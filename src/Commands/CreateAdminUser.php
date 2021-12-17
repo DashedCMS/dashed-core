@@ -3,8 +3,8 @@
 namespace Qubiqx\QcommerceCore\Commands;
 
 use Illuminate\Console\Command;
-use Qubiqx\QcommerceCore\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Qubiqx\QcommerceCore\Models\User;
 
 class CreateAdminUser extends Command
 {

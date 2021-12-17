@@ -3,9 +3,9 @@
 namespace Qubiqx\QcommerceCore\Classes;
 
 use Illuminate\Support\Facades\Request;
+use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use Qubiqx\QcommerceCore\Models\Customsetting;
 use Qubiqx\QcommerceCore\Models\ProductCategory;
-use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 class Helper
 {
@@ -94,7 +94,7 @@ class Helper
 
     public static function getCurrentUrlInLocale($locale, $url = null)
     {
-        if (!$url) {
+        if (! $url) {
             $url = '/';
         }
 

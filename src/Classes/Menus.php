@@ -2,8 +2,8 @@
 
 namespace Qubiqx\QcommerceCore\Classes;
 
-use Qubiqx\QcommerceCore\Models\Menu;
 use Illuminate\Support\Facades\Cache;
+use Qubiqx\QcommerceCore\Models\Menu;
 
 class Menus
 {
@@ -57,13 +57,13 @@ class Menus
             return [];
         });
 
-        foreach($menuItems as &$menuItem){
+        foreach ($menuItems as &$menuItem) {
             $menuItem['active'] = Helper::urlIsActive($menuItem['url'], true);
-            if($menuItem['hasChilds']){
-                foreach($menuItem['childs'] as &$childLevel1Item){
+            if ($menuItem['hasChilds']) {
+                foreach ($menuItem['childs'] as &$childLevel1Item) {
                     $childLevel1Item['active'] = Helper::urlIsActive($childLevel1Item['url'], true);
-                    if($childLevel1Item['hasChilds']){
-                        foreach($childLevel1Item['childs'] as &$childLevel2Item){
+                    if ($childLevel1Item['hasChilds']) {
+                        foreach ($childLevel1Item['childs'] as &$childLevel2Item) {
                             $childLevel2Item['active'] = Helper::urlIsActive($childLevel2Item['url'], true);
                         }
                     }

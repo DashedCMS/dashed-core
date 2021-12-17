@@ -3,17 +3,17 @@
 namespace Qubiqx\QcommerceCore\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Cache;
+use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+use Qubiqx\Qcommerce\Classes\Sites;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Image\Manipulations;
 use Spatie\MediaLibrary\HasMedia;
-use Qubiqx\Qcommerce\Classes\Sites;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Database\Eloquent\Model;
-use Spatie\Translatable\HasTranslations;
-use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+use Spatie\Translatable\HasTranslations;
 
 class Page extends Model implements HasMedia
 {
@@ -75,7 +75,7 @@ class Page extends Model implements HasMedia
 
     public function scopeThisSite($query, $siteId = null)
     {
-        if (!$siteId) {
+        if (! $siteId) {
             $siteId = Sites::getActive();
         }
 
@@ -132,7 +132,7 @@ class Page extends Model implements HasMedia
 
     public function getStatusAttribute()
     {
-        if (!$this->start_date && !$this->end_date) {
+        if (! $this->start_date && ! $this->end_date) {
             return 'active';
         } else {
             if ($this->start_date && $this->end_date) {
