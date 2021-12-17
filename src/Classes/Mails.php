@@ -3,14 +3,14 @@
 namespace Qubiqx\QcommerceCore\Classes;
 
 use Illuminate\Support\Facades\Mail;
-use Qubiqx\QcommerceCore\Models\Customsetting;
 use Qubiqx\QcommerceCore\Mail\NotificationMail;
+use Qubiqx\QcommerceCore\Models\Customsetting;
 
 class Mails
 {
     public static function sendNotificationToAdmins($content, $subject = null): void
     {
-        if (!$subject) {
+        if (! $subject) {
             $subject = $content;
         }
 

@@ -2,11 +2,9 @@
 
 namespace Qubiqx\QcommerceCore\Filament\Resources;
 
-use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
-use Filament\Tables;
 use Qubiqx\QcommerceCore\Filament\Resources\PageResource\Pages\CreatePage;
 use Qubiqx\QcommerceCore\Filament\Resources\PageResource\Pages\EditPage;
 use Qubiqx\QcommerceCore\Filament\Resources\PageResource\Pages\ListPages;

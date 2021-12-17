@@ -2,8 +2,8 @@
 
 namespace Qubiqx\QcommerceCore\Filament\Resources\PageResource\Pages;
 
-use Qubiqx\QcommerceCore\Filament\Resources\PageResource;
 use Filament\Resources\Pages\EditRecord;
+use Qubiqx\QcommerceCore\Filament\Resources\PageResource;
 
 class EditPage extends EditRecord
 {

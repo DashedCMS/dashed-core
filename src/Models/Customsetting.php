@@ -2,13 +2,13 @@
 
 namespace Qubiqx\QcommerceCore\Models;
 
-use Spatie\Image\Manipulations;
-use Spatie\MediaLibrary\HasMedia;
-use Qubiqx\Qcommerce\Classes\Sites;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Eloquent\Model;
+use Qubiqx\Qcommerce\Classes\Sites;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Image\Manipulations;
+use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
@@ -42,7 +42,7 @@ class Customsetting extends Model implements HasMedia
         }
 
         return Cache::tags(['custom-settings', "custom-settings-$name"])->rememberForever("$name-$siteId-$locale", function () use ($name, $siteId, $default, $locale) {
-            if (!Schema::hasTable('qcommerce__custom_settings')) {
+            if (! Schema::hasTable('qcommerce__custom_settings')) {
                 return;
             }
 
@@ -57,7 +57,7 @@ class Customsetting extends Model implements HasMedia
 
     public static function set($name, $value, $siteId = null, $locale = null)
     {
-        if (!$siteId) {
+        if (! $siteId) {
             $siteId = config('qcommerce.sites')[0]['id'];
         }
 

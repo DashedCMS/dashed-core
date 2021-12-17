@@ -7,12 +7,10 @@ use Illuminate\Console\Scheduling\Schedule;
 use Qubiqx\QcommerceCore\Commands\CreateSitemap;
 use Qubiqx\QcommerceCore\Commands\InvalidatePasswordResetTokens;
 use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class QcommerceCoreServiceProvider extends PluginServiceProvider
 {
     public static string $name = 'qcommerce-core';
-
 
     public function bootingPackage()
     {
