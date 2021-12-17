@@ -7,5 +7,7 @@ use Qubiqx\QcommerceCore\Filament\Resources\PageResource;
 
 class ListPages extends ListRecords
 {
+    use ListRecords\Concerns\Translatable;
+
     protected static string $resource = PageResource::class;
 }

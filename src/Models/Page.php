@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
-use Qubiqx\Qcommerce\Classes\Sites;
+use Qubiqx\QcommerceCore\Classes\Sites;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Image\Manipulations;
 use Spatie\MediaLibrary\HasMedia;
@@ -52,6 +52,10 @@ class Page extends Model implements HasMedia
         'created_at',
         'updated_at',
         'deleted_at',
+    ];
+
+    public $casts = [
+      'content' => 'array'
     ];
 
     protected static function booted()

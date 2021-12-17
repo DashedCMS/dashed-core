@@ -1,5 +1,6 @@
 <?php
 
+
 use Qubiqx\QcommerceCore\CMSManager;
 
 if (! function_exists('cms')) {

@@ -10,7 +10,6 @@ class QcommerceCoreEventServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        dd('asdf');
         Page::observe(PageObserver::class);
     }
 }
