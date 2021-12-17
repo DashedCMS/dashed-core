@@ -15,8 +15,16 @@ use Qubiqx\QcommerceCore\Models\Page;
 class PageResource extends Resource
 {
     protected static ?string $model = Page::class;
+    protected static ?string $recordTitleAttribute = 'name';
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-book-open';
+    protected static ?string $navigationGroup = 'Content';
+    protected static ?string $navigationLabel = 'Pagina\'s';
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name', 'slug'];
+    }
 
     public static function form(Form $form): Form
     {

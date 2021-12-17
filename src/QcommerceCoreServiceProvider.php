@@ -4,15 +4,17 @@ namespace Qubiqx\QcommerceCore;
 
 use Filament\PluginServiceProvider;
 use Illuminate\Console\Scheduling\Schedule;
+use Qubiqx\QcommerceCore\Commands\CreateAdminUser;
 use Qubiqx\QcommerceCore\Commands\CreateSitemap;
+use Qubiqx\QcommerceCore\Commands\InstallCommand;
 use Qubiqx\QcommerceCore\Commands\InvalidatePasswordResetTokens;
+use Qubiqx\QcommerceCore\Commands\UpdateCommand;
+use Qubiqx\QcommerceCore\Filament\Resources\PageResource;
 use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class QcommerceCoreServiceProvider extends PluginServiceProvider
 {
     public static string $name = 'qcommerce-core';
-
 
     public function bootingPackage()
     {
@@ -32,6 +34,19 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
             ->hasConfigFile()
             ->hasViews()
             ->hasMigration('create_qcommerce-core_table')
-            ->hasCommand(QcommerceCoreCommand::class);
+            ->hasCommands([
+                CreateAdminUser::class,
+                InstallCommand::class,
+                UpdateCommand::class,
+                InvalidatePasswordResetTokens::class,
+                CreateSitemap::class,
+            ]);
+    }
+
+    protected function getResources(): array
+    {
+        return [
+            PageResource::class
+        ];
     }
 }
