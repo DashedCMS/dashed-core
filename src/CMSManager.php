@@ -1,0 +1,39 @@
+<?php
+
+namespace Qubiqx\QcommerceCore;
+
+use Qubiqx\QcommerceCore\Models\User;
+
+class CMSManager
+{
+    protected static $models = [
+        'User' => User::class,
+    ];
+
+    protected static $builders = [
+        'blocks' => [],
+        'content' => [],
+    ];
+
+    public function model(string $name, ?string $implementation = null): self|string
+    {
+        if (! $implementation) {
+            return static::$models[$name];
+        }
+
+        static::$models[$name] = $implementation;
+
+        return $this;
+    }
+
+    public function builder(string $name, ?array $blocks = null): self|array
+    {
+        if (! $blocks) {
+            return static::$builders[$name];
+        }
+
+        static::$builders[$name] = $blocks;
+
+        return $this;
+    }
+}
