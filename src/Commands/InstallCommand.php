@@ -3,6 +3,7 @@
 namespace Qubiqx\QcommerceCore\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
 
 class InstallCommand extends Command
 {
@@ -37,14 +38,19 @@ class InstallCommand extends Command
      */
     public function handle()
     {
-//        $this->call('vendor:publish', [
-//            '--tag' => 'qcommerce-config',
-//        ]);
-//        $this->call('vendor:publish', [
-//            '--tag' => 'qcommerce-assets',
-//        ]);
+        $this->call('vendor:publish', [
+            '--tag' => 'qcommerce-core-config',
+            '--force' => 'true'
+        ]);
+        $this->call('vendor:publish', [
+            '--tag' => 'filament-translations',
+            '--force' => 'true',
+        ]);
+        $this->call('migrate', [
+            '--force' => 'true',
+        ]);
 //        $this->call('horizon:install');
-//
-//        $this->info('QCommerce installed!');
+
+        $this->info('QCommerce installed!');
     }
 }

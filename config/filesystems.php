@@ -1,0 +1,40 @@
+<?php
+
+return [
+    'default' => env('FILESYSTEM_DRIVER', 'local'),
+
+    'disks' => [
+
+        'local' => [
+            'driver' => 'local',
+            'root' => storage_path('app'),
+        ],
+
+        'public' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public'),
+            'url' => env('APP_URL') . '/storage',
+            'visibility' => 'public',
+        ],
+
+        'qcommerce' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/qcommerce'),
+            'url' => env('APP_URL') . '/storage/qcommerce',
+            'visibility' => 'public',
+        ],
+
+        'qcommerce-uploads' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/qcommerce/uploads'),
+            'url' => env('APP_URL') . '/storage/qcommerce/uploads',
+            'visibility' => 'public',
+        ],
+
+    ],
+
+    'links' => [
+        public_path('storage') => storage_path('app/public'),
+    ],
+
+];

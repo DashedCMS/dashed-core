@@ -15,6 +15,8 @@ class EditPage extends EditRecord
 
     protected static string $resource = PageResource::class;
 
+    //Todo: add action button to directly view the page
+
     protected function mutateFormDataBeforeSave(array $data): array
     {
         $data['slug'] = Str::slug($data['slug'] ?: $data['title']);

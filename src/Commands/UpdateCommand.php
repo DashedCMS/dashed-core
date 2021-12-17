@@ -37,12 +37,18 @@ class UpdateCommand extends Command
      */
     public function handle()
     {
-//        $this->call('vendor:publish', [
-//            '--tag' => 'qcommerce-assets',
-//            '--force',
-//        ]);
-//        $this->call('horizon:publish');
-//
-//        $this->info('QCommerce updated!');
+        $this->call('vendor:publish', [
+            '--tag' => 'qcommerce-core-config',
+        ]);
+
+        $this->call('vendor:publish', [
+            '--tag' => 'filament-translations',
+        ]);
+
+        $this->call('migrate', [
+            '--force' => 'true',
+        ]);
+
+        $this->info('QCommerce updated!');
     }
 }

@@ -6,12 +6,12 @@ class Sites
 {
     public static function getActive()
     {
-        return config('qcommerce.currentSite');
+        return config('qcommerce-core.currentSite');
     }
 
     public static function getSites()
     {
-        return config('qcommerce.sites');
+        return config('qcommerce-core.sites');
     }
 
     public static function getAmountOfSites()
@@ -21,7 +21,7 @@ class Sites
 
     public static function getFirstSite()
     {
-        return config('qcommerce.sites')[0];
+        return config('qcommerce-core.sites')[0];
     }
 
     public static function get($siteId = null)

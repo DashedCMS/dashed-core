@@ -33,9 +33,18 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
 
         $package
             ->name('qcommerce-core')
-            ->hasConfigFile()
+            ->hasConfigFile([
+                'filament',
+                'filament-spatie-laravel-translatable-plugin',
+                'filesystems',
+                'laravellocalization',
+                'media-library',
+                'qcommerce-core'
+            ])
+            ->hasTranslations([
+
+            ])
             ->hasViews()
-            ->hasMigration('create_qcommerce-core_table')
             ->hasCommands([
                 CreateAdminUser::class,
                 InstallCommand::class,
