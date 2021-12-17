@@ -46,7 +46,7 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
     protected function getResources(): array
     {
         return [
-            PageResource::class
+            PageResource::class,
         ];
     }
 }
