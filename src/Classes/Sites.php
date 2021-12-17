@@ -14,6 +14,11 @@ class Sites
         return config('qcommerce.sites');
     }
 
+    public static function getAmountOfSites()
+    {
+        return count(self::getSites());
+    }
+
     public static function getFirstSite()
     {
         return config('qcommerce.sites')[0];

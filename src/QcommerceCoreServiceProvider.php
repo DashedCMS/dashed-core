@@ -29,6 +29,8 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
     {
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
+        //Todo: make sure the filament translations get published
+
         $package
             ->name('qcommerce-core')
             ->hasConfigFile()

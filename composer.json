@@ -77,7 +77,8 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Qubiqx\\QcommerceCore\\QcommerceCoreServiceProvider"
+                "Qubiqx\\QcommerceCore\\QcommerceCoreServiceProvider",
+                "Qubiqx\\QcommerceCore\\QcommerceCoreEventServiceProvider"
             ],
             "aliases": {
                 "QcommerceCore": "Qubiqx\\QcommerceCore\\Facades\\QcommerceCore",
