@@ -2,7 +2,6 @@
 
 namespace Qubiqx\QcommerceCore\Filament\Resources\PageResource\Pages;
 
-use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Resources\Pages\EditRecord\Concerns\Translatable;
 use Illuminate\Support\Str;

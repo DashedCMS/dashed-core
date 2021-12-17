@@ -2,9 +2,9 @@
 
 namespace Qubiqx\QcommerceCore\Filament\Resources;
 
+use Closure;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -13,7 +13,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Concerns\Translatable;
 use Filament\Resources\Form;
-use Closure;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables\Columns\TextColumn;
@@ -75,18 +74,18 @@ class PageResource extends Resource
                             ->label('Actief op site')
                             ->options(collect(Sites::getSites())->pluck('name', 'id'))
                             ->hidden(function () {
-                                return !(Sites::getAmountOfSites() > 1);
+                                return ! (Sites::getAmountOfSites() > 1);
                             })
-                            ->required()
+                            ->required(),
                     ])
-                    ->collapsed(fn($livewire) => $livewire instanceof EditPage),
+                    ->collapsed(fn ($livewire) => $livewire instanceof EditPage),
                 Section::make('Content')
                     ->schema([
                         TextInput::make('name')
                             ->label('Name')
                             ->required()
                             ->rules([
-                                'max:255'
+                                'max:255',
                             ])
                             ->reactive()
                             ->afterStateUpdated(function (Closure $set, $state, $livewire) {
@@ -99,7 +98,7 @@ class PageResource extends Resource
                             ->helperText('Laat leeg om automatisch te laten genereren')
                             ->required()
                             ->rules([
-                                'max:255'
+                                'max:255',
                             ]),
                         TextInput::make('meta_title')
                             ->label('Meta title')
@@ -117,15 +116,15 @@ class PageResource extends Resource
                                 'max:158',
                             ]),
                         SpatieMediaLibraryFileUpload::make('image')
-                            ->collection(fn($livewire) => "meta-image-{$livewire->activeFormLocale}")
+                            ->collection(fn ($livewire) => "meta-image-{$livewire->activeFormLocale}")
                             ->name('Meta afbeelding')
                             ->image(),
 //                        ->disk('qcommerce'),
 //                            ->maxSize(10240)
 
                         Builder::make('content')
-                            ->blocks(cms()->builder('blocks'))
-                    ])
+                            ->blocks(cms()->builder('blocks')),
+                    ]),
             ]);
     }
 
@@ -146,11 +145,11 @@ class PageResource extends Resource
                 TextColumn::make('site_id')
                     ->label('Actief op site')
                     ->sortable()
-                    ->hidden(!(Sites::getAmountOfSites() > 1))
+                    ->hidden(! (Sites::getAmountOfSites() > 1))
                     ->searchable(),
                 TextColumn::make('status')
                     ->label('Status')
-                    ->getStateUsing(fn($record) => ucfirst($record->status))
+                    ->getStateUsing(fn ($record) => ucfirst($record->status)),
             ])
             ->filters([
                 //

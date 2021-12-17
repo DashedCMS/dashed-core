@@ -36,5 +36,4 @@ class CMSManager
 
         return $this;
     }
-
 }

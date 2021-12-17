@@ -55,7 +55,7 @@ class Page extends Model implements HasMedia
     ];
 
     public $casts = [
-      'content' => 'array'
+      'content' => 'array',
     ];
 
     protected static function booted()
@@ -79,7 +79,7 @@ class Page extends Model implements HasMedia
 
     public function scopeThisSite($query, $siteId = null)
     {
-        if (!$siteId) {
+        if (! $siteId) {
             $siteId = Sites::getActive();
         }
 
@@ -136,7 +136,7 @@ class Page extends Model implements HasMedia
 
     public function getStatusAttribute()
     {
-        if (!$this->start_date && !$this->end_date) {
+        if (! $this->start_date && ! $this->end_date) {
             return 'active';
         } else {
             if ($this->start_date && $this->end_date) {
