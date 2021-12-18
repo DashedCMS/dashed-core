@@ -5,7 +5,6 @@ namespace Qubiqx\QcommerceCore;
 use Filament\PluginServiceProvider;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Blade;
-use Qubiqx\QcommerceCore\Classes\Locales;
 use Qubiqx\QcommerceCore\Commands\CreateAdminUser;
 use Qubiqx\QcommerceCore\Commands\CreateSitemap;
 use Qubiqx\QcommerceCore\Commands\InstallCommand;
@@ -14,17 +13,14 @@ use Qubiqx\QcommerceCore\Commands\UpdateCommand;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuResource;
 use Qubiqx\QcommerceCore\Filament\Resources\PageResource;
-use Qubiqx\QcommerceCore\Models\MenuItem;
 use Qubiqx\QcommerceCore\Models\Page;
-use Qubiqx\QcommerceCore\View\FrontendBodyExtend;
-use Qubiqx\QcommerceCore\View\FrontendHead;
 use Spatie\LaravelPackageTools\Package;
 
 class QcommerceCoreServiceProvider extends PluginServiceProvider
 {
     public static string $name = 'qcommerce-core';
 
-    public function bootingPackage()
+    public function boot()
     {
         $this->app->booted(function () {
             $schedule = app(Schedule::class);
