@@ -12,6 +12,7 @@ use Filament\Resources\Concerns\Translatable;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
+use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Support\Str;
 use Qubiqx\QcommerceCore\Classes\Sites;
@@ -54,7 +55,7 @@ class MenuItemResource extends Resource
                     ->options($routeModel['class']::pluck($routeModel['nameField'] ?: 'name', 'id'))
                     ->hidden(fn($get) => !in_array($get('type'), [$key]))
                     ->afterStateHydrated(function (Select $component, Closure $set, $state) {
-                        $set($component, fn ($record) => $record->model_id);
+                        $set($component, fn($record) => $record->model_id);
                     });
         }
 
@@ -77,7 +78,7 @@ class MenuItemResource extends Resource
             MultiSelect::make('site_ids')
                 ->label('Actief op sites')
                 ->options(collect(Sites::getSites())->pluck('name', 'id'))
-            ->required(),
+                ->required(),
             TextInput::make('order')
                 ->label('Volgorde')
                 ->required()
@@ -128,6 +129,9 @@ class MenuItemResource extends Resource
                 TextColumn::make('url')
                     ->label('URL')
                     ->getStateUsing(fn($record) => str_replace(url('/'), '', $record->getUrl())),
+                TextColumn::make('site_ids')
+                    ->label('Sites')
+                    ->getStateUsing(fn($record) => implode(' | ', $record->site_ids)),
             ])
             ->filters([
                 //

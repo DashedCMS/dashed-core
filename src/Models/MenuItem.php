@@ -163,7 +163,7 @@ class MenuItem extends Model
     public function name()
     {
         return Cache::tags(['menus', 'menu-items', 'products', 'product-categories', 'pages', 'articles', "menuitem-$this->id"])->remember("menuitem-name-$this->id", 60 * 60 * 24, function () {
-            if (!$this->type || $this->type == 'external_url') {
+            if (!$this->type || $this->type == 'normal' || $this->type == 'external_url') {
                 return $this->name;
             } else {
                 $modelResult = $this->model::find($this->model_id);

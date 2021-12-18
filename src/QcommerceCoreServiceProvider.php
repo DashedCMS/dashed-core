@@ -40,12 +40,6 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
             'class' => Page::class,
             'nameField' => 'name'
         ]);
-        cms()->routeModels('menuItems', [
-            'name' => 'Menu item',
-            'pluralName' => 'Menu items',
-            'class' => MenuItem::class,
-            'nameField' => 'name'
-        ]);
 
         $package
             ->name('qcommerce-core')
@@ -56,6 +50,9 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
                 'laravellocalization',
                 'media-library',
                 'qcommerce-core'
+            ])
+            ->hasRoutes([
+                'frontend'
             ])
             ->hasViews()
             ->hasCommands([

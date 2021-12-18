@@ -14,8 +14,8 @@ class EditMenuItem extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        $data['model'] = '';
-        $data['model_id'] = '';
+        $data['model'] = null;
+        $data['model_id'] = null;
 
         foreach ($data as $formFieldKey => $formFieldValue) {
             foreach (cms()->getRouteModels() as $routeKey => $routeModel) {
