@@ -4,13 +4,17 @@ namespace Qubiqx\QcommerceCore;
 
 use Filament\PluginServiceProvider;
 use Illuminate\Console\Scheduling\Schedule;
+use Qubiqx\QcommerceCore\Classes\Locales;
 use Qubiqx\QcommerceCore\Commands\CreateAdminUser;
 use Qubiqx\QcommerceCore\Commands\CreateSitemap;
 use Qubiqx\QcommerceCore\Commands\InstallCommand;
 use Qubiqx\QcommerceCore\Commands\InvalidatePasswordResetTokens;
 use Qubiqx\QcommerceCore\Commands\UpdateCommand;
+use Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuResource;
 use Qubiqx\QcommerceCore\Filament\Resources\PageResource;
+use Qubiqx\QcommerceCore\Models\MenuItem;
+use Qubiqx\QcommerceCore\Models\Page;
 use Spatie\LaravelPackageTools\Package;
 
 class QcommerceCoreServiceProvider extends PluginServiceProvider
@@ -30,7 +34,18 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
     {
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
-        //Todo: make sure the filament translations get published
+        cms()->routeModels('page', [
+            'name' => 'Pagina',
+            'pluralName' => 'Pagina\'s',
+            'class' => Page::class,
+            'nameField' => 'name'
+        ]);
+        cms()->routeModels('menuItems', [
+            'name' => 'Menu item',
+            'pluralName' => 'Menu items',
+            'class' => MenuItem::class,
+            'nameField' => 'name'
+        ]);
 
         $package
             ->name('qcommerce-core')
@@ -41,9 +56,6 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
                 'laravellocalization',
                 'media-library',
                 'qcommerce-core'
-            ])
-            ->hasTranslations([
-
             ])
             ->hasViews()
             ->hasCommands([
@@ -60,6 +72,7 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
         return [
             PageResource::class,
             MenuResource::class,
+            MenuItemResource::class,
         ];
     }
 }

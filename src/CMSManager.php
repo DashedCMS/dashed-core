@@ -2,18 +2,24 @@
 
 namespace Qubiqx\QcommerceCore;
 
+use Qubiqx\QcommerceCore\Models\Menu;
+use Qubiqx\QcommerceCore\Models\MenuItem;
 use Qubiqx\QcommerceCore\Models\Page;
 
 class CMSManager
 {
     protected static $models = [
         'Page' => Page::class,
+        'Menu' => Menu::class,
+        'MenuItem' => MenuItem::class,
     ];
 
     protected static $builders = [
         'blocks' => [],
-        'content' => [],
+        'content' => []
     ];
+
+    protected static $routeModels = [];
 
     public function model(string $name, ?string $implementation = null): self|string
     {
@@ -35,5 +41,21 @@ class CMSManager
         static::$builders[$name] = $blocks;
 
         return $this;
+    }
+
+    public function routeModels(string $name, ?array $routeModel = null): self|array
+    {
+        if (! $routeModel) {
+            return static::$routeModels[$name];
+        }
+
+        static::$routeModels[$name] = $routeModel;
+
+        return $this;
+    }
+
+    public function getRouteModels(): self|array
+    {
+        return static::$routeModels;
     }
 }

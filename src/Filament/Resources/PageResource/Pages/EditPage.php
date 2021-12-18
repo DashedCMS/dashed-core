@@ -16,14 +16,14 @@ class EditPage extends EditRecord
 
     protected static string $resource = PageResource::class;
 
-//    protected function getActions(): array
-//    {
-//        return array_merge(parent::getActions(), [
-//            ButtonAction::make('mark_as_not_viewed')
-//                ->label('Bekijk pagina')
-//                ->action('markAsNotViewed'),
-//        ]);
-//    }
+    protected function getActions(): array
+    {
+        return array_merge(parent::getActions(), [
+            ButtonAction::make('view_page')
+                ->label('Bekijk pagina')
+                ->url($this->record->getUrl()),
+        ]);
+    }
 
     protected function mutateFormDataBeforeSave(array $data): array
     {

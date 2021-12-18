@@ -1,6 +1,6 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Filament\Resources\PageResource\Pages;
+namespace Qubiqx\QcommerceCore\Filament\Resources\MenuResource\Pages;
 
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Pages\CreateRecord\Concerns\Translatable;
@@ -16,16 +16,7 @@ class CreateMenu extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['slug'] = Str::slug($data['slug'] ?: $data['title']);
-
-        while (Page::where('slug->' . $this->activeFormLocale, $data['slug'])->count()) {
-            $data['slug'] .= Str::random(1);
-        }
-
-        $data['site_id'] = $data['site_id'] ?: Sites::getFirstSite()['id'];
-        $content = $data['content'];
-        $data['content'] = null;
-        $data['content'][$this->activeFormLocale] = $content;
+        $data['name'] = Str::slug($data['name']);
 
         return $data;
     }

@@ -2,11 +2,13 @@
 
 namespace Qubiqx\QcommerceCore\Classes;
 
+use \Mcamara\LaravelLocalization\LaravelLocalization;
+
 class Locales
 {
     public static function getLocales()
     {
-        $allLocales = \LaravelLocalization::getLocalesOrder();
+        $allLocales =  \Mcamara\LaravelLocalization\Facades\LaravelLocalization::getLocalesOrder();
         $locales = [];
         foreach ($allLocales as $key => $locale) {
             $locale['id'] = $key;

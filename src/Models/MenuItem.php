@@ -42,6 +42,10 @@ class MenuItem extends Model
         'deleted_at',
     ];
 
+    protected $casts = [
+        'site_ids' => 'array',
+    ];
+
     protected static function booted()
     {
         static::created(function ($menuItem) {
@@ -85,7 +89,7 @@ class MenuItem extends Model
         $menuItem = $this;
         while ($menuItem->parent_menu_item_id) {
             $menuItem = self::find($menuItem->parent_menu_item_id);
-            if (! $menuItem) {
+            if (!$menuItem) {
                 return;
             }
         }
@@ -105,7 +109,7 @@ class MenuItem extends Model
         $menuItem = $this;
         while ($menuItem->parent_menu_item_id) {
             $menuItem = self::find($menuItem->parent_menu_item_id);
-            if (! $menuItem) {
+            if (!$menuItem) {
                 return;
             }
         }
@@ -141,7 +145,7 @@ class MenuItem extends Model
     public function getUrl()
     {
         return Cache::tags(['menus', 'menu-items', 'products', 'product-categories', 'pages', 'articles', "menuitem-$this->id"])->remember("menuitem-url-$this->id", 60 * 60 * 24, function () {
-            if (! $this->type || $this->type == 'external_url') {
+            if (!$this->type || $this->type == 'normal' || $this->type == 'external_url') {
                 return LaravelLocalization::localizeUrl($this->url ? $this->url : '/');
             } else {
                 $modelResult = $this->model::find($this->model_id);
@@ -159,14 +163,14 @@ class MenuItem extends Model
     public function name()
     {
         return Cache::tags(['menus', 'menu-items', 'products', 'product-categories', 'pages', 'articles', "menuitem-$this->id"])->remember("menuitem-name-$this->id", 60 * 60 * 24, function () {
-            if (! $this->type || $this->type == 'external_url') {
+            if (!$this->type || $this->type == 'external_url') {
                 return $this->name;
             } else {
                 $modelResult = $this->model::find($this->model_id);
                 $replacementName = '';
                 if ($modelResult) {
                     $replacementName = $modelResult->name;
-                    if (! $replacementName) {
+                    if (!$replacementName) {
                         $replacementName = $modelResult->title;
                     }
                 }
