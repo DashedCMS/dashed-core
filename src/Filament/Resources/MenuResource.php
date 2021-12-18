@@ -50,7 +50,7 @@ class MenuResource extends Resource
                             ->rules([
                                 'max:255',
                             ])
-                            ->unique('menus', 'name', fn($record) => $record)
+                            ->unique('qcommerce__menus', 'name', fn($record) => $record)
                             ->reactive()
                             ->afterStateUpdated(function (Closure $set, $state, $livewire) {
                                 $set('name', Str::slug($state));

@@ -13,8 +13,6 @@ use Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuResource;
 use Qubiqx\QcommerceCore\Filament\Resources\PageResource;
 use Qubiqx\QcommerceCore\Models\Page;
-use Qubiqx\QcommerceCore\View\Components\FrontendBodyExtend;
-use Qubiqx\QcommerceCore\View\Components\FrontendHead;
 use Spatie\LaravelPackageTools\Package;
 
 class QcommerceCoreServiceProvider extends PluginServiceProvider
@@ -28,7 +26,6 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
             $schedule->command(CreateSitemap::class)->daily();
             $schedule->command(InvalidatePasswordResetTokens::class)->everyFifteenMinutes();
         });
-//        Blade::componentNamespace('Qcommerce\\Views\\Components', 'qcommerce');
     }
 
     public function configurePackage(Package $package): void

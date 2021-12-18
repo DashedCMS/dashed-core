@@ -100,7 +100,7 @@ class PageResource extends Resource
                             }),
                         TextInput::make('slug')
                             ->label('Slug')
-                            ->unique('pages', 'slug', fn($record) => $record)
+                            ->unique('qcommerce__pages', 'slug', fn($record) => $record)
                             ->helperText('Laat leeg om automatisch te laten genereren')
                             ->required()
                             ->rules([

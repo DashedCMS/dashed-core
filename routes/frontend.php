@@ -39,6 +39,6 @@ Route::group(
         //Form routes
 //        Route::post('/form/post', [FrontendFormController::class, 'store'])->name('qcommerce.frontend.forms.store');
 
-        Route::get('{slug?}', [FrontendController::class, 'index'])->name('qcommerce.frontend.general.index')->where('slug', '.*');
+        Route::get('{slug?}', [FrontendController::class, 'index'])->name('qcommerce.frontend.general.index')->where('slug', '^(?!qcommerce|admin).[a-zA-Z0-9-_\/]+$');
     }
 );
