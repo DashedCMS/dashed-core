@@ -2,28 +2,17 @@
 
 namespace Qubiqx\QcommerceCore\Filament\Resources\PageResource\Pages;
 
-use Filament\Pages\Actions\ButtonAction;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Resources\Pages\EditRecord\Concerns\Translatable;
 use Illuminate\Support\Str;
 use Qubiqx\QcommerceCore\Classes\Sites;
+use Qubiqx\QcommerceCore\Filament\Resources\MenuResource;
 use Qubiqx\QcommerceCore\Filament\Resources\PageResource;
 use Qubiqx\QcommerceCore\Models\Page;
 
-class EditPage extends EditRecord
+class EditMenu extends EditRecord
 {
-    use Translatable;
-
-    protected static string $resource = PageResource::class;
-
-//    protected function getActions(): array
-//    {
-//        return array_merge(parent::getActions(), [
-//            ButtonAction::make('mark_as_not_viewed')
-//                ->label('Bekijk pagina')
-//                ->action('markAsNotViewed'),
-//        ]);
-//    }
+    protected static string $resource = MenuResource::class;
 
     protected function mutateFormDataBeforeSave(array $data): array
     {

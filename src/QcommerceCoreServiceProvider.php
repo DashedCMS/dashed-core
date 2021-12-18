@@ -9,6 +9,7 @@ use Qubiqx\QcommerceCore\Commands\CreateSitemap;
 use Qubiqx\QcommerceCore\Commands\InstallCommand;
 use Qubiqx\QcommerceCore\Commands\InvalidatePasswordResetTokens;
 use Qubiqx\QcommerceCore\Commands\UpdateCommand;
+use Qubiqx\QcommerceCore\Filament\Resources\MenuResource;
 use Qubiqx\QcommerceCore\Filament\Resources\PageResource;
 use Spatie\LaravelPackageTools\Package;
 
@@ -58,6 +59,7 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
     {
         return [
             PageResource::class,
+            MenuResource::class,
         ];
     }
 }
