@@ -28,6 +28,11 @@ class PageResource extends Resource
     use Translatable;
 
     protected static ?string $model = Page::class;
+//    public static function getModel(): string
+//    {
+//        return cms()->model('Page');
+//    }
+
     protected static ?string $recordTitleAttribute = 'name';
 
     protected static ?string $navigationIcon = 'heroicon-o-book-open';
