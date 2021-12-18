@@ -13,13 +13,13 @@ use Qubiqx\QcommerceCore\Models\Translation;
 Route::group(
     [
         'prefix' => LaravelLocalization::setLocale(),
-        'middleware' => ['web', FrontendMiddleware::class, LocaleSessionRedirect::class, LaravelLocalizationRedirectFilter::class, LaravelLocalizationViewPath::class],
+        'middleware' => ['web', LocaleSessionRedirect::class, LaravelLocalizationRedirectFilter::class, LaravelLocalizationViewPath::class],
     ],
     function () {
         if (Customsetting::get('checkout_account') != 'disabled') {
             //Auth routes
 
-            Route::get('/' . Translation::get('logout-slug', 'slug', 'logout'), [FrontendAuthController::class, 'logout'])->name('qcommerce.frontend.auth.logout');
+//            Route::get('/' . Translation::get('logout-slug', 'slug', 'logout'), [FrontendAuthController::class, 'logout'])->name('qcommerce.frontend.auth.logout');
             Route::group([
                 'middleware' => [GuestMiddleware::class],
             ], function () {
