@@ -11,7 +11,6 @@ use Qubiqx\QcommerceCore\Middleware\GuestMiddleware;
 use Qubiqx\QcommerceCore\Models\Customsetting;
 use Qubiqx\QcommerceCore\Models\Translation;
 
-dd('asdf');
 Route::group(
     [
         'prefix' => LaravelLocalization::setLocale(),

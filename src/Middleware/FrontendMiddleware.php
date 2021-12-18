@@ -20,8 +20,6 @@ class FrontendMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        //Set instance of shopping cart
-        \Cart::instance('default')->count();
         config([
             'seotools.meta.defaults.title' => Customsetting::get('store_name', Sites::getActive(), 'Website'),
             'seotools.meta.defaults.separator' => ' | ',
@@ -36,7 +34,6 @@ class FrontendMiddleware
             'seotools.meta.webmaster_tags.yandex' => Customsetting::get('webmaster_tag_yandex', Sites::getActive(), ''),
             'seotools.meta.webmaster_tags.norton' => Customsetting::get('webmaster_tag_norton', Sites::getActive(), ''),
         ]);
-
 
         $storeMedia = Cache::tags(['general-settings'])->rememberForever("store-media", function () {
             $store = Customsetting::where('name', 'store_name')->with(['media'])->thisSite()->first();
