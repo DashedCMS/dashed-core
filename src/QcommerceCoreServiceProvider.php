@@ -54,7 +54,10 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
             ->hasRoutes([
                 'frontend'
             ])
-            ->hasViews()
+            ->hasViewComponents('qcommerce', [
+                'frontend.head',
+                'frontend.body-extend',
+            ])
             ->hasCommands([
                 CreateAdminUser::class,
                 InstallCommand::class,
