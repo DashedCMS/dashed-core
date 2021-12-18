@@ -5,7 +5,7 @@ namespace Qubiqx\QcommerceCore\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
-use Qubiqx\Qcommerce\Classes\Sites;
+use Qubiqx\QcommerceCore\Classes\Sites;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Image\Manipulations;
 use Spatie\MediaLibrary\HasMedia;
