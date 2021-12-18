@@ -13,7 +13,7 @@ use Qubiqx\QcommerceCore\Models\Translation;
 Route::group(
     [
         'prefix' => LaravelLocalization::setLocale(),
-        'middleware' => ['web', LocaleSessionRedirect::class, LaravelLocalizationRedirectFilter::class, LaravelLocalizationViewPath::class],
+        'middleware' => ['web', FrontendMiddleware::class, LocaleSessionRedirect::class, LaravelLocalizationRedirectFilter::class, LaravelLocalizationViewPath::class],
     ],
     function () {
         if (Customsetting::get('checkout_account') != 'disabled') {
