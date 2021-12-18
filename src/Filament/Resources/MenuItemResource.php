@@ -7,7 +7,6 @@ use Filament\Forms\Components\BelongsToSelect;
 use Filament\Forms\Components\MultiSelect;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Concerns\Translatable;
 use Filament\Resources\Form;
@@ -20,7 +19,6 @@ use Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource\Pages\CreateMenuIte
 use Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource\Pages\EditMenuItem;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource\Pages\ListMenuItem;
 use Qubiqx\QcommerceCore\Models\MenuItem;
-use Qubiqx\QcommerceCore\Models\Page;
 
 class MenuItemResource extends Resource
 {
@@ -78,7 +76,8 @@ class MenuItemResource extends Resource
                 ->reactive(),
             MultiSelect::make('site_ids')
                 ->label('Actief op sites')
-                ->options(collect(Sites::getSites())->pluck('name', 'id')),
+                ->options(collect(Sites::getSites())->pluck('name', 'id'))
+            ->required(),
             TextInput::make('order')
                 ->label('Volgorde')
                 ->required()

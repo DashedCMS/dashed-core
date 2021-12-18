@@ -81,23 +81,14 @@
                 "Qubiqx\\QcommerceCore\\QcommerceCoreEventServiceProvider"
             ],
             "aliases": {
-                "QcommerceCore": "Qubiqx\\QcommerceCore\\Facades\\QcommerceCore",
                 "Sitemap": "Qubiqx\\QcommerceCore\\Classes\\Sitemap",
                 "Helper": "Qubiqx\\QcommerceCore\\Classes\\Helper",
                 "Locales": "Qubiqx\\QcommerceCore\\Classes\\Locales",
                 "Forms": "Qubiqx\\QcommerceCore\\Classes\\Forms",
                 "Menus": "Qubiqx\\QcommerceCore\\Classes\\Menus",
-                "Webshop": "Qubiqx\\QcommerceCore\\Classes\\Webshop",
                 "Sites": "Qubiqx\\QcommerceCore\\Classes\\Sites",
                 "Translation": "Qubiqx\\QcommerceCore\\Models\\Translation",
-                "Customsetting": "Qubiqx\\QcommerceCore\\Models\\Customsetting",
-                "Product": "Qubiqx\\QcommerceCore\\Models\\Product",
-                "Products": "Qubiqx\\QcommerceCore\\Classes\\Products",
-                "Articles": "Qubiqx\\QcommerceCore\\Classes\\Articles",
-                "ProductCategories": "Qubiqx\\QcommerceCore\\Classes\\ProductCategories",
-                "ShoppingCart": "Qubiqx\\QcommerceCore\\Classes\\ShoppingCart",
-                "ShippingZones": "Qubiqx\\QcommerceCore\\Classes\\ShippingZones",
-                "SKUs": "Qubiqx\\QcommerceCore\\Classes\\SKUs"
+                "Customsetting": "Qubiqx\\QcommerceCore\\Models\\Customsetting"
             }
         }
     },
