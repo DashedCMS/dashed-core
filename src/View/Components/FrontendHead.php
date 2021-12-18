@@ -1,6 +1,6 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\View;
+namespace Qubiqx\QcommerceCore\View\Components;
 
 use Illuminate\View\Component;
 
@@ -23,6 +23,6 @@ class FrontendHead extends Component
      */
     public function render()
     {
-        return view('components.frontend.head');
+        return view('qcommerce-core::components.frontend.head');
     }
 }

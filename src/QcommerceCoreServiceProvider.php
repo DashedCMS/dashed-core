@@ -4,7 +4,6 @@ namespace Qubiqx\QcommerceCore;
 
 use Filament\PluginServiceProvider;
 use Illuminate\Console\Scheduling\Schedule;
-use Qubiqx\QcommerceCore\Classes\Locales;
 use Qubiqx\QcommerceCore\Commands\CreateAdminUser;
 use Qubiqx\QcommerceCore\Commands\CreateSitemap;
 use Qubiqx\QcommerceCore\Commands\InstallCommand;
@@ -13,10 +12,9 @@ use Qubiqx\QcommerceCore\Commands\UpdateCommand;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuResource;
 use Qubiqx\QcommerceCore\Filament\Resources\PageResource;
-use Qubiqx\QcommerceCore\Models\MenuItem;
 use Qubiqx\QcommerceCore\Models\Page;
-use Qubiqx\QcommerceCore\View\FrontendBodyExtend;
-use Qubiqx\QcommerceCore\View\FrontendHead;
+use Qubiqx\QcommerceCore\View\Components\FrontendBodyExtend;
+use Qubiqx\QcommerceCore\View\Components\FrontendHead;
 use Spatie\LaravelPackageTools\Package;
 
 class QcommerceCoreServiceProvider extends PluginServiceProvider
@@ -57,8 +55,7 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
             ->hasRoutes([
                 'frontend'
             ])
-            ->hasViewComponents('qcommerce.frontend', FrontendHead::class)
-            ->hasViewComponents('qcommerce.frontend', FrontendBodyExtend::class)
+            ->hasViews()
             ->hasCommands([
                 CreateAdminUser::class,
                 InstallCommand::class,
