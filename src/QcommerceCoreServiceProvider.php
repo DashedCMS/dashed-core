@@ -15,6 +15,8 @@ use Qubiqx\QcommerceCore\Filament\Resources\MenuResource;
 use Qubiqx\QcommerceCore\Filament\Resources\PageResource;
 use Qubiqx\QcommerceCore\Models\MenuItem;
 use Qubiqx\QcommerceCore\Models\Page;
+use Qubiqx\QcommerceCore\View\FrontendBodyExtend;
+use Qubiqx\QcommerceCore\View\FrontendHead;
 use Spatie\LaravelPackageTools\Package;
 
 class QcommerceCoreServiceProvider extends PluginServiceProvider
@@ -54,10 +56,8 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
             ->hasRoutes([
                 'frontend'
             ])
-            ->hasViewComponents('qcommerce', [
-                'frontend.head',
-                'frontend.body-extend',
-            ])
+            ->hasViewComponents('qcommerce', FrontendHead::class)
+            ->hasViewComponents('qcommerce', FrontendBodyExtend::class)
             ->hasCommands([
                 CreateAdminUser::class,
                 InstallCommand::class,
