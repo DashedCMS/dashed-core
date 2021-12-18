@@ -6,6 +6,7 @@ use Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect;
 use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationViewPath;
 use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter;
 use Qubiqx\QcommerceCore\Controllers\Frontend\FrontendController;
+use Qubiqx\QcommerceCore\Middleware\FrontendMiddleware;
 use Qubiqx\QcommerceCore\Middleware\GuestMiddleware;
 use Qubiqx\QcommerceCore\Models\Customsetting;
 use Qubiqx\QcommerceCore\Models\Translation;
