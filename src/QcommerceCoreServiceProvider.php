@@ -4,6 +4,7 @@ namespace Qubiqx\QcommerceCore;
 
 use Filament\PluginServiceProvider;
 use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Support\Facades\Blade;
 use Qubiqx\QcommerceCore\Classes\Locales;
 use Qubiqx\QcommerceCore\Commands\CreateAdminUser;
 use Qubiqx\QcommerceCore\Commands\CreateSitemap;
@@ -30,6 +31,8 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
             $schedule->command(CreateSitemap::class)->daily();
             $schedule->command(InvalidatePasswordResetTokens::class)->everyFifteenMinutes();
         });
+
+        Blade::componentNamespace('QcommerceCore\\Views\\Components', 'qcommerce');
     }
 
     public function configurePackage(Package $package): void
@@ -56,8 +59,6 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
             ->hasRoutes([
                 'frontend'
             ])
-            ->hasViewComponents('qcommerce', FrontendHead::class)
-            ->hasViewComponents('qcommerce', FrontendBodyExtend::class)
             ->hasCommands([
                 CreateAdminUser::class,
                 InstallCommand::class,
