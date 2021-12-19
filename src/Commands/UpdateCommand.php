@@ -45,6 +45,11 @@ class UpdateCommand extends Command
             '--tag' => 'filament-translations',
         ]);
 
+        $this->call('vendor:publish', [
+            '--tag' => 'fm-assets',
+            '--force' => 'true',
+        ]);
+
         $this->call('migrate', [
             '--force' => 'true',
         ]);

@@ -41,14 +41,20 @@ class InstallCommand extends Command
             '--tag' => 'qcommerce-core-config',
             '--force' => 'true',
         ]);
+
         $this->call('vendor:publish', [
             '--tag' => 'filament-translations',
             '--force' => 'true',
         ]);
+
+        $this->call('vendor:publish', [
+            '--tag' => 'fm-assets',
+            '--force' => 'true',
+        ]);
+
         $this->call('migrate', [
             '--force' => 'true',
         ]);
-//        $this->call('horizon:install');
 
         $this->info('QCommerce installed!');
     }
