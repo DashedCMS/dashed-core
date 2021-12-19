@@ -8,7 +8,6 @@ use Filament\Resources\Table;
 use Filament\Tables\Actions\ButtonAction;
 use Filament\Tables\Actions\LinkAction;
 use Filament\Tables\Columns\TextColumn;
-use Qubiqx\QcommerceCore\Models\Menu;
 use Qubiqx\QcommerceCore\Models\MenuItem;
 
 class MenuItemsRelationManager extends HasManyRelationManager
@@ -48,7 +47,7 @@ class MenuItemsRelationManager extends HasManyRelationManager
             ])
             ->headerActions([
                 ButtonAction::make('Aanmaken')
-                    ->url(fn($record) => route('filament.resources.menu-items.create') . '?menuItemId=' . $record),
+                    ->url(fn ($record) => route('filament.resources.menu-items.create') . '?menuItemId=' . $record),
             ]);
     }
 
@@ -57,7 +56,7 @@ class MenuItemsRelationManager extends HasManyRelationManager
         return array_merge(parent::getTableActions(), [
             LinkAction::make('edit')
                 ->label('Bewerken')
-                ->url(fn(MenuItem $record) => route('filament.resources.menu-items.edit', [$record])),
+                ->url(fn (MenuItem $record) => route('filament.resources.menu-items.edit', [$record])),
         ]);
     }
 }

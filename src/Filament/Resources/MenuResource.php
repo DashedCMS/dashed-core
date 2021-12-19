@@ -12,9 +12,6 @@ use Filament\Resources\Table;
 use Filament\Tables\Actions\LinkAction;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Support\Str;
-use Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource\Pages\CreateMenuItem;
-use Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource\Pages\EditMenuItem;
-use Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource\Pages\ListMenuItem;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuResource\Pages\CreateMenu;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuResource\Pages\EditMenu;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuResource\Pages\ListMenu;
@@ -86,7 +83,7 @@ class MenuResource extends Resource
     public static function getRelations(): array
     {
         return [
-            MenuItemsRelationManager::class
+            MenuItemsRelationManager::class,
         ];
     }
 
