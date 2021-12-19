@@ -146,9 +146,8 @@ class MenuItemResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListMenuItem::route('/'),
-            'create' => CreateMenuItem::route('/create'),
-            'edit' => EditMenuItem::route('/{record}/edit'),
+//            'create' => CreateMenuItem::route('/menu/{menu}/create'),
+//            'edit' => EditMenuItem::route('/menu/{menu}/{record}/edit'),
         ];
     }
 }

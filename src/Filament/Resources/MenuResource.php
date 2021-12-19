@@ -9,8 +9,10 @@ use Filament\Resources\Concerns\Translatable;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
+use Filament\Tables\Actions\LinkAction;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Support\Str;
+use Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource\Pages\ListMenuItem;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuResource\Pages\CreateMenu;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuResource\Pages\EditMenu;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuResource\Pages\ListMenu;
@@ -71,6 +73,12 @@ class MenuResource extends Resource
             ])
             ->filters([
                 //
+            ])
+            ->actions([
+                LinkAction::make('Bewerken')
+                    ->url(fn (Menu $record): string => route('filament.resources.menus.edit', [$record])),
+                LinkAction::make('Bewerk menu items')
+                    ->url(fn (Menu $record): string => route('filament.resources.menus.menuItems.index', [$record])),
             ]);
     }
 
@@ -86,6 +94,7 @@ class MenuResource extends Resource
             'index' => ListMenu::route('/'),
             'create' => CreateMenu::route('/create'),
             'edit' => EditMenu::route('/{record}/edit'),
+            'menuItems.index' => ListMenuItem::route('/{record}/menu-items/'),
         ];
     }
 }

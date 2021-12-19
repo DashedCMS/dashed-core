@@ -76,7 +76,7 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
         return [
             PageResource::class,
             MenuResource::class,
-            MenuItemResource::class,
+//            MenuItemResource::class,
             FormResource::class,
 //            FormInputResource::class,
         ];
