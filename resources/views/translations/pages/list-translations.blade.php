@@ -1,3 +1,3 @@
 <x-filament::page>
-    {{ $this->forms }}
+    {{ $this->form }}
 </x-filament::page>

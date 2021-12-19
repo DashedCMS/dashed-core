@@ -9,10 +9,12 @@ use Qubiqx\QcommerceCore\Commands\CreateSitemap;
 use Qubiqx\QcommerceCore\Commands\InstallCommand;
 use Qubiqx\QcommerceCore\Commands\InvalidatePasswordResetTokens;
 use Qubiqx\QcommerceCore\Commands\UpdateCommand;
+use Qubiqx\QcommerceCore\Filament\Pages\FilesPage;
 use Qubiqx\QcommerceCore\Filament\Resources\FormResource;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuResource;
 use Qubiqx\QcommerceCore\Filament\Resources\PageResource;
+use Qubiqx\QcommerceCore\Filament\Resources\TranslationResource;
 use Qubiqx\QcommerceCore\Models\Page;
 use Spatie\LaravelPackageTools\Package;
 
@@ -71,6 +73,13 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
         ];
     }
 
+    protected function getPages(): array
+    {
+        return array_merge(parent::getPages(), [
+            FilesPage::class,
+        ]);
+    }
+
     protected function getResources(): array
     {
         return [
@@ -78,7 +87,7 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
             MenuResource::class,
             MenuItemResource::class,
             FormResource::class,
-//            FormInputResource::class,
+            TranslationResource::class,
         ];
     }
 }

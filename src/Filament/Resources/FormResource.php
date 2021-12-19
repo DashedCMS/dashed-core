@@ -18,7 +18,7 @@ class FormResource extends Resource
     protected static ?string $model = \Qubiqx\QcommerceCore\Models\Form::class;
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static ?string $navigationIcon = 'heroicon-o-menu';
+    protected static ?string $navigationIcon = 'heroicon-o-archive';
     protected static ?string $navigationGroup = 'Formulieren';
     protected static ?string $label = 'Formulier';
     protected static ?string $pluralLabel = 'Formulieren';

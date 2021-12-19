@@ -36,20 +36,15 @@ class Translation extends Model
         'deleted_at',
     ];
 
+    protected $casts = [
+        'variables' => 'array'
+    ];
+
     protected $table = 'qcommerce__translations';
-
-    public function beautifyName()
-    {
-        $name = $this->name;
-        $name = str_replace('-', ' ', $name);
-        $name = ucfirst($name);
-
-        return $name;
-    }
 
     public static function get($name, $tag, $default = null, $type = 'text', $variables = null)
     {
-        if ($name && ! $default) {
+        if ($name && !$default) {
             $default = $name;
             $name = Str::slug($name);
         }
@@ -58,7 +53,7 @@ class Translation extends Model
             return self::getByParams($name, $tag, $default, $type, $variables);
         }
 
-        $result = Cache::rememberForever(Str::slug($name.$tag.app()->getLocale()), function () use ($name, $tag, $default, $type, $variables) {
+        $result = Cache::rememberForever(Str::slug($name . $tag . app()->getLocale()), function () use ($name, $tag, $default, $type, $variables) {
             return self::getByParams($name, $tag, $default, $type, $variables);
         });
 
@@ -71,9 +66,9 @@ class Translation extends Model
             $default = $name;
         }
         $translation = self::where('name', $name)->where('tag', $tag)->first();
-        if (! $translation) {
+        if (!$translation) {
             $translation = self::withTrashed()->where('name', $name)->where('tag', $tag)->first();
-            if (! $translation) {
+            if (!$translation) {
                 $translation = self::updateOrCreate(
                     ['name' => $name, 'tag' => $tag],
                     ['default' => $default, 'type' => $type, 'variables' => $variables ? json_encode($variables) : null]
@@ -81,7 +76,7 @@ class Translation extends Model
 
                 if ($variables) {
                     foreach ($variables as $key => $variable) {
-                        $default = str_replace(':'.$key.':', $variable, $default);
+                        $default = str_replace(':' . $key . ':', $variable, $default);
                     }
                 }
 
@@ -97,7 +92,7 @@ class Translation extends Model
         if ($translation && $translation->value) {
             if ($variables) {
                 foreach ($variables as $key => $variable) {
-                    $translation->value = str_replace(':'.$key.':', $variable, $translation->value);
+                    $translation->value = str_replace(':' . $key . ':', $variable, $translation->value);
                 }
             }
 
@@ -106,7 +101,7 @@ class Translation extends Model
             if ($translation->default) {
                 if ($variables) {
                     foreach ($variables as $key => $variable) {
-                        $translation->default = str_replace(':'.$key.':', $variable, $translation->default);
+                        $translation->default = str_replace(':' . $key . ':', $variable, $translation->default);
                     }
                 }
 
@@ -114,7 +109,7 @@ class Translation extends Model
             } else {
                 if ($variables) {
                     foreach ($variables as $key => $variable) {
-                        $default = str_replace(':'.$key.':', $variable, $default);
+                        $default = str_replace(':' . $key . ':', $variable, $default);
                     }
                 }
 
