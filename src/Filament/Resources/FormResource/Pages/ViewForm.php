@@ -89,7 +89,6 @@ class ViewForm extends Page implements HasTable
                 ])
                 ->sortable();
 
-
         return $tableColumns;
     }
 
