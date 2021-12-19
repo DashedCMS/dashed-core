@@ -57,6 +57,16 @@ class ViewForm extends Page implements HasTable
         ];
     }
 
+    protected function getDefaultTableSortColumn(): ?string
+    {
+        return 'viewed';
+    }
+
+    protected function getDefaultTableSortDirection(): ?string
+    {
+        return 'ASC';
+    }
+
     protected function getTableColumns(): array
     {
         $tableColumns = [
