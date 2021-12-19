@@ -6,7 +6,6 @@ use Closure;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Textarea;
@@ -68,7 +67,7 @@ class ListTranslations extends Page implements HasForms
                                 $set($component, $translation->getTranslation('value', $locale['id']));
                             })
                             ->reactive();
-                    } else if ($translation->type == 'editor') {
+                    } elseif ($translation->type == 'editor') {
                         $schema[] = RichEditor::make("translation_{$translation->id}_{$locale['id']}")
                             ->fileAttachmentsDisk('qcommerce-uploads')
                             ->toolbarButtons([
@@ -94,7 +93,7 @@ class ListTranslations extends Page implements HasForms
                                 $set($component, $translation->getTranslation('value', $locale['id']));
                             })
                             ->reactive();
-                    } else if ($translation->type == 'image') {
+                    } elseif ($translation->type == 'image') {
                         $schema[] = FileUpload::make("translation_{$translation->id}_{$locale['id']}")
                             ->disk('qcommerce-uploads')
                             ->default($translation->default)
@@ -125,7 +124,7 @@ class ListTranslations extends Page implements HasForms
             $sections[] = Section::make('Vertalingen voor ' . $tag)
                 ->schema([
                     Tabs::make('Locales')
-                        ->tabs($tabs)
+                        ->tabs($tabs),
                 ])
                 ->collapsible();
         }
