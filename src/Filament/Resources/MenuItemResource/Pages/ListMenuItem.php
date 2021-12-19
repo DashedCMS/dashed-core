@@ -3,12 +3,12 @@
 namespace Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource\Pages;
 
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
+use Filament\Resources\Pages\Page;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Query\Builder;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuResource;
-use Filament\Resources\Pages\Page;
 
 class ListMenuItem extends Page implements HasTable
 {

@@ -17,7 +17,6 @@ use Illuminate\Support\Str;
 use Qubiqx\QcommerceCore\Classes\Sites;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource\Pages\CreateMenuItem;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource\Pages\EditMenuItem;
-use Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource\Pages\ListMenuItem;
 use Qubiqx\QcommerceCore\Models\MenuItem;
 
 class MenuItemResource extends Resource
