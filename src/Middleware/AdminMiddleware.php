@@ -5,10 +5,6 @@ namespace Qubiqx\QcommerceCore\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\View;
-use Qubiqx\QcommerceCore\Classes\Sites;
-use Qubiqx\QcommerceCore\Models\Customsetting;
 
 class AdminMiddleware
 {
@@ -21,7 +17,7 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect('/' . config('qcommerce.path') . '/login')->with('error', 'Je moet ingelogd zijn om deze pagina te bezoeken');
         }
 
