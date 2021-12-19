@@ -9,6 +9,8 @@ use Qubiqx\QcommerceCore\Commands\CreateSitemap;
 use Qubiqx\QcommerceCore\Commands\InstallCommand;
 use Qubiqx\QcommerceCore\Commands\InvalidatePasswordResetTokens;
 use Qubiqx\QcommerceCore\Commands\UpdateCommand;
+use Qubiqx\QcommerceCore\Filament\Resources\FormInputResource;
+use Qubiqx\QcommerceCore\Filament\Resources\FormResource;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuResource;
 use Qubiqx\QcommerceCore\Filament\Resources\PageResource;
@@ -68,6 +70,8 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
             PageResource::class,
             MenuResource::class,
             MenuItemResource::class,
+            FormResource::class,
+            FormInputResource::class,
         ];
     }
 }
