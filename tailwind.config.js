@@ -4,7 +4,7 @@ module.exports = {
     content: [
         './resources/**/*.blade.php',
         './vendor/filament/**/*.blade.php',
-        './app/**/*.php',
+        './vendor/qubiqx/**/*.php',
     ],
     theme: {
         extend: {

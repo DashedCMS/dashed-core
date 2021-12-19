@@ -10,7 +10,6 @@ use Qubiqx\QcommerceCore\Commands\CreateSitemap;
 use Qubiqx\QcommerceCore\Commands\InstallCommand;
 use Qubiqx\QcommerceCore\Commands\InvalidatePasswordResetTokens;
 use Qubiqx\QcommerceCore\Commands\UpdateCommand;
-use Qubiqx\QcommerceCore\Filament\Resources\FormInputResource;
 use Qubiqx\QcommerceCore\Filament\Resources\FormResource;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuResource;
@@ -65,9 +64,13 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
                 CreateSitemap::class,
             ]);
 
-        Filament::serving(function (): void {
-            Filament::registerTheme(mix('../resources/dist/css/app.css'));
-        });
+    }
+
+    protected function getStyles(): array
+    {
+        return [
+            'qcommerce-core' =>  str_replace('/packages/qubiqx/qcommerce-core/src', '', __DIR__) . '/vendor/qubiqx/qcommerce-core/resources/dist/css/app.css'
+        ];
     }
 
     protected function getResources(): array
