@@ -11,11 +11,9 @@ use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Support\Str;
-use Qubiqx\QcommerceCore\Classes\Sites;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuResource\Pages\CreateMenu;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuResource\Pages\EditMenu;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuResource\Pages\ListMenu;
-use Qubiqx\QcommerceCore\Filament\Resources\MenuResource\RelationManagers\MenuitemsRelationManager;
 use Qubiqx\QcommerceCore\Models\Menu;
 
 class MenuResource extends Resource
@@ -50,12 +48,12 @@ class MenuResource extends Resource
                             ->rules([
                                 'max:255',
                             ])
-                            ->unique('qcommerce__menus', 'name', fn($record) => $record)
+                            ->unique('qcommerce__menus', 'name', fn ($record) => $record)
                             ->reactive()
                             ->afterStateUpdated(function (Closure $set, $state, $livewire) {
                                 $set('name', Str::slug($state));
                             }),
-                    ])
+                    ]),
             ]);
     }
 
@@ -69,7 +67,7 @@ class MenuResource extends Resource
                 ->searchable(),
                 TextColumn::make('amount_of_menu_items')
                     ->label('Aantal menu items')
-                    ->getStateUsing(fn($record) => $record->menuItems->count()),
+                    ->getStateUsing(fn ($record) => $record->menuItems->count()),
             ])
             ->filters([
                 //

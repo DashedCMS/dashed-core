@@ -18,7 +18,7 @@ class FormInput extends Model
     protected $table = 'qcommerce__form_inputs';
 
     protected $casts = [
-        'content' => 'array'
+        'content' => 'array',
     ];
 
     public function form()

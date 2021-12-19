@@ -3,6 +3,7 @@
 namespace Qubiqx\QcommerceCore\Filament\Resources\FormResource\Pages;
 
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
+use Filament\Resources\Pages\Page;
 use Filament\Tables\Actions\LinkAction;
 use Filament\Tables\Columns\BooleanColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -12,7 +13,6 @@ use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 use Qubiqx\QcommerceCore\Filament\Resources\FormResource;
-use Filament\Resources\Pages\Page;
 use Qubiqx\QcommerceCore\Models\FormInput;
 
 class ViewForm extends Page implements HasTable
@@ -53,7 +53,7 @@ class ViewForm extends Page implements HasTable
                 ->options([
                     '0' => 'Niet bekeken',
                     '1' => 'Bekeken',
-                ])
+                ]),
         ];
     }
 
@@ -81,7 +81,7 @@ class ViewForm extends Page implements HasTable
             if ($inputCount < 4) {
                 $tableColumns[] = TextColumn::make($key)
                     ->label(Str::of($key)->replace('_', ' ')->title())
-                    ->getStateUsing(fn($record) => $record->content[$key] ?? 'Niet ingevuld');
+                    ->getStateUsing(fn ($record) => $record->content[$key] ?? 'Niet ingevuld');
             }
             $inputCount++;
         }
@@ -106,7 +106,7 @@ class ViewForm extends Page implements HasTable
     {
         return [
             LinkAction::make('Bekijk')
-                ->url(fn (FormInput $record): string => route('filament.resources.forms.viewFormInput', [$record->form->id, $record]))
+                ->url(fn (FormInput $record): string => route('filament.resources.forms.viewFormInput', [$record->form->id, $record])),
         ];
     }
 }

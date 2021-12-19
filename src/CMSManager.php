@@ -16,7 +16,7 @@ class CMSManager
 
     protected static $builders = [
         'blocks' => [],
-        'content' => []
+        'content' => [],
     ];
 
     protected static $routeModels = [];

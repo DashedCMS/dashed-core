@@ -2,7 +2,6 @@
 
 namespace Qubiqx\QcommerceCore;
 
-use Filament\Facades\Filament;
 use Filament\PluginServiceProvider;
 use Illuminate\Console\Scheduling\Schedule;
 use Qubiqx\QcommerceCore\Commands\CreateAdminUser;
@@ -38,7 +37,7 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
             'name' => 'Pagina',
             'pluralName' => 'Pagina\'s',
             'class' => Page::class,
-            'nameField' => 'name'
+            'nameField' => 'name',
         ]);
 
         $package
@@ -49,10 +48,10 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
                 'filesystems',
                 'laravellocalization',
                 'media-library',
-                'qcommerce-core'
+                'qcommerce-core',
             ])
             ->hasRoutes([
-                'frontend'
+                'frontend',
             ])
             ->hasViews()
             ->hasAssets()
@@ -63,13 +62,12 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
                 InvalidatePasswordResetTokens::class,
                 CreateSitemap::class,
             ]);
-
     }
 
     protected function getStyles(): array
     {
         return [
-            'qcommerce-core' =>  str_replace('/vendor/qubiqx/qcommerce-core/src', '', str_replace('/packages/qubiqx/qcommerce-core/src', '', __DIR__)) . '/vendor/qubiqx/qcommerce-core/resources/dist/css/qcommerce-core.css'
+            'qcommerce-core' => str_replace('/vendor/qubiqx/qcommerce-core/src', '', str_replace('/packages/qubiqx/qcommerce-core/src', '', __DIR__)) . '/vendor/qubiqx/qcommerce-core/resources/dist/css/qcommerce-core.css',
         ];
     }
 

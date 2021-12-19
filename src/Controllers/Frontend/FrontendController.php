@@ -2,10 +2,10 @@
 
 namespace Qubiqx\QcommerceCore\Controllers\Frontend;
 
-use Illuminate\Support\Facades\App;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\View;
 use Artesaos\SEOTools\Facades\SEOTools;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\View;
 use Qubiqx\QcommerceCore\Models\Page;
 
 class FrontendController extends Controller

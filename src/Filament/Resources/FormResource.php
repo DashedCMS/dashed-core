@@ -2,7 +2,6 @@
 
 namespace Qubiqx\QcommerceCore\Filament\Resources;
 
-use Closure;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
@@ -44,8 +43,8 @@ class FormResource extends Resource
                 Section::make('Menu')
                     ->schema([
                         TextInput::make('name')
-                            ->label('Name')
-                    ])
+                            ->label('Name'),
+                    ]),
             ]);
     }
 
@@ -55,15 +54,15 @@ class FormResource extends Resource
             ->columns([
                 TextColumn::make('name')
                     ->label('Naam')
-                    ->formatStateUsing(fn($state) => ucfirst($state))
+                    ->formatStateUsing(fn ($state) => ucfirst($state))
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('amount_of_requests')
                     ->label('Aantal aanvragen')
-                    ->getStateUsing(fn($record) => $record->inputs->count()),
+                    ->getStateUsing(fn ($record) => $record->inputs->count()),
                 TextColumn::make('amount_of_unviewed_requests')
                     ->label('Aantal openstaande aanvragen')
-                    ->getStateUsing(fn($record) => $record->inputs()->unviewed()->count()),
+                    ->getStateUsing(fn ($record) => $record->inputs()->unviewed()->count()),
             ])
             ->filters([
                 //

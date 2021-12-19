@@ -4,7 +4,6 @@ namespace Qubiqx\QcommerceCore\Filament\Resources\FormResource\Pages;
 
 use Filament\Pages\Actions\ButtonAction;
 use Filament\Resources\Pages\Page;
-use Illuminate\Contracts\View\View;
 use Qubiqx\QcommerceCore\Filament\Resources\FormResource;
 use Qubiqx\QcommerceCore\Models\FormInput;
 
@@ -32,6 +31,7 @@ class ViewFormInput extends Page
         array_pop($breadcrumbs);
         $breadcrumbs[route('filament.resources.forms.view', [$this->record->form->id])] = "Aanvragen voor {$this->record->form->name}";
         $breadcrumbs[] = $lastBreadcrumb;
+
         return $breadcrumbs;
     }
 

@@ -28,6 +28,4 @@ class EditMenuItem extends EditRecord
 
         return $data;
     }
-
-
 }

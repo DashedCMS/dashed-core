@@ -3,7 +3,6 @@
 namespace Qubiqx\QcommerceCore\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
 
 class InstallCommand extends Command
 {
@@ -40,7 +39,7 @@ class InstallCommand extends Command
     {
         $this->call('vendor:publish', [
             '--tag' => 'qcommerce-core-config',
-            '--force' => 'true'
+            '--force' => 'true',
         ]);
         $this->call('vendor:publish', [
             '--tag' => 'filament-translations',
