@@ -2,6 +2,7 @@
 
 namespace Qubiqx\QcommerceCore;
 
+use Filament\Facades\Filament;
 use Filament\PluginServiceProvider;
 use Illuminate\Console\Scheduling\Schedule;
 use Qubiqx\QcommerceCore\Commands\CreateAdminUser;
@@ -55,6 +56,7 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
                 'frontend'
             ])
             ->hasViews()
+            ->hasAssets()
             ->hasCommands([
                 CreateAdminUser::class,
                 InstallCommand::class,
@@ -62,6 +64,10 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
                 InvalidatePasswordResetTokens::class,
                 CreateSitemap::class,
             ]);
+
+        Filament::serving(function (): void {
+            Filament::registerTheme(mix('../resources/dist/css/app.css'));
+        });
     }
 
     protected function getResources(): array
@@ -71,7 +77,7 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
             MenuResource::class,
             MenuItemResource::class,
             FormResource::class,
-            FormInputResource::class,
+//            FormInputResource::class,
         ];
     }
 }

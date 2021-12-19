@@ -92,11 +92,11 @@ class ViewForm extends Page implements HasTable
         return $tableColumns;
     }
 
-//    protected function getTableActions(): array
-//    {
-//        return [
-//            LinkAction::make('Bekijk')
-//                ->url(fn (FormInput $record): string => route('filament.resources.form-input.view', $record))
-//        ];
-//    }
+    protected function getTableActions(): array
+    {
+        return [
+            LinkAction::make('Bekijk')
+                ->url(fn (FormInput $record): string => route('filament.resources.forms.viewFormInput', [$record->form->id, $record]))
+        ];
+    }
 }

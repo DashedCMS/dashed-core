@@ -11,6 +11,7 @@ use Filament\Resources\Table;
 use Filament\Tables\Columns\TextColumn;
 use Qubiqx\QcommerceCore\Filament\Resources\FormResource\Pages\ListForm;
 use Qubiqx\QcommerceCore\Filament\Resources\FormResource\Pages\ViewForm;
+use Qubiqx\QcommerceCore\Filament\Resources\FormResource\Pages\ViewFormInput;
 use Qubiqx\QcommerceCore\Models\FormInput;
 
 class FormResource extends Resource
@@ -80,6 +81,7 @@ class FormResource extends Resource
         return [
             'index' => ListForm::route('/'),
             'view' => ViewForm::route('/{record}/inputs'),
+            'viewFormInput' => ViewFormInput::route('/{record}/inputs/{formInput}'),
         ];
     }
 }
