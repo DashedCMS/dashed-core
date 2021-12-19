@@ -17,6 +17,7 @@ use Illuminate\Support\Str;
 use Qubiqx\QcommerceCore\Classes\Sites;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource\Pages\CreateMenuItem;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource\Pages\EditMenuItem;
+use Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource\Pages\ListMenuItem;
 use Qubiqx\QcommerceCore\Models\MenuItem;
 
 class MenuItemResource extends Resource
@@ -26,9 +27,10 @@ class MenuItemResource extends Resource
     protected static ?string $model = MenuItem::class;
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static ?string $navigationIcon = 'heroicon-o-menu-alt-4';
-    protected static ?string $navigationGroup = 'Content';
-    protected static ?string $navigationLabel = 'Menu items';
+    protected static bool $shouldRegisterNavigation = false;
+//    protected static ?string $navigationIcon = 'heroicon-o-menu-alt-4';
+//    protected static ?string $navigationGroup = 'Content';
+//    protected static ?string $navigationLabel = 'Menu items';
     protected static ?string $label = 'Menu item';
     protected static ?string $pluralLabel = 'Menu items';
 
@@ -145,8 +147,9 @@ class MenuItemResource extends Resource
     public static function getPages(): array
     {
         return [
-//            'create' => CreateMenuItem::route('/menu/{menu}/create'),
-//            'edit' => EditMenuItem::route('/menu/{menu}/{record}/edit'),
+            'index' => CreateMenuItem::route('/'),
+            'create' => CreateMenuItem::route('/create'),
+            'edit' => EditMenuItem::route('/{record}/edit'),
         ];
     }
 }

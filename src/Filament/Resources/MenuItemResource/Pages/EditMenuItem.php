@@ -28,4 +28,12 @@ class EditMenuItem extends EditRecord
 
         return $data;
     }
+
+    protected function getBreadcrumbs(): array
+    {
+        $breadcrumbs = parent::getBreadcrumbs();
+        array_shift($breadcrumbs);
+        $breadcrumbs = array_merge([route('filament.resources.menus.edit', [$this->record->menu->id]) => "Menu {$this->record->menu->name}"], $breadcrumbs);
+        return $breadcrumbs;
+    }
 }

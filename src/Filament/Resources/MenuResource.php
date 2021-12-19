@@ -12,10 +12,13 @@ use Filament\Resources\Table;
 use Filament\Tables\Actions\LinkAction;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Support\Str;
+use Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource\Pages\CreateMenuItem;
+use Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource\Pages\EditMenuItem;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource\Pages\ListMenuItem;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuResource\Pages\CreateMenu;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuResource\Pages\EditMenu;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuResource\Pages\ListMenu;
+use Qubiqx\QcommerceCore\Filament\Resources\MenuResource\RelationManagers\MenuItemsRelationManager;
 use Qubiqx\QcommerceCore\Models\Menu;
 
 class MenuResource extends Resource
@@ -77,14 +80,13 @@ class MenuResource extends Resource
             ->actions([
                 LinkAction::make('Bewerken')
                     ->url(fn (Menu $record): string => route('filament.resources.menus.edit', [$record])),
-                LinkAction::make('Bewerk menu items')
-                    ->url(fn (Menu $record): string => route('filament.resources.menus.menuItems.index', [$record])),
             ]);
     }
 
     public static function getRelations(): array
     {
         return [
+            MenuItemsRelationManager::class
         ];
     }
 
@@ -94,7 +96,6 @@ class MenuResource extends Resource
             'index' => ListMenu::route('/'),
             'create' => CreateMenu::route('/create'),
             'edit' => EditMenu::route('/{record}/edit'),
-            'menuItems.index' => ListMenuItem::route('/{record}/menu-items/'),
         ];
     }
 }
