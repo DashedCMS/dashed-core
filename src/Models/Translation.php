@@ -37,14 +37,14 @@ class Translation extends Model
     ];
 
     protected $casts = [
-        'variables' => 'array'
+        'variables' => 'array',
     ];
 
     protected $table = 'qcommerce__translations';
 
     public static function get($name, $tag, $default = null, $type = 'text', $variables = null)
     {
-        if ($name && !$default) {
+        if ($name && ! $default) {
             $default = $name;
             $name = Str::slug($name);
         }
@@ -66,9 +66,9 @@ class Translation extends Model
             $default = $name;
         }
         $translation = self::where('name', $name)->where('tag', $tag)->first();
-        if (!$translation) {
+        if (! $translation) {
             $translation = self::withTrashed()->where('name', $name)->where('tag', $tag)->first();
-            if (!$translation) {
+            if (! $translation) {
                 $translation = self::updateOrCreate(
                     ['name' => $name, 'tag' => $tag],
                     ['default' => $default, 'type' => $type, 'variables' => $variables ? json_encode($variables) : null]

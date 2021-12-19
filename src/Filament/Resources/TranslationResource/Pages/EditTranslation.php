@@ -7,7 +7,6 @@ use Filament\Resources\Pages\EditRecord;
 use Filament\Resources\Pages\EditRecord\Concerns\Translatable;
 use Illuminate\Support\Str;
 use Qubiqx\QcommerceCore\Classes\Sites;
-use Qubiqx\QcommerceCore\Filament\Resources\PageResource;
 use Qubiqx\QcommerceCore\Filament\Resources\TranslationResource;
 use Qubiqx\QcommerceCore\Models\Page;
 
