@@ -14,6 +14,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Actions\ButtonAction;
 use Filament\Resources\Pages\Page;
+use FontLib\EOT\File;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Str;
 use Qubiqx\QcommerceCore\Classes\Locales;
@@ -67,7 +68,16 @@ class ListTranslations extends Page implements HasForms
                             ->rows(5)
                             ->label(Str::of($translation->name)->replace('_', ' ')->replace('-', ' ')->title())
                             ->helperText($helperText ?? '')
-                            ->reactive();
+                            ->reactive()
+                            ->afterStateUpdated(function (Textarea $component, Closure $set, $state) {
+                                $explode = explode('_', $component->getStatePath());
+                                $translationId = $explode[1];
+                                $locale = $explode[2];
+                                $translation = Translation::find($translationId);
+                                $translation->setTranslation("value", $locale, $state);
+                                $translation->save();
+                                $this->notify('success', Str::of($translation->name)->replace('_', ' ')->replace('-', ' ')->title() . " is opgeslagen");
+                            });
                     } elseif ($translation->type == 'editor') {
                         $schema[] = RichEditor::make("translation_{$translation->id}_{$locale['id']}")
                             ->fileAttachmentsDisk('qcommerce-uploads')
@@ -90,21 +100,48 @@ class ListTranslations extends Page implements HasForms
                             ->default($translation->default)
                             ->label(Str::of($translation->name)->replace('_', ' ')->replace('-', ' ')->title())
                             ->helperText($helperText ?? '')
-                            ->reactive();
+                            ->reactive()
+                            ->afterStateUpdated(function (RichEditor $component, Closure $set, $state) {
+                                $explode = explode('_', $component->getStatePath());
+                                $translationId = $explode[1];
+                                $locale = $explode[2];
+                                $translation = Translation::find($translationId);
+                                $translation->setTranslation("value", $locale, $state);
+                                $translation->save();
+                                $this->notify('success', Str::of($translation->name)->replace('_', ' ')->replace('-', ' ')->title() . " is opgeslagen");
+                            });
                     } elseif ($translation->type == 'image') {
                         $schema[] = FileUpload::make("translation_{$translation->id}_{$locale['id']}")
                             ->disk('qcommerce-uploads')
                             ->default($translation->default)
                             ->label(Str::of($translation->name)->replace('_', ' ')->replace('-', ' ')->title())
                             ->helperText($helperText ?? '')
-                            ->reactive();
+                            ->reactive()
+                            ->afterStateUpdated(function (FileUpload $component, Closure $set, $state) {
+                                $explode = explode('_', $component->getStatePath());
+                                $translationId = $explode[1];
+                                $locale = $explode[2];
+                                $translation = Translation::find($translationId);
+                                $translation->setTranslation("value", $locale, $state);
+                                $translation->save();
+                                $this->notify('success', Str::of($translation->name)->replace('_', ' ')->replace('-', ' ')->title() . " is opgeslagen");
+                            });
                     } else {
                         $schema[] = TextInput::make("translation_{$translation->id}_{$locale['id']}")
                             ->default($translation->default)
                             ->label(Str::of($translation->name)->replace('_', ' ')->replace('-', ' ')->title())
                             ->helperText($helperText ?? '')
                             ->default($translation->getTranslation('value', $locale['id']))
-                            ->reactive();
+                            ->reactive()
+                            ->afterStateUpdated(function (TextInput $component, Closure $set, $state) {
+                                $explode = explode('_', $component->getStatePath());
+                                $translationId = $explode[1];
+                                $locale = $explode[2];
+                                $translation = Translation::find($translationId);
+                                $translation->setTranslation("value", $locale, $state);
+                                $translation->save();
+                                $this->notify('success', Str::of($translation->name)->replace('_', ' ')->replace('-', ' ')->title() . " is opgeslagen");
+                            });
                     }
                 }
 
@@ -124,16 +161,16 @@ class ListTranslations extends Page implements HasForms
         return $sections;
     }
 
-    public function submit()
-    {
-        $translations = Translation::all();
-        foreach ($translations as $translation) {
-            foreach (Locales::getLocales() as $locale) {
-                $translation->setTranslation("value", $locale['id'], $this->form->getState()["translation_{$translation->id}_{$locale['id']}"]);
-            }
-            $translation->save();
-        }
-
-        $this->notify('success', 'De vertalingen zijn opgeslagen');
-    }
+//    public function submit()
+//    {
+//        $translations = Translation::all();
+//        foreach ($translations as $translation) {
+//            foreach (Locales::getLocales() as $locale) {
+//                $translation->setTranslation("value", $locale['id'], $this->form->getState()["translation_{$translation->id}_{$locale['id']}"]);
+//            }
+//            $translation->save();
+//        }
+//
+//        $this->notify('success', 'De vertalingen zijn opgeslagen');
+//    }
 }
