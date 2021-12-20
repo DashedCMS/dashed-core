@@ -2,23 +2,9 @@
 
 namespace Qubiqx\QcommerceCore\Filament\Resources;
 
-use Closure;
-use Filament\Forms\Components\Builder;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
-use Filament\Tables\Columns\TextColumn;
-use Illuminate\Support\Str;
-use Qubiqx\QcommerceCore\Classes\Sites;
-use Qubiqx\QcommerceCore\Filament\Resources\PageResource\Pages\CreatePage;
-use Qubiqx\QcommerceCore\Filament\Resources\PageResource\Pages\EditPage;
 use Qubiqx\QcommerceCore\Filament\Resources\TranslationResource\Pages\EditTranslation;
 use Qubiqx\QcommerceCore\Filament\Resources\TranslationResource\Pages\ListTranslations;
 use Qubiqx\QcommerceCore\Models\Translation;

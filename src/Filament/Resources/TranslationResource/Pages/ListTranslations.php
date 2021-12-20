@@ -2,7 +2,6 @@
 
 namespace Qubiqx\QcommerceCore\Filament\Resources\TranslationResource\Pages;
 
-use Closure;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
@@ -12,9 +11,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Pages\Actions\ButtonAction;
 use Filament\Resources\Pages\Page;
-use Illuminate\Contracts\View\View;
 use Illuminate\Support\Str;
 use Qubiqx\QcommerceCore\Classes\Locales;
 use Qubiqx\QcommerceCore\Filament\Resources\TranslationResource;
