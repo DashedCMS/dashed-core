@@ -27,13 +27,17 @@ class ListTranslations extends Page implements HasForms
     protected static string $resource = TranslationResource::class;
     protected static string $view = 'qcommerce-core::translations.pages.list-translations';
 
-    protected function getActions(): array|View|null
+    public function mount(): void
     {
-        return [
-            ButtonAction::make('test')
-                ->label('test')
-                ->action('asd'),
-        ];
+        $formData = [];
+        $translations = Translation::all();
+        foreach ($translations as $translation) {
+            foreach (Locales::getLocales() as $locale) {
+                $formData["translation_{$translation->id}_{$locale['id']}"] = $translation->getTranslation('value', $locale['id']);
+            }
+        }
+
+        $this->form->fill($formData);
     }
 
     protected function getFormSchema(): array
@@ -63,9 +67,6 @@ class ListTranslations extends Page implements HasForms
                             ->rows(5)
                             ->label(Str::of($translation->name)->replace('_', ' ')->replace('-', ' ')->title())
                             ->helperText($helperText ?? '')
-                            ->afterStateHydrated(function (Textarea $component, Closure $set, $state) use ($translation, $locale) {
-                                $set($component, $translation->getTranslation('value', $locale['id']));
-                            })
                             ->reactive();
                     } elseif ($translation->type == 'editor') {
                         $schema[] = RichEditor::make("translation_{$translation->id}_{$locale['id']}")
@@ -89,9 +90,6 @@ class ListTranslations extends Page implements HasForms
                             ->default($translation->default)
                             ->label(Str::of($translation->name)->replace('_', ' ')->replace('-', ' ')->title())
                             ->helperText($helperText ?? '')
-                            ->afterStateHydrated(function (RichEditor $component, Closure $set, $state) use ($translation, $locale) {
-                                $set($component, $translation->getTranslation('value', $locale['id']));
-                            })
                             ->reactive();
                     } elseif ($translation->type == 'image') {
                         $schema[] = FileUpload::make("translation_{$translation->id}_{$locale['id']}")
@@ -99,9 +97,6 @@ class ListTranslations extends Page implements HasForms
                             ->default($translation->default)
                             ->label(Str::of($translation->name)->replace('_', ' ')->replace('-', ' ')->title())
                             ->helperText($helperText ?? '')
-                            ->afterStateHydrated(function (FileUpload $component, Closure $set, $state) use ($translation, $locale) {
-                                $set($component, $translation->getTranslation('value', $locale['id']));
-                            })
                             ->reactive();
                     } else {
                         $schema[] = TextInput::make("translation_{$translation->id}_{$locale['id']}")
@@ -109,9 +104,6 @@ class ListTranslations extends Page implements HasForms
                             ->label(Str::of($translation->name)->replace('_', ' ')->replace('-', ' ')->title())
                             ->helperText($helperText ?? '')
                             ->default($translation->getTranslation('value', $locale['id']))
-//                            ->afterStateHydrated(function (TextInput $component, Closure $set, $state) use ($translation, $locale) {
-//                                $set($component, $translation->getTranslation('value', $locale['id']));
-//                            })
                             ->reactive();
                     }
                 }
@@ -130,5 +122,18 @@ class ListTranslations extends Page implements HasForms
         }
 
         return $sections;
+    }
+
+    public function submit()
+    {
+        $translations = Translation::all();
+        foreach ($translations as $translation) {
+            foreach (Locales::getLocales() as $locale) {
+                $translation->setTranslation("value", $locale['id'], $this->form->getState()["translation_{$translation->id}_{$locale['id']}"]);
+            }
+            $translation->save();
+        }
+
+        $this->notify('success', 'De vertalingen zijn opgeslagen');
     }
 }
