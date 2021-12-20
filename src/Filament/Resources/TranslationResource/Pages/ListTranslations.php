@@ -12,11 +12,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Resources\Pages\Page;
-<<<<<<< HEAD
-use FontLib\EOT\File;
-use Illuminate\Contracts\View\View;
-=======
->>>>>>> 8e8aa21679541f21518ef0c7c38eb0d0d0a15931
 use Illuminate\Support\Str;
 use Qubiqx\QcommerceCore\Classes\Locales;
 use Qubiqx\QcommerceCore\Filament\Resources\TranslationResource;
