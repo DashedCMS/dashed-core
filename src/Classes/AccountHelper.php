@@ -5,7 +5,7 @@ namespace Qubiqx\QcommerceCore\Classes;
 use Illuminate\Support\Facades\Auth;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
-class Account
+class AccountHelper
 {
     public static function getAccountUrl()
     {
