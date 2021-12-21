@@ -2,6 +2,7 @@
 
 namespace Qubiqx\QcommerceCore\Filament\Resources\TranslationResource\Pages;
 
+use Closure;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;

@@ -82,6 +82,7 @@
             ],
             "aliases": {
                 "Sitemap": "Qubiqx\\QcommerceCore\\Classes\\Sitemap",
+                "Account": "Qubiqx\\QcommerceCore\\Classes\\Account",
                 "Helper": "Qubiqx\\QcommerceCore\\Classes\\Helper",
                 "Locales": "Qubiqx\\QcommerceCore\\Classes\\Locales",
                 "Forms": "Qubiqx\\QcommerceCore\\Classes\\Forms",

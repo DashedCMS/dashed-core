@@ -1,0 +1,57 @@
+<?php
+
+namespace Qubiqx\QcommerceCore\Classes;
+
+use Illuminate\Support\Facades\Auth;
+use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+
+class Account
+{
+    public static function getAccountUrl()
+    {
+        if (Auth::check()) {
+            return LaravelLocalization::localizeUrl(route('qcommerce.frontend.account'));
+        } else {
+            return LaravelLocalization::localizeUrl(route('qcommerce.frontend.auth.login'));
+        }
+    }
+
+    public static function getUpdateAccountUrl()
+    {
+        if (Auth::check()) {
+            return route('qcommerce.frontend.account.post');
+        } else {
+            return route('qcommerce.frontend.auth.login');
+        }
+    }
+
+    public static function getLoginPostUrl()
+    {
+        return route('qcommerce.frontend.auth.login.post');
+    }
+
+    public static function getLogoutUrl()
+    {
+        return route('qcommerce.frontend.auth.logout');
+    }
+
+    public static function getRegisterPostUrl()
+    {
+        return route('qcommerce.frontend.auth.register.post');
+    }
+
+    public static function getForgotPasswordUrl()
+    {
+        return LaravelLocalization::localizeUrl(route('qcommerce.frontend.auth.forgot-password'));
+    }
+
+    public static function getForgotPasswordPostUrl()
+    {
+        return route('qcommerce.frontend.auth.forgot-password.post');
+    }
+
+    public static function getResetPasswordPostUrl($token)
+    {
+        return route('qcommerce.frontend.auth.reset-password.post', ['passwordResetToken' => $token]);
+    }
+}
