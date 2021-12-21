@@ -26,7 +26,7 @@ class FrontendController extends Controller
 
         foreach ($routeModels as $routeModel) {
             $response = $routeModel['routeHandler']::handle([
-                'slug' => $slug
+                'slug' => $slug,
             ]);
 
             if (is_a($response, \Illuminate\View\View::class)) {
