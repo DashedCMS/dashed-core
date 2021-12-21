@@ -4,9 +4,7 @@ namespace Qubiqx\QcommerceCore\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use Artesaos\SEOTools\Facades\SEOTools;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\View;
-use Qubiqx\QcommerceCore\Models\Page;
 
 class FrontendController extends Controller
 {
@@ -24,27 +22,17 @@ class FrontendController extends Controller
 
     public function index($slug = null)
     {
-        if ($slug) {
-            $page = Page::publicShowable()->where('slug->' . App::getLocale(), $slug)->where('is_home', 0)->first();
-        } else {
-            $page = Page::publicShowable()->where('is_home', 1)->first();
-        }
+        $routeModels = cms()->getRouteModels();
 
-        if ($page) {
-            if (View::exists('qcommerce.pages.show')) {
-                SEOTools::setTitle($page->meta_title ?: $page->name);
-                SEOTools::setDescription($page->meta_description);
-                SEOTools::opengraph()->setUrl(url()->current());
-                $metaImage = $page->getFirstMediaUrl('meta-image-' . App::getLocale());
-                if ($metaImage) {
-                    SEOTools::addImages($metaImage);
-                }
+        foreach ($routeModels as $routeModel) {
+            $response = $routeModel['routeHandler']::handle([
+                'slug' => $slug
+            ]);
 
-                View::share('page', $page);
-
-                return view('qcommerce.pages.show');
-            } else {
-                return $this->pageNotFound();
+            if (is_a($response, \Illuminate\View\View::class)) {
+                return $response->render();
+            } elseif ($response == 'pageNotFound') {
+                return $this->$response();
             }
         }
 

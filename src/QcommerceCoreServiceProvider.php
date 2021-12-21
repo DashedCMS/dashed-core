@@ -4,6 +4,7 @@ namespace Qubiqx\QcommerceCore;
 
 use Filament\PluginServiceProvider;
 use Illuminate\Console\Scheduling\Schedule;
+use Qubiqx\QcommerceCore\Classes\PageRouteHandler;
 use Qubiqx\QcommerceCore\Commands\CreateAdminUser;
 use Qubiqx\QcommerceCore\Commands\CreateSitemap;
 use Qubiqx\QcommerceCore\Commands\InstallCommand;
@@ -40,6 +41,7 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
             'pluralName' => 'Pagina\'s',
             'class' => Page::class,
             'nameField' => 'name',
+            'routeHandler' => PageRouteHandler::class
         ]);
 
         $package
