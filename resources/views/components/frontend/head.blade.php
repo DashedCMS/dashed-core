@@ -66,6 +66,11 @@
 @endif
 
 @if($favicon)
+    @dd(glide($favicon, [
+    'w' => 1280,
+    'h' => 640,
+    'q' => 80,
+]))
     <link rel="apple-touch-icon" sizes="57x57"
           href="{{Thumbnail::src($favicon->getUrl())->crop(57,57)->url(true)}}">
     <link rel="apple-touch-icon" sizes="60x60"

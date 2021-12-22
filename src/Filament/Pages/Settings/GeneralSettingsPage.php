@@ -160,9 +160,11 @@ class GeneralSettingsPage extends Page implements HasForms
                     ]),
                 FileUpload::make("site_logo_{$site['id']}")
                     ->label('Logo')
+                    ->disk('qcommerce-uploads')
                     ->required(),
                 FileUpload::make("site_favicon_{$site['id']}")
                     ->label('Favicon')
+                    ->disk('qcommerce-uploads')
                     ->required(),
 //                    ->rules([
 //                        $this->validateSingleMedia(),
