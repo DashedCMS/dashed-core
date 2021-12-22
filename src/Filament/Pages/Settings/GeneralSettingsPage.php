@@ -6,19 +6,14 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
-<<<<<<< HEAD
 use Filament\Forms\Components\Textarea;
 use Illuminate\Support\Facades\Cache;
 use Qubiqx\QcommerceCore\Models\Customsetting;
-=======
->>>>>>> a518c9f276be14bd20dd2e3eeb4e3e5daa95fb6c
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
-use Illuminate\Support\Facades\Cache;
 use Qubiqx\QcommerceCore\Classes\Sites;
-use Qubiqx\QcommerceCore\Models\Customsetting;
 
 class GeneralSettingsPage extends Page implements HasForms
 {
