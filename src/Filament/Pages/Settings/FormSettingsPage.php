@@ -2,19 +2,15 @@
 
 namespace Qubiqx\QcommerceCore\Filament\Pages\Settings;
 
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\Textarea;
-use Illuminate\Support\Facades\Cache;
-use Qubiqx\QcommerceCore\Models\Customsetting;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
 use Qubiqx\QcommerceCore\Classes\Sites;
+use Qubiqx\QcommerceCore\Models\Customsetting;
 use Qubiqx\QcommerceCore\Models\User;
 
 class FormSettingsPage extends Page implements HasForms
@@ -88,7 +84,7 @@ class FormSettingsPage extends Page implements HasForms
         foreach ($sites as $site) {
             $emails = $this->form->getState()["notification_form_inputs_emails_{$site['id']}"];
             foreach ($emails as $key => $email) {
-                if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
                     unset($emails[$key]);
                 }
             }
