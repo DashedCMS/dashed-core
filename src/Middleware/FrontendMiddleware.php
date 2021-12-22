@@ -21,7 +21,7 @@ class FrontendMiddleware
     public function handle(Request $request, Closure $next)
     {
         config([
-            'seotools.meta.defaults.title' => Customsetting::get('store_name', Sites::getActive(), 'Website'),
+            'seotools.meta.defaults.title' => Customsetting::get('site_name', Sites::getActive(), 'Website'),
             'seotools.meta.defaults.separator' => ' | ',
             'seotools.meta.defaults.description' => '',
             'seotools.opengraph.defaults.description' => '',
@@ -35,24 +35,11 @@ class FrontendMiddleware
             'seotools.meta.webmaster_tags.norton' => Customsetting::get('webmaster_tag_norton', Sites::getActive(), ''),
         ]);
 
-        $storeMedia = Cache::tags(['general-settings'])->rememberForever("store-media", function () {
-            $store = Customsetting::where('name', 'store_name')->with(['media'])->thisSite()->first();
-            if ($store) {
-                $logo = $store->getFirstMedia('logo');
-                $favicon = $store->getFirstMedia('favicon');
-            } else {
-                $logo = '';
-                $favicon = '';
-            }
+        $logo = Customsetting::get('site_logo', Sites::getActive(), '');
+        $favicon = Customsetting::get('site_favicon', Sites::getActive(), '');
 
-            return [
-                'logo' => $logo,
-                'favicon' => $favicon,
-            ];
-        });
-
-        View::share('logo', $storeMedia['logo'] ?? '');
-        View::share('favicon', $storeMedia['favicon'] ?? '');
+        View::share('logo', $logo);
+        View::share('favicon', $favicon);
 
         return $next($request);
     }

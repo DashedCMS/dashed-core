@@ -44,7 +44,7 @@ class MenuItemResource extends Resource
     {
         $routeModels = [];
         $routeModelInputs = [];
-        foreach (cms()->getRouteModels() as $key => $routeModel) {
+        foreach (cms()->builder('routeModels') as $key => $routeModel) {
             $routeModels[$key] = $routeModel['name'];
 
             $routeModelInputs[] =

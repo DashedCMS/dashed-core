@@ -35,7 +35,6 @@
         "mollie/laravel-mollie": "^2.13",
         "paynl/sdk": "^1.5",
         "qubiqx/montapacking": "*",
-        "rolandstarke/laravel-thumbnail": "^1.0",
         "sentry/sentry-laravel": "^2.5",
         "spatie/laravel-activitylog": "^3.17",
         "spatie/laravel-cookie-consent": "^2.12",

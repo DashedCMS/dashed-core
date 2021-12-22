@@ -18,7 +18,7 @@ class CreateMenuItem extends CreateRecord
         $data['model_id'] = null;
 
         foreach ($data as $formFieldKey => $formFieldValue) {
-            foreach (cms()->getRouteModels() as $routeKey => $routeModel) {
+            foreach (cms()->builder('routeModels') as $routeKey => $routeModel) {
                 if ($formFieldKey == "{$routeKey}_id") {
                     $data['model'] = $routeModel['class'];
                     $data['model_id'] = $formFieldValue;

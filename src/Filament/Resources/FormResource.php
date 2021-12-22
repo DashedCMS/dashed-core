@@ -22,7 +22,6 @@ class FormResource extends Resource
     protected static ?string $navigationGroup = 'Formulieren';
     protected static ?string $label = 'Formulier';
     protected static ?string $pluralLabel = 'Formulieren';
-    protected static ?int $navigationSort = 1;
 
     protected static function getNavigationLabel(): string
     {

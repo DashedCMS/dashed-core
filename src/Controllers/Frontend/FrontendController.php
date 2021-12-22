@@ -22,7 +22,7 @@ class FrontendController extends Controller
 
     public function index($slug = null)
     {
-        $routeModels = cms()->getRouteModels();
+        $routeModels = cms()->builder('routeModels');
 
         foreach ($routeModels as $routeModel) {
             $response = $routeModel['routeHandler']::handle([

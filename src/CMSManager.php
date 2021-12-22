@@ -17,13 +17,13 @@ class CMSManager
     protected static $builders = [
         'blocks' => [],
         'content' => [],
+        'routeModels' => [],
+        'settingPages' => [],
     ];
-
-    protected static $routeModels = [];
 
     public function model(string $name, ?string $implementation = null): self|string
     {
-        if (! $implementation) {
+        if (!$implementation) {
             return static::$models[$name];
         }
 
@@ -34,28 +34,12 @@ class CMSManager
 
     public function builder(string $name, ?array $blocks = null): self|array
     {
-        if (! $blocks) {
+        if (!$blocks) {
             return static::$builders[$name];
         }
 
         static::$builders[$name] = $blocks;
 
         return $this;
-    }
-
-    public function routeModels(string $name, ?array $routeModel = null): self|array
-    {
-        if (! $routeModel) {
-            return static::$routeModels[$name];
-        }
-
-        static::$routeModels[$name] = $routeModel;
-
-        return $this;
-    }
-
-    public function getRouteModels(): self|array
-    {
-        return static::$routeModels;
     }
 }

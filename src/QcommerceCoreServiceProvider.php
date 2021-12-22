@@ -11,6 +11,8 @@ use Qubiqx\QcommerceCore\Commands\InstallCommand;
 use Qubiqx\QcommerceCore\Commands\InvalidatePasswordResetTokens;
 use Qubiqx\QcommerceCore\Commands\UpdateCommand;
 use Qubiqx\QcommerceCore\Filament\Pages\FilesPage;
+use Qubiqx\QcommerceCore\Filament\Pages\Settings\GeneralSettingsPage;
+use Qubiqx\QcommerceCore\Filament\Pages\Settings\SettingsPage;
 use Qubiqx\QcommerceCore\Filament\Resources\FormResource;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuResource;
@@ -36,12 +38,29 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
     {
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
-        cms()->routeModels('page', [
-            'name' => 'Pagina',
-            'pluralName' => 'Pagina\'s',
-            'class' => Page::class,
-            'nameField' => 'name',
-            'routeHandler' => PageRouteHandler::class,
+        cms()->builder('routeModels', [
+            'page' => [
+                'name' => 'Pagina',
+                'pluralName' => 'Pagina\'s',
+                'class' => Page::class,
+                'nameField' => 'name',
+                'routeHandler' => PageRouteHandler::class,
+            ]
+        ]);
+
+        cms()->builder('settingPages', [
+            'general' => [
+                'name' => 'Algemeen',
+                'description' => 'Algemene informatie van de website',
+                'icon' => 'cog',
+                'page' => GeneralSettingsPage::class,
+            ],
+            'formNotifications' => [
+                'name' => 'Formulier notificaties',
+                'description' => 'Beheer meldingen die na het invullen van het formulier worden verstuurd',
+                'icon' => 'bell',
+                'page' => SettingsPage::class,
+            ]
         ]);
 
         $package
@@ -78,6 +97,8 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
     protected function getPages(): array
     {
         return array_merge(parent::getPages(), [
+            SettingsPage::class,
+            GeneralSettingsPage::class,
             FilesPage::class,
         ]);
     }
