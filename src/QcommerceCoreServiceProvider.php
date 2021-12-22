@@ -46,7 +46,7 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
                 'class' => Page::class,
                 'nameField' => 'name',
                 'routeHandler' => PageRouteHandler::class,
-            ]
+            ],
         ]);
 
         cms()->builder('settingPages', [
@@ -60,8 +60,13 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
                 'name' => 'Formulier notificaties',
                 'description' => 'Beheer meldingen die na het invullen van het formulier worden verstuurd',
                 'icon' => 'bell',
+<<<<<<< HEAD
                 'page' => FormSettingsPage::class,
             ]
+=======
+                'page' => SettingsPage::class,
+            ],
+>>>>>>> a518c9f276be14bd20dd2e3eeb4e3e5daa95fb6c
         ]);
 
         $package

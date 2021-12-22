@@ -6,14 +6,19 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
+<<<<<<< HEAD
 use Filament\Forms\Components\Textarea;
 use Illuminate\Support\Facades\Cache;
 use Qubiqx\QcommerceCore\Models\Customsetting;
+=======
+>>>>>>> a518c9f276be14bd20dd2e3eeb4e3e5daa95fb6c
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\Cache;
 use Qubiqx\QcommerceCore\Classes\Sites;
+use Qubiqx\QcommerceCore\Models\Customsetting;
 
 class GeneralSettingsPage extends Page implements HasForms
 {
@@ -102,49 +107,49 @@ class GeneralSettingsPage extends Page implements HasForms
                     ->label('KVK van het bedrijf')
                     ->required()
                     ->rules([
-                        'max:255'
+                        'max:255',
                     ]),
                 TextInput::make("company_btw_{$site['id']}")
                     ->label('BTW ID van het bedrijf')
                     ->required()
                     ->rules([
-                        'max:255'
+                        'max:255',
                     ]),
                 TextInput::make("company_phone_number_{$site['id']}")
                     ->label('Telefoon')
                     ->required()
                     ->rules([
-                        'max:255'
+                        'max:255',
                     ]),
                 TextInput::make("company_street_{$site['id']}")
                     ->label('Straat')
                     ->required()
                     ->rules([
-                        'max:255'
+                        'max:255',
                     ]),
                 TextInput::make("company_street_number_{$site['id']}")
                     ->label('Straatnummer')
                     ->required()
                     ->rules([
-                        'max:255'
+                        'max:255',
                     ]),
                 TextInput::make("company_city_{$site['id']}")
                     ->label('Stad')
                     ->required()
                     ->rules([
-                        'max:255'
+                        'max:255',
                     ]),
                 TextInput::make("company_postal_code_{$site['id']}")
                     ->label('Postcode')
                     ->required()
                     ->rules([
-                        'max:255'
+                        'max:255',
                     ]),
                 TextInput::make("company_country_{$site['id']}")
                     ->label('Land/regio')
                     ->required()
                     ->rules([
-                        'max:255'
+                        'max:255',
                     ]),
             ];
 
