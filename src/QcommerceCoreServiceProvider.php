@@ -49,20 +49,21 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
             ],
         ]);
 
-        cms()->builder('settingPages', [
-            'general' => [
-                'name' => 'Algemeen',
-                'description' => 'Algemene informatie van de website',
-                'icon' => 'cog',
-                'page' => GeneralSettingsPage::class,
-            ],
-            'formNotifications' => [
-                'name' => 'Formulier notificaties',
-                'description' => 'Beheer meldingen die na het invullen van het formulier worden verstuurd',
-                'icon' => 'bell',
-                'page' => FormSettingsPage::class,
-            ],
-        ]);
+        cms()->builder('settingPages', array_merge(cms()->builder('settingPages'), [
+                'general' => [
+                    'name' => 'Algemeen',
+                    'description' => 'Algemene informatie van de website',
+                    'icon' => 'cog',
+                    'page' => GeneralSettingsPage::class,
+                ],
+                'formNotifications' => [
+                    'name' => 'Formulier notificaties',
+                    'description' => 'Beheer meldingen die na het invullen van het formulier worden verstuurd',
+                    'icon' => 'bell',
+                    'page' => FormSettingsPage::class,
+                ],
+            ])
+        );
 
         $package
             ->name('qcommerce-core')
@@ -73,6 +74,7 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
                 'laravellocalization',
                 'media-library',
                 'qcommerce-core',
+                'sentry',
             ])
             ->hasRoutes([
                 'frontend',
