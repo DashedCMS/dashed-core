@@ -11,6 +11,7 @@ use Qubiqx\QcommerceCore\Commands\InstallCommand;
 use Qubiqx\QcommerceCore\Commands\InvalidatePasswordResetTokens;
 use Qubiqx\QcommerceCore\Commands\UpdateCommand;
 use Qubiqx\QcommerceCore\Filament\Pages\FilesPage;
+use Qubiqx\QcommerceCore\Filament\Pages\Settings\FormSettingsPage;
 use Qubiqx\QcommerceCore\Filament\Pages\Settings\GeneralSettingsPage;
 use Qubiqx\QcommerceCore\Filament\Pages\Settings\SettingsPage;
 use Qubiqx\QcommerceCore\Filament\Resources\FormResource;
@@ -59,7 +60,7 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
                 'name' => 'Formulier notificaties',
                 'description' => 'Beheer meldingen die na het invullen van het formulier worden verstuurd',
                 'icon' => 'bell',
-                'page' => SettingsPage::class,
+                'page' => FormSettingsPage::class,
             ]
         ]);
 
@@ -99,6 +100,7 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
         return array_merge(parent::getPages(), [
             SettingsPage::class,
             GeneralSettingsPage::class,
+            FormSettingsPage::class,
             FilesPage::class,
         ]);
     }

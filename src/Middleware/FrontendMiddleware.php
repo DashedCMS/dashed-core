@@ -5,7 +5,6 @@ namespace Qubiqx\QcommerceCore\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
 use Qubiqx\QcommerceCore\Classes\Sites;
 use Qubiqx\QcommerceCore\Models\Customsetting;
@@ -36,8 +35,8 @@ class FrontendMiddleware
             'seotools.meta.webmaster_tags.norton' => Customsetting::get('webmaster_tag_norton', Sites::getActive(), ''),
         ]);
 
-        $logo = Customsetting::get('site_logo', Sites::getActive(), '') ? Storage::url(Customsetting::get('site_logo', Sites::getActive(), '')) : '';
-        $favicon = Customsetting::get('site_favicon', Sites::getActive(), '') ? Storage::url(Customsetting::get('site_favicon', Sites::getActive(), '')) : '';
+        $logo = Customsetting::get('site_logo', Sites::getActive(), '');
+        $favicon = Customsetting::get('site_favicon', Sites::getActive(), '');
 
         View::share('logo', $logo);
         View::share('favicon', $favicon);

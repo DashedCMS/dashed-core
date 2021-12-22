@@ -4,9 +4,9 @@ namespace Qubiqx\QcommerceCore\Filament\Pages\Settings;
 
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\Textarea;
 use Illuminate\Support\Facades\Cache;
 use Qubiqx\QcommerceCore\Models\Customsetting;
 use Filament\Forms\Components\TextInput;
@@ -45,6 +45,17 @@ class GeneralSettingsPage extends Page implements HasForms
             $formData["company_city_{$site['id']}"] = Customsetting::get('company_city', $site['id']);
             $formData["company_postal_code_{$site['id']}"] = Customsetting::get('company_postal_code', $site['id']);
             $formData["company_country_{$site['id']}"] = Customsetting::get('company_country', $site['id']);
+            $formData["google_analytics_id_{$site['id']}"] = Customsetting::get('google_analytics_id', $site['id']);
+            $formData["google_tagmanager_id_{$site['id']}"] = Customsetting::get('google_tagmanager_id', $site['id']);
+            $formData["facebook_pixel_conversion_id_{$site['id']}"] = Customsetting::get('facebook_pixel_conversion_id', $site['id']);
+            $formData["facebook_pixel_site_id_{$site['id']}"] = Customsetting::get('facebook_pixel_site_id', $site['id']);
+            $formData["webmaster_tag_google_{$site['id']}"] = Customsetting::get('webmaster_tag_google', $site['id']);
+            $formData["webmaster_tag_bing_{$site['id']}"] = Customsetting::get('webmaster_tag_bing', $site['id']);
+            $formData["webmaster_tag_alexa_{$site['id']}"] = Customsetting::get('webmaster_tag_alexa', $site['id']);
+            $formData["webmaster_tag_pinterest_{$site['id']}"] = Customsetting::get('webmaster_tag_pinterest', $site['id']);
+            $formData["webmaster_tag_yandex_{$site['id']}"] = Customsetting::get('webmaster_tag_yandex', $site['id']);
+            $formData["webmaster_tag_norton_{$site['id']}"] = Customsetting::get('webmaster_tag_norton', $site['id']);
+            $formData["extra_scripts_{$site['id']}"] = Customsetting::get('extra_scripts', $site['id']);
         }
 
         $this->form->fill($formData);
@@ -166,9 +177,86 @@ class GeneralSettingsPage extends Page implements HasForms
                     ->label('Favicon')
                     ->disk('qcommerce-uploads')
                     ->required(),
-//                    ->rules([
-//                        $this->validateSingleMedia(),
-//                    ]),
+            ];
+
+            $tabs[] = Tab::make($site['id'])
+                ->label(ucfirst($site['name']))
+                ->schema($schema)
+                ->columns([
+                    'default' => 1,
+                    'lg' => 2,
+                ]);
+        }
+        $tabGroups[] = Tabs::make('Sites')
+            ->tabs($tabs);
+
+        $tabs = [];
+        foreach ($sites as $site) {
+            $schema = [
+                Placeholder::make('label')
+                    ->label("Externe koppeling voor {$site['name']}")
+                    ->content('Stel de UA in om Google Analytics te koppelen, en koppel hier webmaster tools.')
+                    ->columnSpan([
+                        'default' => 1,
+                        'lg' => 2,
+                    ]),
+                TextInput::make("google_analytics_id_{$site['id']}")
+                    ->label('Google Analytics ID')
+                    ->rules([
+                        'max:255',
+                    ]),
+                TextInput::make("google_tagmanager_id_{$site['id']}")
+                    ->label('Google Tagmanager ID')
+                    ->rules([
+                        'max:255'
+                    ]),
+                TextInput::make("facebook_pixel_conversion_id_{$site['id']}")
+                    ->label('Facebook Pixel Conversion ID')
+                    ->rules([
+                        'max:255'
+                    ]),
+                TextInput::make("facebook_pixel_site_id_{$site['id']}")
+                    ->label('Facebook Pixel site ID')
+                    ->rules([
+                        'max:255'
+                    ]),
+                TextInput::make("webmaster_tag_google_{$site['id']}")
+                    ->label('Webmaster tag Google')
+                    ->rules([
+                        'max:255'
+                    ]),
+                TextInput::make("webmaster_tag_bing_{$site['id']}")
+                    ->label('Webmaster tag Bing')
+                    ->rules([
+                        'max:255'
+                    ]),
+                TextInput::make("webmaster_tag_alexa_{$site['id']}")
+                    ->label('Webmaster tag Alexa')
+                    ->rules([
+                        'max:255'
+                    ]),
+                TextInput::make("webmaster_tag_pinterest_{$site['id']}")
+                    ->label('Webmaster tag Pinterest')
+                    ->rules([
+                        'max:255'
+                    ]),
+                TextInput::make("webmaster_tag_yandex_{$site['id']}")
+                    ->label('Webmaster tag Yandex')
+                    ->rules([
+                        'max:255'
+                    ]),
+                TextInput::make("webmaster_tag_norton_{$site['id']}")
+                    ->label('Webmaster tag Norton')
+                    ->rules([
+                        'max:255'
+                    ]),
+                Textarea::make("extra_scripts_{$site['id']}")
+                    ->label('Laad extra scripts in op alle pagina`s')
+                    ->rows(10)
+                    ->columnSpan([
+                        'default' => 1,
+                        'lg' => 2,
+                    ]),
             ];
 
             $tabs[] = Tab::make($site['id'])
@@ -203,6 +291,17 @@ class GeneralSettingsPage extends Page implements HasForms
             Customsetting::set('company_city', $this->form->getState()["company_city_{$site['id']}"], $site['id']);
             Customsetting::set('company_postal_code', $this->form->getState()["company_postal_code_{$site['id']}"], $site['id']);
             Customsetting::set('company_country', $this->form->getState()["company_country_{$site['id']}"], $site['id']);
+            Customsetting::set('google_analytics_id', $this->form->getState()["google_analytics_id_{$site['id']}"], $site['id']);
+            Customsetting::set('google_tagmanager_id', $this->form->getState()["google_tagmanager_id_{$site['id']}"], $site['id']);
+            Customsetting::set('facebook_pixel_conversion_id', $this->form->getState()["facebook_pixel_conversion_id_{$site['id']}"], $site['id']);
+            Customsetting::set('facebook_pixel_site_id', $this->form->getState()["facebook_pixel_site_id_{$site['id']}"], $site['id']);
+            Customsetting::set('webmaster_tag_google', $this->form->getState()["webmaster_tag_google_{$site['id']}"], $site['id']);
+            Customsetting::set('webmaster_tag_bing', $this->form->getState()["webmaster_tag_bing_{$site['id']}"], $site['id']);
+            Customsetting::set('webmaster_tag_alexa', $this->form->getState()["webmaster_tag_alexa_{$site['id']}"], $site['id']);
+            Customsetting::set('webmaster_tag_pinterest', $this->form->getState()["webmaster_tag_pinterest_{$site['id']}"], $site['id']);
+            Customsetting::set('webmaster_tag_yandex', $this->form->getState()["webmaster_tag_yandex_{$site['id']}"], $site['id']);
+            Customsetting::set('webmaster_tag_norton', $this->form->getState()["webmaster_tag_norton_{$site['id']}"], $site['id']);
+            Customsetting::set('extra_scripts', $this->form->getState()["extra_scripts_{$site['id']}"], $site['id']);
         }
 
         Cache::tags(['custom-settings'])->flush();

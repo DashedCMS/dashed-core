@@ -1,34 +1,34 @@
 @if(env('APP_ENV') != 'local')
-{{--    @if(isset($order) && $order->isPaidFor() && ((Customsetting::get('google_analytics_id') || Customsetting::get('google_tagmanager_id'))))--}}
-{{--        @php($productsPurchasedLoopCount = 0)--}}
-{{--        <script>--}}
-{{--            window.dataLayer = window.dataLayer || [];--}}
-{{--            dataLayer.push({--}}
-{{--                'transactionId': '{{$order->invoice_id}}',--}}
-{{--                'transactionAffiliation': '{{Customsetting::get('store_name')}}',--}}
-{{--                'transactionTotal': {{ number_format($order->total, 2, '.', '') }},--}}
-{{--                'transactionTax': {{ number_format($order->btw, 2, '.', '') }},--}}
-{{--                'transactionShipping': {{ number_format(0, 2, '.', '') }},--}}
-{{--                'transactionCurrency': 'EUR',--}}
-{{--                'transactionCoupon': '{{ $order->discountCode ? $order->discountCode->code : '' }}',--}}
-{{--                'transactionProducts': [--}}
-{{--                    @foreach($order->orderProducts as $orderProduct)--}}
-{{--                    @if($productsPurchasedLoopCount > 0)--}}
-{{--                    ,--}}
-{{--                        @endif--}}
-{{--                    {--}}
-{{--                        'sku': '{{$orderProduct->sku}}',--}}
-{{--                        'name': '{{$orderProduct->name}}',--}}
-{{--                        --}}{{--'item_id': '{{$orderProduct->product->id}}',--}}
-{{--                        'price': {{number_format($orderProduct->price, 2, '.', '')}},--}}
-{{--                        'quantity': {{$orderProduct->quantity}},--}}
-{{--                    }--}}
-{{--                    @php($productsPurchasedLoopCount++)--}}
-{{--                    @endforeach--}}
-{{--                ]--}}
-{{--            });--}}
-{{--        </script>--}}
-{{--    @endif--}}
+    {{--    @if(isset($order) && $order->isPaidFor() && ((Customsetting::get('google_analytics_id') || Customsetting::get('google_tagmanager_id'))))--}}
+    {{--        @php($productsPurchasedLoopCount = 0)--}}
+    {{--        <script>--}}
+    {{--            window.dataLayer = window.dataLayer || [];--}}
+    {{--            dataLayer.push({--}}
+    {{--                'transactionId': '{{$order->invoice_id}}',--}}
+    {{--                'transactionAffiliation': '{{Customsetting::get('store_name')}}',--}}
+    {{--                'transactionTotal': {{ number_format($order->total, 2, '.', '') }},--}}
+    {{--                'transactionTax': {{ number_format($order->btw, 2, '.', '') }},--}}
+    {{--                'transactionShipping': {{ number_format(0, 2, '.', '') }},--}}
+    {{--                'transactionCurrency': 'EUR',--}}
+    {{--                'transactionCoupon': '{{ $order->discountCode ? $order->discountCode->code : '' }}',--}}
+    {{--                'transactionProducts': [--}}
+    {{--                    @foreach($order->orderProducts as $orderProduct)--}}
+    {{--                    @if($productsPurchasedLoopCount > 0)--}}
+    {{--                    ,--}}
+    {{--                        @endif--}}
+    {{--                    {--}}
+    {{--                        'sku': '{{$orderProduct->sku}}',--}}
+    {{--                        'name': '{{$orderProduct->name}}',--}}
+    {{--                        --}}{{--'item_id': '{{$orderProduct->product->id}}',--}}
+    {{--                        'price': {{number_format($orderProduct->price, 2, '.', '')}},--}}
+    {{--                        'quantity': {{$orderProduct->quantity}},--}}
+    {{--                    }--}}
+    {{--                    @php($productsPurchasedLoopCount++)--}}
+    {{--                    @endforeach--}}
+    {{--                ]--}}
+    {{--            });--}}
+    {{--        </script>--}}
+    {{--    @endif--}}
 
     @if(Customsetting::get('google_tagmanager_id'))
         <script>
@@ -66,37 +66,84 @@
 @endif
 
 @if($favicon)
-    @dd(glide($favicon, [
-    'w' => 1280,
-    'h' => 640,
-    'q' => 80,
-]))
     <link rel="apple-touch-icon" sizes="57x57"
-          href="{{Thumbnail::src($favicon->getUrl())->crop(57,57)->url(true)}}">
+          href="{{ glide($favicon, [
+    'w' => 57,
+    'h' => 57,
+    'q' => 100,
+]) }}">
     <link rel="apple-touch-icon" sizes="60x60"
-          href="{{Thumbnail::src($favicon->getUrl())->crop(60,60)->url(true)}}">
+          href="{{ glide($favicon, [
+    'w' => 60,
+    'h' => 60,
+    'q' => 100,
+]) }}">
     <link rel="apple-touch-icon" sizes="72x72"
-          href="{{Thumbnail::src($favicon->getUrl())->crop(72,72)->url(true)}}">
+          href="{{ glide($favicon, [
+    'w' => 72,
+    'h' => 72,
+    'q' => 100,
+]) }}">
     <link rel="apple-touch-icon" sizes="76x76"
-          href="{{Thumbnail::src($favicon->getUrl())->crop(76,76)->url(true)}}">
+          href="{{ glide($favicon, [
+    'w' => 76,
+    'h' => 76,
+    'q' => 100,
+]) }}">
     <link rel="apple-touch-icon" sizes="114x114"
-          href="{{Thumbnail::src($favicon->getUrl())->crop(114,114)->url(true)}}">
+          href="{{ glide($favicon, [
+    'w' => 114,
+    'h' => 114,
+    'q' => 100,
+]) }}">
     <link rel="apple-touch-icon" sizes="120x120"
-          href="{{Thumbnail::src($favicon->getUrl())->crop(120,120)->url(true)}}">
+          href="{{ glide($favicon, [
+    'w' => 120,
+    'h' => 120,
+    'q' => 100,
+]) }}">
     <link rel="apple-touch-icon" sizes="144x144"
-          href="{{Thumbnail::src($favicon->getUrl())->crop(144,144)->url(true)}}">
+          href="{{ glide($favicon, [
+    'w' => 144,
+    'h' => 144,
+    'q' => 100,
+]) }}">
     <link rel="apple-touch-icon" sizes="152x152"
-          href="{{Thumbnail::src($favicon->getUrl())->crop(152,152)->url(true)}}">
+          href="{{ glide($favicon, [
+    'w' => 152,
+    'h' => 152,
+    'q' => 100,
+]) }}">
     <link rel="apple-touch-icon" sizes="180x180"
-          href="{{Thumbnail::src($favicon->getUrl())->crop(180,180)->url(true)}}">
+          href="{{ glide($favicon, [
+    'w' => 180,
+    'h' => 180,
+    'q' => 100,
+]) }}">
     <link rel="icon" type="image/png" sizes="192x192"
-          href="{{Thumbnail::src($favicon->getUrl())->crop(192,192)->url(true)}}">
+          href="{{ glide($favicon, [
+    'w' => 192,
+    'h' => 192,
+    'q' => 100,
+]) }}">
     <link rel="icon" type="image/png" sizes="32x32"
-          href="{{Thumbnail::src($favicon->getUrl())->crop(32,32)->url(true)}}">
+          href="{{ glide($favicon, [
+    'w' => 32,
+    'h' => 32,
+    'q' => 100,
+]) }}">
     <link rel="icon" type="image/png" sizes="96x96"
-          href="{{Thumbnail::src($favicon->getUrl())->crop(96,96)->url(true)}}">
+          href="{{ glide($favicon, [
+    'w' => 96,
+    'h' => 96,
+    'q' => 100,
+]) }}">
     <link rel="icon" type="image/png" sizes="16x16"
-          href="{{Thumbnail::src($favicon->getUrl())->crop(16,16)->url(true)}}">
+          href="{{ glide($favicon, [
+    'w' => 16,
+    'h' => 16,
+    'q' => 100,
+]) }}">
 @endif
 
 @include('cookieConsent::index')
