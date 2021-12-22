@@ -13,6 +13,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Resources\Pages\Page;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Qubiqx\QcommerceCore\Classes\Locales;
 use Qubiqx\QcommerceCore\Filament\Resources\TranslationResource;
@@ -73,6 +74,7 @@ class ListTranslations extends Page implements HasForms
                                 $translation = Translation::find($translationId);
                                 $translation->setTranslation("value", $locale, $state);
                                 $translation->save();
+                                Cache::forget(Str::slug($translation->name . $translation->tag . $locale));
                                 $this->notify('success', Str::of($translation->name)->replace('_', ' ')->replace('-', ' ')->title() . " is opgeslagen");
                             });
                     } elseif ($translation->type == 'editor') {
@@ -105,6 +107,7 @@ class ListTranslations extends Page implements HasForms
                                 $translation = Translation::find($translationId);
                                 $translation->setTranslation("value", $locale, $state);
                                 $translation->save();
+                                Cache::forget(Str::slug($translation->name . $translation->tag . $locale));
                                 $this->notify('success', Str::of($translation->name)->replace('_', ' ')->replace('-', ' ')->title() . " is opgeslagen");
                             });
                     } elseif ($translation->type == 'image') {
@@ -115,12 +118,14 @@ class ListTranslations extends Page implements HasForms
                             ->helperText($helperText ?? '')
                             ->reactive()
                             ->afterStateUpdated(function (FileUpload $component, Closure $set, $state) {
+                                $path = $state->store('/');
                                 $explode = explode('_', $component->getStatePath());
                                 $translationId = $explode[1];
                                 $locale = $explode[2];
                                 $translation = Translation::find($translationId);
-                                $translation->setTranslation("value", $locale, $state);
+                                $translation->setTranslation("value", $locale, $path);
                                 $translation->save();
+                                Cache::forget(Str::slug($translation->name . $translation->tag . $locale));
                                 $this->notify('success', Str::of($translation->name)->replace('_', ' ')->replace('-', ' ')->title() . " is opgeslagen");
                             });
                     } else {
@@ -137,6 +142,7 @@ class ListTranslations extends Page implements HasForms
                                 $translation = Translation::find($translationId);
                                 $translation->setTranslation("value", $locale, $state);
                                 $translation->save();
+                                Cache::forget(Str::slug($translation->name . $translation->tag . $locale));
                                 $this->notify('success', Str::of($translation->name)->replace('_', ' ')->replace('-', ' ')->title() . " is opgeslagen");
                             });
                     }
