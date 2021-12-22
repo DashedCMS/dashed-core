@@ -7,13 +7,13 @@ use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Textarea;
-use Illuminate\Support\Facades\Cache;
-use Qubiqx\QcommerceCore\Models\Customsetting;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\Cache;
 use Qubiqx\QcommerceCore\Classes\Sites;
+use Qubiqx\QcommerceCore\Models\Customsetting;
 
 class GeneralSettingsPage extends Page implements HasForms
 {
@@ -208,47 +208,47 @@ class GeneralSettingsPage extends Page implements HasForms
                 TextInput::make("google_tagmanager_id_{$site['id']}")
                     ->label('Google Tagmanager ID')
                     ->rules([
-                        'max:255'
+                        'max:255',
                     ]),
                 TextInput::make("facebook_pixel_conversion_id_{$site['id']}")
                     ->label('Facebook Pixel Conversion ID')
                     ->rules([
-                        'max:255'
+                        'max:255',
                     ]),
                 TextInput::make("facebook_pixel_site_id_{$site['id']}")
                     ->label('Facebook Pixel site ID')
                     ->rules([
-                        'max:255'
+                        'max:255',
                     ]),
                 TextInput::make("webmaster_tag_google_{$site['id']}")
                     ->label('Webmaster tag Google')
                     ->rules([
-                        'max:255'
+                        'max:255',
                     ]),
                 TextInput::make("webmaster_tag_bing_{$site['id']}")
                     ->label('Webmaster tag Bing')
                     ->rules([
-                        'max:255'
+                        'max:255',
                     ]),
                 TextInput::make("webmaster_tag_alexa_{$site['id']}")
                     ->label('Webmaster tag Alexa')
                     ->rules([
-                        'max:255'
+                        'max:255',
                     ]),
                 TextInput::make("webmaster_tag_pinterest_{$site['id']}")
                     ->label('Webmaster tag Pinterest')
                     ->rules([
-                        'max:255'
+                        'max:255',
                     ]),
                 TextInput::make("webmaster_tag_yandex_{$site['id']}")
                     ->label('Webmaster tag Yandex')
                     ->rules([
-                        'max:255'
+                        'max:255',
                     ]),
                 TextInput::make("webmaster_tag_norton_{$site['id']}")
                     ->label('Webmaster tag Norton')
                     ->rules([
-                        'max:255'
+                        'max:255',
                     ]),
                 Textarea::make("extra_scripts_{$site['id']}")
                     ->label('Laad extra scripts in op alle pagina`s')
