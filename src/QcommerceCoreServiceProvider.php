@@ -61,7 +61,7 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
                 'description' => 'Beheer meldingen die na het invullen van het formulier worden verstuurd',
                 'icon' => 'bell',
                 'page' => FormSettingsPage::class,
-            ]
+            ],
         ]);
 
         $package
