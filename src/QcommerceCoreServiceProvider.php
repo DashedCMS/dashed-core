@@ -90,9 +90,9 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
 
     protected function getStyles(): array
     {
-        return [
+        return array_merge(parent::getStyles(), [
             'qcommerce-core' => str_replace('/vendor/qubiqx/qcommerce-core/src', '', str_replace('/packages/qubiqx/qcommerce-core/src', '', __DIR__)) . '/vendor/qubiqx/qcommerce-core/resources/dist/css/qcommerce-core.css',
-        ];
+        ]);
     }
 
     protected function getPages(): array
