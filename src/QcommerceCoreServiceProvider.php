@@ -49,7 +49,9 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
             ],
         ]);
 
-        cms()->builder('settingPages', array_merge(cms()->builder('settingPages'), [
+        cms()->builder(
+            'settingPages',
+            array_merge(cms()->builder('settingPages'), [
                 'general' => [
                     'name' => 'Algemeen',
                     'description' => 'Algemene informatie van de website',
