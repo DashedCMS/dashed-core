@@ -109,12 +109,12 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
 
     protected function getResources(): array
     {
-        return [
+        return array_merge(parent::getResources(), [
             PageResource::class,
             MenuResource::class,
             MenuItemResource::class,
             FormResource::class,
             TranslationResource::class,
-        ];
+        ]);
     }
 }

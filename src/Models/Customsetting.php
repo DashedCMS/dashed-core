@@ -58,7 +58,7 @@ class Customsetting extends Model implements HasMedia
     public static function set($name, $value, $siteId = null, $locale = null)
     {
         if (! $siteId) {
-            $siteId = config('qcommerce.sites')[0]['id'];
+            $siteId = Sites::getSites()[0]['id'];
         }
 
         self::updateOrCreate(

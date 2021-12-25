@@ -25,7 +25,7 @@ class GeneralSettingsPage extends Page implements HasForms
     protected static ?string $navigationGroup = 'Overige';
     protected static ?string $title = 'Algemene instellingen';
 
-    protected static string $view = 'qcommerce-core::settings.pages.general-settings';
+    protected static string $view = 'qcommerce-core::settings.pages.default-settings';
 
     public function mount(): void
     {

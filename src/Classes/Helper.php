@@ -27,13 +27,13 @@ class Helper
         return false;
     }
 
-//    public static function formatPrice($price)
-//    {
-//        $result = '€' . number_format($price, 2, ',', '.');
-//        $result = str_replace(',00', ',-', $result);
-//
-//        return $result;
-//    }
+    public static function formatPrice($price)
+    {
+        $result = '€' . number_format($price, 2, ',', '.');
+        $result = str_replace(',00', ',-', $result);
+
+        return $result;
+    }
 
 //    public static function calculateTax($price, $taxPercentage)
 //    {
