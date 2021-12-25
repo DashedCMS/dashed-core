@@ -3,8 +3,8 @@
 namespace Qubiqx\QcommerceCore\Classes;
 
 use Illuminate\Support\Facades\Mail;
-use Qubiqx\QcommerceCore\Mail\NotificationMail;
 use Qubiqx\QcommerceCore\Models\Customsetting;
+use Qubiqx\QcommerceCore\Mail\NotificationMail;
 
 class Mails
 {

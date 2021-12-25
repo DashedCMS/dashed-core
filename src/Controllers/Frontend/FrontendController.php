@@ -3,8 +3,8 @@
 namespace Qubiqx\QcommerceCore\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use Artesaos\SEOTools\Facades\SEOTools;
 use Illuminate\Support\Facades\View;
+use Artesaos\SEOTools\Facades\SEOTools;
 
 class FrontendController extends Controller
 {

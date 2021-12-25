@@ -3,8 +3,8 @@
 namespace Qubiqx\QcommerceCore\Observers;
 
 use Illuminate\Support\Str;
-use Qubiqx\QcommerceCore\Classes\Sites;
 use Qubiqx\QcommerceCore\Models\Page;
+use Qubiqx\QcommerceCore\Classes\Sites;
 
 class PageObserver
 {

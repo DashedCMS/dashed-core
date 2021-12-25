@@ -2,9 +2,9 @@
 
 namespace Qubiqx\QcommerceCore;
 
-use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Qubiqx\QcommerceCore\Models\Page;
 use Qubiqx\QcommerceCore\Observers\PageObserver;
+use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class QcommerceCoreEventServiceProvider extends ServiceProvider
 {

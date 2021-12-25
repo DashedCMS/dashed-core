@@ -3,8 +3,8 @@
 namespace Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource\Pages;
 
 use Filament\Resources\Pages\CreateRecord;
-use Filament\Resources\Pages\CreateRecord\Concerns\Translatable;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource;
+use Filament\Resources\Pages\CreateRecord\Concerns\Translatable;
 
 class CreateMenuItem extends CreateRecord
 {

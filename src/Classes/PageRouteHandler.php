@@ -2,10 +2,10 @@
 
 namespace Qubiqx\QcommerceCore\Classes;
 
-use Artesaos\SEOTools\Facades\SEOTools;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\View;
 use Qubiqx\QcommerceCore\Models\Page;
+use Artesaos\SEOTools\Facades\SEOTools;
 
 class PageRouteHandler
 {
