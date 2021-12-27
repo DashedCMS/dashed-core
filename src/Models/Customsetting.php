@@ -2,19 +2,14 @@
 
 namespace Qubiqx\QcommerceCore\Models;
 
-use Spatie\Image\Manipulations;
-use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\Model;
 use Qubiqx\QcommerceCore\Classes\Sites;
 use Spatie\Activitylog\Traits\LogsActivity;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Customsetting extends Model implements HasMedia
+class Customsetting extends Model
 {
-    use InteractsWithMedia;
     use LogsActivity;
 
     protected static $logFillable = true;
@@ -22,14 +17,6 @@ class Customsetting extends Model implements HasMedia
     protected $fillable = ['name', 'value', 'site_id', 'locale'];
 
     protected $table = 'qcommerce__custom_settings';
-
-    public function registerMediaConversions(Media $media = null): void
-    {
-        $this
-            ->addMediaConversion('preview')
-            ->fit(Manipulations::FIT_CROP, 300, 300)
-            ->nonQueued();
-    }
 
     public static function get($name, $siteId = null, $default = null, $locale = null)
     {
