@@ -24,13 +24,6 @@ return [
             'visibility' => 'public',
         ],
 
-        'qcommerce-uploads' => [
-            'driver' => 'local',
-            'root' => storage_path('app/public/qcommerce/uploads'),
-            'url' => env('APP_URL') . '/storage/qcommerce/uploads',
-            'visibility' => 'public',
-        ],
-
     ],
 
     'links' => [

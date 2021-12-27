@@ -74,7 +74,7 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
                 'filament-spatie-laravel-translatable-plugin',
                 'filesystems',
                 'laravellocalization',
-                'media-library',
+//                'media-library',
                 'qcommerce-core',
                 'sentry',
             ])

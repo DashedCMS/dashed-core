@@ -152,7 +152,7 @@ return [
     |
     */
 
-    'default_filesystem_disk' => env('FILAMENT_FILESYSTEM_DRIVER', 'qcommerce-uploads'),
+    'default_filesystem_disk' => env('FILAMENT_FILESYSTEM_DRIVER', 'public'),
 
     /*
     |--------------------------------------------------------------------------

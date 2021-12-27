@@ -63,20 +63,6 @@ class Helper
 //        return ProductCategory::find($selectedProductCategoriesIds);
 //    }
 
-//    public static function getProductCategoriesFromIdsWithParents($selectedProductCategoriesIds)
-//    {
-//        $selectedProductCategories = ProductCategory::find($selectedProductCategoriesIds);
-//        foreach ($selectedProductCategories as $selectedProductCategory) {
-//            $parentProductCategory = ProductCategory::find($selectedProductCategory->parent_category_id);
-//            while ($parentProductCategory) {
-//                $selectedProductCategoriesIds[] = $parentProductCategory->id;
-//                $parentProductCategory = ProductCategory::find($parentProductCategory->parent_category_id);
-//            }
-//        }
-//
-//        return ProductCategory::find($selectedProductCategoriesIds);
-//    }
-
 //    public static function getProfilePicture($email)
 //    {
 //        return 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($email)));

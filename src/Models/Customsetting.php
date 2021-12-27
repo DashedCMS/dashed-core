@@ -20,7 +20,7 @@ class Customsetting extends Model
 
     public static function get($name, $siteId = null, $default = null, $locale = null)
     {
-        if (! $siteId) {
+        if (!$siteId) {
             $siteId = Sites::getActive();
         }
 
@@ -29,7 +29,7 @@ class Customsetting extends Model
         }
 
         return Cache::tags(['custom-settings', "custom-settings-$name"])->rememberForever("$name-$siteId-$locale", function () use ($name, $siteId, $default, $locale) {
-            if (! Schema::hasTable('qcommerce__custom_settings')) {
+            if (!Schema::hasTable('qcommerce__custom_settings')) {
                 return;
             }
 
@@ -44,7 +44,7 @@ class Customsetting extends Model
 
     public static function set($name, $value, $siteId = null, $locale = null)
     {
-        if (! $siteId) {
+        if (!$siteId) {
             $siteId = Sites::getSites()[0]['id'];
         }
 

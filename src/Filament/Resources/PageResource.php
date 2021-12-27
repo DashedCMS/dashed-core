@@ -3,6 +3,7 @@
 namespace Qubiqx\QcommerceCore\Filament\Resources;
 
 use Closure;
+use Filament\Forms\Components\FileUpload;
 use Illuminate\Support\Str;
 use Filament\Resources\Form;
 use Filament\Resources\Table;
@@ -121,12 +122,11 @@ class PageResource extends Resource
                                 'min:30',
                                 'max:158',
                             ]),
-                        SpatieMediaLibraryFileUpload::make('image')
-                            ->collection(fn ($livewire) => "meta-image-{$livewire->activeFormLocale}")
+                        FileUpload::make('image')
+                            ->disk('qcommerce-uploads')
+//                            ->collection(fn ($livewire) => "meta-image-{$livewire->activeFormLocale}")
                             ->name('Meta afbeelding')
                             ->image(),
-//                        ->disk('qcommerce'),
-//                            ->maxSize(10240)
 
                         Builder::make('content')
                             ->blocks(cms()->builder('blocks')),
