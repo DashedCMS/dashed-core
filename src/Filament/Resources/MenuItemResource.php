@@ -27,9 +27,6 @@ class MenuItemResource extends Resource
     protected static ?string $recordTitleAttribute = 'name';
 
     protected static bool $shouldRegisterNavigation = false;
-//    protected static ?string $navigationIcon = 'heroicon-o-menu-alt-4';
-//    protected static ?string $navigationGroup = 'Content';
-//    protected static ?string $navigationLabel = 'Menu items';
     protected static ?string $label = 'Menu item';
     protected static ?string $pluralLabel = 'Menu items';
 
@@ -76,7 +73,7 @@ class MenuItemResource extends Resource
                 ->reactive(),
             MultiSelect::make('site_ids')
                 ->label('Actief op sites')
-                ->options(collect(Sites::getSites())->pluck('name', 'id'))
+                ->options(collect(Sites::getSites())->pluck('name', 'id')->toArray())
                 ->required(),
             TextInput::make('order')
                 ->label('Volgorde')

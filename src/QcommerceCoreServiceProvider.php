@@ -39,15 +39,18 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
     {
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
-        cms()->builder('routeModels', [
-            'page' => [
-                'name' => 'Pagina',
-                'pluralName' => 'Pagina\'s',
-                'class' => Page::class,
-                'nameField' => 'name',
-                'routeHandler' => PageRouteHandler::class,
-            ],
-        ]);
+
+        cms()->builder('routeModels',
+            array_merge(cms()->builder('routeModels'), [
+                'page' => [
+                    'name' => 'Pagina',
+                    'pluralName' => 'Pagina\'s',
+                    'class' => Page::class,
+                    'nameField' => 'name',
+                    'routeHandler' => PageRouteHandler::class,
+                ],
+            ])
+        );
 
         cms()->builder(
             'settingPages',

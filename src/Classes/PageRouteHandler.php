@@ -9,9 +9,9 @@ use Artesaos\SEOTools\Facades\SEOTools;
 
 class PageRouteHandler
 {
-    public static function handle($paramenters = [])
+    public static function handle($parameters = [])
     {
-        $slug = $paramenters['slug'] ?? '';
+        $slug = $parameters['slug'] ?? '';
         if ($slug) {
             $page = Page::publicShowable()->where('slug->' . App::getLocale(), $slug)->where('is_home', 0)->first();
         } else {
