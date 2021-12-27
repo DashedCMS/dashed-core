@@ -3,7 +3,6 @@
 namespace Qubiqx\QcommerceCore\Filament\Resources;
 
 use Closure;
-use Filament\Forms\Components\FileUpload;
 use Illuminate\Support\Str;
 use Filament\Resources\Form;
 use Filament\Resources\Table;
@@ -18,8 +17,8 @@ use Filament\Tables\Columns\TextColumn;
 use Qubiqx\QcommerceCore\Classes\Sites;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Resources\Concerns\Translatable;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Qubiqx\QcommerceCore\Filament\Resources\PageResource\Pages\EditPage;
 use Qubiqx\QcommerceCore\Filament\Resources\PageResource\Pages\ListPages;
 use Qubiqx\QcommerceCore\Filament\Resources\PageResource\Pages\CreatePage;
