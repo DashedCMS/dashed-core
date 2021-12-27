@@ -5,15 +5,16 @@ namespace Qubiqx\QcommerceCore\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
-use Illuminate\Queue\SerializesModels;
-use Qubiqx\QcommerceCore\Models\Customsetting;
 use Qubiqx\QcommerceCore\Models\Form;
+use Illuminate\Queue\SerializesModels;
 use Qubiqx\QcommerceCore\Models\FormInput;
 use Qubiqx\QcommerceCore\Models\Translation;
+use Qubiqx\QcommerceCore\Models\Customsetting;
 
 class AdminFormSubmitConfirmationMail extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * Create a new message instance.
@@ -34,7 +35,7 @@ class AdminFormSubmitConfirmationMail extends Mailable
      */
     public function build()
     {
-        $mail =  $this->view('qcommerce-core::emails.admin-confirm-form-submit')
+        $mail = $this->view('qcommerce-core::emails.admin-confirm-form-submit')
             ->from(Customsetting::get('site_from_email'), Customsetting::get('company_name'))->subject(Translation::get('admin-form-confirmation-'.Str::slug($this->form->name).'-email-subject', 'forms', 'You received a new form submit!'))
             ->with([
                 'form' => $this->form,

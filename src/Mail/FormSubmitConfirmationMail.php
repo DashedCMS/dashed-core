@@ -5,15 +5,16 @@ namespace Qubiqx\Qcommerce\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
-use Illuminate\Queue\SerializesModels;
-use Qubiqx\QcommerceCore\Models\Customsetting;
 use Qubiqx\QcommerceCore\Models\Form;
+use Illuminate\Queue\SerializesModels;
 use Qubiqx\QcommerceCore\Models\FormInput;
 use Qubiqx\QcommerceCore\Models\Translation;
+use Qubiqx\QcommerceCore\Models\Customsetting;
 
 class FormSubmitConfirmationMail extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * Create a new message instance.

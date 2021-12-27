@@ -4,14 +4,15 @@ namespace Qubiqx\QcommerceCore\Mail;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
-use Illuminate\Queue\SerializesModels;
-use Qubiqx\QcommerceCore\Models\Customsetting;
-use Qubiqx\QcommerceCore\Models\Translation;
 use Qubiqx\QcommerceCore\Models\User;
+use Illuminate\Queue\SerializesModels;
+use Qubiqx\QcommerceCore\Models\Translation;
+use Qubiqx\QcommerceCore\Models\Customsetting;
 
 class PasswordResetMail extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * Create a new message instance.
