@@ -3,7 +3,6 @@
 namespace Qubiqx\QcommerceCore\Models;
 
 use Carbon\Carbon;
-use Spatie\Image\Manipulations;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
 use Qubiqx\QcommerceCore\Classes\Sites;
@@ -68,7 +67,7 @@ class Page extends Model
 
     public function scopeThisSite($query, $siteId = null)
     {
-        if (!$siteId) {
+        if (! $siteId) {
             $siteId = Sites::getActive();
         }
 
@@ -125,7 +124,7 @@ class Page extends Model
 
     public function getStatusAttribute()
     {
-        if (!$this->start_date && !$this->end_date) {
+        if (! $this->start_date && ! $this->end_date) {
             return 'active';
         } else {
             if ($this->start_date && $this->end_date) {
