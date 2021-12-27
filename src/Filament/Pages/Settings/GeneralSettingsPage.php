@@ -106,7 +106,6 @@ class GeneralSettingsPage extends Page implements HasForms
                     ]),
                 TextInput::make("company_btw_{$site['id']}")
                     ->label('BTW ID van het bedrijf')
-                    ->required()
                     ->rules([
                         'max:255',
                     ]),
@@ -171,11 +170,11 @@ class GeneralSettingsPage extends Page implements HasForms
                     ]),
                 FileUpload::make("site_logo_{$site['id']}")
                     ->label('Logo')
-                    ->disk('qcommerce-uploads')
+                    ->directory('qcommerce/branding/logo')
                     ->required(),
                 FileUpload::make("site_favicon_{$site['id']}")
                     ->label('Favicon')
-                    ->disk('qcommerce-uploads')
+                    ->directory('qcommerce/branding/favicon')
                     ->required(),
             ];
 

@@ -27,7 +27,7 @@ class EditPage extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        $data['slug'] = Str::slug($data['slug'] ?: $data['title']);
+        $data['slug'] = Str::slug($data['slug'] ?: $data['name']);
 
         while (Page::where('id', '!=', $this->record->id)->where('slug->' . $this->activeFormLocale, $data['slug'])->count()) {
             $data['slug'] .= Str::random(1);

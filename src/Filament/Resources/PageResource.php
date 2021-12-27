@@ -19,7 +19,6 @@ use Qubiqx\QcommerceCore\Classes\Sites;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Resources\Concerns\Translatable;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Qubiqx\QcommerceCore\Filament\Resources\PageResource\Pages\EditPage;
 use Qubiqx\QcommerceCore\Filament\Resources\PageResource\Pages\ListPages;
 use Qubiqx\QcommerceCore\Filament\Resources\PageResource\Pages\CreatePage;
@@ -111,7 +110,7 @@ class PageResource extends Resource
                             ->label('Meta title')
                             ->rules([
                                 'nullable',
-                                'min:20',
+                                'min:5',
                                 'max:60',
                             ]),
                         Textarea::make('meta_description')
@@ -119,11 +118,11 @@ class PageResource extends Resource
                             ->rows(2)
                             ->rules([
                                 'nullable',
-                                'min:30',
+                                'min:5',
                                 'max:158',
                             ]),
-                        FileUpload::make('image')
-                            ->disk('qcommerce-uploads')
+                        FileUpload::make('meta_image')
+                            ->directory('qcommerce/pages/meta-images')
 //                            ->collection(fn ($livewire) => "meta-image-{$livewire->activeFormLocale}")
                             ->name('Meta afbeelding')
                             ->image(),

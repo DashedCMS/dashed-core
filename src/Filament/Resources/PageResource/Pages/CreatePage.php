@@ -17,7 +17,7 @@ class CreatePage extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['slug'] = Str::slug($data['slug'] ?: $data['title']);
+        $data['slug'] = Str::slug($data['slug'] ?: $data['name']);
 
         while (Page::where('slug->' . $this->activeFormLocale, $data['slug'])->count()) {
             $data['slug'] .= Str::random(1);

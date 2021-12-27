@@ -8,15 +8,10 @@ return [
 
     'sites' => [
         0 => [
-            'id' => 'nxe',
-            'name' => 'NXE',
-            'locales' => ['en', 'nl']
+            'id' => 'site',
+            'name' => 'SITE',
+            'locales' => ['nl']
         ],
-        1 => [
-            'id' => 'gamekoning',
-            'name' => 'Gamekoning',
-            'locales' => ['en', 'nl']
-        ]
     ],
 
     'forms' => [

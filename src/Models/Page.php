@@ -4,22 +4,18 @@ namespace Qubiqx\QcommerceCore\Models;
 
 use Carbon\Carbon;
 use Spatie\Image\Manipulations;
-use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
 use Qubiqx\QcommerceCore\Classes\Sites;
 use Spatie\Translatable\HasTranslations;
 use Spatie\Activitylog\Traits\LogsActivity;
-use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
-class Page extends Model implements HasMedia
+class Page extends Model
 {
     use SoftDeletes;
     use HasTranslations;
-    use InteractsWithMedia;
     use LogsActivity;
 
     protected static $logFillable = true;
@@ -44,6 +40,7 @@ class Page extends Model implements HasMedia
         'content',
         'meta_title',
         'meta_description',
+        'meta_image',
     ];
 
     protected $dates = [
@@ -55,7 +52,7 @@ class Page extends Model implements HasMedia
     ];
 
     public $casts = [
-      'content' => 'array',
+        'content' => 'array',
     ];
 
     protected static function booted()
@@ -69,17 +66,9 @@ class Page extends Model implements HasMedia
         });
     }
 
-    public function registerMediaConversions(Media $media = null): void
-    {
-        $this
-            ->addMediaConversion('preview')
-            ->fit(Manipulations::FIT_CROP, 300, 300)
-            ->nonQueued();
-    }
-
     public function scopeThisSite($query, $siteId = null)
     {
-        if (! $siteId) {
+        if (!$siteId) {
             $siteId = Sites::getActive();
         }
 
@@ -136,7 +125,7 @@ class Page extends Model implements HasMedia
 
     public function getStatusAttribute()
     {
-        if (! $this->start_date && ! $this->end_date) {
+        if (!$this->start_date && !$this->end_date) {
             return 'active';
         } else {
             if ($this->start_date && $this->end_date) {
