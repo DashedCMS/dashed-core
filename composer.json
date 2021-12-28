@@ -48,7 +48,7 @@
             "Qubiqx\\QcommerceCore\\Database\\Factories\\": "database/factories"
         },
         "files": [
-            "../qcommerce-core/src/Helpers/helpers.php"
+            "./qcommerce-core/src/Helpers/helpers.php"
         ]
     },
     "autoload-dev": {
