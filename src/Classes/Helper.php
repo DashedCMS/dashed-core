@@ -27,14 +27,6 @@ class Helper
         return false;
     }
 
-    public static function formatPrice($price)
-    {
-        $result = '€' . number_format($price, 2, ',', '.');
-        $result = str_replace(',00', ',-', $result);
-
-        return $result;
-    }
-
 //    public static function calculateTax($price, $taxPercentage)
 //    {
 //        $calculateInclusiveTax = Customsetting::get('taxes_prices_include_taxes');
@@ -63,10 +55,10 @@ class Helper
 //        return ProductCategory::find($selectedProductCategoriesIds);
 //    }
 
-//    public static function getProfilePicture($email)
-//    {
-//        return 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($email)));
-//    }
+    public static function getProfilePicture($email)
+    {
+        return 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($email)));
+    }
 
     public static function getAdminUrl()
     {
