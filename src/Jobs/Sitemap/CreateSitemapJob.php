@@ -5,13 +5,16 @@ namespace Qubiqx\QcommerceCore\Jobs\Sitemap;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
+use Qubiqx\QcommerceCore\Classes\Sitemap;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Qubiqx\QcommerceCore\Classes\Sitemap;
 
 class CreateSitemapJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     public $timeout = 12000;
 
