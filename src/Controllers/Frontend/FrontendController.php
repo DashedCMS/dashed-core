@@ -5,6 +5,8 @@ namespace Qubiqx\QcommerceCore\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\View;
 use Artesaos\SEOTools\Facades\SEOTools;
+use LynX39\LaraPdfMerger\Facades\PdfMerger;
+use Qubiqx\QcommerceEcommerceCore\Models\Order;
 
 class FrontendController extends Controller
 {

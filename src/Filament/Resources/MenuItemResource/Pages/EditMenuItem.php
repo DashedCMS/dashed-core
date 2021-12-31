@@ -2,6 +2,7 @@
 
 namespace Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource\Pages;
 
+use Filament\Pages\Actions\ButtonAction;
 use Filament\Resources\Pages\EditRecord;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource;
 use Filament\Resources\Pages\EditRecord\Concerns\Translatable;
@@ -27,6 +28,14 @@ class EditMenuItem extends EditRecord
         }
 
         return $data;
+    }
+
+
+    protected function getCancelButtonFormAction(): ButtonAction
+    {
+        return ButtonAction::make('return')
+            ->label('Terug naar menu')
+            ->url(route('filament.resources.menus.edit', [$this->record->menu]));
     }
 
     protected function getBreadcrumbs(): array

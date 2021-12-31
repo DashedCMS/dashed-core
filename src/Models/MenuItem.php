@@ -2,9 +2,9 @@
 
 namespace Qubiqx\QcommerceCore\Models;
 
-use Qubiqx\Qcommerce\Classes\Sites;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
+use Qubiqx\QcommerceCore\Classes\Sites;
 use Spatie\Translatable\HasTranslations;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -152,7 +152,7 @@ class MenuItem extends Model
     {
         return Cache::tags(['menus', 'menu-items', 'products', 'product-categories', 'pages', 'articles', "menuitem-$this->id"])->remember("menuitem-url-$this->id", 60 * 60 * 24, function () {
             if (! $this->type || $this->type == 'normal' || $this->type == 'external_url') {
-                return LaravelLocalization::localizeUrl($this->url ? $this->url : '/');
+                return LaravelLocalization::localizeUrl($this->url ?: '/');
             } else {
                 $modelResult = $this->model::find($this->model_id);
                 if ($modelResult) {

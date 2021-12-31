@@ -26,6 +26,11 @@ class MenuItemResource extends Resource
     protected static ?string $model = MenuItem::class;
     protected static ?string $recordTitleAttribute = 'name';
 
+    public static function getRecordTitle($record): ?string
+    {
+        return $record->name();
+    }
+
     protected static bool $shouldRegisterNavigation = false;
     protected static ?string $label = 'Menu item';
     protected static ?string $pluralLabel = 'Menu items';
@@ -51,7 +56,7 @@ class MenuItemResource extends Resource
                     ->options($routeModel['class']::pluck($routeModel['nameField'] ?: 'name', 'id'))
                     ->hidden(fn ($get) => ! in_array($get('type'), [$key]))
                     ->afterStateHydrated(function (Select $component, Closure $set, $state) {
-                        $set($component, fn ($record) => $record->model_id);
+                        $set($component, fn ($record) => $record->model_id ?? '');
                     });
         }
 
