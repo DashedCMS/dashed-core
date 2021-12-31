@@ -30,7 +30,6 @@ class EditMenuItem extends EditRecord
         return $data;
     }
 
-
     protected function getCancelButtonFormAction(): ButtonAction
     {
         return ButtonAction::make('return')
