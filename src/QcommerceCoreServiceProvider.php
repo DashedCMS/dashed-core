@@ -39,7 +39,6 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
     {
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
-
         cms()->builder(
             'routeModels',
             array_merge(cms()->builder('routeModels'), [
