@@ -5,6 +5,8 @@ namespace Qubiqx\QcommerceCore\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\View;
 use Artesaos\SEOTools\Facades\SEOTools;
+use Qubiqx\QcommerceEcommerceCore\Events\Orders\OrderIsPushableForReviewEvent;
+use Qubiqx\QcommerceEcommerceCore\Models\Order;
 
 class FrontendController extends Controller
 {
@@ -22,6 +24,10 @@ class FrontendController extends Controller
 
     public function index($slug = null)
     {
+        $order = Order::latest()->first();
+        OrderIsPushableForReviewEvent::dispatch($order);
+        $order->refresh();
+        dd($order);
         $routeModels = cms()->builder('routeModels');
 
         foreach ($routeModels as $routeModel) {
