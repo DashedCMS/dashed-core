@@ -24,10 +24,11 @@ class FrontendController extends Controller
 
     public function index($slug = null)
     {
-        $order = Order::latest()->first();
-        OrderIsPushableForReviewEvent::dispatch($order);
-        $order->refresh();
-        dd($order);
+//        $order = Order::latest()->first();
+//        $response = OrderIsPushableForReviewEvent::dispatch($order);
+//        dump($response);
+//        $order->refresh();
+//        dd($order);
         $routeModels = cms()->builder('routeModels');
 
         foreach ($routeModels as $routeModel) {
