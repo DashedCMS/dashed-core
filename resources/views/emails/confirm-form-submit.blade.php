@@ -45,10 +45,10 @@
         } </style>
     <!--[if mso]>
     <xml>
-    <o:OfficeDocumentSettings>
-        <o:AllowPNG/>
-        <o:PixelsPerInch>96</o:PixelsPerInch>
-    </o:OfficeDocumentSettings>
+        <o:OfficeDocumentSettings>
+            <o:AllowPNG/>
+            <o:PixelsPerInch>96</o:PixelsPerInch>
+        </o:OfficeDocumentSettings>
     </xml>
     <![endif]--> <!--[if lte mso 11]>
     <style type="text/css"> .outlook-group-fix {
@@ -171,8 +171,8 @@
     <!-- Body Wrapper --> <!--[if mso | IE]>
     <table align="center" border="0" cellpadding="0" cellspacing="0" class="body-wrapper-outlook" style="width:600px;"
            width="600">
-    <tr>
-        <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;">
+        <tr>
+            <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;">
     <![endif]-->
     <div class="body-wrapper"
          style="font-family: Open Sans, Helvetica, Tahoma, Arial, sans-serif; padding-bottom: 20px; box-shadow: 0 4px 10px #ddd; background: #F2F2F2; background-color: #F2F2F2; margin: 0px auto; max-width: 600px; margin-bottom: 10px;">
@@ -186,11 +186,11 @@
                     <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                     <![endif]--> <!-- Pre-Headers --> <!--[if mso | IE]>
                     <tr>
-                    <td class="pre-header-outlook" width="600px">
-                        <table align="center" border="0" cellpadding="0" cellspacing="0" class="pre-header-outlook"
-                               style="width:560px;" width="560">
-                            <tr>
-                                <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;">
+                        <td class="pre-header-outlook" width="600px">
+                            <table align="center" border="0" cellpadding="0" cellspacing="0" class="pre-header-outlook"
+                                   style="width:560px;" width="560">
+                                <tr>
+                                    <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;">
                     <![endif]-->
                     <!--[if mso | IE]>
                     </td>
@@ -200,11 +200,11 @@
                     </tr>
                     <![endif]--> <!-- header --> <!--[if mso | IE]>
                     <tr>
-                    <td class="header-outlook" width="600px">
-                        <table align="center" border="0" cellpadding="0" cellspacing="0" class="header-outlook"
-                               style="width:560px;" width="560">
-                            <tr>
-                                <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;">
+                        <td class="header-outlook" width="600px">
+                            <table align="center" border="0" cellpadding="0" cellspacing="0" class="header-outlook"
+                                   style="width:560px;" width="560">
+                                <tr>
+                                    <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;">
                     <![endif]-->
                     <div class="header"
                          style="font-family: Open Sans, Helvetica, Tahoma, Arial, sans-serif; line-height: 22px; padding: 15px 0; margin: 0px auto; max-width: 560px;">
@@ -216,7 +216,7 @@
                                     align="center">
                                     <!--[if mso | IE]>
                                     <table role="presentation" border="0" cellpadding="0" cellspacing="0">
-                                    <tr>
+                                        <tr>
                                     <![endif]--> <!-- LOGO --> <!--[if mso | IE]>
                                     <td class="" style="vertical-align:middle;width:140px;">
                                     <![endif]-->
@@ -232,21 +232,17 @@
                                                            style="border-collapse:collapse;border-spacing:0px;">
                                                         <tbody>
                                                         <tr>
-                                                            <?php
-                                                            $site = Customsetting::where('name', 'site_name')->thisSite()->first();
-                                                            if ($site) {
-                                                                $logo = $site->getFirstMedia('logo');
-                                                            } else {
-                                                                $logo = '';
-                                                            }
-                                                            ?>
+                                                            @php($logo = Customsetting::get('site_logo', Sites::getActive(), ''))
                                                             @if($logo)
                                                                 <td style="font-family: Open Sans, Helvetica, Tahoma, Arial, sans-serif;width: 160px;"
                                                                     width="160"><a href="{{url('/')}}" target="_blank"
                                                                                    style="font-family: Open Sans, Helvetica, Tahoma, Arial, sans-serif; padding: 0 10px;">
                                                                         <img alt="{{Customsetting::get('site_name')}}"
                                                                              height="auto"
-                                                                             src="{{Thumbnail::src($logo->getUrl())->heighten(100)->url(true)}}"
+                                                                             src="{{glide($logo, [
+    'h' => 100,
+    'w' => 'auto'
+])}}"
                                                                              style="border:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;font-size:13px;"
                                                                              width="160"> </a></td>
                                                             @endif
@@ -274,8 +270,8 @@
                                                         <!--[if mso | IE]>
                                                         <table role="presentation" border="0" cellpadding="0"
                                                                cellspacing="0" align="center">
-                                                        <tr>
-                                                            <td style="padding:15px 10px;" class="">
+                                                            <tr>
+                                                                <td style="padding:15px 10px;" class="">
                                                         <![endif]--> <a class="link"
                                                                         href="{{url('/')}}"
                                                                         target="_blank"
@@ -309,11 +305,11 @@
                     </tr>
                     <![endif]--> <!-- notice --> <!--[if mso | IE]>
                     <tr>
-                    <td class="notice-wrap-outlook margin-bottom-outlook" width="600px">
-                        <table align="center" border="0" cellpadding="0" cellspacing="0"
-                               class="notice-wrap-outlook margin-bottom-outlook" style="width:560px;" width="560">
-                            <tr>
-                                <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;">
+                        <td class="notice-wrap-outlook margin-bottom-outlook" width="600px">
+                            <table align="center" border="0" cellpadding="0" cellspacing="0"
+                                   class="notice-wrap-outlook margin-bottom-outlook" style="width:560px;" width="560">
+                                <tr>
+                                    <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;">
                     <![endif]-->
                     <div class="notice-wrap margin-bottom"
                          style="font-family: Open Sans, Helvetica, Tahoma, Arial, sans-serif; margin: 0px auto; max-width: 560px; margin-bottom: 15px;">
@@ -325,8 +321,8 @@
                                     align="center">
                                     <!--[if mso | IE]>
                                     <table role="presentation" border="0" cellpadding="0" cellspacing="0">
-                                    <tr>
-                                        <td class="" style="vertical-align:top;width:560px;">
+                                        <tr>
+                                            <td class="" style="vertical-align:top;width:560px;">
                                     <![endif]-->
                                     <div class="column-per-100 outlook-group-fix"
                                          style="font-family: Open Sans, Helvetica, Tahoma, Arial, sans-serif; font-size: 0px; text-align: left; direction: ltr; display: inline-block; vertical-align: top; width: 100%;">

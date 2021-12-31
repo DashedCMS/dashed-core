@@ -34,6 +34,10 @@ class Menu extends Model
         static::updated(function ($menu) {
             Cache::tags(['menus'])->flush();
         });
+
+        static::deleting(function ($menu) {
+            $menu->menuItems()->delete();
+        });
     }
 
     public function scopeSearch($query)

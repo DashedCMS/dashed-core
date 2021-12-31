@@ -71,7 +71,6 @@
                 "Qubiqx\\QcommerceCore\\QcommerceCoreEventServiceProvider"
             ],
             "aliases": {
-                "Sitemap": "Qubiqx\\QcommerceCore\\Classes\\Sitemap",
                 "AccountHelper": "Qubiqx\\QcommerceCore\\Classes\\AccountHelper",
                 "Helper": "Qubiqx\\QcommerceCore\\Classes\\Helper",
                 "Locales": "Qubiqx\\QcommerceCore\\Classes\\Locales",
