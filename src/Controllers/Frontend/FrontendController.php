@@ -5,8 +5,8 @@ namespace Qubiqx\QcommerceCore\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\View;
 use Artesaos\SEOTools\Facades\SEOTools;
-use Qubiqx\QcommerceEcommerceCore\Events\Orders\OrderIsPushableForReviewEvent;
 use Qubiqx\QcommerceEcommerceCore\Models\Order;
+use Qubiqx\QcommerceEcommerceCore\Events\Orders\OrderIsPushableForReviewEvent;
 
 class FrontendController extends Controller
 {
