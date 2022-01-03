@@ -76,8 +76,6 @@ class Helper
             $url = '/';
         }
 
-
-
         return LaravelLocalization::getLocalizedURL($locale, $url);
     }
 }
