@@ -27,16 +27,6 @@ class Helper
         return false;
     }
 
-//    public static function calculateTax($price, $taxPercentage)
-//    {
-//        $calculateInclusiveTax = Customsetting::get('taxes_prices_include_taxes');
-//        if ($calculateInclusiveTax) {
-//            return ($price / (100 + $taxPercentage) * $taxPercentage);
-//        } else {
-//            return ($price / 100 * $taxPercentage);
-//        }
-//    }
-
 //    public static function getProductCategoriesFromIdsWithChilds($selectedProductCategoriesIds)
 //    {
 //        $selectedProductCategories = ProductCategory::find($selectedProductCategoriesIds);
@@ -72,7 +62,7 @@ class Helper
 
     public static function getCurrentUrlInLocale($locale, $url = null)
     {
-        if (! $url) {
+        if (!$url) {
             $url = '/';
         }
 
