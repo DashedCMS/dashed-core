@@ -23,7 +23,7 @@ class EditPage extends EditRecord
                 ->label('Bekijk pagina')
                 ->openUrlInNewTab()
                 ->url($this->record->getUrl()),
-            $this->getActiveFormLocaleSelectAction()
+            $this->getActiveFormLocaleSelectAction(),
         ]);
     }
 

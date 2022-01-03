@@ -26,7 +26,7 @@ class Sites
 
     public static function get($siteId = null)
     {
-        if (!$siteId) {
+        if (! $siteId) {
             return self::getFirstSite();
         }
 
@@ -41,7 +41,7 @@ class Sites
 
     public static function getLocales($siteId = null)
     {
-        if (!$siteId) {
+        if (! $siteId) {
             $site = self::getFirstSite();
         } else {
             foreach (self::getSites() as $allSite) {

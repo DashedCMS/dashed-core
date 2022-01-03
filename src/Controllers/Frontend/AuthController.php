@@ -3,19 +3,19 @@
 namespace Qubiqx\QcommerceCore\Controllers\Frontend;
 
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\View;
-use Artesaos\SEOTools\Facades\SEOTools;
-use Qubiqx\QcommerceCore\Mail\PasswordResetMail;
-use Qubiqx\QcommerceCore\Models\Translation;
 use Qubiqx\QcommerceCore\Models\User;
-use Qubiqx\QcommerceCore\Requests\Frontend\ForgotPasswordRequest;
+use Artesaos\SEOTools\Facades\SEOTools;
+use Qubiqx\QcommerceCore\Models\Translation;
+use Qubiqx\QcommerceCore\Mail\PasswordResetMail;
 use Qubiqx\QcommerceCore\Requests\Frontend\LoginRequest;
 use Qubiqx\QcommerceCore\Requests\Frontend\RegisterRequest;
 use Qubiqx\QcommerceCore\Requests\Frontend\ResetPasswordRequest;
+use Qubiqx\QcommerceCore\Requests\Frontend\ForgotPasswordRequest;
 
 class AuthController extends FrontendController
 {

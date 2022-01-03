@@ -5,8 +5,8 @@ namespace Qubiqx\QcommerceCore\Models;
 use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\FilamentUser;
-use Qubiqx\QcommerceCore\Traits\HasDynamicRelation;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Qubiqx\QcommerceCore\Traits\HasDynamicRelation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 

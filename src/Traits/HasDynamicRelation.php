@@ -2,10 +2,6 @@
 
 namespace Qubiqx\QcommerceCore\Traits;
 
-use Qubiqx\QcommerceCore\Models\Menu;
-use Qubiqx\QcommerceCore\Models\Page;
-use Qubiqx\QcommerceCore\Models\MenuItem;
-
 trait HasDynamicRelation
 {
     /**

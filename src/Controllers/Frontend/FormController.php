@@ -6,20 +6,20 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Mail;
-use Qubiqx\QcommerceCore\Mail\FormSubmitConfirmationMail;
-use Qubiqx\QcommerceCore\Classes\Sites;
-use Qubiqx\QcommerceCore\Mail\AdminFormSubmitConfirmationMail;
-use Qubiqx\QcommerceCore\Models\Customsetting;
 use Qubiqx\QcommerceCore\Models\Form;
+use Qubiqx\QcommerceCore\Classes\Sites;
 use Qubiqx\QcommerceCore\Models\FormInput;
 use Qubiqx\QcommerceCore\Models\Translation;
+use Qubiqx\QcommerceCore\Models\Customsetting;
+use Qubiqx\QcommerceCore\Mail\FormSubmitConfirmationMail;
+use Qubiqx\QcommerceCore\Mail\AdminFormSubmitConfirmationMail;
 
 class FormController extends FrontendController
 {
     public function store(Request $request)
     {
         $formName = $request->form_name;
-        if (!$formName) {
+        if (! $formName) {
             return redirect()->back()->with('error', Translation::get('form-name-not-provided', 'form', 'Form name not provided, please contact a administrator'))->withInput();
         }
 
@@ -40,7 +40,7 @@ class FormController extends FrontendController
                 $request->validate($validations);
 
                 $form = Form::where('name', $formName)->first();
-                if (!$form) {
+                if (! $form) {
                     $form = new Form();
                     $form->name = $formName;
                     $form->save();

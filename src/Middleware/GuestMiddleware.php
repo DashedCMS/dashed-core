@@ -5,7 +5,6 @@ namespace Qubiqx\QcommerceCore\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Qubiqx\Qcommerce\Classes\Webshop;
 use Qubiqx\QcommerceCore\Classes\AccountHelper;
 
 class GuestMiddleware
