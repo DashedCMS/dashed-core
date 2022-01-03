@@ -5,6 +5,8 @@ namespace Qubiqx\QcommerceCore\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\View;
 use Artesaos\SEOTools\Facades\SEOTools;
+use Illuminate\Support\Str;
+use Qubiqx\QcommerceCore\Classes\Locales;
 use Qubiqx\QcommerceEcommerceCore\Models\Order;
 use Qubiqx\QcommerceEcommerceCore\Events\Orders\OrderIsPushableForReviewEvent;
 
@@ -29,6 +31,12 @@ class FrontendController extends Controller
 //        dump($response);
 //        $order->refresh();
 //        dd($order);
+        foreach(Locales::getLocales() as $locale){
+            if(Str::startsWith($slug, $locale['id'])){
+                $slug = Str::substr($slug, strlen($locale['id']) + 1);
+            }
+        }
+
         $routeModels = cms()->builder('routeModels');
 
         foreach ($routeModels as $routeModel) {

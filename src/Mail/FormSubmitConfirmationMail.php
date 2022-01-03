@@ -1,6 +1,6 @@
 <?php
 
-namespace Qubiqx\Qcommerce\Mail;
+namespace Qubiqx\QcommerceCore\Mail;
 
 use Illuminate\Support\Str;
 use Illuminate\Bus\Queueable;

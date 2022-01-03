@@ -5,6 +5,7 @@ namespace Qubiqx\QcommerceCore\Models;
 use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\FilamentUser;
+use Qubiqx\QcommerceCore\Traits\HasDynamicRelation;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -14,6 +15,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
     use HasFactory;
     use Notifiable;
     use LogsActivity;
+    use HasDynamicRelation;
 
     protected static $logFillable = true;
 

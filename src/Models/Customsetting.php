@@ -62,6 +62,6 @@ class Customsetting extends Model
 
     public function scopeThisSite($query)
     {
-        $query->where('site_id', config('qcommerce.currentSite'));
+        $query->where('site_id', Sites::getActive());
     }
 }

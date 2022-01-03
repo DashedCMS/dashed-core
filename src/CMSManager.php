@@ -15,6 +15,8 @@ class CMSManager
     ];
 
     protected static $builders = [
+        'sites' => [],
+        'forms' => [],
         'blocks' => [],
         'content' => [],
         'routeModels' => [],

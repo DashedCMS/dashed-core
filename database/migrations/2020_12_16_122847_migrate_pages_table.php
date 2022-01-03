@@ -17,6 +17,7 @@ class MigratePagesTable extends Migration
         foreach (\Qubiqx\QcommerceCore\Models\Page::get() as $page) {
             $newContent = [];
             foreach (\Qubiqx\QcommerceCore\Classes\Locales::getLocales() as $locale) {
+                $newBlocks = [];
                 foreach (json_decode($page->getTranslation('content', $locale['id']), true) ?: [] as $block) {
                     $newBlocks[Str::orderedUuid()->toString()] = [
                         'type' => $block['type'],

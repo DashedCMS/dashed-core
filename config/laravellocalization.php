@@ -343,7 +343,7 @@ return [
     // URLs which should not be processed, e.g. '/nova', '/nova/*', '/nova-api/*' or specific application URLs
     // Defaults to []
     'urlsIgnored' => [
-        '/' . config('qcommerce.path') . '/*'
+        '/' . config('filament.path') . '/*'
     ],
 
 ];

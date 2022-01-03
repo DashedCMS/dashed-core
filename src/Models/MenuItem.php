@@ -65,7 +65,7 @@ class MenuItem extends Model
 
     public function scopeThisSite($query)
     {
-        $query->where('site_ids->' . config('qcommerce.currentSite'), 'active');
+        $query->whereJsonContains('site_ids', Sites::getActive());
     }
 
     public function scopeSearch($query)

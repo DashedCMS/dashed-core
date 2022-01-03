@@ -6,12 +6,12 @@ class Sites
 {
     public static function getActive()
     {
-        return config('qcommerce-core.currentSite');
+        return env('QCOMMERCE_SITE_ID', cms()->builder('sites')[0]['id']);
     }
 
     public static function getSites()
     {
-        return config('qcommerce-core.sites');
+        return cms()->builder('sites');
     }
 
     public static function getAmountOfSites()
@@ -21,12 +21,12 @@ class Sites
 
     public static function getFirstSite()
     {
-        return config('qcommerce-core.sites')[0];
+        return cms()->builder('sites')[0];
     }
 
     public static function get($siteId = null)
     {
-        if (! $siteId) {
+        if (!$siteId) {
             return self::getFirstSite();
         }
 
@@ -41,7 +41,7 @@ class Sites
 
     public static function getLocales($siteId = null)
     {
-        if (! $siteId) {
+        if (!$siteId) {
             $site = self::getFirstSite();
         } else {
             foreach (self::getSites() as $allSite) {

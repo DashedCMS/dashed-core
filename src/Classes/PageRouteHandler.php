@@ -23,9 +23,8 @@ class PageRouteHandler
                 SEOTools::setTitle($page->meta_title ?: $page->name);
                 SEOTools::setDescription($page->meta_description);
                 SEOTools::opengraph()->setUrl(url()->current());
-                $metaImage = $page->getFirstMediaUrl('meta-image-' . App::getLocale());
-                if ($metaImage) {
-                    SEOTools::addImages($metaImage);
+                if ($page->meta_image) {
+                    SEOTools::addImages($page->meta_image);
                 }
 
                 View::share('page', $page);

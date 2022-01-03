@@ -78,7 +78,7 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
                 'filesystems',
                 'laravellocalization',
 //                'media-library',
-                'qcommerce-core',
+//                'qcommerce-core',
                 'sentry',
             ])
             ->hasRoutes([
