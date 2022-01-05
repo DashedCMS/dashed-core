@@ -6,7 +6,7 @@ class Sites
 {
     public static function getActive()
     {
-        if (cms()->builder('sites')[0]) {
+        if (count(cms()->builder('sites'))) {
             return env('QCOMMERCE_SITE_ID', cms()->builder('sites')[0]['id']);
         } else {
             return '';
