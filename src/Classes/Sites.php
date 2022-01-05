@@ -6,7 +6,11 @@ class Sites
 {
     public static function getActive()
     {
-        return env('QCOMMERCE_SITE_ID', cms()->builder('sites')[0]['id']);
+        if (cms()->builder('sites')[0]) {
+            return env('QCOMMERCE_SITE_ID', cms()->builder('sites')[0]['id']);
+        } else {
+            return '';
+        }
     }
 
     public static function getSites()
@@ -26,7 +30,7 @@ class Sites
 
     public static function get($siteId = null)
     {
-        if (! $siteId) {
+        if (!$siteId) {
             return self::getFirstSite();
         }
 
@@ -41,7 +45,7 @@ class Sites
 
     public static function getLocales($siteId = null)
     {
-        if (! $siteId) {
+        if (!$siteId) {
             $site = self::getFirstSite();
         } else {
             foreach (self::getSites() as $allSite) {
