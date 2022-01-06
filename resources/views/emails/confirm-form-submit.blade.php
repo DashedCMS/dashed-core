@@ -351,7 +351,7 @@
                                                                     <br>
                                                                     {!! nl2br(Translation::get('form-confirmation-' . Str::slug($form->name) . '-email-content', 'forms', 'We will try to respond within 2 business days.', 'textarea')) !!}
                                                                     <hr>
-                                                                    @foreach(json_decode($formInput->content, true) as $field => $value)
+                                                                    @foreach($formInput->content as $field => $value)
                                                                         <h4>{{str_replace('_', ' ', ucfirst($field)) . ':'}}</h4>
                                                                         <div
                                                                             style="margin-top: -20px;">{!! nl2br($value) !!}</div>
