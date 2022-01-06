@@ -86,7 +86,7 @@ class Translation extends Model
             }
         }
 
-        if($translation && $translation->type != $type){
+        if ($translation && $translation->type != $type) {
             $translation->type = $type;
             $translation->save();
         }
