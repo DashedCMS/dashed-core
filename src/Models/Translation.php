@@ -85,6 +85,12 @@ class Translation extends Model
                 $translation->restore();
             }
         }
+
+        if($translation && $translation->type != $type){
+            $translation->type = $type;
+            $translation->save();
+        }
+
         if ($translation && $default && $translation->default != $default) {
             $translation->default = $default;
             $translation->save();
