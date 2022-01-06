@@ -68,6 +68,7 @@ class FormController extends FrontendController
                     try {
                         Mail::to($sendToFieldValue)->send(new FormSubmitConfirmationMail($form, $formInput));
                     } catch (\Exception $e) {
+                        dd($e->getMessage());
                     }
                 }
 
@@ -75,6 +76,7 @@ class FormController extends FrontendController
                     try {
                         Mail::to('robin@qubiqx.com')->send(new AdminFormSubmitConfirmationMail($form, $formInput, $sendToFieldValue));
                     } catch (\Exception $e) {
+                        dd($e->getMessage());
                     }
                 } else {
                     try {
@@ -85,6 +87,7 @@ class FormController extends FrontendController
                             }
                         }
                     } catch (\Exception $e) {
+                        dd($e->getMessage());
                     }
                 }
 
