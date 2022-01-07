@@ -55,7 +55,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
 
     public function canAccessFilament(): bool
     {
-        return (bool) $this->role === 'admin';
+        return ($this->role === 'admin');
     }
 
     public function getFilamentName(): string
