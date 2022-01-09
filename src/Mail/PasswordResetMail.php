@@ -31,7 +31,7 @@ class PasswordResetMail extends Mailable
      */
     public function build()
     {
-        return $this->view('qcommerce::emails.password-reset')
+        return $this->view('qcommerce-core::emails.password-reset')
             ->from(Customsetting::get('site_from_email'), Customsetting::get('company_name'))->subject(Translation::get('password-reset-email-subject', 'login', 'A password reset has been requested for your account at :siteName:', 'text', [
                 'siteName' => Customsetting::get('site_name'),
             ]))
