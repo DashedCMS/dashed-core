@@ -112,13 +112,13 @@ class ListTranslations extends Page implements HasForms
                             });
                     } elseif ($translation->type == 'image') {
                         $schema[] = FileUpload::make("translation_{$translation->id}_{$locale['id']}")
-                            ->disk('qcommerce-uploads')
+                            ->disk('public')
                             ->default($translation->default)
                             ->label(Str::of($translation->name)->replace('_', ' ')->replace('-', ' ')->title())
                             ->helperText($helperText ?? '')
                             ->reactive()
                             ->afterStateUpdated(function (FileUpload $component, Closure $set, $state) {
-                                $path = $state->store('/');
+                                $path = $state->store('/qcommerce/translations');
                                 $explode = explode('_', $component->getStatePath());
                                 $translationId = $explode[1];
                                 $locale = $explode[2];
