@@ -25,6 +25,7 @@ class ListTranslations extends Page implements HasForms
 
     protected static string $resource = TranslationResource::class;
     protected static string $view = 'qcommerce-core::translations.pages.list-translations';
+    public $data;
 
     public function mount(): void
     {
@@ -37,6 +38,11 @@ class ListTranslations extends Page implements HasForms
         }
 
         $this->form->fill($formData);
+    }
+
+    protected function getFormStatePath(): ?string
+    {
+        return 'data';
     }
 
     protected function getFormSchema(): array
@@ -116,18 +122,7 @@ class ListTranslations extends Page implements HasForms
                             ->default($translation->default)
                             ->label(Str::of($translation->name)->replace('_', ' ')->replace('-', ' ')->title())
                             ->helperText($helperText ?? '')
-                            ->reactive()
-                            ->afterStateUpdated(function (FileUpload $component, Closure $set, $state) {
-                                $path = $state->store('/qcommerce/translations');
-                                $explode = explode('_', $component->getStatePath());
-                                $translationId = $explode[1];
-                                $locale = $explode[2];
-                                $translation = Translation::find($translationId);
-                                $translation->setTranslation("value", $locale, $path);
-                                $translation->save();
-                                Cache::forget(Str::slug($translation->name . $translation->tag . $locale));
-                                $this->notify('success', Str::of($translation->name)->replace('_', ' ')->replace('-', ' ')->title() . " is opgeslagen");
-                            });
+                            ->reactive();
                     } else {
                         $schema[] = TextInput::make("translation_{$translation->id}_{$locale['id']}")
                             ->default($translation->default)
@@ -162,6 +157,27 @@ class ListTranslations extends Page implements HasForms
         }
 
         return $sections;
+    }
+
+    public function updated($path, $value): void
+    {
+        foreach (Translation::where('type', 'image')->get() as $translation) {
+            foreach (Locales::getLocales() as $locale) {
+                if (Str::contains($path, "translation_{$translation->id}_{$locale['id']}")) {
+                    $this->notify('success', 'Afbeelding wordt opgeslagen');
+                    $imagePath = $value->store('/qcommerce/translations');
+                    $explode = explode('.', $path);
+                    $explode = explode('_', $explode[1]);
+                    $translationId = $explode[1];
+                    $locale = $explode[2];
+                    $translation = Translation::find($translationId);
+                    $translation->setTranslation("value", $locale, $imagePath);
+                    $translation->save();
+                    Cache::forget(Str::slug($translation->name . $translation->tag . $locale));
+                    $this->notify('success', Str::of($translation->name)->replace('_', ' ')->replace('-', ' ')->title() . " is opgeslagen");
+                }
+            }
+        }
     }
 
 //    public function submit()
