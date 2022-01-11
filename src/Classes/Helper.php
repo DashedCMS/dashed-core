@@ -51,7 +51,7 @@ class Helper
 
     public static function getAdminUrl()
     {
-        return url(config('qcommerce.path'));
+        return url(config('filament.path'));
     }
 
     public static function getLocalUrl($url)
