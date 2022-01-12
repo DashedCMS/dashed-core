@@ -14,11 +14,11 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
-use Mohamedsabil83\FilamentFormsTinyeditor\Components\TinyEditor;
 use Qubiqx\QcommerceCore\Classes\Locales;
 use Qubiqx\QcommerceCore\Models\Translation;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Qubiqx\QcommerceCore\Filament\Resources\TranslationResource;
+use Mohamedsabil83\FilamentFormsTinyeditor\Components\TinyEditor;
 
 class ListTranslations extends Page implements HasForms
 {
