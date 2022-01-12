@@ -50,6 +50,11 @@ class UpdateCommand extends Command
             '--force' => 'true',
         ]);
 
+        $this->call('vendor:publish', [
+            '--tag' => 'filament-forms-tinyeditor-assets',
+            '--force' => 'true',
+        ]);
+
         $this->call('migrate', [
             '--force' => 'true',
         ]);
