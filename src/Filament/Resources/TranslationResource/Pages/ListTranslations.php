@@ -14,6 +14,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
+use Mohamedsabil83\FilamentFormsTinyeditor\Components\TinyEditor;
 use Qubiqx\QcommerceCore\Classes\Locales;
 use Qubiqx\QcommerceCore\Models\Translation;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -84,24 +85,8 @@ class ListTranslations extends Page implements HasForms
                                 $this->notify('success', Str::of($translation->name)->replace('_', ' ')->replace('-', ' ')->title() . " is opgeslagen");
                             });
                     } elseif ($translation->type == 'editor') {
-                        $schema[] = RichEditor::make("translation_{$translation->id}_{$locale['id']}")
-                            ->fileAttachmentsDisk('qcommerce-uploads')
-                            ->toolbarButtons([
-                                'attachFiles',
-                                'blockquote',
-                                'bold',
-                                'bulletList',
-                                'codeBlock',
-                                'h2',
-                                'h3',
-                                'h4',
-                                'italic',
-                                'link',
-                                'orderedList',
-                                'redo',
-                                'strike',
-                                'undo',
-                            ])
+                        $schema[] = TinyEditor::make("translation_{$translation->id}_{$locale['id']}")
+                            ->fileAttachmentsDirectory('/qcommerce/orders/images')
                             ->default($translation->default)
                             ->label(Str::of($translation->name)->replace('_', ' ')->replace('-', ' ')->title())
                             ->helperText($helperText ?? '')
