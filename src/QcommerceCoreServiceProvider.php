@@ -80,6 +80,7 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
 //                'media-library',
 //                'qcommerce-core',
                 'sentry',
+                'activitylog',
             ])
             ->hasRoutes([
                 'frontend',
