@@ -79,6 +79,9 @@ class MenuItemResource extends Resource
             MultiSelect::make('site_ids')
                 ->label('Actief op sites')
                 ->options(collect(Sites::getSites())->pluck('name', 'id')->toArray())
+                ->hidden(function () {
+                    return ! (Sites::getAmountOfSites() > 1);
+                })
                 ->required(),
             TextInput::make('order')
                 ->label('Volgorde')

@@ -4,6 +4,7 @@ namespace Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource\Pages;
 
 use Filament\Pages\Actions\ButtonAction;
 use Filament\Resources\Pages\EditRecord;
+use Qubiqx\QcommerceCore\Classes\Sites;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource;
 use Filament\Resources\Pages\EditRecord\Concerns\Translatable;
 
@@ -26,6 +27,8 @@ class EditMenuItem extends EditRecord
                 }
             }
         }
+
+        $data['site_ids'] = $data['site_ids'] ?? [Sites::getFirstSite()['id']];
 
         return $data;
     }

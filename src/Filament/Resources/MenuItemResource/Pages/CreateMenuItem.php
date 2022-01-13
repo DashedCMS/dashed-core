@@ -3,6 +3,7 @@
 namespace Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource\Pages;
 
 use Filament\Resources\Pages\CreateRecord;
+use Qubiqx\QcommerceCore\Classes\Sites;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource;
 use Filament\Resources\Pages\CreateRecord\Concerns\Translatable;
 
@@ -25,6 +26,8 @@ class CreateMenuItem extends CreateRecord
                 }
             }
         }
+
+        $data['site_ids'] = $data['site_ids'] ?? [Sites::getFirstSite()['id']];
 
         return $data;
     }
