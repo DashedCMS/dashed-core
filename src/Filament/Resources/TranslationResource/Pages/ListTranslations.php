@@ -13,7 +13,6 @@ use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\RichEditor;
 use Qubiqx\QcommerceCore\Classes\Locales;
 use Qubiqx\QcommerceCore\Models\Translation;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -91,7 +90,7 @@ class ListTranslations extends Page implements HasForms
                             ->label(Str::of($translation->name)->replace('_', ' ')->replace('-', ' ')->title())
                             ->helperText($helperText ?? '')
                             ->reactive()
-                            ->afterStateUpdated(function (RichEditor $component, Closure $set, $state) {
+                            ->afterStateUpdated(function (TinyEditor $component, Closure $set, $state) {
                                 $explode = explode('_', $component->getStatePath());
                                 $translationId = $explode[1];
                                 $locale = $explode[2];
