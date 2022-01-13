@@ -33,6 +33,7 @@ class CreateMenusTable extends Migration
             $table->string('type')->nullable();
             $table->string('model')->nullable();
             $table->integer('model_id')->nullable();
+            $table->integer('order')->default(1);
 
             $table->softDeletes();
             $table->timestamps();
