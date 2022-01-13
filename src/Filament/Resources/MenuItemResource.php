@@ -86,6 +86,7 @@ class MenuItemResource extends Resource
             TextInput::make('order')
                 ->label('Volgorde')
                 ->required()
+                ->default(1)
                 ->rules([
                     'numeric',
                     'max:255',
