@@ -71,7 +71,7 @@ class Translation extends Model
             if (! $translation) {
                 $translation = self::updateOrCreate(
                     ['name' => $name, 'tag' => $tag],
-                    ['default' => $default, 'type' => $type, 'variables' => $variables ? json_encode($variables) : null]
+                    ['default' => $default, 'type' => $type, 'variables' => $variables]
                 );
 
                 if ($variables) {
