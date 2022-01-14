@@ -17,7 +17,7 @@ use Qubiqx\QcommerceCore\Models\Translation;
 Route::group(
     [
         'prefix' => LaravelLocalization::setLocale(),
-        'middleware' => ['web', FrontendMiddleware::class, LocaleSessionRedirect::class, LaravelLocalizationRedirectFilter::class, LaravelLocalizationViewPath::class],
+        'middleware' => array_merge(['web', FrontendMiddleware::class, LocaleSessionRedirect::class, LaravelLocalizationRedirectFilter::class, LaravelLocalizationViewPath::class], cms()->builder('frontendMiddlewares')),
     ],
     function () {
         //Auth routes
@@ -55,4 +55,4 @@ Route::group(
     }
 );
 
-Route::fallback([FrontendController::class, 'index'])->middleware(['web', FrontendMiddleware::class, LocaleSessionRedirect::class, LaravelLocalizationRedirectFilter::class, LaravelLocalizationViewPath::class])->name('qcommerce.frontend.general.index')->where('slug', '.*');
+Route::fallback([FrontendController::class, 'index'])->middleware(array_merge(['web', FrontendMiddleware::class, LocaleSessionRedirect::class, LaravelLocalizationRedirectFilter::class, LaravelLocalizationViewPath::class], cms()->builder('frontendMiddlewares')))->name('qcommerce.frontend.general.index')->where('slug', '.*');

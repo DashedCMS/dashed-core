@@ -21,6 +21,7 @@ class CMSManager
         'content' => [],
         'routeModels' => [],
         'settingPages' => [],
+        'frontendMiddlewares' => [],
     ];
 
     public function model(string $name, ?string $implementation = null): self|string
