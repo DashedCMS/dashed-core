@@ -75,6 +75,7 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
             ->hasConfigFile([
                 'filament',
                 'filament-spatie-laravel-translatable-plugin',
+                'filament-forms-tinyeditor',
                 'filesystems',
                 'laravellocalization',
 //                'media-library',
