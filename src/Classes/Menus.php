@@ -2,6 +2,7 @@
 
 namespace Qubiqx\QcommerceCore\Classes;
 
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
 use Qubiqx\QcommerceCore\Models\Menu;
 
@@ -9,7 +10,7 @@ class Menus
 {
     public static function getMenuItems($menuName)
     {
-        $menuItems = Cache::tags(['menus', 'menu-items', 'products', 'product-categories', 'pages'])->rememberForever("menu-$menuName", function () use ($menuName) {
+        $menuItems = Cache::tags(['menus', 'menu-items', 'products', 'product-categories', 'pages'])->rememberForever("menu-$menuName-" . App::getLocale(), function () use ($menuName) {
             $menu = Menu::where('name', $menuName)->first();
 
             if ($menu) {
