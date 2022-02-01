@@ -23,6 +23,7 @@ class CreateMenuItem extends CreateRecord
                 if ($formFieldKey == "{$routeKey}_id") {
                     $data['model'] = $routeModel['class'];
                     $data['model_id'] = $formFieldValue;
+                    unset($data["{$routeKey}_id"]);
                 }
             }
         }
