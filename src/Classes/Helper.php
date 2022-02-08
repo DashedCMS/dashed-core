@@ -61,7 +61,7 @@ class Helper
 
     public static function getCurrentUrlInLocale($locale, $url = null)
     {
-        if (!$url) {
+        if (! $url) {
             $url = '/' . $locale;
         }
 
