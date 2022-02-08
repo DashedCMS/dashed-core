@@ -6,3 +6,5 @@
         </noscript>
     @endif
 @endif
+
+@include('cookieConsent::index')

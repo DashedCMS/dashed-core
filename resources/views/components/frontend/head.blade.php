@@ -115,8 +115,6 @@
 ]) }}">
 @endif
 
-@include('cookieConsent::index')
-
 {!! Customsetting::get('extra_scripts') !!}
 
 {!! SEO::generate() !!}
