@@ -32,7 +32,7 @@ class FrontendController extends Controller
 //        $order->refresh();
 //        dd($order);
         foreach (Locales::getLocales() as $locale) {
-            if (Str::startsWith($slug, $locale['id'])) {
+            if (Str::startsWith($slug, $locale['id'] . '/') || $slug == $locale['id']) {
                 $slug = Str::substr($slug, strlen($locale['id']) + 1);
             }
         }
