@@ -61,11 +61,12 @@ class Helper
 
     public static function getCurrentUrlInLocale($locale, $url = null)
     {
-        if (! $url) {
+        if (!$url) {
             $url = '/' . $locale;
         }
 
         return $url;
+        //When using below, it removes the defaultLocale from URL, which makes it impossible to switch
         return LaravelLocalization::getLocalizedURL($locale, $url);
     }
 }
