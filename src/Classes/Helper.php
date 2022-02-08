@@ -62,7 +62,7 @@ class Helper
     public static function getCurrentUrlInLocale($locale, $url = null)
     {
         if (! $url) {
-            $url = '/';
+            $url = '/' . $locale;
         }
 
         return LaravelLocalization::getLocalizedURL($locale, $url);
