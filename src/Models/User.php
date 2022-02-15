@@ -53,6 +53,10 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         'email_verified_at' => 'datetime',
     ];
 
+    protected $appends = [
+        'name',
+    ];
+
     public function canAccessFilament(): bool
     {
         return ($this->role === 'admin');
