@@ -35,7 +35,7 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
             $schedule->command(InvalidatePasswordResetTokens::class)->everyFifteenMinutes();
         });
 
-        if (!$this->app->environment('production')) {
+        if (! $this->app->environment('production')) {
             Mail::alwaysFrom('support@qubiqx.com');
             Mail::alwaysTo('support@qubiqx.com');
         }
