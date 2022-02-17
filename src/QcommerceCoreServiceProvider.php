@@ -3,6 +3,7 @@
 namespace Qubiqx\QcommerceCore;
 
 use Filament\PluginServiceProvider;
+use Illuminate\Support\Facades\Mail;
 use Qubiqx\QcommerceCore\Models\Page;
 use Spatie\LaravelPackageTools\Package;
 use Illuminate\Console\Scheduling\Schedule;
@@ -33,6 +34,11 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
             $schedule->command(CreateSitemap::class)->daily();
             $schedule->command(InvalidatePasswordResetTokens::class)->everyFifteenMinutes();
         });
+
+        if (!$this->app->environment('production')) {
+            Mail::alwaysFrom('support@qubiqx.com');
+            Mail::alwaysTo('support@qubiqx.com');
+        }
     }
 
     public function configurePackage(Package $package): void
