@@ -12,14 +12,12 @@ use Qubiqx\QcommerceCore\Commands\UpdateCommand;
 use Qubiqx\QcommerceCore\Commands\InstallCommand;
 use Qubiqx\QcommerceCore\Classes\PageRouteHandler;
 use Qubiqx\QcommerceCore\Commands\CreateAdminUser;
-use Qubiqx\QcommerceCore\Filament\Resources\FormResource;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuResource;
 use Qubiqx\QcommerceCore\Filament\Resources\PageResource;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource;
 use Qubiqx\QcommerceCore\Filament\Pages\Settings\SettingsPage;
 use Qubiqx\QcommerceCore\Commands\InvalidatePasswordResetTokens;
 use Qubiqx\QcommerceCore\Filament\Resources\TranslationResource;
-use Qubiqx\QcommerceCore\Filament\Pages\Settings\FormSettingsPage;
 use Qubiqx\QcommerceCore\Filament\Pages\Settings\GeneralSettingsPage;
 
 class QcommerceCoreServiceProvider extends PluginServiceProvider
