@@ -68,14 +68,12 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Qubiqx\\QcommerceCore\\QcommerceCoreServiceProvider",
-                "Qubiqx\\QcommerceCore\\QcommerceCoreEventServiceProvider"
+                "Qubiqx\\QcommerceCore\\QcommerceCoreServiceProvider"
             ],
             "aliases": {
                 "AccountHelper": "Qubiqx\\QcommerceCore\\Classes\\AccountHelper",
                 "Helper": "Qubiqx\\QcommerceCore\\Classes\\Helper",
                 "Locales": "Qubiqx\\QcommerceCore\\Classes\\Locales",
-                "Menus": "Qubiqx\\QcommerceCore\\Classes\\Menus",
                 "Sites": "Qubiqx\\QcommerceCore\\Classes\\Sites",
                 "Customsetting": "Qubiqx\\QcommerceCore\\Models\\Customsetting"
             }

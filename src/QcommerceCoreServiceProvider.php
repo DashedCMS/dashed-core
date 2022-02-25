@@ -4,17 +4,12 @@ namespace Qubiqx\QcommerceCore;
 
 use Filament\PluginServiceProvider;
 use Illuminate\Support\Facades\Mail;
-use Qubiqx\QcommerceCore\Models\Page;
 use Spatie\LaravelPackageTools\Package;
 use Illuminate\Console\Scheduling\Schedule;
 use Qubiqx\QcommerceCore\Commands\CreateSitemap;
 use Qubiqx\QcommerceCore\Commands\UpdateCommand;
 use Qubiqx\QcommerceCore\Commands\InstallCommand;
-use Qubiqx\QcommerceCore\Classes\PageRouteHandler;
 use Qubiqx\QcommerceCore\Commands\CreateAdminUser;
-use Qubiqx\QcommerceCore\Filament\Resources\MenuResource;
-use Qubiqx\QcommerceCore\Filament\Resources\PageResource;
-use Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource;
 use Qubiqx\QcommerceCore\Filament\Pages\Settings\SettingsPage;
 use Qubiqx\QcommerceCore\Commands\InvalidatePasswordResetTokens;
 use Qubiqx\QcommerceCore\Filament\Pages\Settings\GeneralSettingsPage;
@@ -40,19 +35,6 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
     public function configurePackage(Package $package): void
     {
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
-
-        cms()->builder(
-            'routeModels',
-            array_merge(cms()->builder('routeModels'), [
-                'page' => [
-                    'name' => 'Pagina',
-                    'pluralName' => 'Pagina\'s',
-                    'class' => Page::class,
-                    'nameField' => 'name',
-                    'routeHandler' => PageRouteHandler::class,
-                ],
-            ])
-        );
 
         cms()->builder(
             'settingPages',
@@ -103,15 +85,6 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
         return array_merge(parent::getPages(), [
             SettingsPage::class,
             GeneralSettingsPage::class,
-        ]);
-    }
-
-    protected function getResources(): array
-    {
-        return array_merge(parent::getResources(), [
-            PageResource::class,
-            MenuResource::class,
-            MenuItemResource::class,
         ]);
     }
 }

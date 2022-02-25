@@ -3,7 +3,7 @@
 namespace Qubiqx\QcommerceCore;
 
 use Qubiqx\QcommerceCore\Models\Menu;
-use Qubiqx\QcommerceCore\Models\Page;
+use Qubiqx\QcommercePages\Models\Page;
 use Qubiqx\QcommerceCore\Models\MenuItem;
 
 class CMSManager
