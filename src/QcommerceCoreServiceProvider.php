@@ -17,7 +17,6 @@ use Qubiqx\QcommerceCore\Filament\Resources\PageResource;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuItemResource;
 use Qubiqx\QcommerceCore\Filament\Pages\Settings\SettingsPage;
 use Qubiqx\QcommerceCore\Commands\InvalidatePasswordResetTokens;
-use Qubiqx\QcommerceCore\Filament\Resources\TranslationResource;
 use Qubiqx\QcommerceCore\Filament\Pages\Settings\GeneralSettingsPage;
 
 class QcommerceCoreServiceProvider extends PluginServiceProvider
@@ -113,7 +112,6 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
             PageResource::class,
             MenuResource::class,
             MenuItemResource::class,
-            TranslationResource::class,
         ]);
     }
 }
