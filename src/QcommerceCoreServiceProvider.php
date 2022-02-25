@@ -84,8 +84,6 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
                 'filament-forms-tinyeditor',
                 'filesystems',
                 'laravellocalization',
-//                'media-library',
-//                'qcommerce-core',
                 'sentry',
                 'activitylog',
             ])
@@ -116,7 +114,6 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
             SettingsPage::class,
             GeneralSettingsPage::class,
             FormSettingsPage::class,
-            FilesPage::class,
         ]);
     }
 
