@@ -67,12 +67,6 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
                     'icon' => 'cog',
                     'page' => GeneralSettingsPage::class,
                 ],
-                'formNotifications' => [
-                    'name' => 'Formulier notificaties',
-                    'description' => 'Beheer meldingen die na het invullen van het formulier worden verstuurd',
-                    'icon' => 'bell',
-                    'page' => FormSettingsPage::class,
-                ],
             ])
         );
 
@@ -113,7 +107,6 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
         return array_merge(parent::getPages(), [
             SettingsPage::class,
             GeneralSettingsPage::class,
-            FormSettingsPage::class,
         ]);
     }
 
@@ -123,7 +116,6 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
             PageResource::class,
             MenuResource::class,
             MenuItemResource::class,
-            FormResource::class,
             TranslationResource::class,
         ]);
     }

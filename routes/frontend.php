@@ -48,10 +48,6 @@ Route::group(
                 });
             });
         }
-
-        //Form routes
-        Route::post('/form/post', [FormController::class, 'store'])->name('qcommerce.frontend.forms.store');
-
     }
 );
 
