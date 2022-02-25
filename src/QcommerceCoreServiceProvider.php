@@ -12,7 +12,6 @@ use Qubiqx\QcommerceCore\Commands\UpdateCommand;
 use Qubiqx\QcommerceCore\Commands\InstallCommand;
 use Qubiqx\QcommerceCore\Classes\PageRouteHandler;
 use Qubiqx\QcommerceCore\Commands\CreateAdminUser;
-use Qubiqx\QcommerceCore\Filament\Pages\FilesPage;
 use Qubiqx\QcommerceCore\Filament\Resources\FormResource;
 use Qubiqx\QcommerceCore\Filament\Resources\MenuResource;
 use Qubiqx\QcommerceCore\Filament\Resources\PageResource;
