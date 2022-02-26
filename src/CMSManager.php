@@ -2,17 +2,9 @@
 
 namespace Qubiqx\QcommerceCore;
 
-use Qubiqx\QcommerceCore\Models\Menu;
-use Qubiqx\QcommercePages\Models\Page;
-use Qubiqx\QcommerceCore\Models\MenuItem;
-
 class CMSManager
 {
-    protected static $models = [
-        'Page' => Page::class,
-        'Menu' => Menu::class,
-        'MenuItem' => MenuItem::class,
-    ];
+    protected static $models = [];
 
     protected static $builders = [
         'sites' => [],
