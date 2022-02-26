@@ -18,6 +18,8 @@ class CreateCustomSettingsTable extends Migration
             $table->string('name');
             $table->text('value')->nullable();
             $table->string('site_id')->nullable();
+            $table->string('locale')->nullable();
+            $table->index(['name', 'site_id', 'locale']);
             $table->timestamps();
         });
     }

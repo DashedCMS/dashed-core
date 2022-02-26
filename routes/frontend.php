@@ -1,18 +1,17 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Qubiqx\QcommerceCore\Models\Translation;
+use Qubiqx\QcommerceCore\Middleware\AuthMiddleware;
+use Qubiqx\QcommerceCore\Middleware\GuestMiddleware;
+use Qubiqx\QcommerceCore\Middleware\FrontendMiddleware;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+use Qubiqx\QcommerceCore\Controllers\Frontend\AuthController;
+use Qubiqx\QcommerceCore\Controllers\Frontend\AccountController;
 use Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect;
+use Qubiqx\QcommerceCore\Controllers\Frontend\FrontendController;
 use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationViewPath;
 use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter;
-use Qubiqx\QcommerceCore\Controllers\Frontend\AccountController;
-use Qubiqx\QcommerceCore\Controllers\Frontend\AuthController;
-use Qubiqx\QcommerceCore\Controllers\Frontend\FormController;
-use Qubiqx\QcommerceCore\Controllers\Frontend\FrontendController;
-use Qubiqx\QcommerceCore\Middleware\AuthMiddleware;
-use Qubiqx\QcommerceCore\Middleware\FrontendMiddleware;
-use Qubiqx\QcommerceCore\Middleware\GuestMiddleware;
-use Qubiqx\QcommerceCore\Models\Translation;
 
 Route::group(
     [
