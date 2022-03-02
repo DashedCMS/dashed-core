@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Qubiqx\QcommerceCore\Models\Translation;
+use Qubiqx\QcommerceTranslations\Models\Translation;
 use Qubiqx\QcommerceCore\Middleware\AuthMiddleware;
 use Qubiqx\QcommerceCore\Middleware\GuestMiddleware;
 use Qubiqx\QcommerceCore\Middleware\FrontendMiddleware;

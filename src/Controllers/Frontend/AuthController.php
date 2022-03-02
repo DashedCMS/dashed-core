@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\View;
 use Qubiqx\QcommerceCore\Models\User;
 use Artesaos\SEOTools\Facades\SEOTools;
-use Qubiqx\QcommerceCore\Models\Translation;
+use Qubiqx\QcommerceTranslations\Models\Translation;
 use Qubiqx\QcommerceCore\Mail\PasswordResetMail;
 use Qubiqx\QcommerceCore\Requests\Frontend\LoginRequest;
 use Qubiqx\QcommerceCore\Requests\Frontend\RegisterRequest;
