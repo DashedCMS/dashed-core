@@ -1,9 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Qubiqx\QcommerceTranslations\Models\Translation;
 use Qubiqx\QcommerceCore\Middleware\AuthMiddleware;
 use Qubiqx\QcommerceCore\Middleware\GuestMiddleware;
+use Qubiqx\QcommerceTranslations\Models\Translation;
 use Qubiqx\QcommerceCore\Middleware\FrontendMiddleware;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use Qubiqx\QcommerceCore\Controllers\Frontend\AuthController;

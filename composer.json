@@ -17,7 +17,6 @@
     ],
     "require": {
         "php": "^8.0",
-        "alexusmai/laravel-file-manager": "*",
         "artesaos/seotools": "^0.20.0",
         "doctrine/dbal": "^3.0.0",
         "filament/filament": "2.*",

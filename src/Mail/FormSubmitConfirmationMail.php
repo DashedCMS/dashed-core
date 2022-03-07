@@ -8,8 +8,8 @@ use Illuminate\Mail\Mailable;
 use Qubiqx\QcommerceCore\Models\Form;
 use Illuminate\Queue\SerializesModels;
 use Qubiqx\QcommerceCore\Models\FormInput;
-use Qubiqx\QcommerceTranslations\Models\Translation;
 use Qubiqx\QcommerceCore\Models\Customsetting;
+use Qubiqx\QcommerceTranslations\Models\Translation;
 
 class FormSubmitConfirmationMail extends Mailable
 {
