@@ -18,11 +18,6 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
 {
     public static string $name = 'qcommerce-core';
 
-    protected array $styles = [
-//        'qcommerce-core' => __DIR__ . '/../dist/app.css',
-        'qcommerce-core' => __DIR__ . '/../dist/css/qcommerce-core1.css',
-    ];
-
     public function bootingPackage()
     {
         $this->app->booted(function () {
@@ -76,6 +71,13 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
                 InvalidatePasswordResetTokens::class,
                 CreateSitemap::class,
             ]);
+    }
+
+    protected function getStyles(): array
+    {
+        return array_merge(parent::getStyles(), [
+            'qcommerce-core' => str_replace('/vendor/qubiqx/qcommerce-core/src', '', str_replace('/packages/qubiqx/qcommerce-core/src', '', __DIR__)) . '/vendor/qubiqx/qcommerce-core/resources/dist/css/qcommerce-core.css',
+        ]);
     }
 
     protected function getPages(): array
