@@ -3,7 +3,6 @@
 namespace Qubiqx\QcommerceCore\Classes;
 
 use Illuminate\Support\Facades\Request;
-use Qubiqx\QcommerceCore\Models\ProductCategory;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 class Helper
