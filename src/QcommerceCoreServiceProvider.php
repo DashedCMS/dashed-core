@@ -27,7 +27,7 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
 
         $drift->registerConfig(new Config(
             name: 'qcommerce', // Will be used in the slug
-            filesystemDisk: 'qcommerce', // Local, public or s3 for example
+            filesystemDisk: 'public', // Local, public or s3 for example
             cachingStrategy: FilesystemCachingStrategy::class,
         ));
 
