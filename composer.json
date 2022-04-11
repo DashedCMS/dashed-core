@@ -30,7 +30,7 @@
         "spatie/laravel-activitylog": "^3.17",
         "spatie/laravel-cookie-consent": "^3.2",
         "spatie/laravel-package-tools": "^1.9.2",
-        "spatie/laravel-sitemap": "^5.8.0",
+        "spatie/laravel-sitemap": "^6.1.0",
         "wildbit/swiftmailer-postmark": "^3.3"
     },
     "require-dev": {
