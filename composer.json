@@ -29,7 +29,8 @@
         "spatie/laravel-cookie-consent": "^3.2",
         "spatie/laravel-package-tools": "^1.11",
         "spatie/laravel-sitemap": "^6.1.0",
-        "wildbit/swiftmailer-postmark": "^3.3"
+        "symfony/http-client": "^6.0",
+        "symfony/postmark-mailer": "^6.0"
     },
     "require-dev": {
         "nunomaduro/collision": "^6.1",
