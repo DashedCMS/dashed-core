@@ -21,7 +21,6 @@
         "doctrine/dbal": "^3.3",
         "filament/filament": "2.*",
         "filament/spatie-laravel-translatable-plugin": "^2.0",
-        "flowframe/laravel-glide": "^0.1",
         "intervention/image": "^3.0",
         "laravel/horizon": "^5.9",
         "mcamara/laravel-localization": "^1.7",
