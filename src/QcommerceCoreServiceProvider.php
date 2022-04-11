@@ -23,13 +23,13 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
 
     public function bootingPackage()
     {
-        $drift = app(DriftManager::class);
-
-        $drift->registerConfig(new Config(
-            name: 'qcommerce', // Will be used in the slug
-            filesystemDisk: 'public', // Local, public or s3 for example
-            cachingStrategy: FilesystemCachingStrategy::class,
-        ));
+//        $drift = app(DriftManager::class);
+//
+//        $drift->registerConfig(new Config(
+//            name: 'qcommerce', // Will be used in the slug
+//            filesystemDisk: 'public', // Local, public or s3 for example
+//            cachingStrategy: FilesystemCachingStrategy::class,
+//        ));
 
         $this->app->booted(function () {
             $schedule = app(Schedule::class);
