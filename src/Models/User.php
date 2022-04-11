@@ -2,6 +2,7 @@
 
 namespace Qubiqx\QcommerceCore\Models;
 
+use Spatie\Activitylog\LogOptions;
 use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\FilamentUser;
@@ -56,6 +57,11 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
     protected $appends = [
         'name',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults();
+    }
 
     public function canAccessFilament(): bool
     {

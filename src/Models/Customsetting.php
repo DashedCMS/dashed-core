@@ -2,6 +2,7 @@
 
 namespace Qubiqx\QcommerceCore\Models;
 
+use Spatie\Activitylog\LogOptions;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\Model;
@@ -17,6 +18,11 @@ class Customsetting extends Model
     protected $fillable = ['name', 'value', 'site_id', 'locale'];
 
     protected $table = 'qcommerce__custom_settings';
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults();
+    }
 
     public static function get($name, $siteId = null, $default = null, $locale = null)
     {
