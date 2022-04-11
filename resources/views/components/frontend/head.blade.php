@@ -36,7 +36,7 @@
 
 @if($favicon)
     <link rel="apple-touch-icon" sizes="57x57"
-          href="{{ app(\Flowframe\Drift\UrlBuilder::class)->url('qcommerce', $favicon, [
+          href="{{ app(\Flowframe\Drift\UrlBuilder::class)->url('qcommerce', str_replace('/qcommerce', 'qcommerce', $favicon), [
                         'widen' => 57,
                         'heighten' => 57
                     ]) }}">
