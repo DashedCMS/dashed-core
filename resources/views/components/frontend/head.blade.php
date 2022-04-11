@@ -36,83 +36,70 @@
 
 @if($favicon)
     <link rel="apple-touch-icon" sizes="57x57"
-          href="{{ glide($favicon, [
-    'w' => 57,
-    'h' => 57,
-    'q' => 100,
-]) }}">
+          href="{{ app(\Flowframe\Drift\UrlBuilder::class)->url('qcommerce', $favicon, [
+                        'widen' => 57,
+                        'heighten' => 57
+                    ]) }}">
     <link rel="apple-touch-icon" sizes="60x60"
-          href="{{ glide($favicon, [
-    'w' => 60,
-    'h' => 60,
-    'q' => 100,
-]) }}">
+          href="{{ app(\Flowframe\Drift\UrlBuilder::class)->url('qcommerce', $favicon, [
+                        'widen' => 60,
+                        'heighten' => 60
+                    ]) }}">
     <link rel="apple-touch-icon" sizes="72x72"
-          href="{{ glide($favicon, [
-    'w' => 72,
-    'h' => 72,
-    'q' => 100,
-]) }}">
+          href="{{ app(\Flowframe\Drift\UrlBuilder::class)->url('qcommerce', $favicon, [
+                        'widen' => 72,
+                        'heighten' => 72
+                    ]) }}">
     <link rel="apple-touch-icon" sizes="76x76"
-          href="{{ glide($favicon, [
-    'w' => 76,
-    'h' => 76,
-    'q' => 100,
-]) }}">
+          href="{{ app(\Flowframe\Drift\UrlBuilder::class)->url('qcommerce', $favicon, [
+                        'widen' => 76,
+                        'heighten' => 76
+                    ]) }}">
     <link rel="apple-touch-icon" sizes="114x114"
-          href="{{ glide($favicon, [
-    'w' => 114,
-    'h' => 114,
-    'q' => 100,
-]) }}">
+          href="{{ app(\Flowframe\Drift\UrlBuilder::class)->url('qcommerce', $favicon, [
+                        'widen' => 114,
+                        'heighten' => 114
+                    ]) }}">
     <link rel="apple-touch-icon" sizes="120x120"
-          href="{{ glide($favicon, [
-    'w' => 120,
-    'h' => 120,
-    'q' => 100,
-]) }}">
+          href="{{ app(\Flowframe\Drift\UrlBuilder::class)->url('qcommerce', $favicon, [
+                        'widen' => 120,
+                        'heighten' => 120
+                    ]) }}">
     <link rel="apple-touch-icon" sizes="144x144"
-          href="{{ glide($favicon, [
-    'w' => 144,
-    'h' => 144,
-    'q' => 100,
-]) }}">
+          href="{{ app(\Flowframe\Drift\UrlBuilder::class)->url('qcommerce', $favicon, [
+                        'widen' => 144,
+                        'heighten' => 144
+                    ]) }}">
     <link rel="apple-touch-icon" sizes="152x152"
-          href="{{ glide($favicon, [
-    'w' => 152,
-    'h' => 152,
-    'q' => 100,
-]) }}">
+          href="{{ app(\Flowframe\Drift\UrlBuilder::class)->url('qcommerce', $favicon, [
+                        'widen' => 152,
+                        'heighten' => 152
+                    ]) }}">
     <link rel="apple-touch-icon" sizes="180x180"
-          href="{{ glide($favicon, [
-    'w' => 180,
-    'h' => 180,
-    'q' => 100,
-]) }}">
+          href="{{ app(\Flowframe\Drift\UrlBuilder::class)->url('qcommerce', $favicon, [
+                        'widen' => 180,
+                        'heighten' => 180
+                    ]) }}">
     <link rel="icon" type="image/png" sizes="192x192"
-          href="{{ glide($favicon, [
-    'w' => 192,
-    'h' => 192,
-    'q' => 100,
-]) }}">
+          href="{{ app(\Flowframe\Drift\UrlBuilder::class)->url('qcommerce', $favicon, [
+                        'widen' => 192,
+                        'heighten' => 192
+                    ]) }}">
     <link rel="icon" type="image/png" sizes="32x32"
-          href="{{ glide($favicon, [
-    'w' => 32,
-    'h' => 32,
-    'q' => 100,
-]) }}">
+          href="{{ app(\Flowframe\Drift\UrlBuilder::class)->url('qcommerce', $favicon, [
+                        'widen' => 32,
+                        'heighten' => 32
+                    ]) }}">
     <link rel="icon" type="image/png" sizes="96x96"
-          href="{{ glide($favicon, [
-    'w' => 96,
-    'h' => 96,
-    'q' => 100,
-]) }}">
+          href="{{ app(\Flowframe\Drift\UrlBuilder::class)->url('qcommerce', $favicon, [
+                        'widen' => 96,
+                        'heighten' => 96
+                    ]) }}">
     <link rel="icon" type="image/png" sizes="16x16"
-          href="{{ glide($favicon, [
-    'w' => 16,
-    'h' => 16,
-    'q' => 100,
-]) }}">
+          href="{{ app(\Flowframe\Drift\UrlBuilder::class)->url('qcommerce', $favicon, [
+                        'widen' => 16,
+                        'heighten' => 16
+                    ]) }}">
 @endif
 
 {!! Customsetting::get('extra_scripts') !!}

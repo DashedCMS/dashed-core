@@ -3,6 +3,9 @@
 namespace Qubiqx\QcommerceCore;
 
 use Filament\PluginServiceProvider;
+use Flowframe\Drift\CachingStrategies\FilesystemCachingStrategy;
+use Flowframe\Drift\Config;
+use Flowframe\Drift\DriftManager;
 use Illuminate\Support\Facades\Mail;
 use Spatie\LaravelPackageTools\Package;
 use Illuminate\Console\Scheduling\Schedule;
@@ -20,6 +23,14 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
 
     public function bootingPackage()
     {
+        $drift = app(DriftManager::class);
+
+        $drift->registerConfig(new Config(
+            name: 'qcommerce', // Will be used in the slug
+            filesystemDisk: 'qcommerce', // Local, public or s3 for example
+            cachingStrategy: FilesystemCachingStrategy::class,
+        ));
+
         $this->app->booted(function () {
             $schedule = app(Schedule::class);
             $schedule->command(CreateSitemap::class)->daily();
