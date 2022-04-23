@@ -18,7 +18,7 @@ class FrontendController extends Controller
         SEOTools::opengraph()->setUrl(url()->current());
 
         if (View::exists('qcommerce.not-found.show')) {
-            return view('qcommerce.not-found.show');
+            return response()->view('qcommerce.not-found.show')->setStatusCode(404);
         } else {
             abort(404);
         }
