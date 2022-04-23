@@ -39,8 +39,8 @@ class CreateSitemap extends Command
      */
     public function handle()
     {
-        CreateSitemapJob::dispatch();
-//        CreateSitemapJob::dispatch()->delay(now()->addMinutes(rand(0, 240)));
+//        CreateSitemapJob::dispatch();
+        CreateSitemapJob::dispatch()->delay(now()->addMinutes(rand(0, 240)));
 //        Sitemap::create();
     }
 }
