@@ -9,7 +9,7 @@ class Sitemap
     public static function create()
     {
         SitemapGenerator::create(url('/'))
-//            ->setConcurrency(1)
+            ->setConcurrency(1)
             ->writeToFile(public_path('sitemap.xml'));
     }
 }
