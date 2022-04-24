@@ -3,7 +3,6 @@
 namespace Qubiqx\QcommerceCore\Commands;
 
 use Illuminate\Console\Command;
-use Qubiqx\QcommerceCore\Classes\Sitemap;
 use Qubiqx\QcommerceCore\Jobs\Sitemap\CreateSitemapJob;
 
 class CreateSitemap extends Command
