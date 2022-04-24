@@ -39,8 +39,10 @@ class CreateSitemap extends Command
      */
     public function handle()
     {
-//        CreateSitemapJob::dispatch();
-        CreateSitemapJob::dispatch()->delay(now()->addMinutes(rand(0, 240)));
-//        Sitemap::create();
+        if (env('QUEUE_CONNECTION', 'sync') == 'redis') {
+            CreateSitemapJob::dispatch()->delay(now()->addMinutes(rand(0, 240)));
+        } else {
+            CreateSitemapJob::dispatch();
+        }
     }
 }
