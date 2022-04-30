@@ -104,7 +104,7 @@
 
 {!! Customsetting::get('extra_scripts') !!}
 
-<link rel="alternate" hreflang="nl" href="{{ request()->url() }}"/>
+{{--<link rel="alternate" hreflang="nl" href="{{ request()->url() }}"/>--}}
 <link rel="canonical" href="{{ request()->url() }}">
 <meta name="description" content="{{ seo()->metaData('metaTitle') }}">
 <meta property="og:url" content="{{ request()->url() }}">
