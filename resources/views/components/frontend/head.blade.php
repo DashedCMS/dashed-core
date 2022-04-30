@@ -105,7 +105,9 @@
 {!! Customsetting::get('extra_scripts') !!}
 
 <title>{{ seo()->metaData('metaTitle') }}</title>
-{{--<link rel="alternate" hreflang="nl" href="{{ request()->url() }}"/>--}}
+@foreach(seo()->metaData('alternateUrls') as $locale => $url)
+    <link rel="alternate" hreflang="{{ $locale }}" href="{{ $url }}"/>
+@endforeach
 <link rel="canonical" href="{{ request()->url() }}">
 <meta name="description" content="{{ seo()->metaData('metaTitle') }}">
 <meta property="og:url" content="{{ request()->url() }}">
