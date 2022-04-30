@@ -104,6 +104,7 @@
 
 {!! Customsetting::get('extra_scripts') !!}
 
+<title>{{ seo()->metaData('metaTitle') }}</title>
 {{--<link rel="alternate" hreflang="nl" href="{{ request()->url() }}"/>--}}
 <link rel="canonical" href="{{ request()->url() }}">
 <meta name="description" content="{{ seo()->metaData('metaTitle') }}">
