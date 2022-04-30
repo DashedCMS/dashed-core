@@ -111,8 +111,8 @@
 <meta property="og:site_name" content="{{ Customsetting::get('site_name', 'Quezy') }}">
 <meta property="og:title" content="{{ seo()->metaData('metaTitle') }}">
 <meta property="og:description" content="{{ seo()->metaData('metaDescription') }}">
-<meta property="og:type" content="website">
-<meta property="og:locale" content="nl-NL">
+<meta property="og:type" content="{{ seo()->metaData('ogType') }}">
+<meta property="og:locale" content="{{ \Mcamara\LaravelLocalization\Facades\LaravelLocalization::getCurrentLocaleRegional() }}">
 @if(seo()->metaData('metaImage'))
     <meta property="og:image" content="{!! seo()->metaData('metaImage') !!}">
 @endif

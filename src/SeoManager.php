@@ -8,6 +8,7 @@ class SeoManager
         'metaTitle' => '',
         'metaDescription' => '',
         'metaImage' => '',
+        'ogType' => 'website',
         'twitterSite' => '',
         'twitterCreator' => '',
     ];
