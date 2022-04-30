@@ -50,7 +50,7 @@ class FrontendMiddleware
                     Schema::contactPoint()
                         ->telephone(Customsetting::get('company_phone_number'))
                         ->email(Customsetting::get('site_to_email'))
-                )
+                ),
         ]);
 
         View::share('logo', $logo);
