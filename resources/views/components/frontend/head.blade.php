@@ -105,7 +105,6 @@
 {!! Customsetting::get('extra_scripts') !!}
 
 @dd(frontend()->metaData('metaTitle'))
-{!! SEO::generate() !!}
 
 @stack('metadata')
 
