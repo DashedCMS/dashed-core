@@ -4,7 +4,9 @@ namespace Qubiqx\QcommerceCore\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\View;
+use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use Qubiqx\QcommerceCore\Classes\Sites;
 use Qubiqx\QcommerceCore\Models\Customsetting;
 
@@ -19,6 +21,8 @@ class FrontendMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
+        App::setLocale(LaravelLocalization::getCurrentLocale());
+
         config([
             'seotools.meta.defaults.title' => Customsetting::get('site_name', Sites::getActive(), 'Website'),
             'seotools.meta.defaults.separator' => ' | ',
