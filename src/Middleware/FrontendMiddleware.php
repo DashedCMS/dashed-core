@@ -2,15 +2,15 @@
 
 namespace Qubiqx\QcommerceCore\Middleware;
 
-use App\Classes\CustomSettings;
 use Closure;
 use Illuminate\Http\Request;
+use Spatie\SchemaOrg\Schema;
+use App\Classes\CustomSettings;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\View;
 use Qubiqx\QcommerceCore\Classes\Sites;
 use Qubiqx\QcommerceCore\Models\Customsetting;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
-use Spatie\SchemaOrg\Schema;
 
 class FrontendMiddleware
 {
@@ -48,7 +48,8 @@ class FrontendMiddleware
             ->contactPoint(
                 Schema::contactPoint()
                     ->telephone(CustomSettings::get('contact-number', '085 - 732 69 02'))
-                    ->email(CustomSettings::get('contact-email', 'help@quezy.io')));
+                    ->email(CustomSettings::get('contact-email', 'help@quezy.io'))
+            );
 
         $logo = Customsetting::get('site_logo', Sites::getActive(), '');
         $favicon = Customsetting::get('site_favicon', Sites::getActive(), '');
