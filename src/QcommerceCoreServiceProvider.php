@@ -6,7 +6,6 @@ use Flowframe\Drift\Config;
 use Flowframe\Drift\DriftManager;
 use Filament\PluginServiceProvider;
 use Illuminate\Support\Facades\Mail;
-use Qubiqx\QcommerceCore\Filament\Pages\Settings\MetadataSettingsPage;
 use Spatie\LaravelPackageTools\Package;
 use Illuminate\Console\Scheduling\Schedule;
 use Qubiqx\QcommerceCore\Commands\CreateSitemap;
@@ -17,6 +16,7 @@ use Qubiqx\QcommerceCore\Filament\Pages\Settings\SettingsPage;
 use Flowframe\Drift\CachingStrategies\FilesystemCachingStrategy;
 use Qubiqx\QcommerceCore\Commands\InvalidatePasswordResetTokens;
 use Qubiqx\QcommerceCore\Filament\Pages\Settings\GeneralSettingsPage;
+use Qubiqx\QcommerceCore\Filament\Pages\Settings\MetadataSettingsPage;
 
 class QcommerceCoreServiceProvider extends PluginServiceProvider
 {

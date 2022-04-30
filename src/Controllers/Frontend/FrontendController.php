@@ -5,11 +5,8 @@ namespace Qubiqx\QcommerceCore\Controllers\Frontend;
 use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\View;
-use Artesaos\SEOTools\Facades\SEOTools;
 use Qubiqx\QcommerceCore\Classes\Locales;
 use Qubiqx\QcommerceCore\Models\Customsetting;
-use Qubiqx\QcommerceEcommerceCore\Models\Order;
-use Qubiqx\QcommerceEcommerceCore\Events\Orders\OrderIsPushableForReviewEvent;
 
 class FrontendController extends Controller
 {
