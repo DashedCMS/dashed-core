@@ -47,6 +47,7 @@ class FrontendController extends Controller
                     $schemas['localBusiness']->image(app(\Flowframe\Drift\UrlBuilder::class)->url('qcommerce', seo()->metaData('metaImage'), []));
                 }
                 seo()->metaData('schemas', $schemas);
+                seo()->metaData('metaImage', app(\Flowframe\Drift\UrlBuilder::class)->url('qcommerce', seo()->metaData('metaImage'), []));
 
                 return $response->render();
             } elseif ($response == 'pageNotFound') {
