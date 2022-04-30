@@ -40,7 +40,6 @@ class FrontendController extends Controller
             ]);
 
             if (is_a($response, \Illuminate\View\View::class)) {
-
                 $schemas = seo()->metaData('schemas');
                 $schemas['localBusiness']->name(seo()->metaData('metaTitle'));
                 if (seo()->metaData('metaImage')) {
