@@ -40,6 +40,14 @@ class FrontendController extends Controller
             ]);
 
             if (is_a($response, \Illuminate\View\View::class)) {
+
+                $schemas = seo()->metaData('schemas');
+                $schemas['localBusiness']->name(seo()->metaData('metaTitle'));
+                if (seo()->metaData('metaImage')) {
+                    $schemas['localBusiness']->image(app(\Flowframe\Drift\UrlBuilder::class)->url('qcommerce', seo()->metaData('metaImage'), []));
+                }
+                seo()->metaData('schemas', $schemas);
+
                 return $response->render();
             } elseif ($response == 'pageNotFound') {
                 return $this->$response();

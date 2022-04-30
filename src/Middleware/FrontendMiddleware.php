@@ -38,18 +38,20 @@ class FrontendMiddleware
         $logo = Customsetting::get('site_logo', Sites::getActive(), '');
         $favicon = Customsetting::get('site_favicon', Sites::getActive(), '');
 
-        seo()->metaData('schema', Schema::localBusiness()
-            ->legalName(Customsetting::get('site_name'))
-            ->email(Customsetting::get('site_to_email'))
-            ->telephone(Customsetting::get('company_phone_number'))
-            ->logo($logo)
-            ->address(Customsetting::get('company_street') . ' ' . Customsetting::get('company_street_number') . ', ' . Customsetting::get('company_postal_code') . ' ' . Customsetting::get('company_city') . ', ' . Customsetting::get('company_country'))
-            ->url($request->url())
-            ->contactPoint(
-                Schema::contactPoint()
-                    ->telephone(Customsetting::get('company_phone_number'))
-                    ->email(Customsetting::get('site_to_email'))
-            ));
+        seo()->metaData('schemas', [
+            'localBusiness' => Schema::localBusiness()
+                ->legalName(Customsetting::get('site_name'))
+                ->email(Customsetting::get('site_to_email'))
+                ->telephone(Customsetting::get('company_phone_number'))
+                ->logo($logo)
+                ->address(Customsetting::get('company_street') . ' ' . Customsetting::get('company_street_number') . ', ' . Customsetting::get('company_postal_code') . ' ' . Customsetting::get('company_city') . ', ' . Customsetting::get('company_country'))
+                ->url($request->url())
+                ->contactPoint(
+                    Schema::contactPoint()
+                        ->telephone(Customsetting::get('company_phone_number'))
+                        ->email(Customsetting::get('site_to_email'))
+                )
+        ]);
 
         View::share('logo', $logo);
         View::share('favicon', $favicon);

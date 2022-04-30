@@ -147,7 +147,9 @@
     @endif
 @endforeach
 
-{!! seo()->metaData('schema') !!}
+@foreach(seo()->metaData('schemas') as $schema)
+    {!! $schema !!}
+@endforeach
 
 @stack('metadata')
 

@@ -13,7 +13,7 @@ class SeoManager
         'twitterCreator' => '',
         'webmasterTags' => [],
         'robots' => 'index, follow',
-        'schema' => '',
+        'schemas' => [],
         'alternateUrls' => [],
     ];
 
