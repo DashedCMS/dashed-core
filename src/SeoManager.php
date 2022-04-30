@@ -2,18 +2,20 @@
 
 namespace Qubiqx\QcommerceCore;
 
-class FrontendManager
+class SeoManager
 {
     protected static $metaData = [
         'metaTitle' => '',
         'metaDescription' => '',
         'metaImage' => '',
+        'twitterSite' => '',
+        'twitterCreator' => '',
     ];
 
     public function metaData(string $name, ?string $value = null): self|string
     {
         if (! $value) {
-            return static::$metaData[$name] ?? [];
+            return static::$metaData[$name] ?? '';
         }
 
         static::$metaData[$name] = $value;

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\View;
 use Artesaos\SEOTools\Facades\SEOTools;
 use Qubiqx\QcommerceCore\Classes\Locales;
+use Qubiqx\QcommerceCore\Models\Customsetting;
 use Qubiqx\QcommerceEcommerceCore\Models\Order;
 use Qubiqx\QcommerceEcommerceCore\Events\Orders\OrderIsPushableForReviewEvent;
 
@@ -14,8 +15,7 @@ class FrontendController extends Controller
 {
     public function pageNotFound()
     {
-        SEOTools::setTitle('Pagina niet gevonden');
-        SEOTools::opengraph()->setUrl(url()->current());
+        seo()->metaData('metaTitle', 'Pagina niet gevonden');
 
         if (View::exists('qcommerce.not-found.show')) {
             return response()->view('qcommerce.not-found.show')->setStatusCode(404);
@@ -26,11 +26,6 @@ class FrontendController extends Controller
 
     public function index($slug = null)
     {
-//        $order = Order::latest()->first();
-//        $response = OrderIsPushableForReviewEvent::dispatch($order);
-//        dump($response);
-//        $order->refresh();
-//        dd($order);
         foreach (Locales::getLocales() as $locale) {
             if (Str::startsWith($slug, $locale['id'] . '/') || $slug == $locale['id']) {
                 $slug = Str::substr($slug, strlen($locale['id']) + 1);
@@ -38,6 +33,9 @@ class FrontendController extends Controller
         }
 
         $routeModels = cms()->builder('routeModels');
+
+        seo()->metaData('twitterSite', Customsetting::get('default_meta_data_twitter_site'));
+        seo()->metaData('twitterCreator', Customsetting::get('default_meta_data_twitter_site'));
 
         foreach ($routeModels as $routeModel) {
             $response = $routeModel['routeHandler']::handle([

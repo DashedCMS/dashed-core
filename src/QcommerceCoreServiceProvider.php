@@ -6,6 +6,7 @@ use Flowframe\Drift\Config;
 use Flowframe\Drift\DriftManager;
 use Filament\PluginServiceProvider;
 use Illuminate\Support\Facades\Mail;
+use Qubiqx\QcommerceCore\Filament\Pages\Settings\MetadataSettingsPage;
 use Spatie\LaravelPackageTools\Package;
 use Illuminate\Console\Scheduling\Schedule;
 use Qubiqx\QcommerceCore\Commands\CreateSitemap;
@@ -59,6 +60,18 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
             ])
         );
 
+        cms()->builder(
+            'settingPages',
+            array_merge(cms()->builder('settingPages'), [
+                'general' => [
+                    'name' => 'Meta data',
+                    'description' => 'Meta data van de website',
+                    'icon' => 'identification',
+                    'page' => MetadataSettingsPage::class,
+                ],
+            ])
+        );
+
         $package
             ->name('qcommerce-core')
             ->hasConfigFile([
@@ -96,6 +109,7 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
         return array_merge(parent::getPages(), [
             SettingsPage::class,
             GeneralSettingsPage::class,
+            MetadataSettingsPage::class,
         ]);
     }
 }

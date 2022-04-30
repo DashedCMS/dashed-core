@@ -104,7 +104,39 @@
 
 {!! Customsetting::get('extra_scripts') !!}
 
-@dd(frontend()->metaData('metaTitle'))
+<link rel="alternate" hreflang="nl" href="{{ request()->url() }}"/>
+<link rel="canonical" href="{{ request()->url() }}">
+<meta name="description" content="{{ seo()->metaData('metaTitle') }}">
+<meta property="og:url" content="{{ request()->url() }}">
+<meta property="og:site_name" content="{{ Customsetting::get('site_name', 'Quezy') }}">
+<meta property="og:title" content="{{ seo()->metaData('metaTitle') }}">
+<meta property="og:description" content="{{ seo()->metaData('metaDescription') }}">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="nl-NL">
+@if(seo()->metaData('metaImage'))
+    <meta property="og:image" content="{!! seo()->metaData('metaImage') !!}">
+@endif
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="{{ seo()->metaData('metaTitle') }}">
+<meta name="twitter:title" content="{{ seo()->metaData('metaTitle') }}">
+<meta name="twitter:description" content="{{ seo()->metaData('metaDescription') }}">
+<meta name="twitter:card" content="summary_large_image">
+@if(seo()->metaData('metaImage'))
+    <meta name="twitter:image" content="{!! seo()->metaData('metaImage') !!}">
+@endif
+@if(seo()->metaData('twitterSite'))
+    <meta name="twitter:site" content="{{ seo()->metaData('twitterSite') }}">
+@endif
+@if(seo()->metaData('twitterCreator'))
+    <meta name="twitter:creator" content="{{ seo()->metaData('twitterCreator') }}">
+@endif
+
+<meta itemprop="name" content="{{ seo()->metaData('metaTitle') }}">
+<meta itemprop="description" content="{{ seo()->metaData('metaDescription') }}">
+@if(seo()->metaData('metaImage'))
+    <meta itemprop="image" content="{!! seo()->metaData('metaImage') !!}">
+@endif
 
 @stack('metadata')
 

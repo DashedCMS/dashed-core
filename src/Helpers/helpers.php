@@ -2,7 +2,7 @@
 
 
 use Qubiqx\QcommerceCore\CMSManager;
-use Qubiqx\QcommerceCore\FrontendManager;
+use Qubiqx\QcommerceCore\SeoManager;
 
 if (! function_exists('cms')) {
     function cms(): CMSManager
@@ -12,8 +12,8 @@ if (! function_exists('cms')) {
 }
 
 if (! function_exists('frontend')) {
-    function frontend(): FrontendManager
+    function seo(): SeoManager
     {
-        return app(FrontendManager::class);
+        return app(SeoManager::class);
     }
 }
