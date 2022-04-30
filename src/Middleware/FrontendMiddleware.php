@@ -23,6 +23,8 @@ class FrontendMiddleware
     {
         App::setLocale(LaravelLocalization::getCurrentLocale());
 
+        //Todo: make sure stuff below works
+        //Todo: create JSON schema's
         config([
             'seotools.meta.defaults.title' => Customsetting::get('site_name', Sites::getActive(), 'Website'),
             'seotools.meta.defaults.separator' => ' | ',
