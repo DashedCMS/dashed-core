@@ -30,7 +30,7 @@ class CMSManager
     public function builder(string $name, ?array $blocks = null): self|array
     {
         if (! $blocks) {
-            return static::$builders[$name];
+            return static::$builders[$name] ?? [];
         }
 
         static::$builders[$name] = $blocks;
