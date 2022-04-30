@@ -11,9 +11,13 @@ class SeoManager
         'ogType' => 'website',
         'twitterSite' => '',
         'twitterCreator' => '',
+        'webmasterTags' => [],
+        'robots' => 'index, follow',
+        'schema' => '',
+        'alternateUrls' => [],
     ];
 
-    public function metaData(string $name, ?string $value = null): self|string
+    public function metaData(string $name, string|array $value = null): self|string|array
     {
         if (! $value) {
             return static::$metaData[$name] ?? '';

@@ -30,7 +30,8 @@
         "spatie/laravel-sitemap": "^6.1.0",
         "symfony/http-client": "^6.0",
         "symfony/postmark-mailer": "^6.0",
-        "flowframe/laravel-drift": "^0.1.0"
+        "flowframe/laravel-drift": "^0.1.0",
+        "spatie/schema-org": "^3.8"
     },
     "require-dev": {
         "nunomaduro/collision": "^6.1",

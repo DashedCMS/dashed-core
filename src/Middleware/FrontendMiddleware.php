@@ -2,6 +2,7 @@
 
 namespace Qubiqx\QcommerceCore\Middleware;
 
+use App\Classes\CustomSettings;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -9,6 +10,7 @@ use Illuminate\Support\Facades\View;
 use Qubiqx\QcommerceCore\Classes\Sites;
 use Qubiqx\QcommerceCore\Models\Customsetting;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+use Spatie\SchemaOrg\Schema;
 
 class FrontendMiddleware
 {
@@ -23,28 +25,37 @@ class FrontendMiddleware
     {
         App::setLocale(LaravelLocalization::getCurrentLocale());
 
-        //Todo: make sure stuff below works
         //Todo: create JSON schema's
-        config([
-            'seotools.meta.defaults.title' => Customsetting::get('site_name', Sites::getActive(), 'Website'),
-            'seotools.meta.defaults.separator' => ' | ',
-            'seotools.meta.defaults.description' => '',
-            'seotools.opengraph.defaults.description' => '',
-            'seotools.json-ld.defaults.description' => '',
-            'seotools.meta.defaults.robots' => env('APP_ENV') == 'local' ? 'noindex, nofollow' : 'index, follow',
-            'seotools.meta.webmaster_tags.google' => Customsetting::get('webmaster_tag_google', Sites::getActive(), ''),
-            'seotools.meta.webmaster_tags.bing' => Customsetting::get('webmaster_tag_bing', Sites::getActive(), ''),
-            'seotools.meta.webmaster_tags.alexa' => Customsetting::get('webmaster_tag_alexa', Sites::getActive(), ''),
-            'seotools.meta.webmaster_tags.pinterest' => Customsetting::get('webmaster_tag_pinterest', Sites::getActive(), ''),
-            'seotools.meta.webmaster_tags.yandex' => Customsetting::get('webmaster_tag_yandex', Sites::getActive(), ''),
-            'seotools.meta.webmaster_tags.norton' => Customsetting::get('webmaster_tag_norton', Sites::getActive(), ''),
+        seo()->metaData('webmasterTags', [
+            'google' => Customsetting::get('webmaster_tag_google'),
+            'bing' => Customsetting::get('webmaster_tag_bing'),
+            'alexa' => Customsetting::get('webmaster_tag_alexa'),
+            'pinterest' => Customsetting::get('webmaster_tag_pinterest'),
+            'yandex' => Customsetting::get('webmaster_tag_yandex'),
+            'norton' => Customsetting::get('webmaster_tag_norton'),
         ]);
+        seo()->metaData('robots', env('APP_ENV') == 'local' ? 'noindex, nofollow' : 'index, follow');
+        seo()->metaData('metaTitle', Customsetting::get('site_name', Sites::getActive(), 'Website'));
+
+        $schema = Schema::localBusiness()
+            ->legalName(CustomSettings::get('site-name', 'Quezy'))
+            ->email(CustomSettings::get('contact-email', 'help@quezy.io'))
+            ->telephone(CustomSettings::get('contact-number', '085 - 732 69 02'))
+            ->logo(asset('/assets/files/branding/quezy-logo.svg'))
+            ->address(CustomSettings::get('contact-location', 'Bijsterhuizen 1158, 6546AS Nijmegen, Nederland'))
+            ->url($request->url())
+            ->priceRange('$')
+            ->contactPoint(
+                Schema::contactPoint()
+                    ->telephone(CustomSettings::get('contact-number', '085 - 732 69 02'))
+                    ->email(CustomSettings::get('contact-email', 'help@quezy.io')));
 
         $logo = Customsetting::get('site_logo', Sites::getActive(), '');
         $favicon = Customsetting::get('site_favicon', Sites::getActive(), '');
 
         View::share('logo', $logo);
         View::share('favicon', $favicon);
+        View::share('schema', $schema);
 
         return $next($request);
     }

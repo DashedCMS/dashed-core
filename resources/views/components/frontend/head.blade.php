@@ -113,7 +113,8 @@
 <meta property="og:title" content="{{ seo()->metaData('metaTitle') }}">
 <meta property="og:description" content="{{ seo()->metaData('metaDescription') }}">
 <meta property="og:type" content="{{ seo()->metaData('ogType') }}">
-<meta property="og:locale" content="{{ \Mcamara\LaravelLocalization\Facades\LaravelLocalization::getCurrentLocaleRegional() }}">
+<meta property="og:locale"
+      content="{{ \Mcamara\LaravelLocalization\Facades\LaravelLocalization::getCurrentLocaleRegional() }}">
 @if(seo()->metaData('metaImage'))
     <meta property="og:image" content="{!! seo()->metaData('metaImage') !!}">
 @endif
@@ -138,6 +139,13 @@
 @if(seo()->metaData('metaImage'))
     <meta itemprop="image" content="{!! seo()->metaData('metaImage') !!}">
 @endif
+<meta name="robots" content="{{ seo()->metaData('robots') }}">
+
+@foreach(seo()->metaData('webmasterTags') as $platform => $webmasterTag)
+    @if($webmasterTag)
+        <meta name="{{$platform}}-site-verification" content="{{ $webmasterTag }}"/>
+    @endif
+@endforeach
 
 @stack('metadata')
 
