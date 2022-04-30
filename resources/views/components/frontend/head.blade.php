@@ -147,6 +147,8 @@
     @endif
 @endforeach
 
+{!! seo()->metaData('schema') !!}
+
 @stack('metadata')
 
 {!! $slot !!}

@@ -5,7 +5,6 @@ namespace Qubiqx\QcommerceCore\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Spatie\SchemaOrg\Schema;
-use App\Classes\CustomSettings;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\View;
 use Qubiqx\QcommerceCore\Classes\Sites;
@@ -25,7 +24,6 @@ class FrontendMiddleware
     {
         App::setLocale(LaravelLocalization::getCurrentLocale());
 
-        //Todo: create JSON schema's
         seo()->metaData('webmasterTags', [
             'google' => Customsetting::get('webmaster_tag_google'),
             'bing' => Customsetting::get('webmaster_tag_bing'),
@@ -37,26 +35,24 @@ class FrontendMiddleware
         seo()->metaData('robots', env('APP_ENV') == 'local' ? 'noindex, nofollow' : 'index, follow');
         seo()->metaData('metaTitle', Customsetting::get('site_name', Sites::getActive(), 'Website'));
 
-        $schema = Schema::localBusiness()
-            ->legalName(CustomSettings::get('site-name', 'Quezy'))
-            ->email(CustomSettings::get('contact-email', 'help@quezy.io'))
-            ->telephone(CustomSettings::get('contact-number', '085 - 732 69 02'))
-            ->logo(asset('/assets/files/branding/quezy-logo.svg'))
-            ->address(CustomSettings::get('contact-location', 'Bijsterhuizen 1158, 6546AS Nijmegen, Nederland'))
-            ->url($request->url())
-            ->priceRange('$')
-            ->contactPoint(
-                Schema::contactPoint()
-                    ->telephone(CustomSettings::get('contact-number', '085 - 732 69 02'))
-                    ->email(CustomSettings::get('contact-email', 'help@quezy.io'))
-            );
-
         $logo = Customsetting::get('site_logo', Sites::getActive(), '');
         $favicon = Customsetting::get('site_favicon', Sites::getActive(), '');
 
+        seo()->metaData('schema', Schema::localBusiness()
+            ->legalName(Customsetting::get('site_name'))
+            ->email(Customsetting::get('site_to_email'))
+            ->telephone(Customsetting::get('company_phone_number'))
+            ->logo($logo)
+            ->address(Customsetting::get('company_street') . ' ' . Customsetting::get('company_street_number') . ', ' . Customsetting::get('company_postal_code') . ' ' . Customsetting::get('company_city') . ', ' . Customsetting::get('company_country'))
+            ->url($request->url())
+            ->contactPoint(
+                Schema::contactPoint()
+                    ->telephone(Customsetting::get('company_phone_number'))
+                    ->email(Customsetting::get('site_to_email'))
+            ));
+
         View::share('logo', $logo);
         View::share('favicon', $favicon);
-        View::share('schema', $schema);
 
         return $next($request);
     }
