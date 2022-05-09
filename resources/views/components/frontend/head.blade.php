@@ -108,8 +108,8 @@
 @foreach(seo()->metaData('alternateUrls') as $locale => $url)
     <link rel="alternate" hreflang="{{ $locale }}" href="{{ $url }}"/>
 @endforeach
-<link rel="canonical" href="{{ request()->url() }}">
 <meta name="description" content="{{ seo()->metaData('metaTitle') }}">
+<link rel="canonical" href="{{ request()->url() }}">
 <meta property="og:url" content="{{ request()->url() }}">
 <meta property="og:site_name" content="{{ Customsetting::get('site_name', 'Quezy') }}">
 <meta property="og:title" content="{{ seo()->metaData('metaTitle') }}">
