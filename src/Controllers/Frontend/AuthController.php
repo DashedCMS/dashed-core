@@ -26,9 +26,9 @@ class AuthController extends FrontendController
         }
 
         if (View::exists('qcommerce.login.show')) {
-            SEOTools::setTitle(Translation::get('login-page-meta-title', 'login', 'Login'));
-            SEOTools::setDescription(Translation::get('login-page-meta-description', 'login', 'Login to your account'));
-            SEOTools::opengraph()->setUrl(url()->current());
+
+            seo()->metaData('metaTitle', Translation::get('login-page-meta-title', 'login', 'Login'));
+            seo()->metaData('metaDescription', Translation::get('login-page-meta-description', 'login', 'Login to your account'));
 
             return view('qcommerce.login.show');
         } else {
@@ -85,9 +85,8 @@ class AuthController extends FrontendController
         }
 
         if (View::exists('qcommerce.forgot-password.show')) {
-            SEOTools::setTitle(Translation::get('forgot-password-page-meta-title', 'login', 'Forgot password'));
-            SEOTools::setDescription(Translation::get('forgot-password-page-meta-description', 'login', 'Forgot your password?'));
-            SEOTools::opengraph()->setUrl(url()->current());
+            seo()->metaData('metaTitle', Translation::get('forgot-password-page-meta-title', 'login', 'Forgot password'));
+            seo()->metaData('metaDescription', Translation::get('forgot-password-page-meta-description', 'login', 'Forgot your password?'));
 
             return view('qcommerce.forgot-password.show');
         } else {
@@ -119,9 +118,8 @@ class AuthController extends FrontendController
         }
 
         if (View::exists('qcommerce.reset-password.show')) {
-            SEOTools::setTitle(Translation::get('reset-password-page-meta-title', 'login', 'Reset password'));
-            SEOTools::setDescription(Translation::get('reset-password-page-meta-description', 'login', 'Reset your password'));
-            SEOTools::opengraph()->setUrl(url()->current());
+            seo()->metaData('metaTitle', Translation::get('reset-password-page-meta-title', 'login', 'Reset password'));
+            seo()->metaData('metaDescription', Translation::get('reset-password-page-meta-description', 'login', 'Reset your password'));
 
             $user = User::where('password_reset_token', $passwordResetToken)->first();
 
