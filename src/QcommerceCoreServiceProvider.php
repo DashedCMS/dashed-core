@@ -63,7 +63,7 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
         cms()->builder(
             'settingPages',
             array_merge(cms()->builder('settingPages'), [
-                'general' => [
+                'metaData' => [
                     'name' => 'Meta data',
                     'description' => 'Meta data van de website',
                     'icon' => 'identification',
