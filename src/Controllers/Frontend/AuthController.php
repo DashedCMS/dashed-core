@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\View;
 use Qubiqx\QcommerceCore\Models\User;
-use Artesaos\SEOTools\Facades\SEOTools;
 use Qubiqx\QcommerceCore\Mail\PasswordResetMail;
 use Qubiqx\QcommerceTranslations\Models\Translation;
 use Qubiqx\QcommerceCore\Requests\Frontend\LoginRequest;
@@ -26,7 +25,6 @@ class AuthController extends FrontendController
         }
 
         if (View::exists('qcommerce.login.show')) {
-
             seo()->metaData('metaTitle', Translation::get('login-page-meta-title', 'login', 'Login'));
             seo()->metaData('metaDescription', Translation::get('login-page-meta-description', 'login', 'Login to your account'));
 
