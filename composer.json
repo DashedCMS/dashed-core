@@ -78,6 +78,12 @@
             }
         }
     },
+    "repositories": {
+        "awcodes/filament-tiptap-editor": {
+            "type": "path",
+            "url": "./packages/filament-tiptap-editor"
+        }
+    },
     "minimum-stability": "dev",
     "prefer-stable": true
 }
