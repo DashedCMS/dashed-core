@@ -23,6 +23,7 @@
         "laravel/horizon": "^5.9",
         "mcamara/laravel-localization": "^1.7",
         "mohamedsabil83/filament-forms-tinyeditor": "^1.5",
+        "awcodes/filament-tiptap-editor": "^0.2.0",
         "sentry/sentry-laravel": "^2.12",
         "spatie/laravel-activitylog": "^4.5",
         "spatie/laravel-cookie-consent": "^3.2",
@@ -75,12 +76,6 @@
                 "Sites": "Qubiqx\\QcommerceCore\\Classes\\Sites",
                 "Customsetting": "Qubiqx\\QcommerceCore\\Models\\Customsetting"
             }
-        }
-    },
-    "repositories": {
-        "awcodes/filament-tiptap-editor": {
-            "type": "path",
-            "url": "./packages/qubiqx/filament-tiptap-editor"
         }
     },
     "minimum-stability": "dev",
