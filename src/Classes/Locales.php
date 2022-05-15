@@ -2,6 +2,9 @@
 
 namespace Qubiqx\QcommerceCore\Classes;
 
+use Illuminate\Support\Facades\App;
+use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+
 class Locales
 {
     public static function getLocales()
@@ -34,5 +37,11 @@ class Locales
         }
 
         return self::getFirstLocale();
+    }
+
+    public static function setLocale($locale)
+    {
+        App::setLocale($locale);
+        LaravelLocalization::setLocale($locale);
     }
 }

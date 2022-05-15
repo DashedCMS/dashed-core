@@ -4,6 +4,7 @@ namespace Qubiqx\QcommerceCore\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Qubiqx\QcommerceCore\Classes\Locales;
 use Spatie\SchemaOrg\Schema;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\View;
@@ -22,7 +23,7 @@ class FrontendMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        App::setLocale(LaravelLocalization::getCurrentLocale());
+        Locales::setLocale(LaravelLocalization::getCurrentLocale());
 
         seo()->metaData('webmasterTags', [
             'google' => Customsetting::get('webmaster_tag_google'),
