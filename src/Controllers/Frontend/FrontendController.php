@@ -2,10 +2,10 @@
 
 namespace Qubiqx\QcommerceCore\Controllers\Frontend;
 
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Artisan;
 use Qubiqx\QcommerceCore\Classes\Locales;
 use Qubiqx\QcommerceCore\Models\Customsetting;
 
