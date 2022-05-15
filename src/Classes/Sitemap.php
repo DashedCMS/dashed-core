@@ -2,8 +2,6 @@
 
 namespace Qubiqx\QcommerceCore\Classes;
 
-use Spatie\Sitemap\SitemapGenerator;
-
 class Sitemap
 {
     public static function create()
