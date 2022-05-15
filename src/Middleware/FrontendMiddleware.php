@@ -4,11 +4,10 @@ namespace Qubiqx\QcommerceCore\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Qubiqx\QcommerceCore\Classes\Locales;
 use Spatie\SchemaOrg\Schema;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\View;
 use Qubiqx\QcommerceCore\Classes\Sites;
+use Qubiqx\QcommerceCore\Classes\Locales;
 use Qubiqx\QcommerceCore\Models\Customsetting;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
