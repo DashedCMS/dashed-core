@@ -24,7 +24,6 @@ class FrontendController extends Controller
 
     public function index($slug = null)
     {
-        Artisan::call('qcommerce:create-sitemap');
         foreach (Locales::getLocales() as $locale) {
             if (Str::startsWith($slug, $locale['id'] . '/') || $slug == $locale['id']) {
                 $slug = Str::substr($slug, strlen($locale['id']) + 1);
