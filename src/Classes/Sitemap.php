@@ -13,7 +13,6 @@ class Sitemap
         foreach (cms()->builder('routeModels') as $routeModel) {
             $sitemap = $routeModel['routeHandler']::getSitemapUrls($sitemap);
             $sitemap->writeToFile(public_path('sitemap.xml'));
-            dd('s');
         }
 
         $sitemap->writeToFile(public_path('sitemap.xml'));
