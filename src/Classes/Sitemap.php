@@ -8,8 +8,14 @@ class Sitemap
 {
     public static function create()
     {
-        SitemapGenerator::create(url('/'))
-            ->setConcurrency(1)
-            ->writeToFile(public_path('sitemap.xml'));
+        $sitemap = \Spatie\Sitemap\Sitemap::create();
+
+        foreach (cms()->builder('routeModels') as $routeModel) {
+            $sitemap = $routeModel['routeHandler']::getSitemapUrls($sitemap);
+            $sitemap->writeToFile(public_path('sitemap.xml'));
+            dd('s');
+        }
+
+        $sitemap->writeToFile(public_path('sitemap.xml'));
     }
 }

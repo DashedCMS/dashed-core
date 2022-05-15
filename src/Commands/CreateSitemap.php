@@ -3,6 +3,7 @@
 namespace Qubiqx\QcommerceCore\Commands;
 
 use Illuminate\Console\Command;
+use Qubiqx\QcommerceCore\Classes\Sitemap;
 use Qubiqx\QcommerceCore\Jobs\Sitemap\CreateSitemapJob;
 
 class CreateSitemap extends Command
@@ -12,7 +13,7 @@ class CreateSitemap extends Command
      *
      * @var string
      */
-    protected $signature = 'qcommerce:createsitemap';
+    protected $signature = 'qcommerce:create-sitemap';
 
     /**
      * The console command description.
@@ -38,10 +39,6 @@ class CreateSitemap extends Command
      */
     public function handle()
     {
-        if (env('QUEUE_CONNECTION', 'sync') == 'redis') {
-            CreateSitemapJob::dispatch()->delay(now()->addMinutes(rand(0, 240)));
-        } else {
-            CreateSitemapJob::dispatch();
-        }
+        Sitemap::create();
     }
 }
