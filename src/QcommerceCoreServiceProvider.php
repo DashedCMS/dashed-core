@@ -6,6 +6,7 @@ use Flowframe\Drift\Config;
 use Flowframe\Drift\DriftManager;
 use Filament\PluginServiceProvider;
 use Illuminate\Support\Facades\Mail;
+use Qubiqx\QcommerceCore\Filament\Resources\UserResource;
 use Spatie\LaravelPackageTools\Package;
 use Illuminate\Console\Scheduling\Schedule;
 use Qubiqx\QcommerceCore\Commands\CreateSitemap;
@@ -101,6 +102,13 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
     {
         return array_merge(parent::getStyles(), [
             'qcommerce-core' => str_replace('/vendor/qubiqx/qcommerce-core/src', '', str_replace('/packages/qubiqx/qcommerce-core/src', '', __DIR__)) . '/vendor/qubiqx/qcommerce-core/resources/dist/css/qcommerce-core.css',
+        ]);
+    }
+
+    protected function getResources(): array
+    {
+        return array_merge(parent::getResources(), [
+            UserResource::class,
         ]);
     }
 

@@ -92,14 +92,4 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
     {
         return 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($this->email)));
     }
-
-//    public function orders()
-//    {
-//        return $this->hasMany(Order::class)->whereIn('status', ['paid', 'waiting_for_confirmation', 'partially_paid'])->orderBy('created_at', 'DESC');
-//    }
-
-//    public function lastOrder()
-//    {
-//        return $this->orders()->latest()->first();
-//    }
 }
