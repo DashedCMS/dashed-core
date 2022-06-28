@@ -2,15 +2,9 @@
 
 namespace Qubiqx\QcommerceCore\Filament\Resources\UserResource\Users;
 
-use Filament\Pages\Actions\ButtonAction;
-use Filament\Resources\Pages\EditRecord;
-use Filament\Resources\Pages\EditRecord\Concerns\Translatable;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-use Qubiqx\QcommerceCore\Classes\Sites;
+use Filament\Resources\Pages\EditRecord;
 use Qubiqx\QcommerceCore\Filament\Resources\UserResource;
-use Qubiqx\QcommercePages\Filament\Resources\PageResource;
-use Qubiqx\QcommercePages\Models\Page;
 
 class EditUser extends EditRecord
 {

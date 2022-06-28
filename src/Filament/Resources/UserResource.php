@@ -2,30 +2,15 @@
 
 namespace Qubiqx\QcommerceCore\Filament\Resources;
 
-use App\Models\User;
 use Closure;
-use Filament\Forms\Components\BelongsToSelect;
-use Filament\Forms\Components\Builder;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Resources\Concerns\Translatable;
+use App\Models\User;
 use Filament\Resources\Form;
-use Filament\Resources\Resource;
 use Filament\Resources\Table;
+use Filament\Resources\Resource;
 use Filament\Tables\Columns\TextColumn;
-use Illuminate\Support\Str;
-use Qubiqx\QcommerceCore\Classes\Sites;
+use Filament\Forms\Components\TextInput;
 use Qubiqx\QcommerceCore\Filament\Resources\UserResource\Users\EditUser;
 use Qubiqx\QcommerceCore\Filament\Resources\UserResource\Users\ListUsers;
-use Qubiqx\QcommercePages\Filament\Resources\PageResource\Pages\CreatePage;
-use Qubiqx\QcommercePages\Filament\Resources\PageResource\Pages\EditPage;
-use Qubiqx\QcommercePages\Filament\Resources\PageResource\Pages\ListPages;
-use Qubiqx\QcommercePages\Models\Page;
 
 class UserResource extends Resource
 {
@@ -60,7 +45,7 @@ class UserResource extends Resource
                     ]),
                 TextInput::make('email')
                     ->label('Email')
-                    ->unique('users', 'email', fn($record) => $record)
+                    ->unique('users', 'email', fn ($record) => $record)
                     ->required()
                     ->rules([
                         'required',
@@ -81,7 +66,7 @@ class UserResource extends Resource
                     ->reactive(),
                 TextInput::make('password_confirmation')
                     ->label('Wachtwoord herhalen')
-                    ->required(fn(Closure $get) => $get('password'))
+                    ->required(fn (Closure $get) => $get('password'))
                     ->password()
                     ->rules([
                         'min:6',
