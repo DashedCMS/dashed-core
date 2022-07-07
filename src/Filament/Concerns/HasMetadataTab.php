@@ -2,12 +2,12 @@
 
 namespace Qubiqx\QcommerceCore\Filament\Concerns;
 
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\FileUpload;
 
 trait HasMetadataTab
 {
@@ -48,7 +48,7 @@ trait HasMetadataTab
 //                            ->label('Meta canonical URL'),
                         Toggle::make('noindex')
                             ->label('Pagina niet indexeren'),
-                    ])
+                    ]),
             ]);
     }
 }

@@ -2,8 +2,8 @@
 
 namespace Qubiqx\QcommerceCore\Models\Concerns;
 
-use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Qubiqx\QcommerceCore\Models\Metadata;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 trait HasMetadata
 {
