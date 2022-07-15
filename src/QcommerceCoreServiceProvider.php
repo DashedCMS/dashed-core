@@ -6,6 +6,8 @@ use Flowframe\Drift\Config;
 use Flowframe\Drift\DriftManager;
 use Filament\PluginServiceProvider;
 use Illuminate\Support\Facades\Mail;
+use Livewire\Livewire;
+use Qubiqx\QcommerceCore\Livewire\Frontend\Notification\Toastr;
 use Spatie\LaravelPackageTools\Package;
 use Illuminate\Console\Scheduling\Schedule;
 use Qubiqx\QcommerceCore\Commands\CreateSitemap;
@@ -32,6 +34,8 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
             filesystemDisk: 'public', // Local, public or s3 for example
             cachingStrategy: FilesystemCachingStrategy::class,
         ));
+
+        Livewire::component('notification.toastr', Toastr::class);
 
         $this->app->booted(function () {
             $schedule = app(Schedule::class);
