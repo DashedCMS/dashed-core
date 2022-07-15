@@ -2,12 +2,11 @@
 
 namespace Qubiqx\QcommerceCore;
 
+use Livewire\Livewire;
 use Flowframe\Drift\Config;
 use Flowframe\Drift\DriftManager;
 use Filament\PluginServiceProvider;
 use Illuminate\Support\Facades\Mail;
-use Livewire\Livewire;
-use Qubiqx\QcommerceCore\Livewire\Frontend\Notification\Toastr;
 use Spatie\LaravelPackageTools\Package;
 use Illuminate\Console\Scheduling\Schedule;
 use Qubiqx\QcommerceCore\Commands\CreateSitemap;
@@ -16,6 +15,7 @@ use Qubiqx\QcommerceCore\Commands\InstallCommand;
 use Qubiqx\QcommerceCore\Commands\CreateAdminUser;
 use Qubiqx\QcommerceCore\Filament\Resources\UserResource;
 use Qubiqx\QcommerceCore\Filament\Pages\Settings\SettingsPage;
+use Qubiqx\QcommerceCore\Livewire\Frontend\Notification\Toastr;
 use Flowframe\Drift\CachingStrategies\FilesystemCachingStrategy;
 use Qubiqx\QcommerceCore\Commands\InvalidatePasswordResetTokens;
 use Qubiqx\QcommerceCore\Filament\Pages\Settings\GeneralSettingsPage;
