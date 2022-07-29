@@ -10,10 +10,9 @@ use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
-use Qubiqx\QcommerceCore\Filament\Resources\UserResource\Users\CreateUser;
 use Qubiqx\QcommerceCore\Filament\Resources\UserResource\Users\EditUser;
 use Qubiqx\QcommerceCore\Filament\Resources\UserResource\Users\ListUsers;
-use Qubiqx\QcommerceEcommerceCore\Filament\Resources\ShippingZoneResource\Pages\EditShippingZone;
+use Qubiqx\QcommerceCore\Filament\Resources\UserResource\Users\CreateUser;
 
 class UserResource extends Resource
 {
