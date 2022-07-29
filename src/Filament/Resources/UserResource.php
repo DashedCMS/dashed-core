@@ -10,8 +10,10 @@ use Filament\Resources\Table;
 use Filament\Resources\Resource;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use Qubiqx\QcommerceCore\Filament\Resources\UserResource\Users\CreateUser;
 use Qubiqx\QcommerceCore\Filament\Resources\UserResource\Users\EditUser;
 use Qubiqx\QcommerceCore\Filament\Resources\UserResource\Users\ListUsers;
+use Qubiqx\QcommerceEcommerceCore\Filament\Resources\ShippingZoneResource\Pages\EditShippingZone;
 
 class UserResource extends Resource
 {
@@ -73,6 +75,7 @@ class UserResource extends Resource
                         'max:255',
                         'confirmed',
                     ])
+                    ->required(fn ($livewire) => $livewire instanceof CreateUser)
                     ->helperText('Het wachtwoord wordt alleen aangepast als je iets invult')
                     ->reactive(),
                 TextInput::make('password_confirmation')
@@ -118,7 +121,7 @@ class UserResource extends Resource
     {
         return [
             'index' => ListUsers::route('/'),
-            'create' => EditUser::route('/{record}/edit'),
+            'create' => CreateUser::route('/create'),
             'edit' => EditUser::route('/{record}/edit'),
         ];
     }
