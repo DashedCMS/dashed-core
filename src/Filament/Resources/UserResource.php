@@ -4,6 +4,7 @@ namespace Qubiqx\QcommerceCore\Filament\Resources;
 
 use Closure;
 use App\Models\User;
+use Filament\Forms\Components\Select;
 use Filament\Resources\Form;
 use Filament\Resources\Table;
 use Filament\Resources\Resource;
@@ -52,6 +53,16 @@ class UserResource extends Resource
                         'email:rfc',
                         'max:255',
                     ]),
+                Select::make('role')
+                    ->label('Rol')
+                    ->required()
+                    ->options([
+                        'customer' => 'Customer',
+                        'admin' => 'Admin',
+                    ])
+                    ->rules([
+                        'required',
+                    ]),
                 TextInput::make('password')
                     ->label('Wachtwoord')
                     ->nullable()
@@ -88,6 +99,8 @@ class UserResource extends Resource
                     ->label('Email')
                     ->sortable()
                     ->searchable(),
+                TextColumn::make('role')
+                    ->label('Rol'),
             ])
             ->filters([
                 //
@@ -105,6 +118,7 @@ class UserResource extends Resource
     {
         return [
             'index' => ListUsers::route('/'),
+            'create' => EditUser::route('/{record}/edit'),
             'edit' => EditUser::route('/{record}/edit'),
         ];
     }
