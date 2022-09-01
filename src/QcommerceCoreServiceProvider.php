@@ -2,12 +2,12 @@
 
 namespace Qubiqx\QcommerceCore;
 
-use Illuminate\Database\Eloquent\Model;
 use Livewire\Livewire;
 use Flowframe\Drift\Config;
 use Flowframe\Drift\DriftManager;
 use Filament\PluginServiceProvider;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\LaravelPackageTools\Package;
 use Illuminate\Console\Scheduling\Schedule;
 use Qubiqx\QcommerceCore\Commands\CreateSitemap;
