@@ -2,6 +2,7 @@
 
 namespace Qubiqx\QcommerceCore;
 
+use Illuminate\Database\Eloquent\Model;
 use Livewire\Livewire;
 use Flowframe\Drift\Config;
 use Flowframe\Drift\DriftManager;
@@ -27,6 +28,8 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
 
     public function bootingPackage()
     {
+        Model::unguard();
+
         $drift = app(DriftManager::class);
 
         $drift->registerConfig(new Config(
