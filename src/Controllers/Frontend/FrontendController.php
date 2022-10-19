@@ -31,6 +31,9 @@ class FrontendController extends Controller
 
         seo()->metaData('twitterSite', Customsetting::get('default_meta_data_twitter_site'));
         seo()->metaData('twitterCreator', Customsetting::get('default_meta_data_twitter_site'));
+        if (Customsetting::get('default_meta_data_image')) {
+            seo()->metaData('metaImage', Customsetting::get('default_meta_data_image'));
+        }
 
         foreach (cms()->builder('routeModels') as $routeModel) {
             $response = $routeModel['routeHandler']::handle([
@@ -40,9 +43,6 @@ class FrontendController extends Controller
             if (is_a($response, \Illuminate\View\View::class)) {
                 $schemas = seo()->metaData('schemas');
                 $schemas['localBusiness']->name(seo()->metaData('metaTitle'));
-                if (! seo()->metaData('metaImage') && Customsetting::get('default_meta_data_image')) {
-                    seo()->metaData('metaImage', Customsetting::get('default_meta_data_image'));
-                }
 
                 if (seo()->metaData('metaImage')) {
                     $schemas['localBusiness']->image(app(\Flowframe\Drift\UrlBuilder::class)->url('qcommerce', seo()->metaData('metaImage'), [
