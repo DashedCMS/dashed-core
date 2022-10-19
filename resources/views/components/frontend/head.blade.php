@@ -117,7 +117,6 @@
 <meta property="og:type" content="{{ seo()->metaData('ogType') }}">
 <meta property="og:locale"
       content="{{ \Mcamara\LaravelLocalization\Facades\LaravelLocalization::getCurrentLocaleRegional() }}">
-    @dump(seo()->metaData('metaImage'))
 @if(seo()->metaData('metaImage'))
     <meta property="og:image" content="{!! seo()->metaData('metaImage') !!}">
 @else
