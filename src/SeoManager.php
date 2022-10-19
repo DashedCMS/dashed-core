@@ -2,8 +2,15 @@
 
 namespace Qubiqx\QcommerceCore;
 
+use Qubiqx\QcommerceCore\Models\Customsetting;
+
 class SeoManager
 {
+    public function __construct()
+    {
+        self::metaData('metaImage', Customsetting::get('default_meta_data_image'));
+    }
+
     protected static $metaData = [
         'metaTitle' => '',
         'metaDescription' => '',
