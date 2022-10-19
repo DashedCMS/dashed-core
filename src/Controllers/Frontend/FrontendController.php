@@ -47,11 +47,9 @@ class FrontendController extends Controller
                 if (seo()->metaData('metaImage')) {
                     $schemas['localBusiness']->image(app(\Flowframe\Drift\UrlBuilder::class)->url('qcommerce', seo()->metaData('metaImage'), [
                         'widen' => 1200,
-//                        'widen' => 1200,
                     ]));
                     seo()->metaData('metaImage', app(\Flowframe\Drift\UrlBuilder::class)->url('qcommerce', seo()->metaData('metaImage'), [
                         'widen' => 1200,
-//                        'widen' => 1200,
                     ]));
                 }
                 seo()->metaData('schemas', $schemas);
