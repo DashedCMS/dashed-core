@@ -40,16 +40,16 @@ class FrontendController extends Controller
             if (is_a($response, \Illuminate\View\View::class)) {
                 $schemas = seo()->metaData('schemas');
                 $schemas['localBusiness']->name(seo()->metaData('metaTitle'));
-                if (!seo()->metaData('metaImage') && Customsetting::get('default_meta_data_image')) {
+                if (! seo()->metaData('metaImage') && Customsetting::get('default_meta_data_image')) {
                     seo()->metaData('metaImage', Customsetting::get('default_meta_data_image'));
                 }
 
                 if (seo()->metaData('metaImage')) {
                     $schemas['localBusiness']->image(app(\Flowframe\Drift\UrlBuilder::class)->url('qcommerce', seo()->metaData('metaImage'), [
-                        'fit' => [1200, 630]
+                        'fit' => [1200, 630],
                     ]));
                     seo()->metaData('metaImage', app(\Flowframe\Drift\UrlBuilder::class)->url('qcommerce', seo()->metaData('metaImage'), [
-                        'fit' => [1200, 630]
+                        'fit' => [1200, 630],
                     ]));
                 }
                 seo()->metaData('schemas', $schemas);
