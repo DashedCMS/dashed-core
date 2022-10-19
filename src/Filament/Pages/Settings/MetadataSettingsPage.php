@@ -2,6 +2,7 @@
 
 namespace Qubiqx\QcommerceCore\Filament\Pages\Settings;
 
+use Filament\Forms\Components\FileUpload;
 use Filament\Pages\Page;
 use Filament\Forms\Components\Tabs;
 use Illuminate\Support\Facades\Cache;
@@ -32,6 +33,7 @@ class MetadataSettingsPage extends Page implements HasForms
         foreach ($sites as $site) {
             $formData["default_meta_data_twitter_site_{$site['id']}"] = Customsetting::get('default_meta_data_twitter_site', $site['id']);
             $formData["default_meta_data_twitter_creator_{$site['id']}"] = Customsetting::get('default_meta_data_twitter_creator', $site['id']);
+            $formData["default_meta_data_image_{$site['id']}"] = Customsetting::get('default_meta_data_image', $site['id']);
         }
 
         $this->form->fill($formData);
@@ -60,6 +62,14 @@ class MetadataSettingsPage extends Page implements HasForms
                         'max:255',
                     ])
                     ->helperText('Bijv: @qubiqx.dev'),
+                FileUpload::make("default_meta_data_image_{$site['id']}")
+                    ->label('Meta image')
+                    ->directory('qcommerce/metadata')
+                    ->image()
+                    ->rules([
+                        'image',
+                    ])
+                    ->helperText('Dit is de placeholder meta afbeelding die gebruikt wordt als er geen meta afbeelding is opgegeven.'),
             ];
 
             $tabs[] = Tab::make($site['id'])
@@ -83,6 +93,7 @@ class MetadataSettingsPage extends Page implements HasForms
         foreach ($sites as $site) {
             Customsetting::set('default_meta_data_twitter_site', $this->form->getState()["default_meta_data_twitter_site_{$site['id']}"], $site['id']);
             Customsetting::set('default_meta_data_twitter_creator', $this->form->getState()["default_meta_data_twitter_creator_{$site['id']}"], $site['id']);
+            Customsetting::set('default_meta_data_image', $this->form->getState()["default_meta_data_image_{$site['id']}"], $site['id']);
         }
 
         Cache::tags(['custom-settings'])->flush();
