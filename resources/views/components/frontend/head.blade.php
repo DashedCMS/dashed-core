@@ -117,8 +117,14 @@
 <meta property="og:type" content="{{ seo()->metaData('ogType') }}">
 <meta property="og:locale"
       content="{{ \Mcamara\LaravelLocalization\Facades\LaravelLocalization::getCurrentLocaleRegional() }}">
+    @dump(seo()->metaData('metaImage'))
 @if(seo()->metaData('metaImage'))
     <meta property="og:image" content="{!! seo()->metaData('metaImage') !!}">
+@else
+    <meta property="og:image"
+          content="{!! app(\Flowframe\Drift\UrlBuilder::class)->url('qcommerce', Customsetting::get('default_meta_data_image'), [
+                        'fit' => [1200, 630],
+]) !!}">
 @endif
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -128,6 +134,9 @@
 <meta name="twitter:card" content="summary_large_image">
 @if(seo()->metaData('metaImage'))
     <meta name="twitter:image" content="{!! seo()->metaData('metaImage') !!}">
+@else
+    <meta name="twitter:image"
+          content="{!! app(\Flowframe\Drift\UrlBuilder::class)->url('qcommerce', Customsetting::get('default_meta_data_image'), []) !!}">
 @endif
 @if(seo()->metaData('twitterSite'))
     <meta name="twitter:site" content="{{ seo()->metaData('twitterSite') }}">
@@ -140,6 +149,9 @@
 <meta itemprop="description" content="{{ seo()->metaData('metaDescription') }}">
 @if(seo()->metaData('metaImage'))
     <meta itemprop="image" content="{!! seo()->metaData('metaImage') !!}">
+@else
+    <meta itemprop="image"
+          content="{!! app(\Flowframe\Drift\UrlBuilder::class)->url('qcommerce', Customsetting::get('default_meta_data_image'), []) !!}">
 @endif
 <meta name="robots" content="{{ seo()->metaData('robots') }}">
 
