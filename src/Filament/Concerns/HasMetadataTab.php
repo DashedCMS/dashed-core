@@ -48,7 +48,7 @@ trait HasMetadataTab
 //                            ->label('Meta canonical URL'),
                     Toggle::make('noindex')
                         ->label('Pagina niet indexeren'),
-                ])
+                ]),
         ];
 
         return Tab::make('Metadata')
