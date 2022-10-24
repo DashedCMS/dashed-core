@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\View;
 use Qubiqx\QcommerceCore\Classes\Locales;
+use Qubiqx\QcommerceCore\Models\Redirect;
 use Qubiqx\QcommerceCore\Models\Customsetting;
 
 class FrontendController extends Controller
@@ -58,6 +59,10 @@ class FrontendController extends Controller
             } elseif ($response == 'pageNotFound') {
                 return $this->$response();
             }
+        }
+
+        if ($redirect = Redirect::where('from', $slug)->orWhere('from', '/' . $slug)->first()) {
+            return redirect($redirect->to, $redirect->sort);
         }
 
         return $this->pageNotFound();
