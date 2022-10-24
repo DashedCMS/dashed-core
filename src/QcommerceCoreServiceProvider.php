@@ -8,6 +8,7 @@ use Flowframe\Drift\DriftManager;
 use Filament\PluginServiceProvider;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Model;
+use Qubiqx\QcommerceCore\Filament\Resources\RedirectResource;
 use Spatie\LaravelPackageTools\Package;
 use Illuminate\Console\Scheduling\Schedule;
 use Qubiqx\QcommerceCore\Commands\CreateSitemap;
@@ -117,6 +118,7 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
     {
         return array_merge(parent::getResources(), [
             UserResource::class,
+            RedirectResource::class,
         ]);
     }
 
