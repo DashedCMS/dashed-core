@@ -4,11 +4,11 @@ namespace Qubiqx\QcommerceCore\Filament\Resources;
 
 use Closure;
 use App\Models\User;
-use Filament\Forms\Components\Section;
 use Filament\Resources\Form;
 use Filament\Resources\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Qubiqx\QcommerceCore\Filament\Resources\UserResource\Users\EditUser;
@@ -89,7 +89,7 @@ class UserResource extends Resource
                         'max:255',
                     ])
                     ->reactive(),
-                    ]))
+                    ])),
             ]);
     }
 
