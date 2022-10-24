@@ -4,6 +4,7 @@ namespace Qubiqx\QcommerceCore\Filament\Resources;
 
 use Closure;
 use App\Models\User;
+use Filament\Forms\Components\Section;
 use Filament\Resources\Form;
 use Filament\Resources\Table;
 use Filament\Resources\Resource;
@@ -38,6 +39,8 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
+                Section::make('Gebruiker')
+                    ->schema(array_merge([
                 TextInput::make('name')
                     ->label('Naam')
                     ->required()
@@ -86,6 +89,7 @@ class UserResource extends Resource
                         'max:255',
                     ])
                     ->reactive(),
+                    ]))
             ]);
     }
 
