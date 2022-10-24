@@ -8,6 +8,7 @@ use Filament\Resources\Form;
 use Filament\Resources\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Qubiqx\QcommerceCore\Filament\Resources\UserResource\Users\EditUser;
@@ -38,6 +39,8 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
+                Section::make('Gebruiker')
+                    ->schema(array_merge([
                 TextInput::make('name')
                     ->label('Naam')
                     ->required()
@@ -86,6 +89,7 @@ class UserResource extends Resource
                         'max:255',
                     ])
                     ->reactive(),
+                    ])),
             ]);
     }
 
