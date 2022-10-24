@@ -2,6 +2,7 @@
 
 namespace Qubiqx\QcommerceCore\Filament\Concerns;
 
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Tabs\Tab;
@@ -14,7 +15,7 @@ trait HasMetadataTab
     protected static function metadataTab(): array
     {
         return [
-            Fieldset::make('Metadata')
+            Group::make()
                 ->columns(1)
                 ->relationship('metadata')
                 ->schema([
