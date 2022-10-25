@@ -54,12 +54,12 @@ class RedirectResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('from')
-                    ->url(fn($record) => url($record->from))
+                    ->url(fn ($record) => url($record->from))
                     ->openUrlInNewTab()
                     ->label('Oude URL')
                     ->searchable(),
                 TextColumn::make('to')
-                    ->url(fn($record) => $record->to)
+                    ->url(fn ($record) => $record->to)
                     ->openUrlInNewTab()
                     ->label('Nieuwe URL')
                     ->searchable(),
@@ -67,7 +67,7 @@ class RedirectResource extends Resource
                     ->label('Soort redirect'),
                 TextColumn::make('delete_redirect_after')
                     ->label('Delete redirect na')
-                    ->getStateUsing(fn($record) => $record->delete_redirect_after ? $record->delete_redirect_after->format('d-m-Y') : 'Niet verwijderen'),
+                    ->getStateUsing(fn ($record) => $record->delete_redirect_after ? $record->delete_redirect_after->format('d-m-Y') : 'Niet verwijderen'),
             ])
             ->filters([
                 //
