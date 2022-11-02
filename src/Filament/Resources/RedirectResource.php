@@ -27,9 +27,11 @@ class RedirectResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
+            ->schema(
+                [
                     Section::make('content')
-                        ->schema(array_merge([
+                        ->schema(
+                            array_merge([
                                 Forms\Components\TextInput::make('from')
                                     ->required()
                                     ->label('Vanaf welke URL moet er een redirect komen?')
@@ -50,7 +52,7 @@ class RedirectResource extends Resource
                                     ->label('Verwijder redirect na een datum')
                                     ->default(now()->addMonths(3)),
                             ])
-                        )]
+                        ), ]
             );
     }
 
@@ -59,12 +61,12 @@ class RedirectResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('from')
-                    ->url(fn($record) => url($record->from))
+                    ->url(fn ($record) => url($record->from))
                     ->openUrlInNewTab()
                     ->label('Oude URL')
                     ->searchable(),
                 TextColumn::make('to')
-                    ->url(fn($record) => $record->to)
+                    ->url(fn ($record) => $record->to)
                     ->openUrlInNewTab()
                     ->label('Nieuwe URL')
                     ->searchable(),
@@ -72,7 +74,7 @@ class RedirectResource extends Resource
                     ->label('Soort redirect'),
                 TextColumn::make('delete_redirect_after')
                     ->label('Delete redirect na')
-                    ->getStateUsing(fn($record) => $record->delete_redirect_after ? $record->delete_redirect_after->format('d-m-Y') : 'Niet verwijderen'),
+                    ->getStateUsing(fn ($record) => $record->delete_redirect_after ? $record->delete_redirect_after->format('d-m-Y') : 'Niet verwijderen'),
             ])
             ->filters([
                 //
