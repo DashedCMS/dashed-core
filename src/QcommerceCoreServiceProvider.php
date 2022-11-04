@@ -29,7 +29,6 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
 
     public function bootingPackage()
     {
-        //This breaks the hacks we need to do for example, saving products with filtering in a different way
         Model::unguard();
 
         $drift = app(DriftManager::class);
