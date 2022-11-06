@@ -2,15 +2,7 @@
 
 namespace Qubiqx\QcommerceCore\Filament\Concerns;
 
-use Filament\Facades\Filament;
 use Filament\Forms\Components\Group;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\FileUpload;
-use Illuminate\Support\Str;
 
 trait HasCustomBlocksTab
 {
@@ -58,8 +50,9 @@ trait HasCustomBlocksTab
                             $data[$key] = $item;
                         }
                     }
+
                     return $data;
-                })
+                }),
         ];
     }
 }
