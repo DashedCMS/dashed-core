@@ -15,8 +15,6 @@ class Customsetting extends Model
 
     protected static $logFillable = true;
 
-    protected $fillable = ['name', 'value', 'site_id', 'locale'];
-
     protected $table = 'qcommerce__custom_settings';
 
     public function getActivitylogOptions(): LogOptions

@@ -8,13 +8,13 @@ use Spatie\Translatable\HasTranslations;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Metadata extends Model
+class CustomBlock extends Model
 {
     use LogsActivity;
     use HasFactory;
     use HasTranslations;
 
-    protected $table = 'qcommerce__metadata';
+    protected $table = 'qcommerce__custom_blocks';
 
     protected static $logFillable = true;
 
@@ -24,8 +24,6 @@ class Metadata extends Model
     }
 
     public $translatable = [
-        'title',
-        'description',
-        'image',
+        'blocks',
     ];
 }

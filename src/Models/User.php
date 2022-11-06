@@ -25,15 +25,6 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
      *
      * @var array
      */
-    protected $fillable = [
-        'first_name',
-        'last_name',
-        'email',
-        'role',
-        'password',
-        'password_reset_token',
-        'password_reset_requested',
-    ];
 
     /**
      * The attributes that should be hidden for arrays.

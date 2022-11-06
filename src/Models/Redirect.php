@@ -11,13 +11,6 @@ class Redirect extends Model
 
     protected $table = 'qcommerce__redirects';
 
-    protected $fillable = [
-        'from',
-        'to',
-        'sort',
-        'delete_redirect_after',
-    ];
-
     protected $dates = [
         'created_at',
         'updated_at',
