@@ -11,4 +11,9 @@ trait HasCustomBlocks
     {
         return $this->morphOne(CustomBlock::class, 'blockable');
     }
+
+    public function getContentBlocksAttribute()
+    {
+        return $this->customBlocks->blocks ?? [];
+    }
 }
