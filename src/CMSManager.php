@@ -37,4 +37,16 @@ class CMSManager
 
         return $this;
     }
+
+    public function getSearchResults(string $query): array
+    {
+        $results = [];
+
+        foreach (static::builder('routeModels') as $model) {
+            dd($model['class']::search($query)->get());
+            $results = array_merge($results, $model['class']::search($query)->get()->toArray());
+        }
+
+        return $results;
+    }
 }
