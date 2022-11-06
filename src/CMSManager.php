@@ -18,7 +18,7 @@ class CMSManager
 
     public function model(string $name, ?string $implementation = null): self|string
     {
-        if (!$implementation) {
+        if (! $implementation) {
             return static::$models[$name];
         }
 
@@ -29,7 +29,7 @@ class CMSManager
 
     public function builder(string $name, ?array $blocks = null): self|array
     {
-        if (!$blocks) {
+        if (! $blocks) {
             return static::$builders[$name] ?? [];
         }
 
