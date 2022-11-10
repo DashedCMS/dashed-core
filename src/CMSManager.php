@@ -46,12 +46,14 @@ class CMSManager
             $queryResults = $model['class']::search($query)->get();
             $results[$model['class']] = array_merge($model, [
                 'results' => $queryResults,
+                'count' => $queryResults->count(),
                 'hasResults' => $queryResults->count() > 0,
             ]);
         }
 
         return [
             'results' => $results,
+            'count' => collect($results)->sum('count'),
             'hasResults' => collect($results)->filter(fn ($result) => $result['hasResults'])->count() > 0,
         ];
     }
