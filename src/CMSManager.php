@@ -50,6 +50,9 @@ class CMSManager
             ]);
         }
 
-        return $results;
+        return [
+            'results' => $results,
+            'hasResults' => collect($results)->filter(fn ($result) => $result['hasResults'])->count() > 0,
+        ];
     }
 }
