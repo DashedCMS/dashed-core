@@ -18,7 +18,7 @@ class CMSManager
 
     public function model(string $name, ?string $implementation = null): self|string
     {
-        if (! $implementation) {
+        if (!$implementation) {
             return static::$models[$name];
         }
 
@@ -29,7 +29,7 @@ class CMSManager
 
     public function builder(string $name, ?array $blocks = null): self|array
     {
-        if (! $blocks) {
+        if (!$blocks) {
             return static::$builders[$name] ?? [];
         }
 
@@ -38,23 +38,25 @@ class CMSManager
         return $this;
     }
 
-    public function getSearchResults(string $query): array
+    public function getSearchResults(?string $query): array
     {
         $results = [];
 
-        foreach (static::builder('routeModels') as $model) {
-            $queryResults = $model['class']::search($query)->get();
-            $results[$model['class']] = array_merge($model, [
-                'results' => $queryResults,
-                'count' => $queryResults->count(),
-                'hasResults' => $queryResults->count() > 0,
-            ]);
+        if ($query) {
+            foreach (static::builder('routeModels') as $model) {
+                $queryResults = $model['class']::search($query)->get();
+                $results[$model['class']] = array_merge($model, [
+                    'results' => $queryResults,
+                    'count' => $queryResults->count(),
+                    'hasResults' => $queryResults->count() > 0,
+                ]);
+            }
         }
 
         return [
             'results' => $results,
             'count' => collect($results)->sum('count'),
-            'hasResults' => collect($results)->filter(fn ($result) => $result['hasResults'])->count() > 0,
+            'hasResults' => collect($results)->filter(fn($result) => $result['hasResults'])->count() > 0,
         ];
     }
 }
