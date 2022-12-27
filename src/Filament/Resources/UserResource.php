@@ -102,8 +102,8 @@ class UserResource extends Resource
                                 'sm' => 2,
                                 'md' => 2,
                                 'lg' => 2,
-                                'xl' => 2,
-                                '2xl' => 2,
+                                'xl' => 1,
+                                '2xl' => 1,
                             ]),
                         TextInput::make('password')
                             ->label('Wachtwoord')
