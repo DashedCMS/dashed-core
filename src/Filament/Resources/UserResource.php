@@ -40,95 +40,111 @@ class UserResource extends Resource
         return $form
             ->schema([
                 Section::make('Gebruiker')
-                    ->schema(array_merge([
-                TextInput::make('name')
-                    ->label('Naam')
-                    ->required()
-                    ->rules([
-                        'required',
-                        'max:255',
+                    ->schema([
+                        TextInput::make('first_name')
+                            ->label('Voornaam')
+                            ->required()
+                            ->rules([
+                                'required',
+                                'max:255',
+                            ])
+                            ->columnSpan([
+                                'default' => 2,
+                                'sm' => 2,
+                                'md' => 2,
+                                'lg' => 2,
+                                'xl' => 1,
+                                '2xl' => 1,
+                            ]),
+                        TextInput::make('last_name')
+                            ->label('Achternaam')
+                            ->required()
+                            ->rules([
+                                'required',
+                                'max:255',
+                            ])
+                            ->columnSpan([
+                                'default' => 2,
+                                'sm' => 2,
+                                'md' => 2,
+                                'lg' => 2,
+                                'xl' => 1,
+                                '2xl' => 1,
+                            ]),
+                        TextInput::make('email')
+                            ->label('Email')
+                            ->unique('users', 'email', fn($record) => $record)
+                            ->required()
+                            ->rules([
+                                'required',
+                                'email:rfc',
+                                'max:255',
+                            ])
+                            ->columnSpan([
+                                'default' => 2,
+                                'sm' => 2,
+                                'md' => 2,
+                                'lg' => 2,
+                                'xl' => 1,
+                                '2xl' => 1,
+                            ]),
+                        Select::make('role')
+                            ->label('Rol')
+                            ->required()
+                            ->options([
+                                'customer' => 'Customer',
+                                'admin' => 'Admin',
+                            ])
+                            ->rules([
+                                'required',
+                            ])->columnSpan([
+                                'default' => 2,
+                                'sm' => 2,
+                                'md' => 2,
+                                'lg' => 2,
+                                'xl' => 2,
+                                '2xl' => 2,
+                            ]),
+                        TextInput::make('password')
+                            ->label('Wachtwoord')
+                            ->nullable()
+                            ->password()
+                            ->rules([
+                                'nullable',
+                                'min:6',
+                                'max:255',
+                                'confirmed',
+                            ])
+                            ->required(fn($livewire) => $livewire instanceof CreateUser)
+                            ->helperText('Het wachtwoord wordt alleen aangepast als je iets invult')
+                            ->reactive()
+                            ->columnSpan([
+                                'default' => 2,
+                                'sm' => 2,
+                                'md' => 2,
+                                'lg' => 2,
+                                'xl' => 1,
+                                '2xl' => 1,
+                            ]),
+                        TextInput::make('password_confirmation')
+                            ->label('Wachtwoord herhalen')
+                            ->required(fn(Closure $get) => $get('password'))
+                            ->password()
+                            ->rules([
+                                'min:6',
+                                'max:255',
+                            ])
+                            ->reactive()
+                            ->columnSpan([
+                                'default' => 2,
+                                'sm' => 2,
+                                'md' => 2,
+                                'lg' => 2,
+                                'xl' => 1,
+                                '2xl' => 1,
+                            ]),
                     ])
-                    ->columnSpan([
-                        'default' => 2,
-                        'sm' => 2,
-                        'md' => 2,
-                        'lg' => 2,
-                        'xl' => 1,
-                        '2xl' => 1,
-                    ]),
-                TextInput::make('email')
-                    ->label('Email')
-                    ->unique('users', 'email', fn ($record) => $record)
-                    ->required()
-                    ->rules([
-                        'required',
-                        'email:rfc',
-                        'max:255',
-                    ])
-                    ->columnSpan([
-                        'default' => 2,
-                        'sm' => 2,
-                        'md' => 2,
-                        'lg' => 2,
-                        'xl' => 1,
-                        '2xl' => 1,
-                    ]),
-                Select::make('role')
-                    ->label('Rol')
-                    ->required()
-                    ->options([
-                        'customer' => 'Customer',
-                        'admin' => 'Admin',
-                    ])
-                    ->rules([
-                        'required',
-                    ])->columnSpan([
-                        'default' => 2,
-                        'sm' => 2,
-                        'md' => 2,
-                        'lg' => 2,
-                        'xl' => 2,
-                        '2xl' => 2,
-                    ]),
-                TextInput::make('password')
-                    ->label('Wachtwoord')
-                    ->nullable()
-                    ->password()
-                    ->rules([
-                        'nullable',
-                        'min:6',
-                        'max:255',
-                        'confirmed',
-                    ])
-                    ->required(fn ($livewire) => $livewire instanceof CreateUser)
-                    ->helperText('Het wachtwoord wordt alleen aangepast als je iets invult')
-                    ->reactive()
-                    ->columnSpan([
-                        'default' => 2,
-                        'sm' => 2,
-                        'md' => 2,
-                        'lg' => 2,
-                        'xl' => 1,
-                        '2xl' => 1,
-                    ]),
-                TextInput::make('password_confirmation')
-                    ->label('Wachtwoord herhalen')
-                    ->required(fn (Closure $get) => $get('password'))
-                    ->password()
-                    ->rules([
-                        'min:6',
-                        'max:255',
-                    ])
-                    ->reactive()
-                    ->columnSpan([
-                        'default' => 2,
-                        'sm' => 2,
-                        'md' => 2,
-                        'lg' => 2,
-                        'xl' => 1,
-                        '2xl' => 1,
-                    ]),
-                    ]))->columns(2),
+                    ->columns(2),
             ]);
     }
 
