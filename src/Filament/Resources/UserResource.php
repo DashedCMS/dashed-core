@@ -73,7 +73,7 @@ class UserResource extends Resource
                             ]),
                         TextInput::make('email')
                             ->label('Email')
-                            ->unique('users', 'email', fn($record) => $record)
+                            ->unique('users', 'email', fn ($record) => $record)
                             ->required()
                             ->rules([
                                 'required',
@@ -115,7 +115,7 @@ class UserResource extends Resource
                                 'max:255',
                                 'confirmed',
                             ])
-                            ->required(fn($livewire) => $livewire instanceof CreateUser)
+                            ->required(fn ($livewire) => $livewire instanceof CreateUser)
                             ->helperText('Het wachtwoord wordt alleen aangepast als je iets invult')
                             ->reactive()
                             ->columnSpan([
@@ -128,7 +128,7 @@ class UserResource extends Resource
                             ]),
                         TextInput::make('password_confirmation')
                             ->label('Wachtwoord herhalen')
-                            ->required(fn(Closure $get) => $get('password'))
+                            ->required(fn (Closure $get) => $get('password'))
                             ->password()
                             ->rules([
                                 'min:6',
