@@ -48,8 +48,8 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
         });
 
         if (! $this->app->environment('production')) {
-            Mail::alwaysFrom('support@qubiqx.com');
-            Mail::alwaysTo('support@qubiqx.com');
+            Mail::alwaysFrom('info@dashed.nl');
+            Mail::alwaysTo('info@dashed.nl');
         }
     }
 
