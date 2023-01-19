@@ -89,7 +89,7 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
                 'filament-forms-tinyeditor',
                 'filesystems',
                 'laravellocalization',
-                'sentry',
+                'flare',
                 'activitylog',
             ])
             ->hasRoutes([
