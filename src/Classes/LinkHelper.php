@@ -36,7 +36,7 @@ class LinkHelper
             TextInput::make("{$prefix}_url")
                 ->label('Url')
                 ->required($required)
-                ->placeholder('Example: https://example.com')
+                ->placeholder('Example: https://example.com of /contact')
                 ->when(fn ($get) => in_array($get('type'), ['normal'])),
         ], $routeModelInputs))
             ->columns(2);
