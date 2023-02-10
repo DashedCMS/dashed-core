@@ -8,7 +8,7 @@ use Filament\Forms\Components\TextInput;
 
 class LinkHelper
 {
-    public static function field($prefix = 'url_', $required = false)
+    public static function field($prefix = 'url', $required = false)
     {
         $routeModels = [];
         $routeModelInputs = [];
@@ -16,7 +16,7 @@ class LinkHelper
             $routeModels[$key] = $routeModel['name'];
 
             $routeModelInputs[] =
-                Select::make("{$prefix}{$key}_id")
+                Select::make("{$prefix}_{$key}_id")
                     ->label("Kies een " . strtolower($routeModel['name']))
                     ->required($required)
                     ->options($routeModel['class']::pluck($routeModel['nameField'] ?: 'name', 'id'))
@@ -25,7 +25,7 @@ class LinkHelper
         }
 
         return Group::make(array_merge([
-            Select::make('type')
+            Select::make("{$prefix}_type")
                 ->label('Type')
                 ->default('normal')
                 ->options(array_merge([
@@ -33,12 +33,23 @@ class LinkHelper
                 ], $routeModels))
                 ->reactive()
                 ->required($required),
-            TextInput::make('url')
+            TextInput::make("{$prefix}_url")
                 ->label('Url')
                 ->required($required)
                 ->placeholder('Example: https://example.com')
                 ->when(fn ($get) => in_array($get('type'), ['normal'])),
         ], $routeModelInputs))
             ->columns(2);
+    }
+
+    public static function getUrl(array $data = [], $prefix = 'url')
+    {
+        if ($data["{$prefix}_type"] == 'normal') {
+            return $data["{$prefix}_url"];
+        }
+
+        $routeModel = cms()->builder('routeModels')[$data["{$prefix}_type"]];
+
+        return $routeModel['class']::find($data["{$prefix}_{$data["{$prefix}_type"]}_id"])->getUrl();
     }
 }
