@@ -42,13 +42,17 @@ class LinkHelper
             ->columns(2);
     }
 
-    public static function getUrl(array $data = [], $prefix = 'url')
+    public static function getUrl(array $data = [], $prefix = 'url'): string
     {
-        if ($data["{$prefix}_type"] == 'normal') {
+        if (($data["{$prefix}_type"] ?? 'normal') == 'normal') {
             return $data["{$prefix}_url"];
         }
 
         $routeModel = cms()->builder('routeModels')[$data["{$prefix}_type"]];
+
+        if(!$routeModel){
+            return '';
+        }
 
         return $routeModel['class']::find($data["{$prefix}_{$data["{$prefix}_type"]}_id"])->getUrl();
     }
