@@ -72,6 +72,7 @@
             ],
             "aliases": {
                 "AccountHelper": "Qubiqx\\QcommerceCore\\Classes\\AccountHelper",
+                "LinkHelper": "Qubiqx\\QcommerceCore\\Classes\\LinkHelper",
                 "Helper": "Qubiqx\\QcommerceCore\\Classes\\Helper",
                 "Locales": "Qubiqx\\QcommerceCore\\Classes\\Locales",
                 "Sites": "Qubiqx\\QcommerceCore\\Classes\\Sites",
