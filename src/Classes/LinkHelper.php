@@ -50,7 +50,7 @@ class LinkHelper
 
         $routeModel = cms()->builder('routeModels')[$data["{$prefix}_type"]];
 
-        if(!$routeModel){
+        if (! $routeModel) {
             return '';
         }
 
