@@ -26,7 +26,7 @@ class LinkHelper
 
         return Group::make(array_merge([
             Select::make("{$prefix}_type")
-                ->label('Type')
+                ->label('Type voor ' . $prefix)
                 ->default('normal')
                 ->options(array_merge([
                     'normal' => 'Normaal',
