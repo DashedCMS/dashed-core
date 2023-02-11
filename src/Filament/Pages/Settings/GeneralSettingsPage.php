@@ -37,7 +37,6 @@ class GeneralSettingsPage extends Page implements HasForms
             $formData["site_from_email_{$site['id']}"] = Customsetting::get('site_from_email', $site['id']);
             $formData["site_logo_{$site['id']}"] = Customsetting::get('site_logo', $site['id']);
             $formData["site_favicon_{$site['id']}"] = Customsetting::get('site_favicon', $site['id']);
-            $formData["meta_image_{$site['id']}"] = Customsetting::get('meta_image', $site['id']);
             $formData["company_kvk_{$site['id']}"] = Customsetting::get('company_kvk', $site['id']);
             $formData["company_btw_{$site['id']}"] = Customsetting::get('company_btw', $site['id']);
             $formData["company_phone_number_{$site['id']}"] = Customsetting::get('company_phone_number', $site['id']);
@@ -177,9 +176,6 @@ class GeneralSettingsPage extends Page implements HasForms
                     ->label('Favicon')
                     ->directory('qcommerce/branding/favicon')
                     ->required(),
-                FileUpload::make("meta_image_{$site['id']}")
-                    ->label('Standaard meta afbeelding')
-                    ->directory('qcommerce/branding/meta'),
             ];
 
             $tabs[] = Tab::make($site['id'])
@@ -286,7 +282,6 @@ class GeneralSettingsPage extends Page implements HasForms
             Customsetting::set('site_from_email', $this->form->getState()["site_from_email_{$site['id']}"], $site['id']);
             Customsetting::set('site_logo', $this->form->getState()["site_logo_{$site['id']}"], $site['id']);
             Customsetting::set('site_favicon', $this->form->getState()["site_favicon_{$site['id']}"], $site['id']);
-            Customsetting::set('meta_image', $this->form->getState()["meta_image_{$site['id']}"], $site['id']);
             Customsetting::set('company_kvk', $this->form->getState()["company_kvk_{$site['id']}"], $site['id']);
             Customsetting::set('company_btw', $this->form->getState()["company_btw_{$site['id']}"], $site['id']);
             Customsetting::set('company_phone_number', $this->form->getState()["company_phone_number_{$site['id']}"], $site['id']);
