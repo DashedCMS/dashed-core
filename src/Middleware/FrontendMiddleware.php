@@ -34,7 +34,7 @@ class FrontendMiddleware
         ]);
         seo()->metaData('robots', env('APP_ENV') == 'local' ? 'noindex, nofollow' : 'index, follow');
         seo()->metaData('metaTitle', Customsetting::get('site_name', Sites::getActive(), 'Website'));
-        if (!seo()->metaData('metaImage') && Customsetting::get('meta_image', Sites::getActive(), '')) {
+        if (! seo()->metaData('metaImage') && Customsetting::get('meta_image', Sites::getActive(), '')) {
             seo()->metaData('metaImage', Customsetting::get('meta_image', Sites::getActive(), ''));
         }
 
