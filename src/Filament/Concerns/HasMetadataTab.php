@@ -44,6 +44,7 @@ trait HasMetadataTab
                         ->label('Meta afbeelding')
                         ->directory('qcommerce/metadata')
                         ->image()
+                        ->enableDownload()
                         ->helperText('De beste afmeting is 1200x630 pixels'),
 //                        TextInput::make('canonical_url')
 //                            ->label('Meta canonical URL'),
