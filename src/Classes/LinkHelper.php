@@ -54,6 +54,8 @@ class LinkHelper
             return '';
         }
 
-        return $routeModel['class']::find($data["{$prefix}_{$data["{$prefix}_type"]}_id"])->getUrl() ?? '#';
+        $record = $routeModel['class']::find($data["{$prefix}_{$data["{$prefix}_type"]}_id"]);
+
+        return $record ? $record->getUrl() : '#';
     }
 }
