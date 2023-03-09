@@ -148,7 +148,7 @@ trait IsVisitable
         return $breadcrumbs;
     }
 
-    public function getOverviewPage(): ?Page
+    public static function getOverviewPage(): ?Page
     {
         return Page::publicShowable()->find(Customsetting::get(str(class_basename(self::class))->lower() . '_overview_page_id', Sites::getActive()));
     }
