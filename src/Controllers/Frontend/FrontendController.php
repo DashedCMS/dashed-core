@@ -37,9 +37,15 @@ class FrontendController extends Controller
         }
 
         foreach (cms()->builder('routeModels') as $routeModel) {
-            $response = $routeModel['routeHandler']::handle([
-                'slug' => $slug,
-            ]);
+            if(method_exists($routeModel['class'], 'resolveRoute')){
+                $response = $routeModel['class']::resolveRoute([
+                    'slug' => $slug,
+                ]);
+            }else{
+                $response = $routeModel['routeHandler']::handle([
+                    'slug' => $slug,
+                ]);
+            }
 
             if (is_a($response, \Illuminate\View\View::class)) {
                 $schemas = seo()->metaData('schemas');

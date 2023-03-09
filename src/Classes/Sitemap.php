@@ -9,7 +9,11 @@ class Sitemap
         $sitemap = \Spatie\Sitemap\Sitemap::create();
 
         foreach (cms()->builder('routeModels') as $routeModel) {
-            $sitemap = $routeModel['routeHandler']::getSitemapUrls($sitemap);
+            if (method_exists($routeModel['class'], 'getSitemapUrls')) {
+                $sitemap = $routeModel['class']::getSitemapUrls($sitemap);
+            } else {
+                $sitemap = $routeModel['routeHandler']::getSitemapUrls($sitemap);
+            }
             $sitemap->writeToFile(public_path('sitemap.xml'));
         }
 
