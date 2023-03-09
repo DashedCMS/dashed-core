@@ -81,29 +81,29 @@ trait IsVisitable
         return $sitemap;
     }
 
-    public function getStatusAttribute()
+    public function getStatusAttribute(): bool
     {
         if (! $this->start_date && ! $this->end_date) {
-            return 'active';
+            return 1;
         } else {
             if ($this->start_date && $this->end_date) {
                 if ($this->start_date <= Carbon::now() && $this->end_date >= Carbon::now()) {
-                    return 'active';
+                    return 1;
                 } else {
-                    return 'inactive';
+                    return 0;
                 }
             } else {
                 if ($this->start_date) {
                     if ($this->start_date <= Carbon::now()) {
-                        return 'active';
+                        return 1;
                     } else {
-                        return 'inactive';
+                        return 0;
                     }
                 } else {
                     if ($this->end_date >= Carbon::now()) {
-                        return 'active';
+                        return 1;
                     } else {
-                        return 'inactive';
+                        return 0;
                     }
                 }
             }

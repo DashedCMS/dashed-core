@@ -6,6 +6,8 @@ use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
 use Qubiqx\QcommerceCore\Classes\Sites;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
@@ -77,7 +79,7 @@ trait HasVisitableTab
                 ->label('Actief op sites')
                 ->options(collect(Sites::getSites())->pluck('name', 'id'))
                 ->multiple()
-                ->hidden(fn () => ! (Sites::getAmountOfSites() > 1))
+                ->hidden(fn() => !(Sites::getAmountOfSites() > 1))
                 ->required(),
         ];
 
@@ -85,7 +87,7 @@ trait HasVisitableTab
             $schema[] =
                 Select::make('parent_id')
                     ->relationship('parent', 'name')
-                    ->options(fn ($record) => self::$model::where('id', '!=', $record->id ?? 0)->pluck('name', 'id'))
+                    ->options(fn($record) => self::$model::where('id', '!=', $record->id ?? 0)->pluck('name', 'id'))
                     ->label('Bovenliggende item');
         }
 
@@ -94,5 +96,27 @@ trait HasVisitableTab
                 ->columns(1)
                 ->schema($schema),
         ];
+    }
+
+    protected static function visitableTableColumns(): array
+    {
+        if (method_exists(self::$model, 'parent')) {
+            $schema[] =
+                TextColumn::make('parent.name')
+                    ->label('Bovenliggende item')
+                    ->sortable();
+        }
+        $schema[] =
+            TextColumn::make('site_ids')
+                ->label('Actief op sites')
+                ->sortable()
+                ->hidden(!(Sites::getAmountOfSites() > 1))
+                ->searchable();
+        $schema[] = IconColumn::make('status')
+            ->label('Status')
+            ->trueIcon('heroicon-o-check-circle')
+            ->falseIcon('heroicon-o-x-circle');
+
+        return $schema;
     }
 }
