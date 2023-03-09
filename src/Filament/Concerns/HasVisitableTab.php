@@ -79,7 +79,7 @@ trait HasVisitableTab
                 ->label('Actief op sites')
                 ->options(collect(Sites::getSites())->pluck('name', 'id'))
                 ->multiple()
-                ->hidden(fn() => !(Sites::getAmountOfSites() > 1))
+                ->hidden(fn () => ! (Sites::getAmountOfSites() > 1))
                 ->required(),
         ];
 
@@ -87,7 +87,7 @@ trait HasVisitableTab
             $schema[] =
                 Select::make('parent_id')
                     ->relationship('parent', 'name')
-                    ->options(fn($record) => self::$model::where('id', '!=', $record->id ?? 0)->pluck('name', 'id'))
+                    ->options(fn ($record) => self::$model::where('id', '!=', $record->id ?? 0)->pluck('name', 'id'))
                     ->label('Bovenliggende item');
         }
 
@@ -110,7 +110,7 @@ trait HasVisitableTab
             TextColumn::make('site_ids')
                 ->label('Actief op sites')
                 ->sortable()
-                ->hidden(!(Sites::getAmountOfSites() > 1))
+                ->hidden(! (Sites::getAmountOfSites() > 1))
                 ->searchable();
         $schema[] = IconColumn::make('status')
             ->label('Status')
