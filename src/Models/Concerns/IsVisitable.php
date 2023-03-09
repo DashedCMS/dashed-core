@@ -3,16 +3,16 @@
 namespace Qubiqx\QcommerceCore\Models\Concerns;
 
 use Carbon\Carbon;
-use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
-use Qubiqx\QcommerceCore\Classes\Locales;
-use Qubiqx\QcommerceCore\Classes\Sites;
-use Qubiqx\QcommerceCore\Models\Customsetting;
-use Qubiqx\QcommercePages\Models\Page;
-use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Sitemap\Sitemap;
 use Spatie\Sitemap\Tags\Url;
+use Spatie\Activitylog\LogOptions;
+use Qubiqx\QcommercePages\Models\Page;
+use Qubiqx\QcommerceCore\Classes\Sites;
 use Spatie\Translatable\HasTranslations;
+use Qubiqx\QcommerceCore\Classes\Locales;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Qubiqx\QcommerceCore\Models\Customsetting;
+use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 trait IsVisitable
 {
@@ -29,7 +29,7 @@ trait IsVisitable
 
     public function scopeThisSite($query, $siteId = null)
     {
-        if (!$siteId) {
+        if (! $siteId) {
             $siteId = Sites::getActive();
         }
 
@@ -83,7 +83,7 @@ trait IsVisitable
 
     public function getStatusAttribute()
     {
-        if (!$this->start_date && !$this->end_date) {
+        if (! $this->start_date && ! $this->end_date) {
             return 'active';
         } else {
             if ($this->start_date && $this->end_date) {
@@ -130,7 +130,7 @@ trait IsVisitable
 
         if (method_exists($model, 'parent')) {
             while ($model->parent) {
-                if (!$model->parent->is_home) {
+                if (! $model->parent->is_home) {
                     $breadcrumbs[] = [
                         'name' => $model->parent->name,
                         'url' => $model->parent->getUrl(),
@@ -155,11 +155,10 @@ trait IsVisitable
 
     public function getUrl()
     {
-
         $overviewPage = self::getOverviewPage();
         if ($overviewPage) {
             $url = "{$overviewPage->getUrl()}/{$this->slug}";
-        } else if ($this->is_home) {
+        } elseif ($this->is_home) {
             $url = '/';
         } elseif (method_exists($this, 'parent') && $this->parent) {
             $url = "{$this->parent->getUrl()}/{$this->slug}";

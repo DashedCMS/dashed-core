@@ -2,17 +2,14 @@
 
 namespace Qubiqx\QcommerceCore\Filament\Concerns;
 
-use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\FileUpload;
 use Qubiqx\QcommerceCore\Classes\Sites;
-use Qubiqx\QcommercePages\Models\Page;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
 
 trait HasVisitableTab
 {
@@ -80,7 +77,7 @@ trait HasVisitableTab
                 ->label('Actief op sites')
                 ->options(collect(Sites::getSites())->pluck('name', 'id'))
                 ->multiple()
-                ->hidden(fn() => !(Sites::getAmountOfSites() > 1))
+                ->hidden(fn () => ! (Sites::getAmountOfSites() > 1))
                 ->required(),
         ];
 
@@ -88,7 +85,7 @@ trait HasVisitableTab
             $schema[] =
                 Select::make('parent_id')
                     ->relationship('parent', 'name')
-                    ->options(fn($record) => self::$model::where('id', '!=', $record->id ?? 0)->pluck('name', 'id'))
+                    ->options(fn ($record) => self::$model::where('id', '!=', $record->id ?? 0)->pluck('name', 'id'))
                     ->label('Bovenliggende item');
         }
 
