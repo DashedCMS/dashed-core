@@ -27,7 +27,7 @@ class Redirect extends Model
             return;
         }
 
-        if (! str($newSlug)->startsWith('/')) {
+        if (!str($newSlug)->startsWith('/')) {
             $newSlug = '/' . $newSlug;
         }
 
@@ -52,22 +52,20 @@ class Redirect extends Model
         $routeModels = cms()->builder('routeModels');
 
         foreach ($routeModels as $routeModel) {
-            if (method_exists($routeModel['routeHandler'], 'replaceInContent')) {
-                if (method_exists($routeModel['class'], 'replaceInContent')) {
-                    $routeModel['class']::replaceInContent([
-                        url($oldSlug) => url($newSlug),
-                        'href="' . url($oldSlug) . '"' => 'href="' . url($newSlug) . '"',
-                        'href="' . $oldSlug . '"' => 'href="' . $newSlug . '"',
-                        'href="/' . $oldSlug . '"' => 'href="' . $newSlug . '"',
-                    ]);
-                } else {
-                    $routeModel['routeHandler']::replaceInContent([
-                        url($oldSlug) => url($newSlug),
-                        'href="' . url($oldSlug) . '"' => 'href="' . url($newSlug) . '"',
-                        'href="' . $oldSlug . '"' => 'href="' . $newSlug . '"',
-                        'href="/' . $oldSlug . '"' => 'href="' . $newSlug . '"',
-                    ]);
-                }
+            if (method_exists($routeModel['class'], 'replaceInContent')) {
+                $routeModel['class']::replaceInContent([
+                    url($oldSlug) => url($newSlug),
+                    'href="' . url($oldSlug) . '"' => 'href="' . url($newSlug) . '"',
+                    'href="' . $oldSlug . '"' => 'href="' . $newSlug . '"',
+                    'href="/' . $oldSlug . '"' => 'href="' . $newSlug . '"',
+                ]);
+            } elseif (isset($routeModel['routeHandler']) && method_exists($routeModel['routeHandler'], 'replaceInContent')) {
+                $routeModel['routeHandler']::replaceInContent([
+                    url($oldSlug) => url($newSlug),
+                    'href="' . url($oldSlug) . '"' => 'href="' . url($newSlug) . '"',
+                    'href="' . $oldSlug . '"' => 'href="' . $newSlug . '"',
+                    'href="/' . $oldSlug . '"' => 'href="' . $newSlug . '"',
+                ]);
             }
         }
     }
