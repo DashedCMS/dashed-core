@@ -27,7 +27,7 @@ class Redirect extends Model
             return;
         }
 
-        if (!str($newSlug)->startsWith('/')) {
+        if (! str($newSlug)->startsWith('/')) {
             $newSlug = '/' . $newSlug;
         }
 
