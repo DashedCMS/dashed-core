@@ -59,7 +59,6 @@ class Redirect extends Model
                     'href="' . $oldSlug . '"' => 'href="' . $newSlug . '"',
                     'href="/' . $oldSlug . '"' => 'href="' . $newSlug . '"',
                 ]);
-
             } elseif (isset($routeModel['routeHandler']) && method_exists($routeModel['routeHandler'], 'replaceInContent')) {
                 $routeModel['routeHandler']::replaceInContent([
                     url($oldSlug) => url($newSlug),
