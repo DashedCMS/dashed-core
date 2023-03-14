@@ -53,12 +53,21 @@ class Redirect extends Model
 
         foreach ($routeModels as $routeModel) {
             if (method_exists($routeModel['routeHandler'], 'replaceInContent')) {
-                $routeModel['routeHandler']::replaceInContent([
-                    url($oldSlug) => url($newSlug),
-                    'href="' . url($oldSlug) . '"' => 'href="' . url($newSlug) . '"',
-                    'href="' . $oldSlug . '"' => 'href="' . $newSlug . '"',
-                    'href="/' . $oldSlug . '"' => 'href="' . $newSlug . '"',
-                ]);
+                if (method_exists($routeModel['class'], 'replaceInContent')) {
+                    $routeModel['class']::replaceInContent([
+                        url($oldSlug) => url($newSlug),
+                        'href="' . url($oldSlug) . '"' => 'href="' . url($newSlug) . '"',
+                        'href="' . $oldSlug . '"' => 'href="' . $newSlug . '"',
+                        'href="/' . $oldSlug . '"' => 'href="' . $newSlug . '"',
+                    ]);
+                } else {
+                    $routeModel['routeHandler']::replaceInContent([
+                        url($oldSlug) => url($newSlug),
+                        'href="' . url($oldSlug) . '"' => 'href="' . url($newSlug) . '"',
+                        'href="' . $oldSlug . '"' => 'href="' . $newSlug . '"',
+                        'href="/' . $oldSlug . '"' => 'href="' . $newSlug . '"',
+                    ]);
+                }
             }
         }
     }
