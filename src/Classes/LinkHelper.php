@@ -45,7 +45,7 @@ class LinkHelper
     public static function getUrl(array $data = [], $prefix = 'url'): string
     {
         if (($data["{$prefix}_type"] ?? 'normal') == 'normal') {
-            return $data["{$prefix}_url"] ?? '';
+            return $data["{$prefix}_url"] ?? '#';
         }
 
         $routeModel = cms()->builder('routeModels')[$data["{$prefix}_type"]];
