@@ -8,8 +8,8 @@ class SeoManager
 {
     public function __construct()
     {
-//        self::metaData('metaImage', app(\Flowframe\Drift\UrlBuilder::class)->url('qcommerce', Customsetting::get('default_meta_data_image'), []));
-//        dump(self::metaData('meteImage'));
+        //        self::metaData('metaImage', app(\Flowframe\Drift\UrlBuilder::class)->url('qcommerce', Customsetting::get('default_meta_data_image'), []));
+        //        dump(self::metaData('meteImage'));
     }
 
     protected static $metaData = [
