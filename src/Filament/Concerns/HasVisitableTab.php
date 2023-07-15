@@ -61,15 +61,15 @@ trait HasVisitableTab
     {
         $schema = [
             DatePicker::make('start_date')
-                ->label('Vul een startdatum in voor de pagina:')
-                ->helperText('Indien je geen startdatum opgeeft, is de pagina direct zichtbaar')
+                ->label('Vul een startdatum in voor dit item:')
+                ->helperText('Indien je geen startdatum opgeeft, is het item direct zichtbaar')
                 ->rules([
                     'nullable',
                     'date',
                 ]),
             DatePicker::make('end_date')
-                ->label('Vul een einddatum in voor de pagina:')
-                ->helperText('Indien je geen einddatum opgeeft, vervalt de pagina niet')
+                ->label('Vul een einddatum in voor dit item:')
+                ->helperText('Indien je geen einddatum opgeeft, vervalt het item niet')
                 ->rules([
                     'nullable',
                     'date',
