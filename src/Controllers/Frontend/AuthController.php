@@ -126,6 +126,7 @@ class AuthController extends FrontendController
             }
 
             View::share('user', $user);
+            View::share('passwordResetToken', $passwordResetToken);
 
             return view('qcommerce.reset-password.show');
         } else {

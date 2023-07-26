@@ -10,7 +10,6 @@ trait HasCustomBlocksTab
     {
         return [
             Group::make()
-                ->columns(1)
                 ->relationship('customBlocks')
                 ->schema($schema)
                 ->visible(count($schema))
@@ -24,7 +23,6 @@ trait HasCustomBlocksTab
                 ])
                 ->columns(2)
                 ->mutateRelationshipDataBeforeCreateUsing(function ($data, $livewire) {
-                    //Todo: test loading it in on the frontend
                     $blocks = [];
                     foreach ($data as $key => $item) {
                         $blocks[$key] = $item;
