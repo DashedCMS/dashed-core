@@ -8,6 +8,10 @@ use Flowframe\Drift\DriftManager;
 use Filament\PluginServiceProvider;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Model;
+use Qubiqx\QcommerceCore\Livewire\Frontend\Account\Account;
+use Qubiqx\QcommerceCore\Livewire\Frontend\Auth\ForgotPassword;
+use Qubiqx\QcommerceCore\Livewire\Frontend\Auth\Login;
+use Qubiqx\QcommerceCore\Livewire\Frontend\Auth\ResetPassword;
 use Spatie\LaravelPackageTools\Package;
 use Illuminate\Console\Scheduling\Schedule;
 use Qubiqx\QcommerceCore\Commands\CreateSitemap;
@@ -40,6 +44,10 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
         ));
 
         Livewire::component('notification.toastr', Toastr::class);
+        Livewire::component('auth.login', Login::class);
+        Livewire::component('auth.forgot-password', ForgotPassword::class);
+        Livewire::component('auth.reset-password', ResetPassword::class);
+        Livewire::component('account.account', Account::class);
 
         $this->app->booted(function () {
             $schedule = app(Schedule::class);
