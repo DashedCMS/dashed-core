@@ -74,8 +74,13 @@ class Login extends Component
             'registerPassword' => [
                 'min:6',
                 'max:255',
-                'required_with:registerPasswordConfirmation',
-                'same:registerPasswordConfirmation',
+                'required',
+            ],
+            'registerPasswordConfirmation' => [
+                'min:6',
+                'max:255',
+                'required',
+                'same:registerPassword',
             ],
         ],
             [],
