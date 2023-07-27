@@ -3,8 +3,8 @@
 namespace Qubiqx\QcommerceCore\Livewire\Frontend\Account;
 
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
+use Illuminate\Support\Facades\Hash;
 use Qubiqx\QcommerceTranslations\Models\Translation;
 
 class Account extends Component
