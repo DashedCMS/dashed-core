@@ -38,13 +38,6 @@ class Account extends Component
                 'nullable',
                 'min:6',
                 'max:255',
-                'confirmed',
-            ],
-            'password' => [
-                'nullable',
-                'min:6',
-                'max:255',
-                'required',
             ],
             'passwordConfirmation' => [
                 'min:6',
