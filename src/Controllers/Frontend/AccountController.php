@@ -4,7 +4,6 @@ namespace Qubiqx\QcommerceCore\Controllers\Frontend;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\View;
 use Qubiqx\QcommerceTranslations\Models\Translation;
 use Qubiqx\QcommerceCore\Requests\Frontend\UpdateAccountRequest;
 
