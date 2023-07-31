@@ -50,4 +50,7 @@ Route::group(
     }
 );
 
-Route::fallback([FrontendController::class, 'index'])->middleware(array_merge(['web', FrontendMiddleware::class, LocaleSessionRedirect::class, LaravelLocalizationRedirectFilter::class, LaravelLocalizationViewPath::class], cms()->builder('frontendMiddlewares')))->name('qcommerce.frontend.general.index')->where('slug', '.*');
+Route::fallback([FrontendController::class, 'index'])
+    ->middleware(array_merge(['web', FrontendMiddleware::class, LocaleSessionRedirect::class, LaravelLocalizationRedirectFilter::class, LaravelLocalizationViewPath::class], cms()->builder('frontendMiddlewares')))
+    ->name('qcommerce.frontend.general.index')
+    ->where('slug', '.*');
