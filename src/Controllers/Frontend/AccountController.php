@@ -12,7 +12,7 @@ class AccountController extends FrontendController
 {
     public function account()
     {
-        if (View::exists('qcommerce.account.show')) {
+        if (view()->exists('qcommerce.account.show')) {
             seo()->metaData('metaTitle', Translation::get('account-page-meta-title', 'account', 'Account'));
             seo()->metaData('metaDescription', Translation::get('account-page-meta-description', 'account', 'View your account here'));
 

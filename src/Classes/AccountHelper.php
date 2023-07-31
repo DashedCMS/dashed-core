@@ -10,7 +10,7 @@ class AccountHelper
     public static function getAccountUrl()
     {
         if (Auth::check()) {
-            return LaravelLocalization::localizeUrl(route('qcommerce.frontend.account'));
+            return LaravelLocalization::localizeUrl(route('qcommerce.frontend.auth.account'));
         } else {
             return LaravelLocalization::localizeUrl(route('qcommerce.frontend.auth.login'));
         }
