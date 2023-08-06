@@ -1,9 +1,9 @@
 # Qcommerce Core
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/qubiqx/qcommerce-core.svg?style=flat-square)](https://packagist.org/packages/qubiqx/qcommerce-core)
-[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/qubiqx/qcommerce-core/run-tests?label=tests)](https://github.com/qubiqx/qcommerce-core/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/qubiqx/qcommerce-core/Check%20&%20fix%20styling?label=code%20style)](https://github.com/qubiqx/qcommerce-core/actions?query=workflow%3A"Check+%26+fix+styling"+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/qubiqx/qcommerce-core.svg?style=flat-square)](https://packagist.org/packages/qubiqx/qcommerce-core)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/dashed/dashed-core.svg?style=flat-square)](https://packagist.org/packages/dashed/dashed-core)
+[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/dashed/dashed-core/run-tests?label=tests)](https://github.com/dashed/dashed-core/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/dashed/dashed-core/Check%20&%20fix%20styling?label=code%20style)](https://github.com/dashed/dashed-core/actions?query=workflow%3A"Check+%26+fix+styling"+branch%3Amain)
+[![Total Downloads](https://img.shields.io/packagist/dt/dashed/dashed-core.svg?style=flat-square)](https://packagist.org/packages/dashed/dashed-core)
 
 This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
 
@@ -20,7 +20,7 @@ We highly appreciate you sending us a postcard from your hometown, mentioning wh
 You can install the package via composer:
 
 ```bash
-composer require qubiqx/qcommerce-core
+composer require dashed/dashed-core
 ```
 
 You can publish and run the migrations with:

@@ -1,12 +1,12 @@
 {
-    "name": "qubiqx/qcommerce-core",
+    "name": "dashed/dashed-core",
     "description": "Qcommerce Core",
     "keywords": [
         "Qubiqx",
         "laravel",
         "qcommerce-core"
     ],
-    "homepage": "https://github.com/qubiqx/qcommerce-core",
+    "homepage": "https://github.com/Dashed-DEV/dashed-core",
     "license": "MIT",
     "authors": [
         {
