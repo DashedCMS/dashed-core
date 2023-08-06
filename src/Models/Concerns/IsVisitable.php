@@ -8,10 +8,10 @@ use Spatie\Sitemap\Tags\Url;
 use Spatie\Activitylog\LogOptions;
 use Dashed\DashedPages\Models\Page;
 use Dashed\DashedCore\Classes\Sites;
-use Spatie\Translatable\HasTranslations;
 use Dashed\DashedCore\Classes\Locales;
-use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Translatable\HasTranslations;
 use Dashed\DashedCore\Models\Customsetting;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 trait IsVisitable

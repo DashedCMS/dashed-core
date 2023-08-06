@@ -3,10 +3,10 @@
 namespace Dashed\DashedCore\Models;
 
 use Spatie\Activitylog\LogOptions;
+use Dashed\DashedCore\Classes\Sites;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\Model;
-use Dashed\DashedCore\Classes\Sites;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 class Customsetting extends Model

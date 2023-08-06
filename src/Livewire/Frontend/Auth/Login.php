@@ -3,9 +3,9 @@
 namespace Dashed\DashedCore\Livewire\Frontend\Auth;
 
 use Livewire\Component;
+use Dashed\DashedCore\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Dashed\DashedCore\Models\User;
 use Dashed\DashedTranslations\Models\Translation;
 use Dashed\DashedEcommerceCore\Classes\ShoppingCart;
 

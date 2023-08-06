@@ -4,11 +4,11 @@ namespace Dashed\DashedCore\Controllers\Frontend;
 
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use Dashed\DashedCore\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\View;
-use Dashed\DashedCore\Models\User;
 use Dashed\DashedCore\Mail\PasswordResetMail;
 use Dashed\DashedTranslations\Models\Translation;
 use Dashed\DashedCore\Requests\Frontend\LoginRequest;

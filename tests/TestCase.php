@@ -4,7 +4,6 @@ namespace Dashed\DashedCore\Tests;
 
 use Orchestra\Testbench\TestCase as Orchestra;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Dashed\DashedCore\DashedCoreServiceProvider;
 
 class TestCase extends Orchestra
 {
