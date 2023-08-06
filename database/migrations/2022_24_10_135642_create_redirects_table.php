@@ -12,7 +12,7 @@ return new class extends Migration {
      */
     public function up()
     {
-        Schema::create('qcommerce__redirects', function (Blueprint $table) {
+        Schema::create('dashed__redirects', function (Blueprint $table) {
             $table->id();
 
             $table->string('from');

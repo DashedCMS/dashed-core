@@ -12,7 +12,7 @@ return new class extends Migration {
      */
     public function up()
     {
-        Schema::create('qcommerce__metadata', function (Blueprint $table) {
+        Schema::create('dashed__metadata', function (Blueprint $table) {
             $table->id();
             $table->json('image')->nullable();
             $table->json('title')->nullable();

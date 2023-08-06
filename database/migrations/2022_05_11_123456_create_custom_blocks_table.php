@@ -12,7 +12,7 @@ return new class extends Migration {
      */
     public function up()
     {
-        Schema::create('qcommerce__custom_blocks', function (Blueprint $table) {
+        Schema::create('dashed__custom_blocks', function (Blueprint $table) {
             $table->id();
             $table->json('blocks')->nullable();
             $table->morphs('blockable');

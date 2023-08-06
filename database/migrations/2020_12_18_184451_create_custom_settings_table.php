@@ -13,7 +13,7 @@ class CreateCustomSettingsTable extends Migration
      */
     public function up()
     {
-        Schema::create('qcommerce__custom_settings', function (Blueprint $table) {
+        Schema::create('dashed__custom_settings', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->text('value')->nullable();

@@ -3,6 +3,8 @@
 namespace Dashed\DashedCore\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
+use Tiptap\Core\Schema;
 
 class UpdateCommand extends Command
 {
@@ -37,6 +39,16 @@ class UpdateCommand extends Command
      */
     public function handle()
     {
+        $tables = DB::select('SHOW TABLES');
+        foreach ($tables as $table) {
+            $tableName = $table->{'Tables_in_' . env('DB_DATABASE')};
+            if (str($tableName)->contains('qcommerce')) {
+                \Illuminate\Support\Facades\Schema::rename($tableName, str($tableName)->replace('dashed__', 'dashed__'));
+            }
+        }
+
+
+        //Above is for upgrading from Qcommerce to Dashed
         $this->call('vendor:publish', [
             '--tag' => 'dashed-core-config',
         ]);

@@ -22,7 +22,7 @@ return new class extends Migration {
 //            $page->metadata()->updateOrCreate([], $content);
 //        }
 
-        Schema::table('qcommerce__pages', function (Blueprint $table) {
+        Schema::table('dashed__pages', function (Blueprint $table) {
             $table->dropColumn('meta_title');
             $table->dropColumn('meta_description');
             $table->dropColumn('meta_image');
