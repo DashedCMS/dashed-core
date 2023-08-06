@@ -43,6 +43,7 @@ class UpdateCommand extends Command
             $tableName = $table->{'Tables_in_' . env('DB_DATABASE')};
             if (str($tableName)->contains('qcommerce')) {
                 \Illuminate\Support\Facades\Schema::rename($tableName, str($tableName)->replace('qcommerce__', 'dashed__'));
+                $this->info('Table renamed to ' . str($tableName)->replace('qcommerce__', 'dashed__'));
             }
         }
 
