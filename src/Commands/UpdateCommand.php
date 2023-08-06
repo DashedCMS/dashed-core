@@ -51,7 +51,6 @@ class UpdateCommand extends Command
         File::moveDirectory(base_path('resources/views/qcommerce'), base_path('resources/views/dashed'));
         File::moveDirectory(storage_path('app/public/qcommerce'), storage_path('app/public/dashed'));
         File::moveDirectory(storage_path('app/public/__images-cache/qcommerce'), storage_path('app/public/__images-cache/dashed'));
-        dd('asdf');
 
         //Above is for upgrading from Qcommerce to Dashed
         $this->call('vendor:publish', [
