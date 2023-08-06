@@ -25,24 +25,6 @@ class Helper
         return false;
     }
 
-    //    public static function getProductCategoriesFromIdsWithChilds($selectedProductCategoriesIds)
-    //    {
-    //        $selectedProductCategories = ProductCategory::find($selectedProductCategoriesIds);
-    //        foreach ($selectedProductCategories as $selectedProductCategory) {
-    //            $childProductCategories = ProductCategory::where('parent_category_id', $selectedProductCategory->id)->get();
-    //            while ($childProductCategories->count()) {
-    //                $childProductCategoryIds = [];
-    //                foreach ($childProductCategories as $childProductCategory) {
-    //                    $childProductCategoryIds[] = $childProductCategory->id;
-    //                    $selectedProductCategoriesIds[] = $childProductCategory->id;
-    //                }
-    //                $childProductCategories = ProductCategory::whereIn('parent_category_id', $childProductCategoryIds)->get();
-    //            }
-    //        }
-    //
-    //        return ProductCategory::find($selectedProductCategoriesIds);
-    //    }
-
     public static function getProfilePicture($email)
     {
         return 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($email)));

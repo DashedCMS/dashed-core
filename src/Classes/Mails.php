@@ -33,6 +33,7 @@ class Mails
         return [];
     }
 
+    //Todo: move to ecommerce package
     public static function getAdminLowStockNotificationEmails(): array
     {
         $emails = Customsetting::get('notification_low_stock_emails', Sites::getActive(), '[]');

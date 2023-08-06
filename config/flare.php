@@ -25,7 +25,7 @@ return [
     |
     */
 
-    'key' => env('FLARE_KEY', 'C9vsh3fGFsfauYVhilu0Cus6NdCqrgyV'),
+    'key' => env('FLARE_KEY'),
 
     /*
     |--------------------------------------------------------------------------

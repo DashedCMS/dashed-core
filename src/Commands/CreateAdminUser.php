@@ -20,7 +20,7 @@ class CreateAdminUser extends Command
      *
      * @var string
      */
-    protected $description = 'Create a admin user for the Qcommerce admin';
+    protected $description = 'Create a admin user for the Dashed admin';
 
     /**
      * Create a new command instance.
@@ -39,7 +39,7 @@ class CreateAdminUser extends Command
      */
     public function handle()
     {
-        $this->info('We are going to create a admin user for the Qcommerce CMS!');
+        $this->info('We are going to create a admin user for the Dashed CMS!');
         $firstName = $this->ask('What is your first name?');
         $lastName = $this->ask('What is your last name?');
         $email = $this->ask('What is your email?');

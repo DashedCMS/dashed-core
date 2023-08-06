@@ -4,7 +4,7 @@ module.exports = {
     content: [
         './resources/**/*.blade.php',
         './vendor/filament/**/*.blade.php',
-        './vendor/Dashed-DEV/**/*.php',
+        './vendor/dashed/**/*.php',
     ],
     theme: {
         extend: {

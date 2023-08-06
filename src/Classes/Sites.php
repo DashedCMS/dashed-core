@@ -7,7 +7,7 @@ class Sites
     public static function getActive()
     {
         if (count(cms()->builder('sites'))) {
-            return env('QCOMMERCE_SITE_ID', cms()->builder('sites')[0]['id']);
+            return env('DASHED_SITE_ID', cms()->builder('sites')[0]['id']);
         } else {
             return '';
         }
