@@ -4,7 +4,6 @@ namespace Dashed\DashedCore\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use Tiptap\Core\Schema;
 
 class UpdateCommand extends Command
 {
