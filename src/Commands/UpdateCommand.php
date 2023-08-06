@@ -59,6 +59,7 @@ class UpdateCommand extends Command
                 } catch (\Exception $e) {
                     //                    dump($e->getMessage());
                 }
+
                 try {
                     DB::table($tableName)->update([
                         $columnName => DB::raw('REPLACE(' . $columnName . ', "Qubiqx\Qcommerce", "Dashed\Dashed")'),
