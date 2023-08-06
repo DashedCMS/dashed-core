@@ -51,7 +51,6 @@ class UpdateCommand extends Command
             $columns = DB::select('SHOW COLUMNS FROM ' . $tableName);
             foreach($columns as $column) {
                 $columnName = $column->{'Field'};
-                dump($columnName);
 
                 try {
                     DB::table($tableName)->update([
@@ -62,7 +61,6 @@ class UpdateCommand extends Command
                 }
             }
         }
-        dd('done');
 
         File::moveDirectory(base_path('resources/views/qcommerce'), base_path('resources/views/dashed'));
         File::moveDirectory(storage_path('app/public/qcommerce'), storage_path('app/public/dashed'));
