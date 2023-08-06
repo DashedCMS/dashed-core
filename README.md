@@ -1,4 +1,4 @@
-# Qcommerce Core
+# Dashed Core
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/Dashed-DEV/dashed-core.svg?style=flat-square)](https://packagist.org/packages/Dashed-DEV/dashed-core)
 [![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/Dashed-DEV/dashed-core/run-tests?label=tests)](https://github.com/Dashed-DEV/dashed-core/actions?query=workflow%3Arun-tests+branch%3Amain)
@@ -9,7 +9,7 @@ This is where your description should go. Limit it to a paragraph or two. Consid
 
 ## Support us
 
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/Qcommerce core.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/Qcommerce core)
+[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/Dashed core.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/Dashed core)
 
 We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
 

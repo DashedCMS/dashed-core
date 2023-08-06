@@ -56,6 +56,9 @@ class UpdateCommand extends Command
                     DB::table($tableName)->update([
                         $columnName => DB::raw('REPLACE(' . $columnName . ', "qcommerce/", "dashed/")'),
                     ]);
+                    DB::table($tableName)->update([
+                        $columnName => DB::raw('REPLACE(' . $columnName . ', "Qubiqx\Qcommerce", "Dashed\Dashed")'),
+                    ]);
                 } catch (\Exception $e) {
                     //                    dump($e->getMessage());
                 }
@@ -66,7 +69,7 @@ class UpdateCommand extends Command
         File::moveDirectory(storage_path('app/public/qcommerce'), storage_path('app/public/dashed'));
         File::moveDirectory(storage_path('app/public/__images-cache/qcommerce'), storage_path('app/public/__images-cache/dashed'));
 
-        //Above is for upgrading from Qcommerce to Dashed
+        //Above is for upgrading from Dashed to Dashed
         $this->call('vendor:publish', [
             '--tag' => 'dashed-core-config',
         ]);
