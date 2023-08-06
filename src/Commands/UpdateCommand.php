@@ -71,7 +71,7 @@ class UpdateCommand extends Command
                         }
                     }
                 } catch (\Exception $e) {
-                                        dump($e->getMessage());
+                    dump($e->getMessage());
                 }
             }
         }
