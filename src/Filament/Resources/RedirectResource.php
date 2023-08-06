@@ -1,6 +1,6 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Filament\Resources;
+namespace Dashed\DashedCore\Filament\Resources;
 
 use Filament\Forms;
 use Filament\Resources\Form;
@@ -8,10 +8,10 @@ use Filament\Resources\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Section;
 use Filament\Tables\Columns\TextColumn;
-use Qubiqx\QcommerceCore\Models\Redirect;
-use Qubiqx\QcommerceCore\Filament\Resources\RedirectResource\Pages\EditRedirect;
-use Qubiqx\QcommerceCore\Filament\Resources\RedirectResource\Pages\ListRedirects;
-use Qubiqx\QcommerceCore\Filament\Resources\RedirectResource\Pages\CreateRedirect;
+use Dashed\DashedCore\Models\Redirect;
+use Dashed\DashedCore\Filament\Resources\RedirectResource\Pages\EditRedirect;
+use Dashed\DashedCore\Filament\Resources\RedirectResource\Pages\ListRedirects;
+use Dashed\DashedCore\Filament\Resources\RedirectResource\Pages\CreateRedirect;
 
 class RedirectResource extends Resource
 {
@@ -39,7 +39,7 @@ class RedirectResource extends Resource
                                 Forms\Components\TextInput::make('to')
                                     ->required()
                                     ->label('Naar welke URL moet deze redirect verwijzen?')
-                                    ->helperText('Bijv: /dit-is-een-nieuwe-url of https://qubiqx.com/wij-programmeren-kei-goed'),
+                                    ->helperText('Bijv: /dit-is-een-nieuwe-url of https://dashed.com/wij-programmeren-kei-goed'),
                                 Forms\Components\Select::make('sort')
                                     ->required()
                                     ->label('Type redirect')

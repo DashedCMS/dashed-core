@@ -1,6 +1,6 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Controllers\Frontend;
+namespace Dashed\DashedCore\Controllers\Frontend;
 
 use Carbon\Carbon;
 use Illuminate\Support\Str;
@@ -8,27 +8,27 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\View;
-use Qubiqx\QcommerceCore\Models\User;
-use Qubiqx\QcommerceCore\Mail\PasswordResetMail;
-use Qubiqx\QcommerceTranslations\Models\Translation;
-use Qubiqx\QcommerceCore\Requests\Frontend\LoginRequest;
-use Qubiqx\QcommerceCore\Requests\Frontend\RegisterRequest;
-use Qubiqx\QcommerceCore\Requests\Frontend\ResetPasswordRequest;
-use Qubiqx\QcommerceCore\Requests\Frontend\ForgotPasswordRequest;
+use Dashed\DashedCore\Models\User;
+use Dashed\DashedCore\Mail\PasswordResetMail;
+use Dashed\DashedTranslations\Models\Translation;
+use Dashed\DashedCore\Requests\Frontend\LoginRequest;
+use Dashed\DashedCore\Requests\Frontend\RegisterRequest;
+use Dashed\DashedCore\Requests\Frontend\ResetPasswordRequest;
+use Dashed\DashedCore\Requests\Frontend\ForgotPasswordRequest;
 
 class AuthController extends FrontendController
 {
     public function login()
     {
         if (Auth::check()) {
-            return redirect(route('qcommerce.frontend.account'))->with('success', Translation::get('already-logged-in', 'login', 'You are already logged in'));
+            return redirect(route('dashed.frontend.account'))->with('success', Translation::get('already-logged-in', 'login', 'You are already logged in'));
         }
 
-        if (View::exists('qcommerce.login.show')) {
+        if (View::exists('dashed.login.show')) {
             seo()->metaData('metaTitle', Translation::get('login-page-meta-title', 'login', 'Login'));
             seo()->metaData('metaDescription', Translation::get('login-page-meta-description', 'login', 'Login to your account'));
 
-            return view('qcommerce.login.show');
+            return view('dashed.login.show');
         } else {
             return $this->pageNotFound();
         }
@@ -48,7 +48,7 @@ class AuthController extends FrontendController
 
         Auth::login($user, $request->remember_me);
 
-        return redirect(route('qcommerce.frontend.account'))->with('success', Translation::get('succesfully-logged-in', 'login', 'You are logged in!'));
+        return redirect(route('dashed.frontend.account'))->with('success', Translation::get('succesfully-logged-in', 'login', 'You are logged in!'));
     }
 
     public function registerPost(RegisterRequest $request)
@@ -62,31 +62,31 @@ class AuthController extends FrontendController
 
         Auth::login($user, $request->remember_me);
 
-        return redirect(route('qcommerce.frontend.account'))->with('success', Translation::get('succesfully-registered', 'login', 'You are registered!'));
+        return redirect(route('dashed.frontend.account'))->with('success', Translation::get('succesfully-registered', 'login', 'You are registered!'));
     }
 
     public function logout()
     {
         if (! Auth::check()) {
-            return redirect(route('qcommerce.frontend.auth.login'))->with('success', Translation::get('already-logged-out', 'login', 'You are already logged out'));
+            return redirect(route('dashed.frontend.auth.login'))->with('success', Translation::get('already-logged-out', 'login', 'You are already logged out'));
         }
 
         Auth::logout();
 
-        return redirect(route('qcommerce.frontend.auth.login'))->with('success', Translation::get('succesfully-logged-out', 'login', 'You are logged out!'));
+        return redirect(route('dashed.frontend.auth.login'))->with('success', Translation::get('succesfully-logged-out', 'login', 'You are logged out!'));
     }
 
     public function forgotPassword()
     {
         if (Auth::check()) {
-            return redirect(route('qcommerce.frontend.account'))->with('success', Translation::get('already-logged-in', 'login', 'You are already logged in'));
+            return redirect(route('dashed.frontend.account'))->with('success', Translation::get('already-logged-in', 'login', 'You are already logged in'));
         }
 
-        if (View::exists('qcommerce.forgot-password.show')) {
+        if (View::exists('dashed.forgot-password.show')) {
             seo()->metaData('metaTitle', Translation::get('forgot-password-page-meta-title', 'login', 'Forgot password'));
             seo()->metaData('metaDescription', Translation::get('forgot-password-page-meta-description', 'login', 'Forgot your password?'));
 
-            return view('qcommerce.forgot-password.show');
+            return view('dashed.forgot-password.show');
         } else {
             return $this->pageNotFound();
         }
@@ -95,7 +95,7 @@ class AuthController extends FrontendController
     public function forgotPasswordPost(ForgotPasswordRequest $request)
     {
         if (Auth::check()) {
-            return redirect(route('qcommerce.frontend.account'))->with('success', Translation::get('already-logged-in', 'login', 'You are already logged in'));
+            return redirect(route('dashed.frontend.account'))->with('success', Translation::get('already-logged-in', 'login', 'You are already logged in'));
         }
 
         $user = User::where('email', $request->email)->first();
@@ -112,23 +112,23 @@ class AuthController extends FrontendController
     public function resetPassword($passwordResetToken)
     {
         if (Auth::check()) {
-            return redirect(route('qcommerce.frontend.account'))->with('success', Translation::get('already-logged-in', 'login', 'You are already logged in'));
+            return redirect(route('dashed.frontend.account'))->with('success', Translation::get('already-logged-in', 'login', 'You are already logged in'));
         }
 
-        if (View::exists('qcommerce.reset-password.show')) {
+        if (View::exists('dashed.reset-password.show')) {
             seo()->metaData('metaTitle', Translation::get('reset-password-page-meta-title', 'login', 'Reset password'));
             seo()->metaData('metaDescription', Translation::get('reset-password-page-meta-description', 'login', 'Reset your password'));
 
             $user = User::where('password_reset_token', $passwordResetToken)->first();
 
             if (! $user) {
-                return redirect(route('qcommerce.frontend.auth.forgot-password'))->with('success', Translation::get('reset-token-invalid', 'login', 'The token that was provided is invalid'));
+                return redirect(route('dashed.frontend.auth.forgot-password'))->with('success', Translation::get('reset-token-invalid', 'login', 'The token that was provided is invalid'));
             }
 
             View::share('user', $user);
             View::share('passwordResetToken', $passwordResetToken);
 
-            return view('qcommerce.reset-password.show');
+            return view('dashed.reset-password.show');
         } else {
             return $this->pageNotFound();
         }
@@ -137,13 +137,13 @@ class AuthController extends FrontendController
     public function resetPasswordPost(ResetPasswordRequest $request, $passwordResetToken)
     {
         if (Auth::check()) {
-            return redirect(route('qcommerce.frontend.account'))->with('success', Translation::get('already-logged-in', 'login', 'You are already logged in'));
+            return redirect(route('dashed.frontend.account'))->with('success', Translation::get('already-logged-in', 'login', 'You are already logged in'));
         }
 
         $user = User::where('password_reset_token', $passwordResetToken)->first();
 
         if (! $user) {
-            return redirect(route('qcommerce.frontend.auth.forgot-password'))->with('success', Translation::get('reset-token-invalid', 'login', 'The token that was provided is invalid'));
+            return redirect(route('dashed.frontend.auth.forgot-password'))->with('success', Translation::get('reset-token-invalid', 'login', 'The token that was provided is invalid'));
         }
 
         $user->password_reset_token = null;
@@ -153,6 +153,6 @@ class AuthController extends FrontendController
 
         Auth::login($user);
 
-        return redirect(route('qcommerce.frontend.account'))->with('success', Translation::get('reset-password-post-success', 'login', 'Your password has been reset!'));
+        return redirect(route('dashed.frontend.account'))->with('success', Translation::get('reset-password-post-success', 'login', 'Your password has been reset!'));
     }
 }

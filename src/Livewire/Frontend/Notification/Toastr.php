@@ -1,6 +1,6 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Livewire\Frontend\Notification;
+namespace Dashed\DashedCore\Livewire\Frontend\Notification;
 
 use Livewire\Component;
 
@@ -26,6 +26,6 @@ class Toastr extends Component
 
     public function render()
     {
-        return view('qcommerce-core::frontend.notification.toastr');
+        return view('dashed-core::frontend.notification.toastr');
     }
 }

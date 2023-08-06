@@ -1,9 +1,9 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Filament\Resources\UserResource\Users;
+namespace Dashed\DashedCore\Filament\Resources\UserResource\Users;
 
 use Filament\Resources\Pages\ListRecords;
-use Qubiqx\QcommerceCore\Filament\Resources\UserResource;
+use Dashed\DashedCore\Filament\Resources\UserResource;
 
 class ListUsers extends ListRecords
 {

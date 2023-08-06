@@ -1,10 +1,10 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Tests;
+namespace Dashed\DashedCore\Tests;
 
 use Orchestra\Testbench\TestCase as Orchestra;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Qubiqx\QcommerceCore\QcommerceCoreServiceProvider;
+use Dashed\DashedCore\DashedCoreServiceProvider;
 
 class TestCase extends Orchestra
 {
@@ -13,7 +13,7 @@ class TestCase extends Orchestra
         parent::setUp();
 
         Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'Qubiqx\\QcommerceCore\\Database\\Factories\\'.class_basename($modelName).'Factory'
+            fn (string $modelName) => 'Dashed\\DashedCore\\Database\\Factories\\'.class_basename($modelName).'Factory'
         );
     }
 
@@ -29,7 +29,7 @@ class TestCase extends Orchestra
         config()->set('database.default', 'testing');
 
         /*
-        $migration = include __DIR__.'/../database/migrations/create_qcommerce-core_table.php.stub';
+        $migration = include __DIR__.'/../database/migrations/create_dashed-core_table.php.stub';
         $migration->up();
         */
     }

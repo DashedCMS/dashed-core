@@ -1,8 +1,8 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Models\Concerns;
+namespace Dashed\DashedCore\Models\Concerns;
 
-use Qubiqx\QcommerceCore\Models\CustomBlock;
+use Dashed\DashedCore\Models\CustomBlock;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 trait HasCustomBlocks

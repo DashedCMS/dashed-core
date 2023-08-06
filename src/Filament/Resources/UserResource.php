@@ -1,6 +1,6 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Filament\Resources;
+namespace Dashed\DashedCore\Filament\Resources;
 
 use Closure;
 use App\Models\User;
@@ -11,9 +11,9 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
-use Qubiqx\QcommerceCore\Filament\Resources\UserResource\Users\EditUser;
-use Qubiqx\QcommerceCore\Filament\Resources\UserResource\Users\ListUsers;
-use Qubiqx\QcommerceCore\Filament\Resources\UserResource\Users\CreateUser;
+use Dashed\DashedCore\Filament\Resources\UserResource\Users\EditUser;
+use Dashed\DashedCore\Filament\Resources\UserResource\Users\ListUsers;
+use Dashed\DashedCore\Filament\Resources\UserResource\Users\CreateUser;
 
 class UserResource extends Resource
 {

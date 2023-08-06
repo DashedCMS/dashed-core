@@ -1,13 +1,13 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Models;
+namespace Dashed\DashedCore\Models;
 
 use Spatie\Activitylog\LogOptions;
 use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\FilamentUser;
 use Spatie\Activitylog\Traits\LogsActivity;
-use Qubiqx\QcommerceCore\Traits\HasDynamicRelation;
+use Dashed\DashedCore\Traits\HasDynamicRelation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Commands;
+namespace Dashed\DashedCore\Commands;
 
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Qubiqx\QcommerceCore\Models\User;
+use Dashed\DashedCore\Models\User;
 
 class InvalidatePasswordResetTokens extends Command
 {
@@ -13,7 +13,7 @@ class InvalidatePasswordResetTokens extends Command
      *
      * @var string
      */
-    protected $signature = 'qcommerce:invalidatepasswordresettokens';
+    protected $signature = 'dashed:invalidatepasswordresettokens';
 
     /**
      * The console command description.

@@ -1,14 +1,14 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Middleware;
+namespace Dashed\DashedCore\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
 use Spatie\SchemaOrg\Schema;
 use Illuminate\Support\Facades\View;
-use Qubiqx\QcommerceCore\Classes\Sites;
-use Qubiqx\QcommerceCore\Classes\Locales;
-use Qubiqx\QcommerceCore\Models\Customsetting;
+use Dashed\DashedCore\Classes\Sites;
+use Dashed\DashedCore\Classes\Locales;
+use Dashed\DashedCore\Models\Customsetting;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 class FrontendMiddleware

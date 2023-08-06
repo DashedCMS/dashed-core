@@ -1,6 +1,6 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Filament\Concerns;
+namespace Dashed\DashedCore\Filament\Concerns;
 
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Toggle;
@@ -42,7 +42,7 @@ trait HasMetadataTab
                         ]),
                     FileUpload::make('image')
                         ->label('Meta afbeelding')
-                        ->directory('qcommerce/metadata')
+                        ->directory('dashed/metadata')
                         ->image()
                         ->enableDownload()
                         ->helperText('De beste afmeting is 1200x630 pixels'),
@@ -82,7 +82,7 @@ trait HasMetadataTab
                             ]),
                         FileUpload::make('image')
                             ->label('Meta afbeelding')
-                            ->directory('qcommerce/metadata')
+                            ->directory('dashed/metadata')
                             ->image()
                             ->helperText('De beste afmeting is 1200x630 pixels'),
 //                        TextInput::make('canonical_url')

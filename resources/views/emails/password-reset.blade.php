@@ -239,7 +239,7 @@
                                                                                    style="font-family: Open Sans, Helvetica, Tahoma, Arial, sans-serif; padding: 0 10px;">
                                                                         <img alt="{{Customsetting::get('site_name')}}"
                                                                              height="auto"
-                                                                             src="{{app(\Flowframe\Drift\UrlBuilder::class)->url('qcommerce', $logo, [
+                                                                             src="{{app(\Flowframe\Drift\UrlBuilder::class)->url('dashed', $logo, [
                                                                                     'heighten' => 100
                                                                                 ])}}"
                                                                              style="border:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;font-size:13px;"
@@ -364,7 +364,7 @@
                                                                             role="presentation"
                                                                             style="font-family: Open Sans, Helvetica, Tahoma, Arial, sans-serif; border: none; border-radius: 3px; cursor: auto; mso-padding-alt: 10px 25px; background: {{Translation::get('primary-color-code', 'emails', '#A0131C')}};"
                                                                             valign="middle"><a
-                                                                                href="{{route('qcommerce.frontend.auth.reset-password', ['passwordResetToken' => $user->password_reset_token])}}"
+                                                                                href="{{route('dashed.frontend.auth.reset-password', ['passwordResetToken' => $user->password_reset_token])}}"
                                                                                 style="display: inline-block; background: {{Translation::get('primary-color-code', 'emails', '#A0131C')}}; color: #ffffff; font-family: Open Sans, Helvetica, Tahoma, Arial, sans-serif; font-size: 18px; font-weight: bold; line-height: 120%; margin: 0; text-decoration: none; text-transform: none; padding: 10px 25px; mso-padding-alt: 0px; border-radius: 3px;"
                                                                                 target="_blank"> {{Translation::get('reset-password', 'login', 'Reset password')}} </a>
                                                                         </td>

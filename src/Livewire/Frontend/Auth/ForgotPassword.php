@@ -1,14 +1,14 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Livewire\Frontend\Auth;
+namespace Dashed\DashedCore\Livewire\Frontend\Auth;
 
 use Carbon\Carbon;
 use Livewire\Component;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
-use Qubiqx\QcommerceCore\Models\User;
-use Qubiqx\QcommerceCore\Mail\PasswordResetMail;
-use Qubiqx\QcommerceTranslations\Models\Translation;
+use Dashed\DashedCore\Models\User;
+use Dashed\DashedCore\Mail\PasswordResetMail;
+use Dashed\DashedTranslations\Models\Translation;
 
 class ForgotPassword extends Component
 {
@@ -39,6 +39,6 @@ class ForgotPassword extends Component
 
     public function render()
     {
-        return view('qcommerce-ecommerce-core::frontend.auth.forgot-password');
+        return view('dashed-ecommerce-core::frontend.auth.forgot-password');
     }
 }

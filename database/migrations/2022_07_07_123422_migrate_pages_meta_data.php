@@ -12,9 +12,9 @@ return new class extends Migration {
      */
     public function up()
     {
-//        foreach (\Qubiqx\QcommercePages\Models\Page::get() as $page) {
+//        foreach (\Dashed\DashedPages\Models\Page::get() as $page) {
 //            $content = [];
-//            foreach (\Qubiqx\QcommerceCore\Classes\Locales::getLocales() as $locale) {
+//            foreach (\Dashed\DashedCore\Classes\Locales::getLocales() as $locale) {
 //                $content['title'][$locale['id']] = $page->getTranslation('meta_title', $locale['id']);
 //                $content['description'][$locale['id']] = $page->getTranslation('meta_description', $locale['id']);
 //                $content['image'][$locale['id']] = $page->getTranslation('meta_image', $locale['id']);

@@ -1,6 +1,6 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Classes;
+namespace Dashed\DashedCore\Classes;
 
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;

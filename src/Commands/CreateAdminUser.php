@@ -1,10 +1,10 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Commands;
+namespace Dashed\DashedCore\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
-use Qubiqx\QcommerceCore\Models\User;
+use Dashed\DashedCore\Models\User;
 
 class CreateAdminUser extends Command
 {
@@ -13,7 +13,7 @@ class CreateAdminUser extends Command
      *
      * @var string
      */
-    protected $signature = 'qcommerce:create-user';
+    protected $signature = 'dashed:create-user';
 
     /**
      * The console command description.

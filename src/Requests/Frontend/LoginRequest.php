@@ -1,6 +1,6 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Requests\Frontend;
+namespace Dashed\DashedCore\Requests\Frontend;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Http\FormRequest;

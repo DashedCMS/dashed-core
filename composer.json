@@ -1,17 +1,17 @@
 {
     "name": "dashed/dashed-core",
-    "description": "Qcommerce Core",
+    "description": "DashedCore",
     "keywords": [
-        "Qubiqx",
+        "Dashed",
         "laravel",
-        "qcommerce-core"
+        "dashed-core"
     ],
     "homepage": "https://github.com/Dashed-DEV/dashed-core",
     "license": "MIT",
     "authors": [
         {
             "name": "Robin van Maasakker",
-            "email": "robin@qubiqx.com",
+            "email": "robin@dashed.nl",
             "role": "Developer"
         }
     ],
@@ -48,8 +48,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Qubiqx\\QcommerceCore\\": "src",
-            "Qubiqx\\QcommerceCore\\Database\\Factories\\": "database/factories"
+            "Dashed\\DashedCore\\": "src",
+            "Dashed\\DashedCore\\Database\\Factories\\": "database/factories"
         },
         "files": [
             "src/Helpers/helpers.php"
@@ -57,7 +57,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Qubiqx\\QcommerceCore\\Tests\\": "tests"
+            "Dashed\\DashedCore\\Tests\\": "tests"
         }
     },
     "scripts": {
@@ -74,15 +74,15 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Qubiqx\\QcommerceCore\\QcommerceCoreServiceProvider"
+                "Dashed\\DashedCore\\DashedCoreServiceProvider"
             ],
             "aliases": {
-                "AccountHelper": "Qubiqx\\QcommerceCore\\Classes\\AccountHelper",
-                "LinkHelper": "Qubiqx\\QcommerceCore\\Classes\\LinkHelper",
-                "Helper": "Qubiqx\\QcommerceCore\\Classes\\Helper",
-                "Locales": "Qubiqx\\QcommerceCore\\Classes\\Locales",
-                "Sites": "Qubiqx\\QcommerceCore\\Classes\\Sites",
-                "Customsetting": "Qubiqx\\QcommerceCore\\Models\\Customsetting"
+                "AccountHelper": "Dashed\\DashedCore\\Classes\\AccountHelper",
+                "LinkHelper": "Dashed\\DashedCore\\Classes\\LinkHelper",
+                "Helper": "Dashed\\DashedCore\\Classes\\Helper",
+                "Locales": "Dashed\\DashedCore\\Classes\\Locales",
+                "Sites": "Dashed\\DashedCore\\Classes\\Sites",
+                "Customsetting": "Dashed\\DashedCore\\Models\\Customsetting"
             }
         }
     },

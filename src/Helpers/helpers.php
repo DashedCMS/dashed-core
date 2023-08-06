@@ -1,8 +1,8 @@
 <?php
 
 
-use Qubiqx\QcommerceCore\CMSManager;
-use Qubiqx\QcommerceCore\SeoManager;
+use Dashed\DashedCore\CMSManager;
+use Dashed\DashedCore\SeoManager;
 
 if (! function_exists('cms')) {
     function cms(): CMSManager

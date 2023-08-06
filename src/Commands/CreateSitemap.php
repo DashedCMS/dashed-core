@@ -1,9 +1,9 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Commands;
+namespace Dashed\DashedCore\Commands;
 
 use Illuminate\Console\Command;
-use Qubiqx\QcommerceCore\Classes\Sitemap;
+use Dashed\DashedCore\Classes\Sitemap;
 
 class CreateSitemap extends Command
 {
@@ -12,7 +12,7 @@ class CreateSitemap extends Command
      *
      * @var string
      */
-    protected $signature = 'qcommerce:create-sitemap';
+    protected $signature = 'dashed:create-sitemap';
 
     /**
      * The console command description.

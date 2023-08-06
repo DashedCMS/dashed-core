@@ -1,13 +1,13 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Livewire\Frontend\Auth;
+namespace Dashed\DashedCore\Livewire\Frontend\Auth;
 
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Qubiqx\QcommerceCore\Models\User;
-use Qubiqx\QcommerceTranslations\Models\Translation;
-use Qubiqx\QcommerceEcommerceCore\Classes\ShoppingCart;
+use Dashed\DashedCore\Models\User;
+use Dashed\DashedTranslations\Models\Translation;
+use Dashed\DashedEcommerceCore\Classes\ShoppingCart;
 
 class Login extends Component
 {
@@ -57,7 +57,7 @@ class Login extends Component
         if (ShoppingCart::cartItemsCount() > 0) {
             return redirect(ShoppingCart::getCartUrl())->with('success', Translation::get('succesfully-logged-in', 'login', 'You are logged in!'));
         } else {
-            return redirect(route('qcommerce.frontend.account'))->with('success', Translation::get('succesfully-logged-in', 'login', 'You are logged in!'));
+            return redirect(route('dashed.frontend.account'))->with('success', Translation::get('succesfully-logged-in', 'login', 'You are logged in!'));
         }
     }
 
@@ -98,11 +98,11 @@ class Login extends Component
 
         Auth::login($user, $this->registerRememberMe);
 
-        return redirect(route('qcommerce.frontend.account'))->with('success', Translation::get('succesfully-logged-in', 'login', 'You are logged in!'));
+        return redirect(route('dashed.frontend.account'))->with('success', Translation::get('succesfully-logged-in', 'login', 'You are logged in!'));
     }
 
     public function render()
     {
-        return view('qcommerce-ecommerce-core::frontend.auth.login');
+        return view('dashed-ecommerce-core::frontend.auth.login');
     }
 }

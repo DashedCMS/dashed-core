@@ -17,10 +17,10 @@ return [
             'visibility' => 'public',
         ],
 
-        'qcommerce' => [
+        'dashed' => [
             'driver' => 'local',
-            'root' => storage_path('app/public/qcommerce'),
-            'url' => env('APP_URL') . '/storage/qcommerce',
+            'root' => storage_path('app/public/dashed'),
+            'url' => env('APP_URL') . '/storage/dashed',
             'visibility' => 'public',
         ],
 

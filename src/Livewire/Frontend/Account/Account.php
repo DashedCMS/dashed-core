@@ -1,11 +1,11 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Livewire\Frontend\Account;
+namespace Dashed\DashedCore\Livewire\Frontend\Account;
 
 use App\Models\User;
 use Livewire\Component;
 use Illuminate\Support\Facades\Hash;
-use Qubiqx\QcommerceTranslations\Models\Translation;
+use Dashed\DashedTranslations\Models\Translation;
 
 class Account extends Component
 {
@@ -66,6 +66,6 @@ class Account extends Component
 
     public function render()
     {
-        return view('qcommerce-core::frontend.account.account');
+        return view('dashed-core::frontend.account.account');
     }
 }

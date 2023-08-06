@@ -1,15 +1,15 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Qubiqx\QcommerceCore\Middleware\AuthMiddleware;
-use Qubiqx\QcommerceCore\Middleware\GuestMiddleware;
-use Qubiqx\QcommerceTranslations\Models\Translation;
-use Qubiqx\QcommerceCore\Middleware\FrontendMiddleware;
+use Dashed\DashedCore\Middleware\AuthMiddleware;
+use Dashed\DashedCore\Middleware\GuestMiddleware;
+use Dashed\DashedTranslations\Models\Translation;
+use Dashed\DashedCore\Middleware\FrontendMiddleware;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
-use Qubiqx\QcommerceCore\Controllers\Frontend\AuthController;
-use Qubiqx\QcommerceCore\Controllers\Frontend\AccountController;
+use Dashed\DashedCore\Controllers\Frontend\AuthController;
+use Dashed\DashedCore\Controllers\Frontend\AccountController;
 use Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect;
-use Qubiqx\QcommerceCore\Controllers\Frontend\FrontendController;
+use Dashed\DashedCore\Controllers\Frontend\FrontendController;
 use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationViewPath;
 use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter;
 
@@ -21,19 +21,19 @@ Route::group(
     function () {
         //Auth routes
 
-        Route::get('/' . Translation::get('logout-slug', 'slug', 'logout'), [AuthController::class, 'logout'])->name('qcommerce.frontend.auth.logout');
+        Route::get('/' . Translation::get('logout-slug', 'slug', 'logout'), [AuthController::class, 'logout'])->name('dashed.frontend.auth.logout');
         Route::group([
             'middleware' => [GuestMiddleware::class],
         ], function () {
-            Route::get('/' . Translation::get('login-slug', 'slug', 'login'), [AuthController::class, 'login'])->name('qcommerce.frontend.auth.login');
-            Route::post('/' . Translation::get('login-slug', 'slug', 'login'), [AuthController::class, 'loginPost'])->name('qcommerce.frontend.auth.login.post');
-            Route::post('/' . Translation::get('register-slug', 'slug', 'register'), [AuthController::class, 'login'])->name('qcommerce.frontend.auth.register');
-            Route::post('/' . Translation::get('register-slug', 'slug', 'register'), [AuthController::class, 'registerPost'])->name('qcommerce.frontend.auth.register.post');
+            Route::get('/' . Translation::get('login-slug', 'slug', 'login'), [AuthController::class, 'login'])->name('dashed.frontend.auth.login');
+            Route::post('/' . Translation::get('login-slug', 'slug', 'login'), [AuthController::class, 'loginPost'])->name('dashed.frontend.auth.login.post');
+            Route::post('/' . Translation::get('register-slug', 'slug', 'register'), [AuthController::class, 'login'])->name('dashed.frontend.auth.register');
+            Route::post('/' . Translation::get('register-slug', 'slug', 'register'), [AuthController::class, 'registerPost'])->name('dashed.frontend.auth.register.post');
 
-            Route::get('/' . Translation::get('forgot-password-slug', 'slug', 'forgot-password'), [AuthController::class, 'forgotPassword'])->name('qcommerce.frontend.auth.forgot-password');
-            Route::post('/' . Translation::get('forgot-password-slug', 'slug', 'forgot-password'), [AuthController::class, 'forgotPasswordPost'])->name('qcommerce.frontend.auth.forgot-password.post');
-            Route::get('/' . Translation::get('reset-password-slug', 'slug', 'reset-password') . '/{passwordResetToken}', [AuthController::class, 'resetPassword'])->name('qcommerce.frontend.auth.reset-password');
-            Route::post('/' . Translation::get('reset-password-slug', 'slug', 'reset-password') . '/{passwordResetToken}', [AuthController::class, 'resetPasswordPost'])->name('qcommerce.frontend.auth.reset-password.post');
+            Route::get('/' . Translation::get('forgot-password-slug', 'slug', 'forgot-password'), [AuthController::class, 'forgotPassword'])->name('dashed.frontend.auth.forgot-password');
+            Route::post('/' . Translation::get('forgot-password-slug', 'slug', 'forgot-password'), [AuthController::class, 'forgotPasswordPost'])->name('dashed.frontend.auth.forgot-password.post');
+            Route::get('/' . Translation::get('reset-password-slug', 'slug', 'reset-password') . '/{passwordResetToken}', [AuthController::class, 'resetPassword'])->name('dashed.frontend.auth.reset-password');
+            Route::post('/' . Translation::get('reset-password-slug', 'slug', 'reset-password') . '/{passwordResetToken}', [AuthController::class, 'resetPasswordPost'])->name('dashed.frontend.auth.reset-password.post');
         });
 
         Route::group([
@@ -41,8 +41,8 @@ Route::group(
         ], function () {
             //Account routes
             Route::prefix('/' . Translation::get('account-slug', 'slug', 'account'))->group(function () {
-                Route::get('/', [AccountController::class, 'account'])->name('qcommerce.frontend.account');
-                Route::post('/', [AccountController::class, 'accountPost'])->name('qcommerce.frontend.account.post');
+                Route::get('/', [AccountController::class, 'account'])->name('dashed.frontend.account');
+                Route::post('/', [AccountController::class, 'accountPost'])->name('dashed.frontend.account.post');
             });
         });
     }
@@ -50,5 +50,5 @@ Route::group(
 
 Route::fallback([FrontendController::class, 'index'])
     ->middleware(array_merge(['web', FrontendMiddleware::class, LocaleSessionRedirect::class, LaravelLocalizationRedirectFilter::class, LaravelLocalizationViewPath::class], cms()->builder('frontendMiddlewares')))
-    ->name('qcommerce.frontend.general.index')
+    ->name('dashed.frontend.general.index')
     ->where('slug', '.*');

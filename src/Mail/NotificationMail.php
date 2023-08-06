@@ -1,11 +1,11 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Mail;
+namespace Dashed\DashedCore\Mail;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Qubiqx\QcommerceCore\Models\Customsetting;
+use Dashed\DashedCore\Models\Customsetting;
 
 class NotificationMail extends Mailable
 {
@@ -20,7 +20,7 @@ class NotificationMail extends Mailable
 
     public function build()
     {
-        return $this->view('qcommerce-core::emails.notification')
+        return $this->view('dashed-core::emails.notification')
             ->from(Customsetting::get('site_from_email'), Customsetting::get('company_name'))
             ->subject($this->subject)
             ->with([

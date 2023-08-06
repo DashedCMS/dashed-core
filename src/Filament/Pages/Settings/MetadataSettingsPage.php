@@ -1,17 +1,17 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Filament\Pages\Settings;
+namespace Dashed\DashedCore\Filament\Pages\Settings;
 
 use Filament\Pages\Page;
 use Filament\Forms\Components\Tabs;
 use Illuminate\Support\Facades\Cache;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Components\Tabs\Tab;
-use Qubiqx\QcommerceCore\Classes\Sites;
+use Dashed\DashedCore\Classes\Sites;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
-use Qubiqx\QcommerceCore\Models\Customsetting;
+use Dashed\DashedCore\Models\Customsetting;
 use Filament\Forms\Concerns\InteractsWithForms;
 
 class MetadataSettingsPage extends Page implements HasForms
@@ -24,7 +24,7 @@ class MetadataSettingsPage extends Page implements HasForms
     protected static ?string $navigationGroup = 'Overige';
     protected static ?string $title = 'Meta data instellingen';
 
-    protected static string $view = 'qcommerce-core::settings.pages.default-settings';
+    protected static string $view = 'dashed-core::settings.pages.default-settings';
 
     public function mount(): void
     {
@@ -55,16 +55,16 @@ class MetadataSettingsPage extends Page implements HasForms
                     ->rules([
                         'max:255',
                     ])
-                    ->helperText('Bijv: @qubiqx.dev'),
+                    ->helperText('Bijv: @dashed.dev'),
                 TextInput::make("default_meta_data_twitter_creator_{$site['id']}")
                     ->label('Twitter creator')
                     ->rules([
                         'max:255',
                     ])
-                    ->helperText('Bijv: @qubiqx.dev'),
+                    ->helperText('Bijv: @dashed.dev'),
                 FileUpload::make("default_meta_data_image_{$site['id']}")
                     ->label('Meta image')
-                    ->directory('qcommerce/metadata')
+                    ->directory('dashed/metadata')
                     ->image()
                     ->rules([
                         'image',

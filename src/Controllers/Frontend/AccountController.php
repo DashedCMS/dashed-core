@@ -1,21 +1,21 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Controllers\Frontend;
+namespace Dashed\DashedCore\Controllers\Frontend;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Qubiqx\QcommerceTranslations\Models\Translation;
-use Qubiqx\QcommerceCore\Requests\Frontend\UpdateAccountRequest;
+use Dashed\DashedTranslations\Models\Translation;
+use Dashed\DashedCore\Requests\Frontend\UpdateAccountRequest;
 
 class AccountController extends FrontendController
 {
     public function account()
     {
-        if (view()->exists('qcommerce.account.show')) {
+        if (view()->exists('dashed.account.show')) {
             seo()->metaData('metaTitle', Translation::get('account-page-meta-title', 'account', 'Account'));
             seo()->metaData('metaDescription', Translation::get('account-page-meta-description', 'account', 'View your account here'));
 
-            return view('qcommerce.account.show');
+            return view('dashed.account.show');
         } else {
             return $this->pageNotFound();
         }

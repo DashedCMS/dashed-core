@@ -1,6 +1,6 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Filament\Concerns;
+namespace Dashed\DashedCore\Filament\Concerns;
 
 use Filament\Forms\Components\Group;
 

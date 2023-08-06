@@ -1,6 +1,6 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Filament\Concerns;
+namespace Dashed\DashedCore\Filament\Concerns;
 
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
@@ -8,7 +8,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use Qubiqx\QcommerceCore\Classes\Sites;
+use Dashed\DashedCore\Classes\Sites;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
@@ -45,7 +45,7 @@ trait HasVisitableTab
                         ]),
                     FileUpload::make('image')
                         ->label('Meta afbeelding')
-                        ->directory('qcommerce/metadata')
+                        ->directory('dashed/metadata')
                         ->image()
                         ->enableDownload()
                         ->helperText('De beste afmeting is 1200x630 pixels'),

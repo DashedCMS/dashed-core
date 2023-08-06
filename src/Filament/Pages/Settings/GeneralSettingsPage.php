@@ -1,6 +1,6 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Filament\Pages\Settings;
+namespace Dashed\DashedCore\Filament\Pages\Settings;
 
 use Filament\Pages\Page;
 use Filament\Forms\Components\Tabs;
@@ -8,11 +8,11 @@ use Illuminate\Support\Facades\Cache;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Textarea;
-use Qubiqx\QcommerceCore\Classes\Sites;
+use Dashed\DashedCore\Classes\Sites;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
-use Qubiqx\QcommerceCore\Models\Customsetting;
+use Dashed\DashedCore\Models\Customsetting;
 use Filament\Forms\Concerns\InteractsWithForms;
 
 class GeneralSettingsPage extends Page implements HasForms
@@ -25,7 +25,7 @@ class GeneralSettingsPage extends Page implements HasForms
     protected static ?string $navigationGroup = 'Overige';
     protected static ?string $title = 'Algemene instellingen';
 
-    protected static string $view = 'qcommerce-core::settings.pages.default-settings';
+    protected static string $view = 'dashed-core::settings.pages.default-settings';
 
     public function mount(): void
     {
@@ -170,11 +170,11 @@ class GeneralSettingsPage extends Page implements HasForms
                     ]),
                 FileUpload::make("site_logo_{$site['id']}")
                     ->label('Logo')
-                    ->directory('qcommerce/branding/logo')
+                    ->directory('dashed/branding/logo')
                     ->required(),
                 FileUpload::make("site_favicon_{$site['id']}")
                     ->label('Favicon')
-                    ->directory('qcommerce/branding/favicon')
+                    ->directory('dashed/branding/favicon')
                     ->required(),
             ];
 

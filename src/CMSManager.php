@@ -1,6 +1,6 @@
 <?php
 
-namespace Qubiqx\QcommerceCore;
+namespace Dashed\DashedCore;
 
 class CMSManager
 {

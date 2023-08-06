@@ -1,6 +1,6 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Models;
+namespace Dashed\DashedCore\Models;
 
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +14,7 @@ class CustomBlock extends Model
     use HasFactory;
     use HasTranslations;
 
-    protected $table = 'qcommerce__custom_blocks';
+    protected $table = 'dashed__custom_blocks';
 
     protected static $logFillable = true;
 

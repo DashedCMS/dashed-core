@@ -70,7 +70,7 @@ return [
     */
     'accepted_file_types' => ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml', 'application/pdf'],
     'disk' => 'public',
-    'directory' => 'qcommerce/uploads',
+    'directory' => 'dashed/uploads',
     'visibility' => 'public',
     'preserve_file_names' => false,
     'max_file_size' => 2042,

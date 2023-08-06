@@ -1,6 +1,6 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Filament\Pages\Settings;
+namespace Dashed\DashedCore\Filament\Pages\Settings;
 
 use Filament\Pages\Page;
 
@@ -11,5 +11,5 @@ class SettingsPage extends Page
     protected static ?string $navigationGroup = 'Overige';
     protected static ?int $navigationSort = 100000;
 
-    protected static string $view = 'qcommerce-core::settings.pages.settings';
+    protected static string $view = 'dashed-core::settings.pages.settings';
 }

@@ -1,12 +1,12 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Models;
+namespace Dashed\DashedCore\Models;
 
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\Model;
-use Qubiqx\QcommerceCore\Classes\Sites;
+use Dashed\DashedCore\Classes\Sites;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 class Customsetting extends Model
@@ -15,7 +15,7 @@ class Customsetting extends Model
 
     protected static $logFillable = true;
 
-    protected $table = 'qcommerce__custom_settings';
+    protected $table = 'dashed__custom_settings';
 
     public function getActivitylogOptions(): LogOptions
     {
@@ -33,7 +33,7 @@ class Customsetting extends Model
         }
 
         return Cache::tags(['custom-settings', "custom-settings-$name"])->rememberForever("$name-$siteId-$locale", function () use ($name, $siteId, $default, $locale) {
-            if (! Schema::hasTable('qcommerce__custom_settings')) {
+            if (! Schema::hasTable('dashed__custom_settings')) {
                 return;
             }
 

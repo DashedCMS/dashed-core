@@ -26,7 +26,7 @@ return [
     |
     */
 
-    'path' => env('FILAMENT_PATH', 'qcommerce'),
+    'path' => env('FILAMENT_PATH', 'dashed'),
 
     /*
     |--------------------------------------------------------------------------

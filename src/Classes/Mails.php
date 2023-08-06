@@ -1,10 +1,10 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Classes;
+namespace Dashed\DashedCore\Classes;
 
 use Illuminate\Support\Facades\Mail;
-use Qubiqx\QcommerceCore\Models\Customsetting;
-use Qubiqx\QcommerceCore\Mail\NotificationMail;
+use Dashed\DashedCore\Models\Customsetting;
+use Dashed\DashedCore\Mail\NotificationMail;
 
 class Mails
 {

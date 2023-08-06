@@ -1,6 +1,6 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Classes;
+namespace Dashed\DashedCore\Classes;
 
 class Sitemap
 {

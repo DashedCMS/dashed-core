@@ -1,9 +1,9 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Filament\Resources\RedirectResource\Pages;
+namespace Dashed\DashedCore\Filament\Resources\RedirectResource\Pages;
 
 use Filament\Resources\Pages\CreateRecord;
-use Qubiqx\QcommerceCore\Filament\Resources\RedirectResource;
+use Dashed\DashedCore\Filament\Resources\RedirectResource;
 
 class CreateRedirect extends CreateRecord
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Commands;
+namespace Dashed\DashedCore\Commands;
 
 use Illuminate\Console\Command;
 
@@ -11,14 +11,14 @@ class InstallCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'qcommerce:install';
+    protected $signature = 'dashed:install';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Install Qcommerce in your application';
+    protected $description = 'Install Dashed in your application';
 
     /**
      * Create a new command instance.
@@ -38,7 +38,7 @@ class InstallCommand extends Command
     public function handle()
     {
         $this->call('vendor:publish', [
-            '--tag' => 'qcommerce-core-config',
+            '--tag' => 'dashed-core-config',
             '--force' => 'true',
         ]);
 
@@ -61,6 +61,6 @@ class InstallCommand extends Command
             '--force' => 'true',
         ]);
 
-        $this->info('QCommerce installed!');
+        $this->info('Dashed installed!');
     }
 }

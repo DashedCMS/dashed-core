@@ -1,6 +1,6 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Commands;
+namespace Dashed\DashedCore\Commands;
 
 use Illuminate\Console\Command;
 
@@ -11,14 +11,14 @@ class UpdateCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'qcommerce:update';
+    protected $signature = 'dashed:update';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Update Qcommerce in your application';
+    protected $description = 'Update Dashed in your application';
 
     /**
      * Create a new command instance.
@@ -38,7 +38,7 @@ class UpdateCommand extends Command
     public function handle()
     {
         $this->call('vendor:publish', [
-            '--tag' => 'qcommerce-core-config',
+            '--tag' => 'dashed-core-config',
         ]);
 
         $this->call('vendor:publish', [
@@ -59,6 +59,6 @@ class UpdateCommand extends Command
             '--force' => 'true',
         ]);
 
-        $this->info('QCommerce updated!');
+        $this->info('Dashed updated!');
     }
 }

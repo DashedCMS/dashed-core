@@ -1,6 +1,6 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Models;
+namespace Dashed\DashedCore\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -9,7 +9,7 @@ class Redirect extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'qcommerce__redirects';
+    protected $table = 'dashed__redirects';
 
     protected $dates = [
         'created_at',

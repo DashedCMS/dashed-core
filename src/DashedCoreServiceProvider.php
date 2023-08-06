@@ -1,6 +1,6 @@
 <?php
 
-namespace Qubiqx\QcommerceCore;
+namespace Dashed\DashedCore;
 
 use Livewire\Livewire;
 use Flowframe\Drift\Config;
@@ -10,26 +10,26 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\LaravelPackageTools\Package;
 use Illuminate\Console\Scheduling\Schedule;
-use Qubiqx\QcommerceCore\Commands\CreateSitemap;
-use Qubiqx\QcommerceCore\Commands\UpdateCommand;
-use Qubiqx\QcommerceCore\Commands\InstallCommand;
-use Qubiqx\QcommerceCore\Commands\CreateAdminUser;
-use Qubiqx\QcommerceCore\Livewire\Frontend\Auth\Login;
-use Qubiqx\QcommerceCore\Filament\Resources\UserResource;
-use Qubiqx\QcommerceCore\Livewire\Frontend\Account\Account;
-use Qubiqx\QcommerceCore\Filament\Resources\RedirectResource;
-use Qubiqx\QcommerceCore\Filament\Pages\Settings\SettingsPage;
-use Qubiqx\QcommerceCore\Livewire\Frontend\Auth\ResetPassword;
-use Qubiqx\QcommerceCore\Livewire\Frontend\Auth\ForgotPassword;
-use Qubiqx\QcommerceCore\Livewire\Frontend\Notification\Toastr;
+use Dashed\DashedCore\Commands\CreateSitemap;
+use Dashed\DashedCore\Commands\UpdateCommand;
+use Dashed\DashedCore\Commands\InstallCommand;
+use Dashed\DashedCore\Commands\CreateAdminUser;
+use Dashed\DashedCore\Livewire\Frontend\Auth\Login;
+use Dashed\DashedCore\Filament\Resources\UserResource;
+use Dashed\DashedCore\Livewire\Frontend\Account\Account;
+use Dashed\DashedCore\Filament\Resources\RedirectResource;
+use Dashed\DashedCore\Filament\Pages\Settings\SettingsPage;
+use Dashed\DashedCore\Livewire\Frontend\Auth\ResetPassword;
+use Dashed\DashedCore\Livewire\Frontend\Auth\ForgotPassword;
+use Dashed\DashedCore\Livewire\Frontend\Notification\Toastr;
 use Flowframe\Drift\CachingStrategies\FilesystemCachingStrategy;
-use Qubiqx\QcommerceCore\Commands\InvalidatePasswordResetTokens;
-use Qubiqx\QcommerceCore\Filament\Pages\Settings\GeneralSettingsPage;
-use Qubiqx\QcommerceCore\Filament\Pages\Settings\MetadataSettingsPage;
+use Dashed\DashedCore\Commands\InvalidatePasswordResetTokens;
+use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
+use Dashed\DashedCore\Filament\Pages\Settings\MetadataSettingsPage;
 
-class QcommerceCoreServiceProvider extends PluginServiceProvider
+class DashedCoreServiceProvider extends PluginServiceProvider
 {
-    public static string $name = 'qcommerce-core';
+    public static string $name = 'dashed-core';
 
     public function bootingPackage()
     {
@@ -38,7 +38,7 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
         $drift = app(DriftManager::class);
 
         $drift->registerConfig(new Config(
-            name: 'qcommerce', // Will be used in the slug
+            name: 'dashed', // Will be used in the slug
             filesystemDisk: 'public', // Local, public or s3 for example
             cachingStrategy: FilesystemCachingStrategy::class,
         ));
@@ -90,7 +90,7 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
         );
 
         $package
-            ->name('qcommerce-core')
+            ->name('dashed-core')
             ->hasConfigFile([
                 'filament',
                 'filament-spatie-laravel-translatable-plugin',
@@ -117,7 +117,7 @@ class QcommerceCoreServiceProvider extends PluginServiceProvider
     protected function getStyles(): array
     {
         return array_merge(parent::getStyles(), [
-            'qcommerce-core' => str_replace('/vendor/dashed/dashed-core/src', '', str_replace('/packages/dashed/dashed-core/src', '', __DIR__)) . '/vendor/dashed/dashed-core/resources/dist/css/qcommerce-core.css',
+            'dashed-core' => str_replace('/vendor/Dashed-DEV/dashed-core/src', '', str_replace('/packages/Dashed-DEV/dashed-core/src', '', __DIR__)) . '/vendor/Dashed-DEV/dashed-core/resources/dist/css/dashed-core.css',
         ]);
     }
 

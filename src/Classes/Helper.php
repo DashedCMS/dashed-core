@@ -1,6 +1,6 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Classes;
+namespace Dashed\DashedCore\Classes;
 
 use Illuminate\Support\Facades\Request;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;

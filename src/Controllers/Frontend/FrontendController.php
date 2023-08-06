@@ -1,13 +1,13 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Controllers\Frontend;
+namespace Dashed\DashedCore\Controllers\Frontend;
 
 use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\View;
-use Qubiqx\QcommerceCore\Classes\Locales;
-use Qubiqx\QcommerceCore\Models\Redirect;
-use Qubiqx\QcommerceCore\Models\Customsetting;
+use Dashed\DashedCore\Classes\Locales;
+use Dashed\DashedCore\Models\Redirect;
+use Dashed\DashedCore\Models\Customsetting;
 
 class FrontendController extends Controller
 {
@@ -15,8 +15,8 @@ class FrontendController extends Controller
     {
         seo()->metaData('metaTitle', 'Pagina niet gevonden');
 
-        if (View::exists('qcommerce.not-found.show')) {
-            return response()->view('qcommerce.not-found.show')->setStatusCode(404);
+        if (View::exists('dashed.not-found.show')) {
+            return response()->view('dashed.not-found.show')->setStatusCode(404);
         } else {
             abort(404);
         }
@@ -52,10 +52,10 @@ class FrontendController extends Controller
                 $schemas['localBusiness']->name(seo()->metaData('metaTitle'));
 
                 if (seo()->metaData('metaImage')) {
-                    $schemas['localBusiness']->image(app(\Flowframe\Drift\UrlBuilder::class)->url('qcommerce', seo()->metaData('metaImage'), [
+                    $schemas['localBusiness']->image(app(\Flowframe\Drift\UrlBuilder::class)->url('dashed', seo()->metaData('metaImage'), [
                         'widen' => 1200,
                     ]));
-                    seo()->metaData('metaImage', app(\Flowframe\Drift\UrlBuilder::class)->url('qcommerce', seo()->metaData('metaImage'), [
+                    seo()->metaData('metaImage', app(\Flowframe\Drift\UrlBuilder::class)->url('dashed', seo()->metaData('metaImage'), [
                         'widen' => 1200,
                     ]));
                 }

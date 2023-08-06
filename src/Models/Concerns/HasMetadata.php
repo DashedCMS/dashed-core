@@ -1,8 +1,8 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Models\Concerns;
+namespace Dashed\DashedCore\Models\Concerns;
 
-use Qubiqx\QcommerceCore\Models\Metadata;
+use Dashed\DashedCore\Models\Metadata;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 trait HasMetadata

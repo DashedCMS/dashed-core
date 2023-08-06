@@ -1,6 +1,6 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Traits;
+namespace Dashed\DashedCore\Traits;
 
 trait HasDynamicRelation
 {

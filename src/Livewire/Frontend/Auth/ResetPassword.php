@@ -1,12 +1,12 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Livewire\Frontend\Auth;
+namespace Dashed\DashedCore\Livewire\Frontend\Auth;
 
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Qubiqx\QcommerceCore\Models\User;
-use Qubiqx\QcommerceTranslations\Models\Translation;
+use Dashed\DashedCore\Models\User;
+use Dashed\DashedTranslations\Models\Translation;
 
 class ResetPassword extends Component
 {
@@ -40,11 +40,11 @@ class ResetPassword extends Component
 
         Auth::login($this->user);
 
-        return redirect(route('qcommerce.frontend.account'))->with('success', Translation::get('reset-password-post-success', 'login', 'Your password has been reset!'));
+        return redirect(route('dashed.frontend.account'))->with('success', Translation::get('reset-password-post-success', 'login', 'Your password has been reset!'));
     }
 
     public function render()
     {
-        return view('qcommerce-ecommerce-core::frontend.auth.reset-password');
+        return view('dashed-ecommerce-core::frontend.auth.reset-password');
     }
 }

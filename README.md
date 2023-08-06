@@ -1,9 +1,9 @@
 # Qcommerce Core
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/dashed/dashed-core.svg?style=flat-square)](https://packagist.org/packages/dashed/dashed-core)
-[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/dashed/dashed-core/run-tests?label=tests)](https://github.com/dashed/dashed-core/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/dashed/dashed-core/Check%20&%20fix%20styling?label=code%20style)](https://github.com/dashed/dashed-core/actions?query=workflow%3A"Check+%26+fix+styling"+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/dashed/dashed-core.svg?style=flat-square)](https://packagist.org/packages/dashed/dashed-core)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/Dashed-DEV/dashed-core.svg?style=flat-square)](https://packagist.org/packages/Dashed-DEV/dashed-core)
+[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/Dashed-DEV/dashed-core/run-tests?label=tests)](https://github.com/Dashed-DEV/dashed-core/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/Dashed-DEV/dashed-core/Check%20&%20fix%20styling?label=code%20style)](https://github.com/Dashed-DEV/dashed-core/actions?query=workflow%3A"Check+%26+fix+styling"+branch%3Amain)
+[![Total Downloads](https://img.shields.io/packagist/dt/Dashed-DEV/dashed-core.svg?style=flat-square)](https://packagist.org/packages/Dashed-DEV/dashed-core)
 
 This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
 
@@ -26,13 +26,13 @@ composer require dashed/dashed-core
 You can publish and run the migrations with:
 
 ```bash
-php artisan vendor:publish --tag="qcommerce-core_without_prefix-migrations"
+php artisan vendor:publish --tag="dashed-core_without_prefix-migrations"
 php artisan migrate
 ```
 
 You can publish the config file with:
 ```bash
-php artisan vendor:publish --tag="qcommerce-core_without_prefix-config"
+php artisan vendor:publish --tag="dashed-core_without_prefix-config"
 ```
 
 Optionally, you can publish the views using
@@ -51,8 +51,8 @@ return [
 ## Usage
 
 ```php
-$qcommerce-core = new Qubiqx\QcommerceCore();
-echo $qcommerce-core->echoPhrase('Hello, Qubiqx!');
+$dashed-core = new Dashed\DashedCore();
+echo $dashed-core->echoPhrase('Hello, Dashed!');
 ```
 
 ## Testing
@@ -75,7 +75,7 @@ Please review [our security policy](../../security/policy) on how to report secu
 
 ## Credits
 
-- [Robin van Maasakker](https://github.com/Qubiqx)
+- [Robin van Maasakker](https://github.com/Dashed)
 - [All Contributors](../../contributors)
 
 ## License

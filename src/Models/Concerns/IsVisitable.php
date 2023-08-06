@@ -1,17 +1,17 @@
 <?php
 
-namespace Qubiqx\QcommerceCore\Models\Concerns;
+namespace Dashed\DashedCore\Models\Concerns;
 
 use Carbon\Carbon;
 use Spatie\Sitemap\Sitemap;
 use Spatie\Sitemap\Tags\Url;
 use Spatie\Activitylog\LogOptions;
-use Qubiqx\QcommercePages\Models\Page;
-use Qubiqx\QcommerceCore\Classes\Sites;
+use Dashed\DashedPages\Models\Page;
+use Dashed\DashedCore\Classes\Sites;
 use Spatie\Translatable\HasTranslations;
-use Qubiqx\QcommerceCore\Classes\Locales;
+use Dashed\DashedCore\Classes\Locales;
 use Spatie\Activitylog\Traits\LogsActivity;
-use Qubiqx\QcommerceCore\Models\Customsetting;
+use Dashed\DashedCore\Models\Customsetting;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 trait IsVisitable
