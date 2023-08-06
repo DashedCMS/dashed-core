@@ -61,11 +61,17 @@ class UpdateCommand extends Command
                 }
 
                 try {
-                    DB::table($tableName)->update([
-                        $columnName => DB::raw('REPLACE(' . $columnName . ', "Qubiqx\Qcommerce", "Dashed\Dashed")'),
-                    ]);
+                    foreach(DB::table($tableName)->get() as $row) {
+                        $row = (array) $row;
+                        if (isset($row[$columnName])) {
+                            $row[$columnName] = str_replace('Qubiqx\Qcommerce', 'Dashed\Dashed', $row[$columnName]);
+                            DB::table($tableName)->where('id', $row['id'])->update([
+                                $columnName => $row[$columnName],
+                            ]);
+                        }
+                    }
                 } catch (\Exception $e) {
-                    //                    dump($e->getMessage());
+                                        dump($e->getMessage());
                 }
             }
         }
