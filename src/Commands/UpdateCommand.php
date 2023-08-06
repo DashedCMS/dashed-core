@@ -44,9 +44,24 @@ class UpdateCommand extends Command
             $tableName = $table->{'Tables_in_' . env('DB_DATABASE')};
             if (str($tableName)->contains('qcommerce')) {
                 \Illuminate\Support\Facades\Schema::rename($tableName, str($tableName)->replace('qcommerce__', 'dashed__'));
-                $this->info('Table renamed to ' . str($tableName)->replace('qcommerce__', 'dashed__'));
+                $tableName = str($tableName)->replace('qcommerce__', 'dashed__');
+                $this->info('Table renamed to ' . $tableName);
+            }
+
+            $columns = DB::select('SHOW COLUMNS FROM ' . $tableName);
+            foreach($columns as $column){
+                $columnName = $column->{'Field'};
+                dump($columnName);
+                try {
+                    DB::table($tableName)->update([
+                        $columnName => DB::raw('REPLACE(' . $columnName . ', "qcommerce/", "dashed/")')
+                    ]);
+                }catch (\Exception $e){
+//                    dump($e->getMessage());
+                }
             }
         }
+            dd('done');
 
         File::moveDirectory(base_path('resources/views/qcommerce'), base_path('resources/views/dashed'));
         File::moveDirectory(storage_path('app/public/qcommerce'), storage_path('app/public/dashed'));

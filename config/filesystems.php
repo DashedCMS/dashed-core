@@ -24,6 +24,13 @@ return [
             'visibility' => 'public',
         ],
 
+        'dashed-uploads' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/dashed/uploads'),
+            'url' => env('APP_URL') . '/storage/dashed/uploads',
+            'visibility' => 'public',
+        ],
+
     ],
 
     'links' => [
