@@ -108,6 +108,10 @@ class UpdateCommand extends Command
             File::put($file, $contents);
         }
 
+        $contents = File::get(base_path('composer.json'));
+        $contents = str_replace("@php artisan qcommerce:update", "@php artisan dashed:update", $contents);
+        File::put($file, $contents);
+
         //Above is for upgrading from Qcommerce to Dashed
         $this->call('vendor:publish', [
             '--tag' => 'dashed-core-config',
