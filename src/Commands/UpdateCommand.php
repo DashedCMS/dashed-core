@@ -42,6 +42,42 @@ class UpdateCommand extends Command
     {
         $enableMigrations = !$this->option('disable-migrations');
 
+        $this->info('Rename all directories from Qcommerce to Dashed...');
+        File::moveDirectory(base_path('resources/views/qcommerce'), base_path('resources/views/dashed'));
+        File::moveDirectory(base_path('resources/views/vendor/qcommerce-core'), base_path('resources/views/vendor/dashed-core'));
+        File::moveDirectory(base_path('resources/views/vendor/qcommerce-ecommerce-core'), base_path('resources/views/vendor/dashed-ecommerce-core'));
+        File::moveDirectory(storage_path('app/public/qcommerce'), storage_path('app/public/dashed'));
+        File::moveDirectory(storage_path('app/public/__images-cache/qcommerce'), storage_path('app/public/__images-cache/dashed'));
+
+        $this->info('Rename all namespaces in blades from Qcommerce to Dashed...');
+        $files = File::allFiles(base_path('resources/views'));
+        foreach ($files as $file) {
+            $contents = File::get($file);
+            $contents = str_replace('qcommerce::', 'dashed::', $contents);
+            $contents = str_replace('qcommerce-', 'dashed-', $contents);
+            File::put($file, $contents);
+        }
+
+        $this->info('Rename all namespaces in classes from Qcommerce to Dashed...');
+        $files = File::allFiles(base_path('app'));
+        foreach ($files as $file) {
+            $contents = File::get($file);
+            $contents = str_replace('Qubiqx\Qcommerce', 'Dashed\Dashed', $contents);
+            $contents = str_replace('\Qcommerce', '\Dashed', $contents);
+            $contents = str_replace('qcommerce', 'dashed', $contents);
+            File::put($file, $contents);
+        }
+
+        $this->info('Rename all names from Qcommerce to Dashed...');
+        $files = File::allFiles(base_path('config'));
+        foreach ($files as $file) {
+            $contents = File::get($file);
+            $contents = str_replace("'qcommerce'", "'dashed'", $contents);
+            $contents = str_replace("/qcommerce", "/dashed", $contents);
+            $contents = str_replace("qcommerce", "dashed", $contents);
+            File::put($file, $contents);
+        }
+
         $this->info('Retrieving all tables...');
         $tables = DB::select('SHOW TABLES');
         foreach ($tables as $table) {
@@ -83,42 +119,6 @@ class UpdateCommand extends Command
                     }
                 }
             }
-        }
-
-        $this->info('Rename all directories from Qcommerce to Dashed...');
-        File::moveDirectory(base_path('resources/views/qcommerce'), base_path('resources/views/dashed'));
-        File::moveDirectory(base_path('resources/views/vendor/qcommerce-core'), base_path('resources/views/vendor/dashed-core'));
-        File::moveDirectory(base_path('resources/views/vendor/qcommerce-ecommerce-core'), base_path('resources/views/vendor/dashed-ecommerce-core'));
-        File::moveDirectory(storage_path('app/public/qcommerce'), storage_path('app/public/dashed'));
-        File::moveDirectory(storage_path('app/public/__images-cache/qcommerce'), storage_path('app/public/__images-cache/dashed'));
-
-        $this->info('Rename all namespaces in blades from Qcommerce to Dashed...');
-        $files = File::allFiles(base_path('resources/views'));
-        foreach ($files as $file) {
-            $contents = File::get($file);
-            $contents = str_replace('qcommerce::', 'dashed::', $contents);
-            $contents = str_replace('qcommerce-', 'dashed-', $contents);
-            File::put($file, $contents);
-        }
-
-        $this->info('Rename all namespaces in classes from Qcommerce to Dashed...');
-        $files = File::allFiles(base_path('app'));
-        foreach ($files as $file) {
-            $contents = File::get($file);
-            $contents = str_replace('Qubiqx\Qcommerce', 'Dashed\Dashed', $contents);
-            $contents = str_replace('\Qcommerce', '\Dashed', $contents);
-            $contents = str_replace('qcommerce', 'dashed', $contents);
-            File::put($file, $contents);
-        }
-
-        $this->info('Rename all names from Qcommerce to Dashed...');
-        $files = File::allFiles(base_path('config'));
-        foreach ($files as $file) {
-            $contents = File::get($file);
-            $contents = str_replace("'qcommerce'", "'dashed'", $contents);
-            $contents = str_replace("/qcommerce", "/dashed", $contents);
-            $contents = str_replace("qcommerce", "dashed", $contents);
-            File::put($file, $contents);
         }
 
         $this->info('Default upgrading...');
