@@ -14,7 +14,7 @@ class UpdateCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'dashed:update';
+    protected $signature = 'dashed:update {--disable-migrations}';
 
     /**
      * The console command description.
@@ -40,6 +40,8 @@ class UpdateCommand extends Command
      */
     public function handle()
     {
+        $enableMigrations = !$this->option('disable-migrations');
+
         $tables = DB::select('SHOW TABLES');
         foreach ($tables as $table) {
             $tableName = $table->{'Tables_in_' . env('DB_DATABASE')};
@@ -117,9 +119,11 @@ class UpdateCommand extends Command
             '--force' => 'true',
         ]);
 
-        $this->call('migrate', [
-            '--force' => 'true',
-        ]);
+        if ($enableMigrations) {
+            $this->call('migrate', [
+                '--force' => 'true',
+            ]);
+        }
 
         $this->info('Dashed updated!');
     }
