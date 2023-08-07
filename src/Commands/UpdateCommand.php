@@ -114,6 +114,9 @@ class UpdateCommand extends Command
                         $columnName => DB::raw('REPLACE(' . $columnName . ', "qcommerce/", "dashed/")'),
                     ]);
                     DB::table($tableName)->update([
+                        $columnName => DB::raw('REPLACE(' . $columnName . ', "qcommerce\", "dashed\")'),
+                    ]);
+                    DB::table($tableName)->update([
                         $columnName => DB::raw('REPLACE(' . $columnName . ', "Qcommerce", "Dashed")'),
                     ]);
                     DB::table($tableName)->update([
