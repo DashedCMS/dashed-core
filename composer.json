@@ -18,7 +18,6 @@
     "require": {
         "php": "^8.2",
         "awcodes/filament-tiptap-editor": "^2.6",
-        "dashed/dashed-translations": "^1.0",
         "doctrine/dbal": "^3.3",
         "filament/filament": "^2.17",
         "filament/spatie-laravel-translatable-plugin": "^2.17",
