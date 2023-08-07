@@ -57,6 +57,7 @@ class UpdateCommand extends Command
             $columns = DB::select('SHOW COLUMNS FROM ' . $tableName);
             foreach ($columns as $column) {
                 $columnName = $column->{'Field'};
+                $this->info('Checking column ' . $columnName . ' from table ' . $tableName . '...');
 
                 try {
                     DB::table($tableName)->update([
@@ -68,6 +69,7 @@ class UpdateCommand extends Command
 
                 try {
                     foreach (DB::table($tableName)->get() as $row) {
+                        $this->info('Checking row ' . $row->id . ' from column ' . $columnName . ' from table ' . $tableName . '...');
                         $row = (array)$row;
                         if (isset($row[$columnName])) {
                             $row[$columnName] = str_replace('Qubiqx\Qcommerce', 'Dashed\Dashed', $row[$columnName]);
