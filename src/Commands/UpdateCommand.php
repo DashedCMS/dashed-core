@@ -100,6 +100,14 @@ class UpdateCommand extends Command
             File::put($file, $contents);
         }
 
+        $files = File::allFiles(base_path('config'));
+        foreach ($files as $file) {
+            $contents = File::get($file);
+            $contents = str_replace("'qcommerce'", "'dashed'", $contents);
+            $contents = str_replace("/qcommerce", "/dashed", $contents);
+            File::put($file, $contents);
+        }
+
         //Above is for upgrading from Qcommerce to Dashed
         $this->call('vendor:publish', [
             '--tag' => 'dashed-core-config',
