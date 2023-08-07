@@ -56,11 +56,22 @@ class UpdateCommand extends Command
             $contents = str_replace('qcommerce::', 'dashed::', $contents);
             $contents = str_replace('qcommerce-', 'dashed-', $contents);
             $contents = str_replace('qcommerce', 'dashed', $contents);
+            $contents = str_replace('Qubiqx\Qcommerce', 'Dashed\Dashed', $contents);
             File::put($file, $contents);
         }
 
         $this->info('Rename all namespaces in classes from Qcommerce to Dashed...');
         $files = File::allFiles(base_path('app'));
+        foreach ($files as $file) {
+            $contents = File::get($file);
+            $contents = str_replace('Qubiqx\Qcommerce', 'Dashed\Dashed', $contents);
+            $contents = str_replace('\Qcommerce', '\Dashed', $contents);
+            $contents = str_replace('qcommerce', 'dashed', $contents);
+            File::put($file, $contents);
+        }
+
+        $this->info('Rename all namespaces in routes from Qcommerce to Dashed...');
+        $files = File::allFiles(base_path('routes'));
         foreach ($files as $file) {
             $contents = File::get($file);
             $contents = str_replace('Qubiqx\Qcommerce', 'Dashed\Dashed', $contents);
