@@ -67,19 +67,20 @@ class UpdateCommand extends Command
                     //                    dump($e->getMessage());
                 }
 
-                try {
-                    foreach (DB::table($tableName)->get() as $row) {
-                        $this->info('Checking row ' . $row->id . ' from column ' . $columnName . ' from table ' . $tableName . '...');
-                        $row = (array)$row;
-                        if (isset($row[$columnName])) {
-                            $row[$columnName] = str_replace('Qubiqx\Qcommerce', 'Dashed\Dashed', $row[$columnName]);
-                            DB::table($tableName)->where('id', $row['id'])->update([
-                                $columnName => $row[$columnName],
-                            ]);
+                if(!str($column->{'Type'})->contains(['int', 'timestamp'])){
+                    try {
+                        foreach (DB::table($tableName)->get() as $row) {
+                            $this->info('Checking row ' . $row->id . ' from column ' . $columnName . ' from table ' . $tableName . '...');
+                            $row = (array)$row;
+                            if (isset($row[$columnName])) {
+                                $row[$columnName] = str_replace('Qubiqx\Qcommerce', 'Dashed\Dashed', $row[$columnName]);
+                                DB::table($tableName)->where('id', $row['id'])->update([
+                                    $columnName => $row[$columnName],
+                                ]);
+                            }
                         }
+                    } catch (\Exception $e) {
                     }
-                } catch (\Exception $e) {
-                    dump($e->getMessage());
                 }
             }
         }
