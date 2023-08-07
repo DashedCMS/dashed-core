@@ -5,6 +5,7 @@ namespace Dashed\DashedCore\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class UpdateCommand extends Command
 {
@@ -49,7 +50,7 @@ class UpdateCommand extends Command
             }
 
             $columns = DB::select('SHOW COLUMNS FROM ' . $tableName);
-            foreach($columns as $column) {
+            foreach ($columns as $column) {
                 $columnName = $column->{'Field'};
 
                 try {
@@ -61,8 +62,8 @@ class UpdateCommand extends Command
                 }
 
                 try {
-                    foreach(DB::table($tableName)->get() as $row) {
-                        $row = (array) $row;
+                    foreach (DB::table($tableName)->get() as $row) {
+                        $row = (array)$row;
                         if (isset($row[$columnName])) {
                             $row[$columnName] = str_replace('Qubiqx\Qcommerce', 'Dashed\Dashed', $row[$columnName]);
                             DB::table($tableName)->where('id', $row['id'])->update([
@@ -81,6 +82,21 @@ class UpdateCommand extends Command
         File::moveDirectory(base_path('resources/views/vendor/qcommerce-ecommerce-core'), base_path('resources/views/vendor/dashed-ecommerce-core'));
         File::moveDirectory(storage_path('app/public/qcommerce'), storage_path('app/public/dashed'));
         File::moveDirectory(storage_path('app/public/__images-cache/qcommerce'), storage_path('app/public/__images-cache/dashed'));
+
+        $files = File::allFiles(base_path('resources/views'));
+        foreach ($files as $file) {
+            $contents = File::get($file);
+            $contents = str_replace('qcommerce::', 'dashed::', $contents);
+            $contents = str_replace('qcommerce-core', 'dashed-core', $contents);
+            File::put($file, $contents);
+        }
+
+        $files = File::allFiles(base_path('app'));
+        foreach ($files as $file) {
+            $contents = File::get($file);
+            $contents = str_replace('Qubiqx\Qcommerce', 'Dashed\Dashed', $contents);
+            File::put($file, $contents);
+        }
 
         //Above is for upgrading from Qcommerce to Dashed
         $this->call('vendor:publish', [
