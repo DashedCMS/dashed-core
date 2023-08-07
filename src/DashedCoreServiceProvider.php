@@ -117,7 +117,7 @@ class DashedCoreServiceProvider extends PluginServiceProvider
     protected function getStyles(): array
     {
         return array_merge(parent::getStyles(), [
-            'dashed-core' => str_replace('/vendor/Dashed-DEV/dashed-core/src', '', str_replace('/packages/Dashed-DEV/dashed-core/src', '', __DIR__)) . '/vendor/Dashed-DEV/dashed-core/resources/dist/css/dashed-core.css',
+            'dashed-core' => str_replace('/vendor/dashed/dashed-core/src', '', str_replace('/packages/dashed/dashed-core/src', '', __DIR__)) . '/vendor/dashed/dashed-core/resources/dist/css/dashed-core.css',
         ]);
     }
 
