@@ -24,7 +24,7 @@ class FrontendController extends Controller
 
     public function index($slug = null)
     {
-        if ($slug == 'qcommerce' && config('filament.path') != 'qcommerce') {
+        if (str($slug)->startsWith('qcommerce') && config('filament.path') != 'qcommerce') {
             return redirect(config('filament.path'));
         }
 
