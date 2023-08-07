@@ -45,6 +45,7 @@ class UpdateCommand extends Command
         $this->info('Retrieving all tables...');
         $tables = DB::select('SHOW TABLES');
         foreach ($tables as $table) {
+            $this->info('Checking table ' . $table . '...');
             $tableName = $table->{'Tables_in_' . env('DB_DATABASE')};
             if (str($tableName)->contains('qcommerce')) {
                 $this->info('Renaming table to ' . $tableName);
