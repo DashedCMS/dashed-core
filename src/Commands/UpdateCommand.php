@@ -106,6 +106,8 @@ class UpdateCommand extends Command
         foreach ($files as $file) {
             $contents = File::get($file);
             $contents = str_replace('Qubiqx\Qcommerce', 'Dashed\Dashed', $contents);
+            $contents = str_replace('\Qcommerce', '\Dashed', $contents);
+            $contents = str_replace('qcommerce', 'dashed', $contents);
             File::put($file, $contents);
         }
 
@@ -115,6 +117,7 @@ class UpdateCommand extends Command
             $contents = File::get($file);
             $contents = str_replace("'qcommerce'", "'dashed'", $contents);
             $contents = str_replace("/qcommerce", "/dashed", $contents);
+            $contents = str_replace("qcommerce", "dashed", $contents);
             File::put($file, $contents);
         }
 
