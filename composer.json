@@ -55,11 +55,6 @@
             "src/Helpers/helpers.php"
         ]
     },
-    "autoload-dev": {
-        "psr-4": {
-            "Dashed\\DashedCore\\Tests\\": "tests"
-        }
-    },
     "scripts": {
         "analyse": "vendor/bin/phpstan analyse",
         "test": "vendor/bin/pest",
