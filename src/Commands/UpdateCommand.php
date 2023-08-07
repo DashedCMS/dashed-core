@@ -55,6 +55,7 @@ class UpdateCommand extends Command
             $contents = File::get($file);
             $contents = str_replace('qcommerce::', 'dashed::', $contents);
             $contents = str_replace('qcommerce-', 'dashed-', $contents);
+            $contents = str_replace('qcommerce', 'dashed', $contents);
             File::put($file, $contents);
         }
 
