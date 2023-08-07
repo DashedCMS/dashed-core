@@ -94,7 +94,7 @@ class UpdateCommand extends Command
         foreach ($files as $file) {
             $contents = File::get($file);
             $contents = str_replace('qcommerce::', 'dashed::', $contents);
-            $contents = str_replace('qcommerce-core', 'dashed-core', $contents);
+            $contents = str_replace('qcommerce-', 'dashed-', $contents);
             File::put($file, $contents);
         }
 
