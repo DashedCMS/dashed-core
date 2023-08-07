@@ -77,10 +77,12 @@ class UpdateCommand extends Command
         }
 
         File::moveDirectory(base_path('resources/views/qcommerce'), base_path('resources/views/dashed'));
+        File::moveDirectory(base_path('resources/views/vendor/qcommerce-core'), base_path('resources/views/vendor/dashed-core'));
+        File::moveDirectory(base_path('resources/views/vendor/qcommerce-ecommerce-core'), base_path('resources/views/vendor/dashed-ecommerce-core'));
         File::moveDirectory(storage_path('app/public/qcommerce'), storage_path('app/public/dashed'));
         File::moveDirectory(storage_path('app/public/__images-cache/qcommerce'), storage_path('app/public/__images-cache/dashed'));
 
-        //Above is for upgrading from Dashed to Dashed
+        //Above is for upgrading from Qcommerce to Dashed
         $this->call('vendor:publish', [
             '--tag' => 'dashed-core-config',
         ]);
