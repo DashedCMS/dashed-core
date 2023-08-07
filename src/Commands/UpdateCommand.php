@@ -95,29 +95,37 @@ class UpdateCommand extends Command
                 $columnName = $column->{'Field'};
                 $this->info('Checking column ' . $columnName . ' from table ' . $tableName . '...');
 
+//                dump($columnName);
                 try {
                     DB::table($tableName)->update([
                         $columnName => DB::raw('REPLACE(' . $columnName . ', "qcommerce/", "dashed/")'),
+                    ]);
+                    DB::table($tableName)->update([
+                        $columnName => DB::raw('REPLACE(' . $columnName . ', "Qcommerce", "Dashed")'),
+                    ]);
+                    DB::table($tableName)->update([
+                        $columnName => DB::raw('REPLACE(' . $columnName . ', "Qubiqx", "Dashed")'),
                     ]);
                 } catch (\Exception $e) {
                     //                    dump($e->getMessage());
                 }
 
-                if(!str($column->{'Type'})->contains(['int', 'timestamp'])){
-                    try {
-                        foreach (DB::table($tableName)->get() as $row) {
-                            $this->info('Checking row ' . $row->id . ' from column ' . $columnName . ' from table ' . $tableName . '...');
-                            $row = (array)$row;
-                            if (isset($row[$columnName])) {
-                                $row[$columnName] = str_replace('Qubiqx\Qcommerce', 'Dashed\Dashed', $row[$columnName]);
-                                DB::table($tableName)->where('id', $row['id'])->update([
-                                    $columnName => $row[$columnName],
-                                ]);
-                            }
-                        }
-                    } catch (\Exception $e) {
-                    }
-                }
+//                if(!str($column->{'Type'})->contains(['int', 'timestamp'])){
+//                    dump(DB::table($tableName)->where($columnName,  'contains', 'Qubiqx\Qcommerce')->count());
+//                    try {
+//                        foreach (DB::table($tableName)->where($columnName, 'LIKE', '%Qubiqx\Qcommerce%')->get() as $row) {
+//                            $this->info('Checking row ' . $row->id . ' from column ' . $columnName . ' from table ' . $tableName . '...');
+//                            $row = (array)$row;
+//                            if (isset($row[$columnName])) {
+//                                $row[$columnName] = str_replace('Qubiqx\Qcommerce', 'Dashed\Dashed', $row[$columnName]);
+//                                DB::table($tableName)->where('id', $row['id'])->update([
+//                                    $columnName => $row[$columnName],
+//                                ]);
+//                            }
+//                        }
+//                    } catch (\Exception $e) {
+//                    }
+//                }
             }
         }
 
