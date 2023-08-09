@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore;
 
+use Filament\Facades\Filament;
 use Livewire\Livewire;
 use Flowframe\Drift\Config;
 use Flowframe\Drift\DriftManager;
@@ -30,10 +31,6 @@ use Dashed\DashedCore\Filament\Pages\Settings\MetadataSettingsPage;
 class DashedCoreServiceProvider extends PluginServiceProvider
 {
     public static string $name = 'dashed-core';
-
-    protected array $styles = [
-        'dashed-core' => __DIR__ . '/../dist/filament.css',
-    ];
 
     public function bootingPackage()
     {
