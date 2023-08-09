@@ -162,6 +162,9 @@ class UpdateCommand extends Command
         $this->call('vendor:publish', [
             '--tag' => 'dashed-core-config',
         ]);
+        $this->call('vendor:publish', [
+            '--tag' => 'dashed-core-assets',
+        ]);
 
         $this->call('vendor:publish', [
             '--tag' => 'filament-translations',

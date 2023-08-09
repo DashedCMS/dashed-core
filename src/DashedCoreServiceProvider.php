@@ -31,6 +31,10 @@ class DashedCoreServiceProvider extends PluginServiceProvider
 {
     public static string $name = 'dashed-core';
 
+    protected array $styles = [
+        'dashed-core' => __DIR__ . '/../dist/filament.css',
+    ];
+
     public function bootingPackage()
     {
         Model::unguard();
@@ -114,12 +118,12 @@ class DashedCoreServiceProvider extends PluginServiceProvider
             ]);
     }
 
-    protected function getStyles(): array
-    {
-        return array_merge(parent::getStyles(), [
-            'dashed-core' => str_replace('/vendor/dashed/dashed-core/src', '', str_replace('/packages/dashed/dashed-core/src', '', __DIR__)) . '/vendor/dashed/dashed-core/resources/dist/css/filament.css',
-        ]);
-    }
+//    protected function getStyles(): array
+//    {
+//        return array_merge(parent::getStyles(), [
+//            'dashed-core' => str_replace('/vendor/dashed/dashed-core/src', '', str_replace('/packages/dashed/dashed-core/src', '', __DIR__)) . '/vendor/dashed/dashed-core/resources/dist/css/filament.css',
+//        ]);
+//    }
 
     protected function getResources(): array
     {
