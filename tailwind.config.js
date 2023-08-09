@@ -20,6 +20,7 @@ export default {
         'bg-green-100',
         'text-green-800',
         'line-through',
+        'text-egg-blue',
     ],
     theme: {
         extend: {
