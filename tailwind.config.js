@@ -4,7 +4,9 @@ import typography from '@tailwindcss/typography'
 
 export default {
     content: [
-        '*'
+        './resources/**/*.blade.php',
+        './vendor/filament/**/*.blade.php',
+        './vendor/dashed/**/*.php',
     ],
     theme: {
         extend: {
