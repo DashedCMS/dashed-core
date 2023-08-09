@@ -3,12 +3,15 @@ import forms from '@tailwindcss/forms'
 import typography from '@tailwindcss/typography'
 
 export default {
-    // content: [
-    //     './resources/**/*.blade.php',
-    //     './vendor/filament/**/*.blade.php',
-    //     './vendor/dashed/**/*.php',
-    // ],
-    purge: false,
+    content: [
+        './resources/**/*.blade.php',
+        './vendor/filament/**/*.blade.php',
+        './vendor/dashed/**/*.php',
+    ],
+    safelist: [
+        'bg-red-100',
+        'text-red-800',
+    ],
     theme: {
         extend: {
             colors: {
