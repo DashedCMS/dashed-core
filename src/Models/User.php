@@ -10,6 +10,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 use Dashed\DashedCore\Traits\HasDynamicRelation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Webbingbrasil\FilamentTwoFactor\TwoFactorAuthenticatable;
 
 class User extends Authenticatable implements FilamentUser, HasAvatar
 {
@@ -17,6 +18,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
     use Notifiable;
     use LogsActivity;
     use HasDynamicRelation;
+    use TwoFactorAuthenticatable;
 
     protected static $logFillable = true;
 
