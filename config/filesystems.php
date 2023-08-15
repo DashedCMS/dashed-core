@@ -17,14 +17,14 @@ return [
             'visibility' => 'public',
         ],
 
-//        'dashed' => [
-//            'driver' => 'local',
-//            'root' => storage_path('app/public/dashed'),
-//            'url' => env('APP_URL') . '/storage/dashed',
-//            'visibility' => 'public',
-//        ],
-
         'dashed' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/dashed'),
+            'url' => env('APP_URL') . '/storage/dashed',
+            'visibility' => 'public',
+        ],
+
+        'dashed-cdn' => [
             'driver' => 's3',
             'visibility' => 'public',
             'key' => env('DO_SPACES_KEY', 'SHXIIVK6NJAZ3GZCNKJS'),
