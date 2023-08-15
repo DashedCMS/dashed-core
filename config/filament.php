@@ -152,7 +152,7 @@ return [
     |
     */
 
-    'default_filesystem_disk' => env('FILAMENT_FILESYSTEM_DRIVER', 'dashed-cdn'),
+    'default_filesystem_disk' => env('FILAMENT_FILESYSTEM_DRIVER', 'dashed'),
 
     /*
     |--------------------------------------------------------------------------

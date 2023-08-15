@@ -40,7 +40,7 @@ class DashedCoreServiceProvider extends PluginServiceProvider
 
         $drift->registerConfig(new Config(
             name: 'dashed', // Will be used in the slug
-            filesystemDisk: 'dashed-cdn', // Local, public or s3 for example
+            filesystemDisk: 'dashed', // Local, public or s3 for example
             cachingStrategy: FilesystemCachingStrategy::class,
         ));
 
