@@ -98,6 +98,8 @@ class DashedCoreServiceProvider extends PluginServiceProvider
                 'filament-spatie-laravel-translatable-plugin',
                 'filament-forms-tinyeditor',
                 'filesystems',
+                'file-manager',
+                'livewire',
                 'laravellocalization',
                 'flare',
                 'activitylog',
