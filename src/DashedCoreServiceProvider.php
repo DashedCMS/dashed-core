@@ -41,7 +41,7 @@ class DashedCoreServiceProvider extends PluginServiceProvider
         $drift->registerConfig(new Config(
             name: 'dashed', // Will be used in the slug
             filesystemDisk: 'dashed', // Local, public or s3 for example
-            cachingStrategy: FilesystemCachingStrategy::class,
+            cachingStrategy: \Dashed\DashedCore\Classes\FilesystemCachingStrategy::class,
         ));
 
         Livewire::component('notification.toastr', Toastr::class);
