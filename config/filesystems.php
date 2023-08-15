@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'default' => env('FILESYSTEM_DRIVER', 'dashed-cdn'),
+    'default' => env('FILESYSTEM_DRIVER', 'public'),
 
     'disks' => [
 
