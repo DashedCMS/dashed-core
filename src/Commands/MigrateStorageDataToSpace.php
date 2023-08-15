@@ -4,6 +4,7 @@ namespace Dashed\DashedCore\Commands;
 
 use Illuminate\Console\Command;
 use Dashed\DashedCore\Classes\Sitemap;
+use Illuminate\Support\Facades\Storage;
 
 class MigrateStorageDataToSpace extends Command
 {
@@ -38,5 +39,23 @@ class MigrateStorageDataToSpace extends Command
      */
     public function handle()
     {
+        $folders = ['dashed'];
+
+        foreach ($folders as $folder) {
+            $files = Storage::disk('public')->allFiles($folder);
+//            dd($files);
+
+            $this->withProgressBar($files, function ($filePath) {
+                if (!Storage::disk('dashed')->exists($filePath)) {
+                    //            foreach ($files as $filePath) {
+                    $this->newLine();
+                    $this->info('Downloading file: ' . $filePath);
+                    $file = Storage::disk('public')->get($filePath);
+                    Storage::disk('dashed')->put($filePath, $file);
+                }
+            });
+        }
+
+        return Command::SUCCESS;
     }
 }
