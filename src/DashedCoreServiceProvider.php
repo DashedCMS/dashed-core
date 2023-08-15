@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore;
 
+use Dashed\DashedCore\Commands\MigrateStorageDataToSpace;
 use Filament\Facades\Filament;
 use Livewire\Livewire;
 use Flowframe\Drift\Config;
@@ -112,6 +113,7 @@ class DashedCoreServiceProvider extends PluginServiceProvider
                 UpdateCommand::class,
                 InvalidatePasswordResetTokens::class,
                 CreateSitemap::class,
+                MigrateStorageDataToSpace::class,
             ]);
     }
 
