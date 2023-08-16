@@ -115,7 +115,6 @@ class DashedCoreServiceProvider extends PluginServiceProvider
                 UpdateCommand::class,
                 InvalidatePasswordResetTokens::class,
                 CreateSitemap::class,
-                MigrateStorageDataToSpace::class,
             ]);
     }
 
