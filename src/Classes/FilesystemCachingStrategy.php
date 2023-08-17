@@ -19,7 +19,7 @@ class FilesystemCachingStrategy implements CachingStrategy
         return Storage::disk('dashed')->get("__images-cache/{$path}/{$signature}");
     }
 
-    public function cache(string $path, string $signature, Image $image, Config $config): void
+    public function cache(string $path, string $signature, string|Image $image, Config $config): void
     {
         Storage::disk('dashed')->put("__images-cache/{$path}/{$signature}", (string) $image);
     }

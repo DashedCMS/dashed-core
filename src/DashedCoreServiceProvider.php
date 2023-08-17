@@ -5,8 +5,8 @@ namespace Dashed\DashedCore;
 use Dashed\DashedCore\Commands\MigrateStorageDataToSpace;
 use Filament\Facades\Filament;
 use Livewire\Livewire;
-use Flowframe\Drift\Config;
-use Flowframe\Drift\DriftManager;
+use Dashed\Drift\Config;
+use Dashed\Drift\DriftManager;
 use Filament\PluginServiceProvider;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Model;
@@ -25,7 +25,6 @@ use Dashed\DashedCore\Livewire\Frontend\Auth\ResetPassword;
 use Dashed\DashedCore\Livewire\Frontend\Auth\ForgotPassword;
 use Dashed\DashedCore\Livewire\Frontend\Notification\Toastr;
 use Dashed\DashedCore\Commands\InvalidatePasswordResetTokens;
-use Flowframe\Drift\CachingStrategies\FilesystemCachingStrategy;
 use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\MetadataSettingsPage;
 

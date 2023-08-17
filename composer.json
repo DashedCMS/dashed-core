@@ -18,10 +18,10 @@
     "require": {
         "php": "^8.2",
         "awcodes/filament-tiptap-editor": "^2.6",
+        "dashed/laravel-drift": "^1.0",
         "doctrine/dbal": "^3.3",
         "filament/filament": "^2.17",
         "filament/spatie-laravel-translatable-plugin": "^2.17",
-        "flowframe/laravel-drift": "^0.2.0",
         "friendsofphp/php-cs-fixer": "^3.21",
         "laravel/horizon": "^5.18",
         "league/flysystem-aws-s3-v3": "^3.15",

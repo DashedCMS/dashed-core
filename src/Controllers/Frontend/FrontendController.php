@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore\Controllers\Frontend;
 
+use Dashed\Drift\UrlBuilder;
 use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\View;
@@ -56,10 +57,10 @@ class FrontendController extends Controller
                 $schemas['localBusiness']->name(seo()->metaData('metaTitle'));
 
                 if (seo()->metaData('metaImage')) {
-                    $schemas['localBusiness']->image(app(\Flowframe\Drift\UrlBuilder::class)->url('dashed', seo()->metaData('metaImage'), [
+                    $schemas['localBusiness']->image(app(UrlBuilder::class)->url('dashed', seo()->metaData('metaImage'), [
                         'widen' => 1200,
                     ]));
-                    seo()->metaData('metaImage', app(\Flowframe\Drift\UrlBuilder::class)->url('dashed', seo()->metaData('metaImage'), [
+                    seo()->metaData('metaImage', app(UrlBuilder::class)->url('dashed', seo()->metaData('metaImage'), [
                         'widen' => 1200,
                     ]));
                 }
