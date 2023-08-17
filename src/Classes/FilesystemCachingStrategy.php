@@ -2,8 +2,8 @@
 
 namespace Dashed\DashedCore\Classes;
 
-use Flowframe\Drift\Config;
-use Flowframe\Drift\Contracts\CachingStrategy;
+use Dashed\Drift\Config;
+use Dashed\Drift\Contracts\CachingStrategy;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Image;
 
