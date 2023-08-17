@@ -41,7 +41,7 @@ class DashedCoreServiceProvider extends PluginServiceProvider
 
         $drift->registerConfig(new Config(
             name: 'dashed',
-            filesystemDisk: config('filesystems.dashed.driver') == 'local' ? 'public' : 'dashed',
+            filesystemDisk: config('filesystems')['dashed']['driver'] ?? 'public',
             cachingStrategy: FilesystemCachingStrategy::class,
         ));
 
