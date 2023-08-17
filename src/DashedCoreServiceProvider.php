@@ -4,6 +4,7 @@ namespace Dashed\DashedCore;
 
 use Dashed\DashedCore\Commands\MigrateStorageDataToSpace;
 use Filament\Facades\Filament;
+use Dashed\Drift\CachingStrategies\FilesystemCachingStrategy;
 use Livewire\Livewire;
 use Dashed\Drift\Config;
 use Dashed\Drift\DriftManager;
@@ -41,7 +42,7 @@ class DashedCoreServiceProvider extends PluginServiceProvider
         $drift->registerConfig(new Config(
             name: 'dashed',
             filesystemDisk: config('filesystems.dashed.driver') == 'local' ? 'public' : 'dashed',
-            cachingStrategy: \Dashed\DashedCore\Classes\FilesystemCachingStrategy::class,
+            cachingStrategy: FilesystemCachingStrategy::class,
         ));
 
         Livewire::component('notification.toastr', Toastr::class);
