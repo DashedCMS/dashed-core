@@ -8,7 +8,7 @@ class SeoManager
 {
     public function __construct()
     {
-        //        self::metaData('metaImage', app(\Flowframe\Drift\UrlBuilder::class)->url('dashed', Customsetting::get('default_meta_data_image'), []));
+        //        self::metaData('metaImage', app(\Dashed\Drift\UrlBuilder::class)->url('dashed', Customsetting::get('default_meta_data_image'), []));
         //        dump(self::metaData('meteImage'));
     }
 
