@@ -57,6 +57,7 @@ class UpdateCommand extends Command
             $contents = str_replace('qcommerce-', 'dashed-', $contents);
             $contents = str_replace('qcommerce', 'dashed', $contents);
             $contents = str_replace('Qubiqx\Qcommerce', 'Dashed\Dashed', $contents);
+            $contents = str_replace('Flowframe\Drift', 'Dashed\Drift', $contents);
             File::put($file, $contents);
         }
 
