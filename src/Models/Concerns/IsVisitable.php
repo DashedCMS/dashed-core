@@ -20,11 +20,10 @@ trait IsVisitable
     use HasTranslations;
     use LogsActivity;
 
-    protected static $logFillable = true;
-
     public function getActivitylogOptions(): LogOptions
     {
-        return LogOptions::defaults();
+        return LogOptions::defaults()
+            ->logAll();
     }
 
     public function scopeThisSite($query, $siteId = null)
