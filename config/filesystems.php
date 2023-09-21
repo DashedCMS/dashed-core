@@ -19,8 +19,8 @@ return [
 
         'dashed' => [
             'driver' => 'local',
-            'root' => storage_path('app/public/dashed'),
-            'url' => env('APP_URL') . '/storage/dashed',
+            'root' => storage_path('app/public'),
+            'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
         ],
 
