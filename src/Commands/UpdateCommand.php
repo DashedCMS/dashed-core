@@ -42,121 +42,102 @@ class UpdateCommand extends Command
     {
         $enableMigrations = !$this->option('disable-migrations');
 
-        $this->info('Rename all directories from Qcommerce to Dashed...');
-        File::moveDirectory(base_path('resources/views/qcommerce'), base_path('resources/views/dashed'));
-        File::moveDirectory(base_path('resources/views/vendor/qcommerce-core'), base_path('resources/views/vendor/dashed-core'));
-        File::moveDirectory(base_path('resources/views/vendor/qcommerce-ecommerce-core'), base_path('resources/views/vendor/dashed-ecommerce-core'));
-        File::moveDirectory(storage_path('app/public/qcommerce'), storage_path('app/public/dashed'));
-        File::moveDirectory(storage_path('app/public/__images-cache/qcommerce'), storage_path('app/public/__images-cache/dashed'));
-
-        $this->info('Rename all namespaces in blades from Qcommerce to Dashed...');
-        $files = File::allFiles(base_path('resources/views'));
-        foreach ($files as $file) {
-            $contents = File::get($file);
-            $contents = str_replace('qcommerce::', 'dashed::', $contents);
-            $contents = str_replace('qcommerce-', 'dashed-', $contents);
-            $contents = str_replace('qcommerce', 'dashed', $contents);
-            $contents = str_replace('Qubiqx\Qcommerce', 'Dashed\Dashed', $contents);
-            $contents = str_replace('Flowframe\Drift', 'Dashed\Drift', $contents);
-            File::put($file, $contents);
-        }
-
-        $this->info('Rename all namespaces in classes from Qcommerce to Dashed...');
-        $files = File::allFiles(base_path('app'));
-        foreach ($files as $file) {
-            $contents = File::get($file);
-            $contents = str_replace('Qubiqx\Qcommerce', 'Dashed\Dashed', $contents);
-            $contents = str_replace('\Qcommerce', '\Dashed', $contents);
-            $contents = str_replace('qcommerce', 'dashed', $contents);
-            File::put($file, $contents);
-        }
-
-        $this->info('Rename all namespaces in routes from Qcommerce to Dashed...');
-        $files = File::allFiles(base_path('routes'));
-        foreach ($files as $file) {
-            $contents = File::get($file);
-            $contents = str_replace('Qubiqx\Qcommerce', 'Dashed\Dashed', $contents);
-            $contents = str_replace('\Qcommerce', '\Dashed', $contents);
-            $contents = str_replace('qcommerce', 'dashed', $contents);
-            File::put($file, $contents);
-        }
-
-        $this->info('Rename all names from Qcommerce to Dashed...');
-        $files = File::allFiles(base_path('config'));
-        foreach ($files as $file) {
-            $contents = File::get($file);
-            $contents = str_replace("'qcommerce'", "'dashed'", $contents);
-            $contents = str_replace("/qcommerce", "/dashed", $contents);
-            $contents = str_replace("qcommerce", "dashed", $contents);
-            $contents = str_replace("Qubiqx\Qcommerce", "Dashed\Dashed", $contents);
-            File::put($file, $contents);
-        }
-
-        $this->info('Retrieving all tables...');
-        $tables = DB::select('SHOW TABLES');
-        foreach ($tables as $table) {
-            $tableName = $table->{'Tables_in_' . env('DB_DATABASE')};
-            $this->info('Checking table ' . $tableName . '...');
-            if (str($tableName)->contains('qcommerce')) {
-                $this->info('Renaming table to ' . $tableName);
-                \Illuminate\Support\Facades\Schema::rename($tableName, str($tableName)->replace('qcommerce__', 'dashed__'));
-                $tableName = str($tableName)->replace('qcommerce__', 'dashed__');
-                $this->info('Table renamed to ' . $tableName);
-            }
-
-            $columns = DB::select('SHOW COLUMNS FROM ' . $tableName);
-            foreach ($columns as $column) {
-                $columnName = $column->{'Field'};
-                $this->info('Checking column ' . $columnName . ' from table ' . $tableName . '...');
-
-//                dump($columnName);
-                try {
-                    DB::table($tableName)->update([
-                        $columnName => DB::raw('REPLACE(' . $columnName . ', "qcommerce/", "dashed/")'),
-                    ]);
-                } catch (\Exception $e) {
-                    //                    dump($e->getMessage());
-                }
-
-                try{
-                    DB::table($tableName)->update([
-                        $columnName => DB::raw('REPLACE(' . $columnName . ', "Qcommerce", "Dashed")'),
-                    ]);
-                }catch (\Exception $e) {
-                }
-
-                try{
-                    DB::table($tableName)->update([
-                        $columnName => DB::raw('REPLACE(' . $columnName . ', "Qubiqx", "Dashed")'),
-                    ]);
-                }catch (\Exception $e) {
-                }
-
-                try{
-                    DB::table($tableName)->update([
-                        $columnName => DB::raw('REPLACE(' . $columnName . ', "qcommerce", "dashed")'),
-                    ]);
-                }catch (\Exception $e) {
-                }
-
-//                if(!str($column->{'Type'})->contains(['int', 'timestamp'])){
-//                    dump(DB::table($tableName)->where($columnName,  'contains', 'Qubiqx\Qcommerce')->count());
-//                    try {
-//                        foreach (DB::table($tableName)->where($columnName, 'LIKE', '%Qubiqx\Qcommerce%')->get() as $row) {
-//                            $this->info('Checking row ' . $row->id . ' from column ' . $columnName . ' from table ' . $tableName . '...');
-//                            $row = (array)$row;
-//                            if (isset($row[$columnName])) {
-//                                $row[$columnName] = str_replace('Qubiqx\Qcommerce', 'Dashed\Dashed', $row[$columnName]);
-//                                DB::table($tableName)->where('id', $row['id'])->update([
-//                                    $columnName => $row[$columnName],
-//                                ]);
-//                            }
-//                        }
-//                    } catch (\Exception $e) {
-//                    }
+//        $this->info('Rename all directories from Qcommerce to Dashed...');
+//        File::moveDirectory(base_path('resources/views/qcommerce'), base_path('resources/views/dashed'));
+//        File::moveDirectory(base_path('resources/views/vendor/qcommerce-core'), base_path('resources/views/vendor/dashed-core'));
+//        File::moveDirectory(base_path('resources/views/vendor/qcommerce-ecommerce-core'), base_path('resources/views/vendor/dashed-ecommerce-core'));
+//        File::moveDirectory(storage_path('app/public/qcommerce'), storage_path('app/public/dashed'));
+//        File::moveDirectory(storage_path('app/public/__images-cache/qcommerce'), storage_path('app/public/__images-cache/dashed'));
+//
+//        $this->info('Rename all namespaces in blades from Qcommerce to Dashed...');
+//        $files = File::allFiles(base_path('resources/views'));
+//        foreach ($files as $file) {
+//            $contents = File::get($file);
+//            $contents = str_replace('qcommerce::', 'dashed::', $contents);
+//            $contents = str_replace('qcommerce-', 'dashed-', $contents);
+//            $contents = str_replace('qcommerce', 'dashed', $contents);
+//            $contents = str_replace('Qubiqx\Qcommerce', 'Dashed\Dashed', $contents);
+//            $contents = str_replace('Flowframe\Drift', 'Dashed\Drift', $contents);
+//            File::put($file, $contents);
+//        }
+//
+//        $this->info('Rename all namespaces in classes from Qcommerce to Dashed...');
+//        $files = File::allFiles(base_path('app'));
+//        foreach ($files as $file) {
+//            $contents = File::get($file);
+//            $contents = str_replace('Qubiqx\Qcommerce', 'Dashed\Dashed', $contents);
+//            $contents = str_replace('\Qcommerce', '\Dashed', $contents);
+//            $contents = str_replace('qcommerce', 'dashed', $contents);
+//            File::put($file, $contents);
+//        }
+//
+//        $this->info('Rename all namespaces in routes from Qcommerce to Dashed...');
+//        $files = File::allFiles(base_path('routes'));
+//        foreach ($files as $file) {
+//            $contents = File::get($file);
+//            $contents = str_replace('Qubiqx\Qcommerce', 'Dashed\Dashed', $contents);
+//            $contents = str_replace('\Qcommerce', '\Dashed', $contents);
+//            $contents = str_replace('qcommerce', 'dashed', $contents);
+//            File::put($file, $contents);
+//        }
+//
+//        $this->info('Rename all names from Qcommerce to Dashed...');
+//        $files = File::allFiles(base_path('config'));
+//        foreach ($files as $file) {
+//            $contents = File::get($file);
+//            $contents = str_replace("'qcommerce'", "'dashed'", $contents);
+//            $contents = str_replace("/qcommerce", "/dashed", $contents);
+//            $contents = str_replace("qcommerce", "dashed", $contents);
+//            $contents = str_replace("Qubiqx\Qcommerce", "Dashed\Dashed", $contents);
+//            File::put($file, $contents);
+//        }
+//
+//        $this->info('Retrieving all tables...');
+//        $tables = DB::select('SHOW TABLES');
+//        foreach ($tables as $table) {
+//            $tableName = $table->{'Tables_in_' . env('DB_DATABASE')};
+//            $this->info('Checking table ' . $tableName . '...');
+//            if (str($tableName)->contains('qcommerce')) {
+//                $this->info('Renaming table to ' . $tableName);
+//                \Illuminate\Support\Facades\Schema::rename($tableName, str($tableName)->replace('qcommerce__', 'dashed__'));
+//                $tableName = str($tableName)->replace('qcommerce__', 'dashed__');
+//                $this->info('Table renamed to ' . $tableName);
+//            }
+//
+//            $columns = DB::select('SHOW COLUMNS FROM ' . $tableName);
+//            foreach ($columns as $column) {
+//                $columnName = $column->{'Field'};
+//                $this->info('Checking column ' . $columnName . ' from table ' . $tableName . '...');
+//
+//                try {
+//                    DB::table($tableName)->update([
+//                        $columnName => DB::raw('REPLACE(' . $columnName . ', "qcommerce/", "dashed/")'),
+//                    ]);
+//                } catch (\Exception $e) {
 //                }
-            }
-        }
+//
+//                try{
+//                    DB::table($tableName)->update([
+//                        $columnName => DB::raw('REPLACE(' . $columnName . ', "Qcommerce", "Dashed")'),
+//                    ]);
+//                }catch (\Exception $e) {
+//                }
+//
+//                try{
+//                    DB::table($tableName)->update([
+//                        $columnName => DB::raw('REPLACE(' . $columnName . ', "Qubiqx", "Dashed")'),
+//                    ]);
+//                }catch (\Exception $e) {
+//                }
+//
+//                try{
+//                    DB::table($tableName)->update([
+//                        $columnName => DB::raw('REPLACE(' . $columnName . ', "qcommerce", "dashed")'),
+//                    ]);
+//                }catch (\Exception $e) {
+//                }
+//            }
+//        }
 
         $this->info('Default upgrading...');
         //Above is for upgrading from Qcommerce to Dashed
