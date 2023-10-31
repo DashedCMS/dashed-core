@@ -27,6 +27,11 @@ class UserResource extends Resource
     protected static ?string $label = 'Gebruiker';
     protected static ?string $pluralLabel = 'Gebruikers';
 
+    protected static function shouldRegisterNavigation(): bool
+    {
+        return config('dashed.show_default_user_resource', true);
+    }
+
     public static function getGloballySearchableAttributes(): array
     {
         return [
