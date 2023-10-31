@@ -102,6 +102,7 @@ class DashedCoreServiceProvider extends PluginServiceProvider
                 'livewire',
                 'laravellocalization',
                 'flare',
+                'dashed-core',
                 'activitylog',
             ])
             ->hasRoutes([

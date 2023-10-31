@@ -29,7 +29,7 @@ class UserResource extends Resource
 
     protected static function shouldRegisterNavigation(): bool
     {
-        return config('dashed.show_default_user_resource', true);
+        return config('dashed-core.show_default_user_resource', true);
     }
 
     public static function getGloballySearchableAttributes(): array
