@@ -26,28 +26,18 @@ trait HasVisitableTab
                         ->label('Meta titel')
                         ->nullable()
                         ->minLength(5)
-                        ->maxLength(70)
-                        ->rules([
-                            'nullable',
-                            'min:5',
-                            'max:70',
-                        ]),
+                        ->maxLength(70),
                     Textarea::make('description')
                         ->label('Meta omschrijving')
                         ->nullable()
                         ->minLength(5)
                         ->maxLength(170)
-                        ->rows(2)
-                        ->rules([
-                            'nullable',
-                            'min:5',
-                            'max:170',
-                        ]),
+                        ->rows(2),
                     FileUpload::make('image')
                         ->label('Meta afbeelding')
                         ->directory('dashed/metadata')
                         ->image()
-                        ->enableDownload()
+                        ->downloadable()
                         ->helperText('De beste afmeting is 1200x630 pixels'),
 //                        TextInput::make('canonical_url')
 //                            ->label('Meta canonical URL'),
@@ -63,18 +53,14 @@ trait HasVisitableTab
             DatePicker::make('start_date')
                 ->label('Vul een startdatum in voor dit item:')
                 ->helperText('Indien je geen startdatum opgeeft, is het item direct zichtbaar')
-                ->rules([
-                    'nullable',
-                    'date',
-                ]),
+                ->nullable()
+                ->date(),
             DatePicker::make('end_date')
                 ->label('Vul een einddatum in voor dit item:')
                 ->helperText('Indien je geen einddatum opgeeft, vervalt het item niet')
-                ->rules([
-                    'nullable',
-                    'date',
-                    'after:startDate',
-                ]),
+                ->nullable()
+                ->date()
+                ->after('startDate'),
             Select::make('site_ids')
                 ->label('Actief op sites')
                 ->options(collect(Sites::getSites())->pluck('name', 'id'))

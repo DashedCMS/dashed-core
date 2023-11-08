@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore\Models;
 
+use Filament\Panel;
 use Spatie\Activitylog\LogOptions;
 use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Notifications\Notifiable;
@@ -10,7 +11,6 @@ use Spatie\Activitylog\Traits\LogsActivity;
 use Dashed\DashedCore\Traits\HasDynamicRelation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Webbingbrasil\FilamentTwoFactor\TwoFactorAuthenticatable;
 
 class User extends Authenticatable implements FilamentUser, HasAvatar
 {
@@ -18,7 +18,6 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
     use Notifiable;
     use LogsActivity;
     use HasDynamicRelation;
-    use TwoFactorAuthenticatable;
 
     protected static $logFillable = true;
 
@@ -56,7 +55,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         return LogOptions::defaults();
     }
 
-    public function canAccessFilament(): bool
+    public function canAccessPanel(Panel $panel): bool
     {
         return ($this->role === 'admin');
     }
