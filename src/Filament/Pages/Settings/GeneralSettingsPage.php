@@ -6,19 +6,16 @@ use Filament\Pages\Page;
 use Filament\Forms\Components\Tabs;
 use Dashed\DashedCore\Classes\Sites;
 use Illuminate\Support\Facades\Cache;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
 use Dashed\DashedCore\Models\Customsetting;
-use Filament\Forms\Concerns\InteractsWithForms;
 
-class GeneralSettingsPage extends Page implements HasForms
+class GeneralSettingsPage extends Page
 {
-    use InteractsWithForms;
-
     protected static ?string $navigationIcon = 'heroicon-o-cog';
     protected static bool $shouldRegisterNavigation = false;
     protected static ?string $navigationLabel = 'Algemene instellingen';
@@ -26,6 +23,7 @@ class GeneralSettingsPage extends Page implements HasForms
     protected static ?string $title = 'Algemene instellingen';
 
     protected static string $view = 'dashed-core::settings.pages.default-settings';
+    public array $data = [];
 
     public function mount(): void
     {
@@ -75,76 +73,54 @@ class GeneralSettingsPage extends Page implements HasForms
                 TextInput::make("site_name_{$site['id']}")
                     ->label('Site naam')
                     ->required()
-                    ->rules([
-                        'max:255',
-                    ]),
+                    ->maxLength(255),
                 TextInput::make("site_to_email_{$site['id']}")
                     ->label('Contact email')
                     ->required()
                     ->type('email')
                     ->email()
                     ->helperText('We gebruiken dit adres om belangrijke informatie naartoe te sturen.')
-                    ->rules([
-                        'email',
-                        'max:60',
-                    ]),
+                    ->maxLength(60)
+                    ->email(),
                 TextInput::make("site_from_email_{$site['id']}")
                     ->label('E-mailadres afzender')
                     ->required()
                     ->type('email')
                     ->email()
                     ->helperText('Je klanten zien dit adres als je hun een e-mail stuurt.')
-                    ->rules([
-                        'email',
-                        'max:60',
-                    ]),
+                ->email()
+                    ->maxLength(60),
                 TextInput::make("company_kvk_{$site['id']}")
                     ->label('KVK van het bedrijf')
                     ->required()
-                    ->rules([
-                        'max:255',
-                    ]),
+                    ->maxLength(255),
                 TextInput::make("company_btw_{$site['id']}")
                     ->label('BTW ID van het bedrijf')
-                    ->rules([
-                        'max:255',
-                    ]),
+                    ->maxLength(255),
                 TextInput::make("company_phone_number_{$site['id']}")
                     ->label('Telefoon')
                     ->required()
-                    ->rules([
-                        'max:255',
-                    ]),
+                    ->maxLength(255),
                 TextInput::make("company_street_{$site['id']}")
                     ->label('Straat')
                     ->required()
-                    ->rules([
-                        'max:255',
-                    ]),
+                    ->maxLength(255),
                 TextInput::make("company_street_number_{$site['id']}")
                     ->label('Straatnummer')
                     ->required()
-                    ->rules([
-                        'max:255',
-                    ]),
+                    ->maxLength(255),
                 TextInput::make("company_city_{$site['id']}")
                     ->label('Stad')
                     ->required()
-                    ->rules([
-                        'max:255',
-                    ]),
+                    ->maxLength(255),
                 TextInput::make("company_postal_code_{$site['id']}")
                     ->label('Postcode')
                     ->required()
-                    ->rules([
-                        'max:255',
-                    ]),
+                    ->maxLength(255),
                 TextInput::make("company_country_{$site['id']}")
                     ->label('Land/regio')
                     ->required()
-                    ->rules([
-                        'max:255',
-                    ]),
+                    ->maxLength(255),
             ];
 
             $tabs[] = Tab::make($site['id'])
@@ -201,54 +177,34 @@ class GeneralSettingsPage extends Page implements HasForms
                     ]),
                 TextInput::make("google_analytics_id_{$site['id']}")
                     ->label('Google Analytics ID')
-                    ->rules([
-                        'max:255',
-                    ]),
+                    ->maxLength(255),
                 TextInput::make("google_tagmanager_id_{$site['id']}")
                     ->label('Google Tagmanager ID')
-                    ->rules([
-                        'max:255',
-                    ]),
+                    ->maxLength(255),
                 TextInput::make("facebook_pixel_conversion_id_{$site['id']}")
                     ->label('Facebook Pixel Conversion ID')
-                    ->rules([
-                        'max:255',
-                    ]),
+                    ->maxLength(255),
                 TextInput::make("facebook_pixel_site_id_{$site['id']}")
                     ->label('Facebook Pixel site ID')
-                    ->rules([
-                        'max:255',
-                    ]),
+                    ->maxLength(255),
                 TextInput::make("webmaster_tag_google_{$site['id']}")
                     ->label('Webmaster tag Google')
-                    ->rules([
-                        'max:255',
-                    ]),
+                    ->maxLength(255),
                 TextInput::make("webmaster_tag_bing_{$site['id']}")
                     ->label('Webmaster tag Bing')
-                    ->rules([
-                        'max:255',
-                    ]),
+                    ->maxLength(255),
                 TextInput::make("webmaster_tag_alexa_{$site['id']}")
                     ->label('Webmaster tag Alexa')
-                    ->rules([
-                        'max:255',
-                    ]),
+                    ->maxLength(255),
                 TextInput::make("webmaster_tag_pinterest_{$site['id']}")
                     ->label('Webmaster tag Pinterest')
-                    ->rules([
-                        'max:255',
-                    ]),
+                    ->maxLength(255),
                 TextInput::make("webmaster_tag_yandex_{$site['id']}")
                     ->label('Webmaster tag Yandex')
-                    ->rules([
-                        'max:255',
-                    ]),
+                    ->maxLength(255),
                 TextInput::make("webmaster_tag_norton_{$site['id']}")
                     ->label('Webmaster tag Norton')
-                    ->rules([
-                        'max:255',
-                    ]),
+                    ->maxLength(255),
                 Textarea::make("extra_scripts_{$site['id']}")
                     ->label('Laad extra scripts in op alle pagina`s')
                     ->rows(10)
@@ -270,6 +226,11 @@ class GeneralSettingsPage extends Page implements HasForms
             ->tabs($tabs);
 
         return $tabGroups;
+    }
+
+    public function getFormStatePath(): ?string
+    {
+        return 'data';
     }
 
     public function submit()
@@ -305,6 +266,9 @@ class GeneralSettingsPage extends Page implements HasForms
 
         Cache::tags(['custom-settings'])->flush();
 
-        $this->notify('success', 'De algemene instellingen zijn opgeslagen');
+        Notification::make()
+            ->title('De algemene instellingen zijn opgeslagen')
+            ->success()
+            ->send();
     }
 }

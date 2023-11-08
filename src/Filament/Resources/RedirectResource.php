@@ -3,12 +3,16 @@
 namespace Dashed\DashedCore\Filament\Resources;
 
 use Filament\Forms;
-use Filament\Resources\Form;
-use Filament\Resources\Table;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Dashed\DashedCore\Models\Redirect;
 use Filament\Forms\Components\Section;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
 use Dashed\DashedCore\Filament\Resources\RedirectResource\Pages\EditRedirect;
 use Dashed\DashedCore\Filament\Resources\RedirectResource\Pages\ListRedirects;
 use Dashed\DashedCore\Filament\Resources\RedirectResource\Pages\CreateRedirect;
@@ -52,7 +56,7 @@ class RedirectResource extends Resource
                                     ->label('Verwijder redirect na een datum')
                                     ->default(now()->addMonths(3)),
                             ])
-                        ), ]
+                        ),]
             );
     }
 
@@ -60,6 +64,9 @@ class RedirectResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('id')
+                    ->label('ID')
+                    ->sortable(),
                 TextColumn::make('from')
                     ->url(fn ($record) => url($record->from))
                     ->openUrlInNewTab()
@@ -74,10 +81,18 @@ class RedirectResource extends Resource
                     ->label('Soort redirect'),
                 TextColumn::make('delete_redirect_after')
                     ->label('Delete redirect na')
+                    ->sortable()
                     ->getStateUsing(fn ($record) => $record->delete_redirect_after ? $record->delete_redirect_after->format('d-m-Y') : 'Niet verwijderen'),
             ])
-            ->filters([
-                //
+            ->actions([
+                EditAction::make()
+                    ->button(),
+                DeleteAction::make(),
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
             ]);
     }
 

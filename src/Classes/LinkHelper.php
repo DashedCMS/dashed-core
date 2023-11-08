@@ -21,7 +21,7 @@ class LinkHelper
                     ->required($required)
                     ->options($routeModel['class']::pluck($routeModel['nameField'] ?: 'name', 'id'))
                     ->searchable()
-                    ->when(fn ($get) => in_array($get("{$prefix}_type"), [$key]));
+                    ->visible(fn ($get) => in_array($get("{$prefix}_type"), [$key]));
         }
 
         return Group::make(array_merge([
@@ -37,7 +37,7 @@ class LinkHelper
                 ->label('Url')
                 ->required($required)
                 ->placeholder('Example: https://example.com of /contact')
-                ->when(fn ($get) => in_array($get("{$prefix}_type"), ['normal'])),
+                ->visible(fn ($get) => in_array($get("{$prefix}_type"), ['normal'])),
         ], $routeModelInputs))
             ->columns(2);
     }

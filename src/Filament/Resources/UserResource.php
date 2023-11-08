@@ -2,15 +2,19 @@
 
 namespace Dashed\DashedCore\Filament\Resources;
 
-use Closure;
 use App\Models\User;
-use Filament\Resources\Form;
-use Filament\Resources\Table;
+use Filament\Forms\Get;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
 use Dashed\DashedCore\Filament\Resources\UserResource\Users\EditUser;
 use Dashed\DashedCore\Filament\Resources\UserResource\Users\ListUsers;
 use Dashed\DashedCore\Filament\Resources\UserResource\Users\CreateUser;
@@ -27,7 +31,7 @@ class UserResource extends Resource
     protected static ?string $label = 'Gebruiker';
     protected static ?string $pluralLabel = 'Gebruikers';
 
-    protected static function shouldRegisterNavigation(): bool
+    public static function shouldRegisterNavigation(): bool
     {
         return config('dashed-core.show_default_user_resource', true);
     }
@@ -49,105 +53,41 @@ class UserResource extends Resource
                         TextInput::make('first_name')
                             ->label('Voornaam')
                             ->required()
-                            ->rules([
-                                'required',
-                                'max:255',
-                            ])
-                            ->columnSpan([
-                                'default' => 2,
-                                'sm' => 2,
-                                'md' => 2,
-                                'lg' => 2,
-                                'xl' => 1,
-                                '2xl' => 1,
-                            ]),
+                            ->maxLength(255),
                         TextInput::make('last_name')
                             ->label('Achternaam')
                             ->required()
-                            ->rules([
-                                'required',
-                                'max:255',
-                            ])
-                            ->columnSpan([
-                                'default' => 2,
-                                'sm' => 2,
-                                'md' => 2,
-                                'lg' => 2,
-                                'xl' => 1,
-                                '2xl' => 1,
-                            ]),
+                            ->maxLength(255),
                         TextInput::make('email')
                             ->label('Email')
                             ->unique('users', 'email', fn ($record) => $record)
                             ->required()
-                            ->rules([
-                                'required',
-                                'email:rfc',
-                                'max:255',
-                            ])
-                            ->columnSpan([
-                                'default' => 2,
-                                'sm' => 2,
-                                'md' => 2,
-                                'lg' => 2,
-                                'xl' => 1,
-                                '2xl' => 1,
-                            ]),
+                            ->email()
+                            ->maxLength(255),
                         Select::make('role')
                             ->label('Rol')
                             ->required()
                             ->options([
                                 'customer' => 'Customer',
                                 'admin' => 'Admin',
-                            ])
-                            ->rules([
-                                'required',
-                            ])->columnSpan([
-                                'default' => 2,
-                                'sm' => 2,
-                                'md' => 2,
-                                'lg' => 2,
-                                'xl' => 1,
-                                '2xl' => 1,
                             ]),
                         TextInput::make('password')
                             ->label('Wachtwoord')
                             ->nullable()
                             ->password()
-                            ->rules([
-                                'nullable',
-                                'min:6',
-                                'max:255',
-                                'confirmed',
-                            ])
+                            ->confirmed()
+                            ->minLength(6)
+                            ->maxLength(255)
                             ->required(fn ($livewire) => $livewire instanceof CreateUser)
                             ->helperText('Het wachtwoord wordt alleen aangepast als je iets invult')
-                            ->reactive()
-                            ->columnSpan([
-                                'default' => 2,
-                                'sm' => 2,
-                                'md' => 2,
-                                'lg' => 2,
-                                'xl' => 1,
-                                '2xl' => 1,
-                            ]),
+                            ->reactive(),
                         TextInput::make('password_confirmation')
                             ->label('Wachtwoord herhalen')
-                            ->required(fn (Closure $get) => $get('password'))
+                            ->required(fn (Get $get) => $get('password'))
                             ->password()
-                            ->rules([
-                                'min:6',
-                                'max:255',
-                            ])
-                            ->reactive()
-                            ->columnSpan([
-                                'default' => 2,
-                                'sm' => 2,
-                                'md' => 2,
-                                'lg' => 2,
-                                'xl' => 1,
-                                '2xl' => 1,
-                            ]),
+                            ->minLength(6)
+                            ->maxLength(255)
+                            ->reactive(),
                     ])
                     ->columns(2),
             ]);
@@ -170,6 +110,16 @@ class UserResource extends Resource
             ])
             ->filters([
                 //
+            ])
+            ->actions([
+                EditAction::make()
+                    ->button(),
+                DeleteAction::make(),
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
             ]);
     }
 

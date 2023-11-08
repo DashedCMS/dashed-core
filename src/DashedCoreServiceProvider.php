@@ -2,13 +2,9 @@
 
 namespace Dashed\DashedCore;
 
-use Dashed\DashedCore\Commands\MigrateStorageDataToSpace;
-use Filament\Facades\Filament;
-use Dashed\Drift\CachingStrategies\FilesystemCachingStrategy;
 use Livewire\Livewire;
 use Dashed\Drift\Config;
 use Dashed\Drift\DriftManager;
-use Filament\PluginServiceProvider;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\LaravelPackageTools\Package;
@@ -18,22 +14,21 @@ use Dashed\DashedCore\Commands\UpdateCommand;
 use Dashed\DashedCore\Commands\InstallCommand;
 use Dashed\DashedCore\Commands\CreateAdminUser;
 use Dashed\DashedCore\Livewire\Frontend\Auth\Login;
-use Dashed\DashedCore\Filament\Resources\UserResource;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Dashed\DashedCore\Livewire\Frontend\Account\Account;
-use Dashed\DashedCore\Filament\Resources\RedirectResource;
-use Dashed\DashedCore\Filament\Pages\Settings\SettingsPage;
 use Dashed\DashedCore\Livewire\Frontend\Auth\ResetPassword;
 use Dashed\DashedCore\Livewire\Frontend\Auth\ForgotPassword;
 use Dashed\DashedCore\Livewire\Frontend\Notification\Toastr;
 use Dashed\DashedCore\Commands\InvalidatePasswordResetTokens;
+use Dashed\Drift\CachingStrategies\FilesystemCachingStrategy;
 use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\MetadataSettingsPage;
 
-class DashedCoreServiceProvider extends PluginServiceProvider
+class DashedCoreServiceProvider extends PackageServiceProvider
 {
     public static string $name = 'dashed-core';
 
-    public function bootingPackage()
+    public function packageBooted()
     {
         Model::unguard();
 
@@ -57,7 +52,7 @@ class DashedCoreServiceProvider extends PluginServiceProvider
             $schedule->command(InvalidatePasswordResetTokens::class)->everyFifteenMinutes();
         });
 
-        if (! $this->app->environment('production')) {
+        if (!$this->app->environment('production')) {
             Mail::alwaysFrom('info@dashed.nl');
             Mail::alwaysTo('info@dashed.nl');
         }
@@ -66,6 +61,8 @@ class DashedCoreServiceProvider extends PluginServiceProvider
     public function configurePackage(Package $package): void
     {
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'dashed-core');
 
         cms()->builder(
             'settingPages',
@@ -92,7 +89,7 @@ class DashedCoreServiceProvider extends PluginServiceProvider
         );
 
         $package
-            ->name('dashed-core')
+            ->name(static::$name)
             ->hasConfigFile([
                 'filament',
                 'filament-spatie-laravel-translatable-plugin',
@@ -117,29 +114,5 @@ class DashedCoreServiceProvider extends PluginServiceProvider
                 InvalidatePasswordResetTokens::class,
                 CreateSitemap::class,
             ]);
-    }
-
-//    protected function getStyles(): array
-//    {
-//        return array_merge(parent::getStyles(), [
-//            'dashed-core' => str_replace('/vendor/dashed/dashed-core/src', '', str_replace('/packages/dashed/dashed-core/src', '', __DIR__)) . '/vendor/dashed/dashed-core/resources/dist/css/filament.css',
-//        ]);
-//    }
-
-    protected function getResources(): array
-    {
-        return array_merge(parent::getResources(), [
-            UserResource::class,
-            RedirectResource::class,
-        ]);
-    }
-
-    protected function getPages(): array
-    {
-        return array_merge(parent::getPages(), [
-            SettingsPage::class,
-            GeneralSettingsPage::class,
-            MetadataSettingsPage::class,
-        ]);
     }
 }

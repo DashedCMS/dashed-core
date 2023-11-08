@@ -2,8 +2,8 @@
 
 namespace Dashed\DashedCore\Controllers\Frontend;
 
-use Dashed\Drift\UrlBuilder;
 use Illuminate\Support\Str;
+use Dashed\Drift\UrlBuilder;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\View;
 use Dashed\DashedCore\Classes\Locales;

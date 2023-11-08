@@ -6,18 +6,15 @@ use Filament\Pages\Page;
 use Filament\Forms\Components\Tabs;
 use Dashed\DashedCore\Classes\Sites;
 use Illuminate\Support\Facades\Cache;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
 use Dashed\DashedCore\Models\Customsetting;
-use Filament\Forms\Concerns\InteractsWithForms;
 
-class MetadataSettingsPage extends Page implements HasForms
+class MetadataSettingsPage extends Page
 {
-    use InteractsWithForms;
-
     protected static ?string $navigationIcon = 'heroicon-o-cog';
     protected static bool $shouldRegisterNavigation = false;
     protected static ?string $navigationLabel = 'Meta data instellingen';
@@ -25,6 +22,7 @@ class MetadataSettingsPage extends Page implements HasForms
     protected static ?string $title = 'Meta data instellingen';
 
     protected static string $view = 'dashed-core::settings.pages.default-settings';
+    public array $data = [];
 
     public function mount(): void
     {
@@ -52,23 +50,16 @@ class MetadataSettingsPage extends Page implements HasForms
                     ->content('Dit is de standaard voor meta data.'),
                 TextInput::make("default_meta_data_twitter_site_{$site['id']}")
                     ->label('Twitter site')
-                    ->rules([
-                        'max:255',
-                    ])
+                    ->maxLength(255)
                     ->helperText('Bijv: @dashed.dev'),
                 TextInput::make("default_meta_data_twitter_creator_{$site['id']}")
                     ->label('Twitter creator')
-                    ->rules([
-                        'max:255',
-                    ])
+                    ->maxLength(255)
                     ->helperText('Bijv: @dashed.dev'),
                 FileUpload::make("default_meta_data_image_{$site['id']}")
                     ->label('Meta image')
                     ->directory('dashed/metadata')
                     ->image()
-                    ->rules([
-                        'image',
-                    ])
                     ->helperText('Dit is de placeholder meta afbeelding die gebruikt wordt als er geen meta afbeelding is opgegeven.'),
             ];
 
@@ -86,6 +77,11 @@ class MetadataSettingsPage extends Page implements HasForms
         return $tabGroups;
     }
 
+    public function getFormStatePath(): ?string
+    {
+        return 'data';
+    }
+
     public function submit()
     {
         $sites = Sites::getSites();
@@ -98,6 +94,9 @@ class MetadataSettingsPage extends Page implements HasForms
 
         Cache::tags(['custom-settings'])->flush();
 
-        $this->notify('success', 'De meta data zijn opgeslagen');
+        Notification::make()
+            ->title('De meta data instellingen zijn opgeslagen')
+            ->success()
+            ->send();
     }
 }

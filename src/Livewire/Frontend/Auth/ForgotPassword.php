@@ -34,7 +34,7 @@ class ForgotPassword extends Component
 
         $this->reset('email');
 
-        $this->emit('showAlert', 'success', Translation::get('forgot-password-post-success', 'login', 'If we can find an account with your email you will receive a email to reset your password.'));
+        $this->dispatch('showAlert', 'success', Translation::get('forgot-password-post-success', 'login', 'If we can find an account with your email you will receive a email to reset your password.'));
     }
 
     public function render()

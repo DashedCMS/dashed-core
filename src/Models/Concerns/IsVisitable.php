@@ -18,6 +18,7 @@ trait IsVisitable
 {
     use HasMetadata;
     use HasTranslations;
+    use HasSearchScope;
     use LogsActivity;
 
     public function getActivitylogOptions(): LogOptions
@@ -46,22 +47,6 @@ trait IsVisitable
                     $query->where('end_date', null)
                         ->orWhere('end_date', '>=', now()->format('Y-m-d H:i:s'));
                 });
-        }
-    }
-
-    public function scopeSearch($query, ?string $search = null)
-    {
-        if (request()->get('search') ?: $search) {
-            $search = strtolower(request()->get('search') ?: $search);
-            $loop = 1;
-            foreach (self::getTranslatableAttributes() as $attribute) {
-                if ($loop == 1) {
-                    $query->whereRaw('LOWER(`' . $attribute . '`) LIKE ? ', ['%' . trim(strtolower($search)) . '%']);
-                } else {
-                    $query->orWhereRaw('LOWER(`' . $attribute . '`) LIKE ? ', ['%' . trim(strtolower($search)) . '%']);
-                }
-                $loop++;
-            }
         }
     }
 

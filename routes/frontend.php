@@ -5,11 +5,11 @@ use Dashed\DashedCore\Middleware\AuthMiddleware;
 use Dashed\DashedCore\Middleware\GuestMiddleware;
 use Dashed\DashedTranslations\Models\Translation;
 use Dashed\DashedCore\Middleware\FrontendMiddleware;
-use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use Dashed\DashedCore\Controllers\Frontend\AuthController;
+use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use Dashed\DashedCore\Controllers\Frontend\AccountController;
-use Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect;
 use Dashed\DashedCore\Controllers\Frontend\FrontendController;
+use Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect;
 use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationViewPath;
 use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter;
 

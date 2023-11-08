@@ -3,6 +3,7 @@
 namespace Dashed\DashedCore\Filament\Concerns;
 
 use Filament\Forms\Components\Group;
+use Filament\Resources\Pages\CreateRecord;
 
 trait HasCustomBlocksTab
 {
@@ -10,25 +11,18 @@ trait HasCustomBlocksTab
     {
         return [
             Group::make()
-                ->relationship('customBlocks')
                 ->schema($schema)
-                ->visible(count($schema))
-                ->columnSpan([
-                    'default' => 1,
-                    'sm' => 1,
-                    'md' => 1,
-                    'lg' => 1,
-                    'xl' => 2,
-                    '2xl' => 2,
-                ])
                 ->columns(2)
+                ->columnSpanFull()
+                ->visible(fn ($livewire) => count($schema) && !$livewire instanceof CreateRecord)
+                ->relationship('customBlocks')
                 ->mutateRelationshipDataBeforeCreateUsing(function ($data, $livewire) {
                     $blocks = [];
                     foreach ($data as $key => $item) {
                         $blocks[$key] = $item;
                         unset($data[$key]);
                     }
-                    $data['blocks'][$livewire->activeFormLocale] = $blocks;
+                    $data['blocks'][$livewire->activeLocale] = $blocks;
 
                     return $data;
                 })
@@ -38,11 +32,11 @@ trait HasCustomBlocksTab
                         $blocks[$key] = $item;
                         unset($data[$key]);
                     }
-                    $data['blocks'][$livewire->activeFormLocale] = $blocks;
+                    $data['blocks'][$livewire->activeLocale] = $blocks;
 
                     return $data;
                 })
-                ->mutateRelationshipDataBeforeFillUsing(function ($data, $livewire) {
+                ->mutateRelationshipDataBeforeFillUsing(function ($data) {
                     if (is_array($data['blocks'])) {
                         foreach ($data['blocks'] ?? [] as $key => $item) {
                             $data[$key] = $item;

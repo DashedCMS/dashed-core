@@ -61,7 +61,7 @@ class Account extends Component
 
         $this->user->save();
         $this->reset(['password', 'passwordConfirmation']);
-        $this->emit('showAlert', 'success', Translation::get('account-updated', 'account', 'Your account has been updated'));
+        $this->dispatch('showAlert', 'success', Translation::get('account-updated', 'account', 'Your account has been updated'));
     }
 
     public function render()

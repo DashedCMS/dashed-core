@@ -18,12 +18,12 @@ class CustomBlock extends Model
 
     protected static $logFillable = true;
 
+    public $translatable = [
+        'blocks',
+    ];
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults();
     }
-
-    public $translatable = [
-        'blocks',
-    ];
 }
