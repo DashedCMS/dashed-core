@@ -94,6 +94,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                 'filament',
                 'filament-spatie-laravel-translatable-plugin',
                 'filament-forms-tinyeditor',
+                'filament-tiptap-editor',
                 'filesystems',
                 'file-manager',
                 'livewire',
