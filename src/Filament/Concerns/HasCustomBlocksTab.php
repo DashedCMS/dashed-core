@@ -29,7 +29,7 @@ trait HasCustomBlocksTab
                         $blocks[$key] = $item;
                         unset($data[$key]);
                     }
-                    $data['blocks'][$livewire->activeLocale] = $blocks;
+                    $data['blocks'] = $blocks;
 
                     return $data;
                 })
@@ -39,7 +39,7 @@ trait HasCustomBlocksTab
                         $blocks[$key] = $item;
                         unset($data[$key]);
                     }
-                    $data['blocks'][$livewire->activeLocale] = $blocks;
+                    $data['blocks'] = $blocks;
 
                     return $data;
                 })
