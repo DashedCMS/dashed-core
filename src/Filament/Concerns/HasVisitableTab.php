@@ -36,6 +36,7 @@ trait HasVisitableTab
                     FileUpload::make('image')
                         ->label('Meta afbeelding')
                         ->directory('dashed/metadata')
+                        ->disk('dashed')
                         ->image()
                         ->downloadable()
                         ->helperText('De beste afmeting is 1200x630 pixels'),
