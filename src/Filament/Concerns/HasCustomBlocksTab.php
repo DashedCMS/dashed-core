@@ -3,7 +3,6 @@
 namespace Dashed\DashedCore\Filament\Concerns;
 
 use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Repeater;
 use Filament\Resources\Pages\CreateRecord;
 
@@ -21,7 +20,8 @@ trait HasCustomBlocksTab
                 ->defaultItems(1)
                 ->columns(2)
                 ->columnSpanFull()
-                ->visible(fn ($livewire) => count($schema) && !$livewire instanceof CreateRecord)
+                ->visible(fn($livewire) => count($schema))
+//                ->visible(fn($livewire) => count($schema) && !$livewire instanceof CreateRecord)
                 ->relationship('customBlocks')
                 ->mutateRelationshipDataBeforeCreateUsing(function ($data, $livewire) {
                     $blocks = [];
@@ -59,7 +59,7 @@ trait HasCustomBlocksTab
                 ->schema($schema)
                 ->columns(2)
                 ->columnSpanFull()
-                ->visible(fn ($livewire) => count($schema) && !$livewire instanceof CreateRecord)
+                ->visible(fn($livewire) => count($schema) && !$livewire instanceof CreateRecord)
                 ->relationship('customBlocks')
                 ->mutateRelationshipDataBeforeCreateUsing(function ($data, $livewire) {
                     ray('mutateRelationshipDataBeforeCreateUsing');
