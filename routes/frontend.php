@@ -13,40 +13,43 @@ use Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect;
 use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationViewPath;
 use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter;
 
-Route::group(
-    [
-        'prefix' => LaravelLocalization::setLocale(),
-        'middleware' => array_merge(['web', FrontendMiddleware::class, LocaleSessionRedirect::class, LaravelLocalizationRedirectFilter::class, LaravelLocalizationViewPath::class], cms()->builder('frontendMiddlewares')),
-    ],
-    function () {
-        //Auth routes
+if (config('dashed-core.default_auth_pages_enabled', true)) {
 
-        Route::get('/' . Translation::get('logout-slug', 'slug', 'logout'), [AuthController::class, 'logout'])->name('dashed.frontend.auth.logout');
-        Route::group([
-            'middleware' => [GuestMiddleware::class],
-        ], function () {
-            Route::get('/' . Translation::get('login-slug', 'slug', 'login'), [AuthController::class, 'login'])->name('dashed.frontend.auth.login');
-            Route::post('/' . Translation::get('login-slug', 'slug', 'login'), [AuthController::class, 'loginPost'])->name('dashed.frontend.auth.login.post');
-            Route::post('/' . Translation::get('register-slug', 'slug', 'register'), [AuthController::class, 'login'])->name('dashed.frontend.auth.register');
-            Route::post('/' . Translation::get('register-slug', 'slug', 'register'), [AuthController::class, 'registerPost'])->name('dashed.frontend.auth.register.post');
+    Route::group(
+        [
+            'prefix' => LaravelLocalization::setLocale(),
+            'middleware' => array_merge(['web', FrontendMiddleware::class, LocaleSessionRedirect::class, LaravelLocalizationRedirectFilter::class, LaravelLocalizationViewPath::class], cms()->builder('frontendMiddlewares')),
+        ],
+        function () {
+            //Auth routes
 
-            Route::get('/' . Translation::get('forgot-password-slug', 'slug', 'forgot-password'), [AuthController::class, 'forgotPassword'])->name('dashed.frontend.auth.forgot-password');
-            Route::post('/' . Translation::get('forgot-password-slug', 'slug', 'forgot-password'), [AuthController::class, 'forgotPasswordPost'])->name('dashed.frontend.auth.forgot-password.post');
-            Route::get('/' . Translation::get('reset-password-slug', 'slug', 'reset-password') . '/{passwordResetToken}', [AuthController::class, 'resetPassword'])->name('dashed.frontend.auth.reset-password');
-            Route::post('/' . Translation::get('reset-password-slug', 'slug', 'reset-password') . '/{passwordResetToken}', [AuthController::class, 'resetPasswordPost'])->name('dashed.frontend.auth.reset-password.post');
-        });
+            Route::get('/' . Translation::get('logout-slug', 'slug', 'logout'), [AuthController::class, 'logout'])->name('dashed.frontend.auth.logout');
+            Route::group([
+                'middleware' => [GuestMiddleware::class],
+            ], function () {
+                Route::get('/' . Translation::get('login-slug', 'slug', 'login'), [AuthController::class, 'login'])->name('dashed.frontend.auth.login');
+                Route::post('/' . Translation::get('login-slug', 'slug', 'login'), [AuthController::class, 'loginPost'])->name('dashed.frontend.auth.login.post');
+                Route::post('/' . Translation::get('register-slug', 'slug', 'register'), [AuthController::class, 'login'])->name('dashed.frontend.auth.register');
+                Route::post('/' . Translation::get('register-slug', 'slug', 'register'), [AuthController::class, 'registerPost'])->name('dashed.frontend.auth.register.post');
 
-        Route::group([
-            'middleware' => [AuthMiddleware::class],
-        ], function () {
-            //Account routes
-            Route::prefix('/' . Translation::get('account-slug', 'slug', 'account'))->group(function () {
-                Route::get('/', [AccountController::class, 'account'])->name('dashed.frontend.account');
-                Route::post('/', [AccountController::class, 'accountPost'])->name('dashed.frontend.account.post');
+                Route::get('/' . Translation::get('forgot-password-slug', 'slug', 'forgot-password'), [AuthController::class, 'forgotPassword'])->name('dashed.frontend.auth.forgot-password');
+                Route::post('/' . Translation::get('forgot-password-slug', 'slug', 'forgot-password'), [AuthController::class, 'forgotPasswordPost'])->name('dashed.frontend.auth.forgot-password.post');
+                Route::get('/' . Translation::get('reset-password-slug', 'slug', 'reset-password') . '/{passwordResetToken}', [AuthController::class, 'resetPassword'])->name('dashed.frontend.auth.reset-password');
+                Route::post('/' . Translation::get('reset-password-slug', 'slug', 'reset-password') . '/{passwordResetToken}', [AuthController::class, 'resetPasswordPost'])->name('dashed.frontend.auth.reset-password.post');
             });
-        });
-    }
-);
+
+            Route::group([
+                'middleware' => [AuthMiddleware::class],
+            ], function () {
+                //Account routes
+                Route::prefix('/' . Translation::get('account-slug', 'slug', 'account'))->group(function () {
+                    Route::get('/', [AccountController::class, 'account'])->name('dashed.frontend.account');
+                    Route::post('/', [AccountController::class, 'accountPost'])->name('dashed.frontend.account.post');
+                });
+            });
+        }
+    );
+}
 
 Route::fallback([FrontendController::class, 'index'])
     ->middleware(array_merge(['web', FrontendMiddleware::class, LocaleSessionRedirect::class, LaravelLocalizationRedirectFilter::class, LaravelLocalizationViewPath::class], cms()->builder('frontendMiddlewares')))
