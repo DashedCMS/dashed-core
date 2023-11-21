@@ -97,6 +97,7 @@ trait HasVisitableTab
             TextColumn::make('site_ids')
                 ->label('Actief op sites')
                 ->sortable()
+                ->badge()
                 ->hidden(! (Sites::getAmountOfSites() > 1))
                 ->searchable();
         $schema[] = IconColumn::make('status')
