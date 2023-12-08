@@ -20,7 +20,7 @@ trait HasCustomBlocksTab
                 ->defaultItems(1)
                 ->columns(2)
                 ->columnSpanFull()
-                ->visible(fn($livewire) => count($schema))
+                ->visible(fn ($livewire) => count($schema))
 //                ->visible(fn($livewire) => count($schema) && !$livewire instanceof CreateRecord)
                 ->relationship('customBlocks')
                 ->mutateRelationshipDataBeforeCreateUsing(function ($data, $livewire) {
@@ -59,7 +59,7 @@ trait HasCustomBlocksTab
                 ->schema($schema)
                 ->columns(2)
                 ->columnSpanFull()
-                ->visible(fn($livewire) => count($schema) && !$livewire instanceof CreateRecord)
+                ->visible(fn ($livewire) => count($schema) && !$livewire instanceof CreateRecord)
                 ->relationship('customBlocks')
                 ->mutateRelationshipDataBeforeCreateUsing(function ($data, $livewire) {
                     ray('mutateRelationshipDataBeforeCreateUsing');

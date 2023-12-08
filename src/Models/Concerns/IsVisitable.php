@@ -29,7 +29,7 @@ trait IsVisitable
 
     public function scopeThisSite($query, $siteId = null)
     {
-        if (! $siteId) {
+        if (!$siteId) {
             $siteId = Sites::getActive();
         }
 
@@ -67,7 +67,7 @@ trait IsVisitable
 
     public function getStatusAttribute(): bool
     {
-        if (! $this->start_date && ! $this->end_date) {
+        if (!$this->start_date && !$this->end_date) {
             return 1;
         } else {
             if ($this->start_date && $this->end_date) {
@@ -112,9 +112,16 @@ trait IsVisitable
             ];
         }
 
+        if ($overviewPage) {
+            $breadcrumbs[] = [
+                'name' => $model->name,
+                'url' => $model->getUrl(),
+            ];
+        }
+
         if (method_exists($model, 'parent')) {
             while ($model->parent) {
-                if (! $model->parent->is_home) {
+                if (!$model->parent->is_home) {
                     $breadcrumbs[] = [
                         'name' => $model->parent->name,
                         'url' => $model->parent->getUrl(),
