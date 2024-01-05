@@ -10,6 +10,10 @@ trait HasCustomBlocksTab
 {
     protected static function customBlocksTab(array $schema = []): array
     {
+        if(!count($schema)){
+            return [];
+        }
+
         return [
             Repeater::make('customBlocks')
                 ->hiddenLabel()
@@ -21,7 +25,6 @@ trait HasCustomBlocksTab
                 ->columns(2)
                 ->columnSpanFull()
                 ->visible(fn ($livewire) => count($schema))
-//                ->visible(fn($livewire) => count($schema) && !$livewire instanceof CreateRecord)
                 ->relationship('customBlocks')
                 ->mutateRelationshipDataBeforeCreateUsing(function ($data, $livewire) {
                     $blocks = [];
