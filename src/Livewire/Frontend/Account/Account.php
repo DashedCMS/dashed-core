@@ -3,6 +3,7 @@
 namespace Dashed\DashedCore\Livewire\Frontend\Account;
 
 use App\Models\User;
+use Filament\Notifications\Notification;
 use Livewire\Component;
 use Illuminate\Support\Facades\Hash;
 use Dashed\DashedTranslations\Models\Translation;
@@ -61,6 +62,10 @@ class Account extends Component
 
         $this->user->save();
         $this->reset(['password', 'passwordConfirmation']);
+        Notification::make()
+            ->title(Translation::get('account-updated-message', 'account', 'Your account has been updated'))
+            ->success()
+            ->send();
         $this->dispatch('showAlert', 'success', Translation::get('account-updated', 'account', 'Your account has been updated'));
     }
 
