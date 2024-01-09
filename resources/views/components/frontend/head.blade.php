@@ -178,10 +178,10 @@
         }(window, document, 'script',
             'https://connect.facebook.net/en_US/fbevents.js');
         @if(Customsetting::get('facebook_pixel_conversion_id'))
-        fbq('init', {{Customsetting::get('facebook_pixel_conversion_id')}});
+        fbq('init', '{{Customsetting::get('facebook_pixel_conversion_id')}}');
         @endif
         @if(Customsetting::get('facebook_pixel_site_id'))
-        fbq('init', {{Customsetting::get('facebook_pixel_site_id')}});
+        fbq('init', '{{Customsetting::get('facebook_pixel_site_id')}}');
         @endif
         fbq('track', 'PageView');
     </script>
