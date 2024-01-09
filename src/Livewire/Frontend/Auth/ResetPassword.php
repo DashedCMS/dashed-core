@@ -45,6 +45,6 @@ class ResetPassword extends Component
 
     public function render()
     {
-        return view('dashed-ecommerce-core::frontend.auth.reset-password');
+        return view('dashed-core::frontend.auth.reset-password');
     }
 }

@@ -39,6 +39,6 @@ class ForgotPassword extends Component
 
     public function render()
     {
-        return view('dashed-ecommerce-core::frontend.auth.forgot-password');
+        return view('dashed-core::frontend.auth.forgot-password');
     }
 }
