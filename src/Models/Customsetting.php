@@ -33,7 +33,7 @@ class Customsetting extends Model
         }
 
         return Cache::tags(['custom-settings', "custom-settings-$name"])->rememberForever("$name-$siteId-$locale", function () use ($name, $siteId, $default, $locale) {
-            if (! Schema::hasTable('dashed__custom_settings')) {
+            if (app()->runningInConsole()) {
                 return;
             }
 
