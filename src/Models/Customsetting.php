@@ -33,9 +33,10 @@ class Customsetting extends Model
         }
 
         return Cache::tags(['custom-settings', "custom-settings-$name"])->rememberForever("$name-$siteId-$locale", function () use ($name, $siteId, $default, $locale) {
-            if (app()->runningInConsole()) {
-                return;
-            }
+            //Cannot use this because this fails emails etc
+//        if (app()->runningInConsole()) {
+//            return $default;
+//        }
 
             $customSetting = self::where('name', $name)->where('site_id', $siteId)->where('locale', $locale)->first();
             if ($customSetting && $customSetting->value !== null) {
