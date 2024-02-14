@@ -92,34 +92,27 @@ class GeneralSettingsPage extends Page
                     ->maxLength(60),
                 TextInput::make("company_kvk_{$site['id']}")
                     ->label('KVK van het bedrijf')
-                    ->required()
                     ->maxLength(255),
                 TextInput::make("company_btw_{$site['id']}")
                     ->label('BTW ID van het bedrijf')
                     ->maxLength(255),
                 TextInput::make("company_phone_number_{$site['id']}")
                     ->label('Telefoon')
-                    ->required()
                     ->maxLength(255),
                 TextInput::make("company_street_{$site['id']}")
                     ->label('Straat')
-                    ->required()
                     ->maxLength(255),
                 TextInput::make("company_street_number_{$site['id']}")
                     ->label('Straatnummer')
-                    ->required()
                     ->maxLength(255),
                 TextInput::make("company_city_{$site['id']}")
                     ->label('Stad')
-                    ->required()
                     ->maxLength(255),
                 TextInput::make("company_postal_code_{$site['id']}")
                     ->label('Postcode')
-                    ->required()
                     ->maxLength(255),
                 TextInput::make("company_country_{$site['id']}")
                     ->label('Land/regio')
-                    ->required()
                     ->maxLength(255),
             ];
 
@@ -146,12 +139,10 @@ class GeneralSettingsPage extends Page
                     ]),
                 FileUpload::make("site_logo_{$site['id']}")
                     ->label('Logo')
-                    ->directory('dashed/branding/logo')
-                    ->required(),
+                    ->directory('dashed/branding/logo'),
                 FileUpload::make("site_favicon_{$site['id']}")
                     ->label('Favicon')
-                    ->directory('dashed/branding/favicon')
-                    ->required(),
+                    ->directory('dashed/branding/favicon'),
             ];
 
             $tabs[] = Tab::make($site['id'])
