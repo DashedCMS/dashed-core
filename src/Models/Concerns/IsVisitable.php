@@ -116,14 +116,19 @@ trait IsVisitable
         }
 
         if (method_exists($model, 'parent')) {
+            $parentBreadcrumbs = [];
             while ($model->parent) {
                 if (!$model->parent->is_home) {
-                    $breadcrumbs[] = [
+                    $parentBreadcrumbs[] = [
                         'name' => $model->parent->name,
                         'url' => $model->parent->getUrl(),
                     ];
                 }
                 $model = $model->parent;
+            }
+            if (count($parentBreadcrumbs)) {
+                $parentBreadcrumbs = array_reverse($parentBreadcrumbs);
+                $breadcrumbs = array_merge($breadcrumbs, $parentBreadcrumbs);
             }
         }
 
