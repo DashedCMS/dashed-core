@@ -148,7 +148,11 @@ trait IsVisitable
     {
         $overviewPage = self::getOverviewPage();
         if ($overviewPage) {
-            $url = "{$overviewPage->getUrl()}/{$this->slug}";
+            if (method_exists($this, 'parent') && $this->parent) {
+                $url = "{$this->parent->getUrl()}/{$this->slug}";
+            } else {
+                $url = "{$overviewPage->getUrl()}/{$this->slug}";
+            }
         } elseif ($this->is_home) {
             $url = '/';
         } elseif (method_exists($this, 'parent') && $this->parent) {
