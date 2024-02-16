@@ -99,11 +99,6 @@ trait IsVisitable
         $breadcrumbs = [];
         $model = $this;
 
-        $overviewPage = self::getOverviewPage();
-        if ($overviewPage) {
-            $model = $overviewPage;
-        }
-
         $homePage = Page::isHome()->publicShowable()->first();
         if ($homePage) {
             $breadcrumbs[] = [
@@ -112,10 +107,11 @@ trait IsVisitable
             ];
         }
 
+        $overviewPage = self::getOverviewPage();
         if ($overviewPage) {
             $breadcrumbs[] = [
-                'name' => $model->name,
-                'url' => $model->getUrl(),
+                'name' => $overviewPage->name,
+                'url' => $overviewPage->getUrl(),
             ];
         }
 
@@ -135,6 +131,7 @@ trait IsVisitable
             'name' => $this->name,
             'url' => $this->getUrl(),
         ];
+        dd($breadcrumbs);
 
         return $breadcrumbs;
     }
