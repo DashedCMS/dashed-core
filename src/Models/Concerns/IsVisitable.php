@@ -131,7 +131,6 @@ trait IsVisitable
             'name' => $this->name,
             'url' => $this->getUrl(),
         ];
-        dd($breadcrumbs);
 
         return $breadcrumbs;
     }
