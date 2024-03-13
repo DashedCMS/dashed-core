@@ -139,9 +139,11 @@ class GeneralSettingsPage extends Page
                     ]),
                 FileUpload::make("site_logo_{$site['id']}")
                     ->label('Logo')
+                    ->downloadable()
                     ->directory('dashed/branding/logo'),
                 FileUpload::make("site_favicon_{$site['id']}")
                     ->label('Favicon')
+                    ->downloadable()
                     ->directory('dashed/branding/favicon'),
             ];
 
