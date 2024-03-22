@@ -19,7 +19,6 @@ trait HasCustomBlocksTab
                 ->hiddenLabel()
                 ->deletable(false)
                 ->schema($schema)
-                ->minItems(1)
                 ->maxItems(1)
                 ->defaultItems(1)
                 ->columns(2)
