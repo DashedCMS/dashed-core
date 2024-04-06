@@ -2,6 +2,8 @@
 
 namespace Dashed\DashedCore;
 
+use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
+use Dashed\DashedCore\Models\Customsetting;
 use Livewire\Livewire;
 use Dashed\Drift\Config;
 use Dashed\Drift\DriftManager;
@@ -38,6 +40,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             name: 'dashed',
             filesystemDisk: (config('filesystems')['disks']['dashed']['driver'] ?? 'local') == 's3' ? 'dashed' : 'public',
             cachingStrategy: FilesystemCachingStrategy::class,
+//            forceLazyLoad: Customsetting::
         ));
 
         Livewire::component('notification.toastr', Toastr::class);
@@ -84,6 +87,18 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                     'description' => 'Meta data van de website',
                     'icon' => 'identification',
                     'page' => MetadataSettingsPage::class,
+                ],
+            ])
+        );
+
+        cms()->builder(
+            'settingPages',
+            array_merge(cms()->builder('settingPages'), [
+                'metaData' => [
+                    'name' => 'Afbeelding',
+                    'description' => 'Afbeelding van de website',
+                    'icon' => 'photo',
+                    'page' => ImageSettingsPage::class,
                 ],
             ])
         );
