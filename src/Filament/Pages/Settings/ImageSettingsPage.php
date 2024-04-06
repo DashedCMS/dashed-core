@@ -29,9 +29,9 @@ class ImageSettingsPage extends Page
     {
         $formData = [];
         $sites = Sites::getSites();
-        foreach ($sites as $site) {
+//        foreach ($sites as $site) {
             $formData["image_force_lazy_load"] = Customsetting::get('image_force_lazy_load', null, false);
-        }
+//        }
 
         $this->form->fill($formData);
     }

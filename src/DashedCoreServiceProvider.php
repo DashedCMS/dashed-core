@@ -40,7 +40,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             name: 'dashed',
             filesystemDisk: (config('filesystems')['disks']['dashed']['driver'] ?? 'local') == 's3' ? 'dashed' : 'public',
             cachingStrategy: FilesystemCachingStrategy::class,
-//            forceLazyLoad: Customsetting::
+            forceLazyLoad: Customsetting::get('image_force_lazy_load', null, false),
         ));
 
         Livewire::component('notification.toastr', Toastr::class);
