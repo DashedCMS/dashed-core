@@ -19,6 +19,7 @@
         "php": "^8.2",
         "awcodes/filament-tiptap-editor": "^3.0",
         "dashed/laravel-drift": "^1.0",
+        "dashed/laravel-seo-scanner": "dev-main",
         "doctrine/dbal": "^3.3",
         "filament/filament": "^3.0-stable",
         "filament/spatie-laravel-translatable-plugin": "^3.0-stable",
