@@ -54,7 +54,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             $schedule = app(Schedule::class);
             $schedule->command(CreateSitemap::class)->daily();
             $schedule->command(InvalidatePasswordResetTokens::class)->everyFifteenMinutes();
-            $schedule->command(SeoScan::class)->daily();
+//            $schedule->command(SeoScan::class)->daily();
         });
 
         if (!$this->app->environment('production')) {
