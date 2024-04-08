@@ -91,6 +91,10 @@ return [
         'nova/*',
         'horizon/*',
         'vapor-ui/*',
+        'api/*',
+        'file-manager/*',
+        '_ignition/*',
+        'sanctum/*',
     ],
 
     /*
