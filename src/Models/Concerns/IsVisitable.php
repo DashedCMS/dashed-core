@@ -147,7 +147,7 @@ trait IsVisitable
         return Page::publicShowable()->find(Customsetting::get(str(class_basename(self::class))->lower() . '_overview_page_id', Sites::getActive()));
     }
 
-    public function getUrl(): string
+    public function getUrl()
     {
         $overviewPage = self::getOverviewPage();
         if ($overviewPage) {
@@ -167,7 +167,7 @@ trait IsVisitable
         return LaravelLocalization::localizeUrl($url);
     }
 
-    public function getUrlAttribute(): string
+    public function getUrlAttribute()
     {
         return $this->getUrl();
     }
