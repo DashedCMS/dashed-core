@@ -4,6 +4,7 @@ namespace Dashed\DashedCore;
 
 use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
 use Dashed\DashedCore\Models\Customsetting;
+use Dashed\Seo\Commands\SeoScan;
 use Livewire\Livewire;
 use Dashed\Drift\Config;
 use Dashed\Drift\DriftManager;
@@ -53,6 +54,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             $schedule = app(Schedule::class);
             $schedule->command(CreateSitemap::class)->daily();
             $schedule->command(InvalidatePasswordResetTokens::class)->everyFifteenMinutes();
+            $schedule->command(SeoScan::class)->daily();
         });
 
         if (!$this->app->environment('production')) {
