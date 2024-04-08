@@ -116,6 +116,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                 'laravellocalization',
                 'flare',
                 'dashed-core',
+                'seo',
                 'activitylog',
             ])
             ->hasRoutes([

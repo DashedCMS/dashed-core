@@ -2,7 +2,6 @@
 
 namespace Dashed\DashedCore\Controllers\Frontend;
 
-use Dashed\DashedPages\Models\Page;
 use Illuminate\Support\Str;
 use Dashed\Drift\UrlBuilder;
 use App\Http\Controllers\Controller;

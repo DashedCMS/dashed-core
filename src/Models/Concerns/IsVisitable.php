@@ -3,6 +3,7 @@
 namespace Dashed\DashedCore\Models\Concerns;
 
 use Carbon\Carbon;
+use Dashed\Seo\Traits\HasSeoScore;
 use Spatie\Sitemap\Sitemap;
 use Spatie\Sitemap\Tags\Url;
 use Spatie\Activitylog\LogOptions;
@@ -20,6 +21,7 @@ trait IsVisitable
     use HasTranslations;
     use HasSearchScope;
     use LogsActivity;
+    use HasSeoScore;
 
     public function getActivitylogOptions(): LogOptions
     {
@@ -145,7 +147,7 @@ trait IsVisitable
         return Page::publicShowable()->find(Customsetting::get(str(class_basename(self::class))->lower() . '_overview_page_id', Sites::getActive()));
     }
 
-    public function getUrl()
+    public function getUrl(): string
     {
         $overviewPage = self::getOverviewPage();
         if ($overviewPage) {
@@ -163,5 +165,10 @@ trait IsVisitable
         }
 
         return LaravelLocalization::localizeUrl($url);
+    }
+
+    public function getUrlAttribute(): string
+    {
+        return $this->getUrl();
     }
 }
