@@ -2,6 +2,10 @@
 
 namespace Dashed\DashedCore\Controllers\Frontend;
 
+use Dashed\DashedEcommerceCore\Jobs\UpdateProductInformationJob;
+use Dashed\DashedEcommerceCore\Models\Product;
+use Dashed\DashedPages\Models\Page;
+use Dashed\Seo\Jobs\ScanSpecificResult;
 use Illuminate\Support\Str;
 use Dashed\Drift\UrlBuilder;
 use App\Http\Controllers\Controller;
