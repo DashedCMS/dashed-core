@@ -2,6 +2,8 @@
 
 namespace Dashed\DashedCore\Filament\Pages\Settings;
 
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Toggle;
 use Filament\Pages\Page;
 use Filament\Forms\Components\Tabs;
 use Dashed\DashedCore\Classes\Sites;
@@ -13,7 +15,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
 use Dashed\DashedCore\Models\Customsetting;
 
-class MetadataSettingsPage extends Page
+class SEOSettingsPage extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-cog';
     protected static bool $shouldRegisterNavigation = false;
@@ -32,6 +34,7 @@ class MetadataSettingsPage extends Page
             $formData["default_meta_data_twitter_site_{$site['id']}"] = Customsetting::get('default_meta_data_twitter_site', $site['id']);
             $formData["default_meta_data_twitter_creator_{$site['id']}"] = Customsetting::get('default_meta_data_twitter_creator', $site['id']);
             $formData["default_meta_data_image_{$site['id']}"] = Customsetting::get('default_meta_data_image', $site['id']);
+            $formData["seo_check_models"] = Customsetting::get('seo_check_models', null, false);
         }
 
         $this->form->fill($formData);
@@ -74,6 +77,14 @@ class MetadataSettingsPage extends Page
         $tabGroups[] = Tabs::make('Sites')
             ->tabs($tabs);
 
+        $tabGroups[] =
+            Section::make('SEO instellingen voor alle sites')
+            ->schema([
+                Toggle::make("seo_check_models")
+                    ->label('Check SEO modellen op score')
+                    ->helperText('Dit kan het opslaan process vertragen, vraag dit na bij je beheerder.')
+            ]);
+
         return $tabGroups;
     }
 
@@ -90,12 +101,13 @@ class MetadataSettingsPage extends Page
             Customsetting::set('default_meta_data_twitter_site', $this->form->getState()["default_meta_data_twitter_site_{$site['id']}"], $site['id']);
             Customsetting::set('default_meta_data_twitter_creator', $this->form->getState()["default_meta_data_twitter_creator_{$site['id']}"], $site['id']);
             Customsetting::set('default_meta_data_image', $this->form->getState()["default_meta_data_image_{$site['id']}"], $site['id']);
+            Customsetting::set('seo_check_models', $this->form->getState()["seo_check_models"], $site['id']);
         }
 
         Cache::tags(['custom-settings'])->flush();
 
         Notification::make()
-            ->title('De meta data instellingen zijn opgeslagen')
+            ->title('De SEO instellingen zijn opgeslagen')
             ->success()
             ->send();
     }

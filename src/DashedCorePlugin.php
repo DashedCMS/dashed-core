@@ -3,6 +3,7 @@
 namespace Dashed\DashedCore;
 
 use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
+use Dashed\DashedCore\Filament\Pages\Settings\SEOSettingsPage;
 use Filament\Panel;
 use Filament\Contracts\Plugin;
 use Dashed\DashedCore\Filament\Resources\UserResource;
@@ -28,7 +29,7 @@ class DashedCorePlugin implements Plugin
             ->pages([
                 SettingsPage::class,
                 GeneralSettingsPage::class,
-                MetadataSettingsPage::class,
+                SEOSettingsPage::class,
                 ImageSettingsPage::class,
             ]);
     }

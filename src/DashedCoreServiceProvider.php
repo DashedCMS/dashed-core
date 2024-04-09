@@ -3,6 +3,7 @@
 namespace Dashed\DashedCore;
 
 use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
+use Dashed\DashedCore\Filament\Pages\Settings\SEOSettingsPage;
 use Dashed\DashedCore\Models\Customsetting;
 use Dashed\Seo\Commands\SeoScan;
 use Livewire\Livewire;
@@ -84,11 +85,11 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         cms()->builder(
             'settingPages',
             array_merge(cms()->builder('settingPages'), [
-                'metaData' => [
-                    'name' => 'Meta data',
-                    'description' => 'Meta data van de website',
+                'seo' => [
+                    'name' => 'SEO',
+                    'description' => 'SEO van de website',
                     'icon' => 'identification',
-                    'page' => MetadataSettingsPage::class,
+                    'page' => SEOSettingsPage::class,
                 ],
             ])
         );
@@ -96,7 +97,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         cms()->builder(
             'settingPages',
             array_merge(cms()->builder('settingPages'), [
-                'metaData' => [
+                'image' => [
                     'name' => 'Afbeelding',
                     'description' => 'Afbeelding van de website',
                     'icon' => 'photo',

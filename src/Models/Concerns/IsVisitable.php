@@ -28,7 +28,9 @@ trait IsVisitable
     public static function bootIsVisitable()
     {
         static::saved(function ($model) {
-            ScanSpecificResult::dispatch($model);
+            if (Customsetting::get('seo_check_models', null, false)) {
+                ScanSpecificResult::dispatch($model);
+            }
         });
     }
 
