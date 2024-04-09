@@ -3,6 +3,7 @@
 namespace Dashed\DashedCore\Filament\Concerns;
 
 use Dashed\DashedCore\Classes\Sites;
+use Dashed\DashedCore\Models\Customsetting;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
@@ -106,6 +107,12 @@ trait HasVisitableTab
             ->label('Status')
             ->trueIcon('heroicon-o-check-circle')
             ->falseIcon('heroicon-o-x-circle');
+
+        if(Customsetting::get('seo_check_models', null, false)){
+            $schema[] = TextColumn::make('seo_score')
+                ->label('SEO score')
+                ->getStateUsing(fn($record) => $record->getActualScore());
+        }
 
         return $schema;
     }
