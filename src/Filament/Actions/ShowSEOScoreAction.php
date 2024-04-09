@@ -41,6 +41,8 @@ class ShowSEOScoreAction extends Action
 
         if ($seoScore) {
             $this->color($seoScore->score < 70 ? 'danger' : ($seoScore->score < 90 ? 'warning' : 'success'));
+        } else {
+            $this->color('danger');
         }
 
         $this->groupedIcon('heroicon-o-chart-bar-square');
@@ -49,14 +51,15 @@ class ShowSEOScoreAction extends Action
 
         $this->visible((bool)Customsetting::get('seo_check_models', null, false));
 
-        $this->modalContent(view('dashed-core::actions.show-seo-score', [
+        $this->modalContent(fn($record) => view('dashed-core::actions.show-seo-score', [
             'seoScore' => $seoScore,
+            'record' => $record,
         ]));
 
         $this->action(function (): void {
-            $result = $this->process(static fn (Model $record) => $record->delete());
+            $result = $this->process(static fn(Model $record) => $record->delete());
 
-            if (! $result) {
+            if (!$result) {
                 $this->failure();
 
                 return;

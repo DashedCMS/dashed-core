@@ -4,6 +4,7 @@ namespace Dashed\DashedCore;
 
 use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\SEOSettingsPage;
+use Dashed\DashedCore\Livewire\Infolists\SEO\SEOScoreInfoList;
 use Dashed\DashedCore\Models\Customsetting;
 use Dashed\Seo\Commands\SeoScan;
 use Livewire\Livewire;
@@ -11,7 +12,6 @@ use Dashed\Drift\Config;
 use Dashed\Drift\DriftManager;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Model;
-use SEOScoreInfoList;
 use Spatie\LaravelPackageTools\Package;
 use Illuminate\Console\Scheduling\Schedule;
 use Dashed\DashedCore\Commands\CreateSitemap;
