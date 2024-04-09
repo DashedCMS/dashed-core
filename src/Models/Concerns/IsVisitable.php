@@ -182,4 +182,5 @@ trait IsVisitable
     {
         return $this->getUrl();
     }
+
 }
