@@ -11,6 +11,7 @@ use Dashed\Drift\Config;
 use Dashed\Drift\DriftManager;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Model;
+use SEOScoreInfoList;
 use Spatie\LaravelPackageTools\Package;
 use Illuminate\Console\Scheduling\Schedule;
 use Dashed\DashedCore\Commands\CreateSitemap;
@@ -26,7 +27,6 @@ use Dashed\DashedCore\Livewire\Frontend\Notification\Toastr;
 use Dashed\DashedCore\Commands\InvalidatePasswordResetTokens;
 use Dashed\Drift\CachingStrategies\FilesystemCachingStrategy;
 use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
-use Dashed\DashedCore\Filament\Pages\Settings\MetadataSettingsPage;
 
 class DashedCoreServiceProvider extends PackageServiceProvider
 {
@@ -50,6 +50,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         Livewire::component('auth.forgot-password', ForgotPassword::class);
         Livewire::component('auth.reset-password', ResetPassword::class);
         Livewire::component('account.account', Account::class);
+        Livewire::component('infolists.seo', SEOScoreInfoList::class);
 
         $this->app->booted(function () {
             $schedule = app(Schedule::class);

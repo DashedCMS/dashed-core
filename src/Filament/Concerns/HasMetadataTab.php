@@ -3,7 +3,6 @@
 namespace Dashed\DashedCore\Filament\Concerns;
 
 use Filament\Forms\Components\Group;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Tabs\Tab;
@@ -41,15 +40,6 @@ trait HasMetadataTab
 //                            ->label('Meta canonical URL'),
                     Toggle::make('noindex')
                         ->label('Pagina niet indexeren'),
-                ]),
-            Section::make('tes')
-                ->columns(1)
-                ->schema([
-                    TextInput::make('title')
-                        ->label('Meta titel')
-                        ->nullable()
-                        ->minLength(5)
-                        ->maxLength(70),
                 ]),
         ];
 

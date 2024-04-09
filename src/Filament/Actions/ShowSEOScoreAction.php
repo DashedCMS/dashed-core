@@ -5,6 +5,12 @@ namespace Dashed\DashedCore\Filament\Actions;
 use Dashed\DashedCore\Models\Customsetting;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\CanCustomizeProcess;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Concerns\InteractsWithInfolists;
+use Filament\Infolists\Contracts\HasInfolists;
+use Filament\Infolists\Infolist;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Database\Eloquent\Model;
 
@@ -20,6 +26,7 @@ class ShowSEOScoreAction extends Action
     protected function setUp(): void
     {
         parent::setUp();
+
         $seoScore = $this->record->seoScores->first();
 
         $this->label("Bekijk SEO score (" . ($seoScore->score ?? 0) . ")");

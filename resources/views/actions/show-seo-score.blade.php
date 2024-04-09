@@ -1,4 +1,6 @@
 <div>
+    <livewire:infolists.seo/>
+
     @if($seoScore)
         <p>De huidige SEO score is: {{ $seoScore->score }}</p>
 
