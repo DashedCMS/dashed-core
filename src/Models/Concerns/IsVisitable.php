@@ -3,7 +3,9 @@
 namespace Dashed\DashedCore\Models\Concerns;
 
 use Carbon\Carbon;
+use Dashed\Seo\Jobs\ScanSpecificResult;
 use Dashed\Seo\Traits\HasSeoScore;
+use Illuminate\Support\Facades\Cache;
 use Spatie\Sitemap\Sitemap;
 use Spatie\Sitemap\Tags\Url;
 use Spatie\Activitylog\LogOptions;
@@ -22,6 +24,13 @@ trait IsVisitable
     use HasSearchScope;
     use LogsActivity;
     use HasSeoScore;
+
+    public static function bootIsVisitable()
+    {
+        static::saved(function ($model) {
+            ScanSpecificResult::dispatch($model);
+        });
+    }
 
     public function getActivitylogOptions(): LogOptions
     {
