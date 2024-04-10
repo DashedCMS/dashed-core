@@ -108,7 +108,7 @@ trait HasVisitableTab
             ->trueIcon('heroicon-o-check-circle')
             ->falseIcon('heroicon-o-x-circle');
 
-        if(Customsetting::get('seo_check_models', null, false)){
+        if (Customsetting::get('seo_check_models', null, false)) {
             $schema[] = TextColumn::make('seo_score')
                 ->label('SEO score')
                 ->getStateUsing(fn($record) => $record->getActualScore());
