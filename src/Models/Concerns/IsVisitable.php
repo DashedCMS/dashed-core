@@ -52,11 +52,12 @@ trait IsVisitable
 
     public function scopeSlug($query, string $slug = '')
     {
-        if(!$slug){
+        if (!$slug) {
             //Should not be found
             $query->where('id', 0);
+        } else {
+            $query->where('slug', 'LIKE', '%"' . app()->getLocale() . '": "' . $slug . '"%');
         }
-        $query->where('slug', 'LIKE', '%' . App::getLocale() . '": "' . $slug . '"%');
     }
 
     public function scopePublicShowable($query)
