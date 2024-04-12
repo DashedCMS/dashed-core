@@ -5,6 +5,7 @@ namespace Dashed\DashedCore\Models\Concerns;
 use Carbon\Carbon;
 use Dashed\Seo\Jobs\ScanSpecificResult;
 use Dashed\Seo\Traits\HasSeoScore;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
 use Spatie\Sitemap\Sitemap;
 use Spatie\Sitemap\Tags\Url;
@@ -47,6 +48,15 @@ trait IsVisitable
         }
 
         $query->whereJsonContains('site_ids', $siteId);
+    }
+
+    public function scopeSlug($query, string $slug = '')
+    {
+        if(!$slug){
+            //Should not be found
+            $query->where('id', 0);
+        }
+        $query->where('slug', 'LIKE', '%' . App::getLocale() . '": "' . $slug . '%');
     }
 
     public function scopePublicShowable($query)
