@@ -56,7 +56,7 @@ trait IsVisitable
             //Should not be found
             $query->where('id', 0);
         }
-        $query->where('slug', 'LIKE', '%' . App::getLocale() . '": "' . $slug . '%');
+        $query->where('slug', 'LIKE', '%' . App::getLocale() . '": "' . $slug . '"%');
     }
 
     public function scopePublicShowable($query)
