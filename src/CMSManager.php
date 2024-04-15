@@ -64,6 +64,6 @@ class CMSManager
 
     public function isCMSRoute(): bool
     {
-        return str(request()->url())->contains(config('filament.path'));
+        return str(request()->url())->contains(config('filament.path')) || str(request()->url())->contains('livewire');
     }
 }
