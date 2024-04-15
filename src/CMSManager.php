@@ -2,6 +2,8 @@
 
 namespace Dashed\DashedCore;
 
+use Illuminate\Support\Facades\Route;
+
 class CMSManager
 {
     protected static $models = [];
@@ -58,5 +60,10 @@ class CMSManager
             'count' => collect($results)->sum('count'),
             'hasResults' => collect($results)->filter(fn ($result) => $result['hasResults'])->count() > 0,
         ];
+    }
+
+    public function isCMSRoute(): bool
+    {
+        return str(request()->url())->contains(config('filament.path'));
     }
 }
