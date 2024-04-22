@@ -10,6 +10,12 @@ use Filament\Actions\ViewAction;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
+use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Actions\ForceDeleteAction;
+use Filament\Tables\Actions\ForceDeleteBulkAction;
+use Filament\Tables\Actions\RestoreAction;
+use Filament\Tables\Actions\RestoreBulkAction;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Dashed\DashedCore\Models\Redirect;
@@ -19,6 +25,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\HtmlString;
 
 class NotFoundPageResource extends Resource
@@ -52,6 +60,14 @@ class NotFoundPageResource extends Resource
             ]);
     }
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
+    }
+
     public static function table(Table $table): Table
     {
         return $table
@@ -71,6 +87,10 @@ class NotFoundPageResource extends Resource
                 TextColumn::make('total_occurrences')
                     ->label('Aantal keer voorgekomen')
                     ->sortable(),
+            ])
+            ->filters([
+                TrashedFilter::make(),
+                // ...
             ])
             ->actions([
                 \Filament\Tables\Actions\ViewAction::make()
@@ -107,8 +127,18 @@ class NotFoundPageResource extends Resource
                             ->title('Redirect aangemaakt')
                             ->success()
                             ->send();
-                    })
-            ]);
+                    }),
+                DeleteAction::make(),
+                ForceDeleteAction::make(),
+                RestoreAction::make(),
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
+                ]),
+            ]);;
     }
 
     public static function getRelations(): array

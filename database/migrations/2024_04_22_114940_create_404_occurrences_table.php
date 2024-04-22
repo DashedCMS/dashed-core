@@ -22,6 +22,7 @@ return new class extends Migration {
             $table->string('locale');
 
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('dashed__not_found_page_occurrences', function (Blueprint $table) {

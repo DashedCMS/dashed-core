@@ -10,6 +10,8 @@ class NotFoundPage extends Model
 {
     protected $table = 'dashed__not_found_pages';
 
+    use SoftDeletes;
+
     public function occurrences(): HasMany
     {
         return $this->hasMany(NotFoundPageOccurrence::class, 'not_found_page_id');
