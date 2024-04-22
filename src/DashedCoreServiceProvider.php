@@ -2,31 +2,32 @@
 
 namespace Dashed\DashedCore;
 
+use Dashed\DashedCore\Commands\CreateAdminUser;
+use Dashed\DashedCore\Commands\CreateSitemap;
+use Dashed\DashedCore\Commands\InstallCommand;
+use Dashed\DashedCore\Commands\InvalidatePasswordResetTokens;
+use Dashed\DashedCore\Commands\UpdateCommand;
+use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\SEOSettingsPage;
+use Dashed\DashedCore\Filament\Widgets\NotFoundPageGlobalStats;
+use Dashed\DashedCore\Filament\Widgets\NotFoundPageStats;
+use Dashed\DashedCore\Livewire\Frontend\Account\Account;
+use Dashed\DashedCore\Livewire\Frontend\Auth\ForgotPassword;
+use Dashed\DashedCore\Livewire\Frontend\Auth\Login;
+use Dashed\DashedCore\Livewire\Frontend\Auth\ResetPassword;
+use Dashed\DashedCore\Livewire\Frontend\Notification\Toastr;
 use Dashed\DashedCore\Livewire\Infolists\SEO\SEOScoreInfoList;
 use Dashed\DashedCore\Models\Customsetting;
-use Dashed\Seo\Commands\SeoScan;
-use Livewire\Livewire;
+use Dashed\Drift\CachingStrategies\FilesystemCachingStrategy;
 use Dashed\Drift\Config;
 use Dashed\Drift\DriftManager;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Database\Eloquent\Model;
-use Spatie\LaravelPackageTools\Package;
 use Illuminate\Console\Scheduling\Schedule;
-use Dashed\DashedCore\Commands\CreateSitemap;
-use Dashed\DashedCore\Commands\UpdateCommand;
-use Dashed\DashedCore\Commands\InstallCommand;
-use Dashed\DashedCore\Commands\CreateAdminUser;
-use Dashed\DashedCore\Livewire\Frontend\Auth\Login;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Mail;
+use Livewire\Livewire;
+use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Dashed\DashedCore\Livewire\Frontend\Account\Account;
-use Dashed\DashedCore\Livewire\Frontend\Auth\ResetPassword;
-use Dashed\DashedCore\Livewire\Frontend\Auth\ForgotPassword;
-use Dashed\DashedCore\Livewire\Frontend\Notification\Toastr;
-use Dashed\DashedCore\Commands\InvalidatePasswordResetTokens;
-use Dashed\Drift\CachingStrategies\FilesystemCachingStrategy;
-use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
 
 class DashedCoreServiceProvider extends PackageServiceProvider
 {
@@ -51,6 +52,10 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         Livewire::component('auth.reset-password', ResetPassword::class);
         Livewire::component('account.account', Account::class);
         Livewire::component('infolists.seo', SEOScoreInfoList::class);
+
+        //Widgets
+        Livewire::component('not-found-page-stats', NotFoundPageStats::class);
+        Livewire::component('not-found-page-global-stats', NotFoundPageGlobalStats::class);
 
         $this->app->booted(function () {
             $schedule = app(Schedule::class);

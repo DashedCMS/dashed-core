@@ -3,19 +3,12 @@
 namespace Dashed\DashedCore\Filament\Resources\NotFoundPageResource\Pages;
 
 use Dashed\DashedCore\Filament\Resources\NotFoundPageResource;
-use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Form;
-use Filament\Pages\Dashboard\Concerns\HasFiltersForm;
-use Filament\Resources\Pages\EditRecord;
-use Dashed\DashedCore\Filament\Resources\RedirectResource;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewNotFoundPage extends ViewRecord
 {
     protected static string $resource = NotFoundPageResource::class;
+
 
     protected function getHeaderActions(): array
     {
@@ -26,7 +19,7 @@ class ViewNotFoundPage extends ViewRecord
     protected function getFooterWidgets(): array
     {
         return [
-          NotFoundPageResource\Widgets\NotFoundPageStats::class,
+          \Dashed\DashedCore\Filament\Widgets\NotFoundPageStats::class,
         ];
     }
 }

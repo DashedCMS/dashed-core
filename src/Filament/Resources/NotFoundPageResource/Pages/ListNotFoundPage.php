@@ -3,9 +3,7 @@
 namespace Dashed\DashedCore\Filament\Resources\NotFoundPageResource\Pages;
 
 use Dashed\DashedCore\Filament\Resources\NotFoundPageResource;
-use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
-use Dashed\DashedCore\Filament\Resources\RedirectResource;
 
 class ListNotFoundPage extends ListRecords
 {
@@ -20,7 +18,7 @@ class ListNotFoundPage extends ListRecords
     protected function getFooterWidgets(): array
     {
         return [
-          NotFoundPageResource\Widgets\NotFoundPageGlobalStats::class,
+          \Dashed\DashedCore\Filament\Widgets\NotFoundPageGlobalStats::class,
         ];
     }
 }
