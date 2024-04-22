@@ -23,7 +23,7 @@ class RedirectResource extends Resource
     protected static ?string $recordTitleAttribute = 'from';
 
     protected static ?string $navigationIcon = 'heroicon-o-link';
-    protected static ?string $navigationGroup = 'Content';
+    protected static ?string $navigationGroup = 'Routes';
     protected static ?string $navigationLabel = 'Redirects';
     protected static ?string $label = 'Redirect';
     protected static ?string $pluralLabel = 'Redirects';
@@ -31,8 +31,7 @@ class RedirectResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema(
-                [
+            ->schema([
                     Section::make('content')
                         ->schema(
                             array_merge([

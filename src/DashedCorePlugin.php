@@ -4,13 +4,14 @@ namespace Dashed\DashedCore;
 
 use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\SEOSettingsPage;
+use Dashed\DashedCore\Filament\Resources\NotFoundPageResource;
+use Dashed\DashedCore\Filament\Resources\NotFoundPageResource\Widgets\NotFoundPageStats;
 use Filament\Panel;
 use Filament\Contracts\Plugin;
 use Dashed\DashedCore\Filament\Resources\UserResource;
 use Dashed\DashedCore\Filament\Resources\RedirectResource;
 use Dashed\DashedCore\Filament\Pages\Settings\SettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
-use Dashed\DashedCore\Filament\Pages\Settings\MetadataSettingsPage;
 
 class DashedCorePlugin implements Plugin
 {
@@ -25,12 +26,16 @@ class DashedCorePlugin implements Plugin
             ->resources([
                 UserResource::class,
                 RedirectResource::class,
+                NotFoundPageResource::class,
             ])
             ->pages([
                 SettingsPage::class,
                 GeneralSettingsPage::class,
                 SEOSettingsPage::class,
                 ImageSettingsPage::class,
+            ])
+            ->widgets([
+                NotFoundPageStats::class,
             ]);
     }
 

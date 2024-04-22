@@ -23,6 +23,7 @@
         "doctrine/dbal": "^3.3",
         "filament/filament": "^3.0-stable",
         "filament/spatie-laravel-translatable-plugin": "^3.0-stable",
+        "flowframe/laravel-trend": "^0.2.0",
         "friendsofphp/php-cs-fixer": "^3.21",
         "laravel/horizon": "^5.18",
         "league/flysystem-aws-s3-v3": "^3.15",

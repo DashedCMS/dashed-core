@@ -60,7 +60,7 @@ return [
     |
     */
     'accepted_file_types' => ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml', 'application/pdf'],
-    'disk' => 'public',
+    'disk' => 'dashed',
     'directory' => 'images',
     'visibility' => 'public',
     'preserve_file_names' => false,
@@ -69,7 +69,7 @@ return [
     'image_crop_aspect_ratio' => null,
     'image_resize_target_width' => null,
     'image_resize_target_height' => null,
-    'use_relative_paths' => true,
+    'use_relative_paths' => false,
 
     /*
     |--------------------------------------------------------------------------

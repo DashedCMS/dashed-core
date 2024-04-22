@@ -2,6 +2,9 @@
 
 namespace Dashed\DashedCore\Controllers\Frontend;
 
+use Dashed\DashedCore\Classes\Sites;
+use Dashed\DashedCore\Models\NotFoundOccurence;
+use Dashed\DashedCore\Models\NotFoundPage;
 use Dashed\DashedEcommerceCore\Jobs\UpdateProductInformationJob;
 use Dashed\DashedEcommerceCore\Models\Product;
 use Dashed\DashedPages\Models\Page;
@@ -18,6 +21,8 @@ class FrontendController extends Controller
 {
     public function pageNotFound()
     {
+        NotFoundPage::saveOccurrence(str(request()->fullUrl())->replace(request()->root(), ''), 404, request()->header('referer'), request()->userAgent(), request()->ip(), Sites::getActive(), app()->getLocale());
+
         seo()->metaData('metaTitle', 'Pagina niet gevonden');
 
         if (View::exists('dashed.not-found.show')) {
