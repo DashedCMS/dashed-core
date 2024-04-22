@@ -9,6 +9,9 @@ class ListNotFoundPage extends ListRecords
 {
     protected static string $resource = NotFoundPageResource::class;
 
+    public ?string $tableSortColumn = 'last_occurrence';
+    public ?string $tableSortDirection = 'desc';
+
     protected function getHeaderActions(): array
     {
         return [
