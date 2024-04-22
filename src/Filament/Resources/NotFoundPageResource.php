@@ -104,7 +104,7 @@ class NotFoundPageResource extends Resource
                             ->required()
                             ->label('Naar welke URL moet deze redirect verwijzen?')
                             ->reactive()
-                            ->helperText(fn(Forms\Get $get) => $get('to') && UrlHelper::checkUrlResponseCode(url($get('to'))) == 200 ? 'Deze URL is bereikbaar' : 'Deze URL is niet bereikbaar'),
+                            ->helperText(fn(Forms\Get $get) => !$get('to') ? 'Vul een URL in' : (UrlHelper::checkUrlResponseCode(url($get('to'))) == 200 ? 'Deze URL is bereikbaar' : 'Deze URL is niet bereikbaar')),
                         Forms\Components\Select::make('sort')
                             ->required()
                             ->label('Type redirect')

@@ -10,7 +10,16 @@ class UrlHelper
 {
     public static function checkUrlResponseCode(string $url): int
     {
-        $headers = get_headers($url);
+        if (env('APP_ENV') === 'local') {
+            stream_context_set_default([
+                'ssl' => [
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                ],
+            ]);
+        }
+
+        $headers = get_headers($url . '?disableNotFoundLog');
         return (int)substr($headers[0], 9, 3);
     }
 }

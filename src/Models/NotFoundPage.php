@@ -17,10 +17,14 @@ class NotFoundPage extends Model
         return $this->hasMany(NotFoundPageOccurrence::class, 'not_found_page_id');
     }
 
-    public static function saveOccurrence($link, $statusCode, $referer, $userAgent, $ipAddress, $site, $locale)
+    public static function saveOccurrence($link, $statusCode, $referer, $userAgent, $ipAddress, $site, $locale): void
     {
+        if (request()->has('disableNotFoundLog')) {
+            return;
+        }
+
         $notFoundPage = self::withTrashed()->where('link', $link)->where('site', $site)->where('locale', $locale)->first();
-        if(!$notFoundPage){
+        if (!$notFoundPage) {
             $notFoundPage = self::create([
                 'link' => $link,
                 'site' => $site,
