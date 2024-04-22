@@ -19,11 +19,14 @@ class NotFoundPage extends Model
 
     public static function saveOccurrence($link, $statusCode, $referer, $userAgent, $ipAddress, $site, $locale)
     {
-        $notFoundPage = self::firstOrCreate([
-            'link' => $link,
-            'site' => $site,
-            'locale' => $locale
-        ]);
+        $notFoundPage = self::withTrashed()->where('link', $link)->where('site', $site)->where('locale', $locale)->first();
+        if(!$notFoundPage){
+            $notFoundPage = self::create([
+                'link' => $link,
+                'site' => $site,
+                'locale' => $locale
+            ]);
+        }
 
         $notFoundPage->occurrences()->create([
             'status_code' => $statusCode,

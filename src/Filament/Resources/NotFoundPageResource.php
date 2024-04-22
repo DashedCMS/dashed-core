@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore\Filament\Resources;
 
+use Dashed\DashedCore\Classes\UrlHelper;
 use Dashed\DashedCore\Filament\Resources\NotFoundPageResource\Pages\ListNotFoundPage;
 use Dashed\DashedCore\Filament\Resources\NotFoundPageResource\Pages\ViewNotFoundPage;
 use Dashed\DashedCore\Models\NotFoundPage;
@@ -45,16 +46,16 @@ class NotFoundPageResource extends Resource
             ->schema([
                 Section::make('Informatie')
                     ->schema([
-                            Forms\Components\TextInput::make('link')
-                                ->label('Link'),
-                            Forms\Components\TextInput::make('last_occurrence')
-                                ->label('Laatst voorgekomen op'),
-                            Forms\Components\TextInput::make('total_occurrences')
-                                ->label('Totaal aantal keer voorgekomen'),
-                            Forms\Components\TextInput::make('site')
-                                ->label('Site'),
-                            Forms\Components\TextInput::make('locale')
-                                ->label('Taal'),
+                        Forms\Components\TextInput::make('link')
+                            ->label('Link'),
+                        Forms\Components\TextInput::make('last_occurrence')
+                            ->label('Laatst voorgekomen op'),
+                        Forms\Components\TextInput::make('total_occurrences')
+                            ->label('Totaal aantal keer voorgekomen'),
+                        Forms\Components\TextInput::make('site')
+                            ->label('Site'),
+                        Forms\Components\TextInput::make('locale')
+                            ->label('Taal'),
                     ])
                     ->columns(2)
             ]);
@@ -102,7 +103,8 @@ class NotFoundPageResource extends Resource
                         Forms\Components\TextInput::make('to')
                             ->required()
                             ->label('Naar welke URL moet deze redirect verwijzen?')
-                            ->helperText('Bijv: /dit-is-een-nieuwe-url of https://dashed.com/wij-programmeren-kei-goed'),
+                            ->reactive()
+                            ->helperText(fn(Forms\Get $get) => $get('to') && UrlHelper::checkUrlResponseCode(url($get('to'))) == 200 ? 'Deze URL is bereikbaar' : 'Deze URL is niet bereikbaar'),
                         Forms\Components\Select::make('sort')
                             ->required()
                             ->label('Type redirect')
