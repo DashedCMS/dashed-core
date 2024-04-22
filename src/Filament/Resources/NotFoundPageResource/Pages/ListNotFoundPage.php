@@ -16,4 +16,11 @@ class ListNotFoundPage extends ListRecords
         return [
         ];
     }
+
+    protected function getFooterWidgets(): array
+    {
+        return [
+          NotFoundPageResource\Widgets\NotFoundPageGlobalStats::class,
+        ];
+    }
 }

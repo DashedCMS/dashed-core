@@ -17,9 +17,6 @@ class NotFoundPage extends Model
 
     public static function saveOccurrence($link, $statusCode, $referer, $userAgent, $ipAddress, $site, $locale)
     {
-        //Todo: create correct resource for this
-        //Todo: create a widget to display this data
-        //Todo: create function to easily create a redirect
         $notFoundPage = self::firstOrCreate([
             'link' => $link,
             'site' => $site,

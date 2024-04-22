@@ -14,12 +14,10 @@ use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Flowframe\Trend\Trend;
 use Illuminate\Database\Eloquent\Model;
 
-class NotFoundPageStats extends ChartWidget
+class NotFoundPageGlobalStats extends ChartWidget
 {
     use InteractsWithPageFilters;
 
-
-    public ?Model $record = null;
     protected static ?string $heading = 'Aantal keer bezocht';
     protected int|string|array $columnSpan = 'full';
     protected static ?string $maxHeight = '300px';
@@ -50,7 +48,6 @@ class NotFoundPageStats extends ChartWidget
 
         $trend = Trend::query(
             NotFoundPageOccurrence::query()
-                ->where('not_found_page_id', $this->record->id)
         )
             ->between(start: $startDate, end: now())
             ->{$method}()
@@ -64,8 +61,8 @@ class NotFoundPageStats extends ChartWidget
         return [
             'datasets' => [
                 [
-                    'name' => 'Aantal keer bezocht',
-                    'label' => $statistics['data'],
+                    'label' => 'Aantal keer bezocht',
+                    'data' => $statistics['data'],
                     'backgroundColor' => 'rgba(216, 255, 51, 1)',
                     'borderColor' => 'rgba(216, 255, 51, 1)',
                 ],

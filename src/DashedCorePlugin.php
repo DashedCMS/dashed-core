@@ -5,6 +5,7 @@ namespace Dashed\DashedCore;
 use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\SEOSettingsPage;
 use Dashed\DashedCore\Filament\Resources\NotFoundPageResource;
+use Dashed\DashedCore\Filament\Resources\NotFoundPageResource\Widgets\NotFoundPageGlobalStats;
 use Dashed\DashedCore\Filament\Resources\NotFoundPageResource\Widgets\NotFoundPageStats;
 use Filament\Panel;
 use Filament\Contracts\Plugin;
@@ -36,6 +37,7 @@ class DashedCorePlugin implements Plugin
             ])
             ->widgets([
                 NotFoundPageStats::class,
+                NotFoundPageGlobalStats::class,
             ]);
     }
 
