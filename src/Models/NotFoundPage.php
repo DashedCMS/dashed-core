@@ -39,4 +39,9 @@ class NotFoundPage extends Model
             'ip_address' => $ipAddress
         ]);
     }
+
+    public function getHasRedirectAttribute(): bool
+    {
+        return Redirect::where('from', $this->link)->exists();
+    }
 }

@@ -17,6 +17,7 @@ use Filament\Tables\Actions\ForceDeleteAction;
 use Filament\Tables\Actions\ForceDeleteBulkAction;
 use Filament\Tables\Actions\RestoreAction;
 use Filament\Tables\Actions\RestoreBulkAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
@@ -89,6 +90,10 @@ class NotFoundPageResource extends Resource
                 TextColumn::make('total_occurrences')
                     ->label('Aantal keer voorgekomen')
                     ->sortable(),
+                IconColumn::make('hasRedirect')
+                    ->label('Heeft een redirect')
+                    ->trueIcon('heroicon-o-check-circle')
+                    ->falseIcon('heroicon-o-x-circle'),
             ])
             ->filters([
                 TrashedFilter::make(),
@@ -117,7 +122,16 @@ class NotFoundPageResource extends Resource
                             ]),
                         Forms\Components\DatePicker::make('delete_redirect_after')
                             ->label('Verwijder redirect na een datum')
-                            ->default(now()->addMonths(3)),
+                            ->default(now()->addMonths(3))
+                            ->reactive()
+                            ->hintAction(
+                                Forms\Components\Actions\Action::make('emptyDate')
+                                    ->label('Leeg datum')
+                                    ->icon('heroicon-o-clock')
+                                    ->action(function (Forms\Set $set) {
+                                        $set('delete_redirect_after', null);
+                                    })
+                            ),
                     ])
                     ->action(function ($record, array $data) {
                         $redirect = Redirect::create([
