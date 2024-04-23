@@ -23,6 +23,7 @@ class NotFoundPageOccurrence extends Model
 
     public function notFoundPage(): BelongsTo
     {
-        return $this->belongsTo(NotFoundPage::class, 'not_found_page_id');
+        return $this->belongsTo(NotFoundPage::class, 'not_found_page_id')
+            ->withTrashed();
     }
 }
