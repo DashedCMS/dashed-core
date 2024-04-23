@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore\Filament\Resources;
 
+use Dashed\DashedCore\Classes\LinkHelper;
 use Dashed\DashedCore\Classes\UrlHelper;
 use Dashed\DashedCore\Filament\Resources\NotFoundPageResource\Pages\ListNotFoundPage;
 use Dashed\DashedCore\Filament\Resources\NotFoundPageResource\Pages\ViewNotFoundPage;
@@ -100,11 +101,12 @@ class NotFoundPageResource extends Resource
                     ->label('Maak redirect aan')
                     ->button()
                     ->form([
-                        Forms\Components\TextInput::make('to')
-                            ->required()
-                            ->label('Naar welke URL moet deze redirect verwijzen?')
-                            ->reactive()
-                            ->helperText(fn(Forms\Get $get) => !$get('to') ? 'Vul een URL in' : (UrlHelper::checkUrlResponseCode(url($get('to'))) == 200 ? 'Deze URL is bereikbaar' : 'Deze URL is niet bereikbaar')),
+                        LinkHelper::field(required: true),
+//                        Forms\Components\TextInput::make('to')
+//                            ->required()
+//                            ->label('Naar welke URL moet deze redirect verwijzen?')
+//                            ->reactive()
+//                            ->helperText(fn(Forms\Get $get) => !$get('to') ? 'Vul een URL in' : (UrlHelper::checkUrlResponseCode(url($get('to'))) == 200 ? 'Deze URL is bereikbaar' : 'Deze URL is niet bereikbaar')),
                         Forms\Components\Select::make('sort')
                             ->required()
                             ->label('Type redirect')
@@ -120,7 +122,7 @@ class NotFoundPageResource extends Resource
                     ->action(function ($record, array $data) {
                         $redirect = Redirect::create([
                             'from' => $record->link,
-                            'to' => $data['to'],
+                            'to' => str(LinkHelper::getUrl($data))->replace(url('/'), ''),
                             'sort' => $data['sort'],
                             'delete_redirect_after' => $data['delete_redirect_after'],
                         ]);
