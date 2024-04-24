@@ -15,13 +15,21 @@ class Redirect extends Model
         'delete_redirect_after' => 'date',
     ];
 
+    public static function handleSlugChangeForFilamentModel($record, string $locale, string $newSlug)
+    {
+        app()->setLocale($locale);
+        $oldUrl = str($record->getUrl())->replace(url('/'), '')->toString();
+        $newUrl = str($oldUrl)->replace($record->getTranslation('slug', $locale), $newSlug)->toString();
+        self::handleSlugChange($oldUrl, $newUrl);
+    }
+
     public static function handleSlugChange(?string $oldSlug, ?string $newSlug)
     {
         if ($oldSlug === $newSlug) {
             return;
         }
 
-        if (! str($newSlug)->startsWith('/')) {
+        if (!str($newSlug)->startsWith('/')) {
             $newSlug = '/' . $newSlug;
         }
 
@@ -36,6 +44,7 @@ class Redirect extends Model
         $redirect->delete_redirect_after = now()->addMonths(3);
         $redirect->save();
 
+        return;
         Redirect::whereColumn('from', 'to')->delete();
         foreach (Redirect::get() as $redirect) {
             if (url($redirect->from) == url($redirect->to)) {
