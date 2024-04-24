@@ -3,6 +3,9 @@
 namespace Dashed\DashedCore\Models\Concerns;
 
 use Carbon\Carbon;
+use Dashed\DashedCore\Jobs\RunUrlHistoryCheck;
+use Dashed\DashedCore\Models\Redirect;
+use Dashed\DashedCore\Models\UrlHistory;
 use Dashed\Seo\Jobs\ScanSpecificResult;
 use Dashed\Seo\Traits\HasSeoScore;
 use Illuminate\Support\Facades\App;
@@ -32,6 +35,7 @@ trait IsVisitable
             if (Customsetting::get('seo_check_models', null, false)) {
                 ScanSpecificResult::dispatch($model);
             }
+            RunUrlHistoryCheck::dispatch();
         });
     }
 
@@ -72,6 +76,11 @@ trait IsVisitable
                         ->orWhere('end_date', '>=', now()->format('Y-m-d H:i:s'));
                 });
         }
+    }
+
+    public function urlHistory()
+    {
+        return $this->morphMany(UrlHistory::class, 'model');
     }
 
     public static function getSitemapUrls(Sitemap $sitemap): Sitemap

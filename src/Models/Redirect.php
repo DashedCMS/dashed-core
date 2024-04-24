@@ -44,7 +44,6 @@ class Redirect extends Model
         $redirect->delete_redirect_after = now()->addMonths(3);
         $redirect->save();
 
-        return;
         Redirect::whereColumn('from', 'to')->delete();
         foreach (Redirect::get() as $redirect) {
             if (url($redirect->from) == url($redirect->to)) {
