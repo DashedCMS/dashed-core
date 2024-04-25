@@ -24,6 +24,14 @@ class Customsetting extends Model
 
     public static function get($name, $siteId = null, $default = null, $locale = null)
     {
+        $tableExists = Cache::remember('dashed__custom_settings_table_exists', 60, function () {
+            return Schema::hasTable('dashed__custom_settings');
+        });
+
+        if (! $tableExists) {
+            return $default;
+        }
+
         if (! $siteId) {
             $siteId = Sites::getActive();
         }
