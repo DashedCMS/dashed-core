@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 use Spatie\Sitemap\Sitemap;
 use Spatie\Sitemap\Tags\Url;
@@ -37,7 +38,7 @@ trait IsVisitable
     public static function bootIsVisitable()
     {
         static::saving(function ($model) {
-            foreach(Locales::getLocales() as $locale){
+            foreach (Locales::getLocales() as $locale) {
                 $slug = Str::slug($model->getTranslation('slug', $locale['id']) ?: $model->getTranslation('name', $locale['id']));
 
                 while (self::where('id', '!=', $model->id ?? 0)->where('slug->' . $locale['id'], $slug)->count()) {
@@ -104,12 +105,12 @@ trait IsVisitable
 
     public static function getSitemapUrls(Sitemap $sitemap): Sitemap
     {
-        foreach (self::publicShowable()->get() as $page) {
+        foreach (self::publicShowable()->get() as $model) {
             foreach (Locales::getLocales() as $locale) {
                 if (in_array($locale['id'], Sites::get()['locales'])) {
                     Locales::setLocale($locale['id']);
                     $sitemap
-                        ->add(Url::create($page->getUrl()));
+                        ->add(Url::create($model->getUrl()));
                 }
             }
         }
@@ -235,5 +236,55 @@ trait IsVisitable
     public static function getAllResults($pagination = 12, $orderBy = 'created_at', $order = 'DESC')
     {
         return self::search()->thisSite()->publicShowable()->orderBy($orderBy, $order)->paginate($pagination)->withQueryString();
+    }
+
+    public static function resolveRoute($parameters = [])
+    {
+        $class = str(self::class)->lower()->explode('\\')->last();
+        $slug = $parameters['slug'] ?? '';
+        if ($slug && $overviewPage = self::getOverviewPage()) {
+            $slugParts = explode('/', $slug);
+            if($overviewPage){
+                unset($slugParts[0]);
+            }
+            $parentId = null;
+            foreach ($slugParts as $slugPart) {
+                $model = self::publicShowable()->slug($slugPart)->where('parent_id', $parentId)->first();
+                $parentId = $model?->id;
+                if (!$model) {
+                    return;
+                }
+            }
+        }
+
+        if ($model ?? false) {
+            if (View::exists('dashed.' . $class . '.show')) {
+                seo()->metaData('metaTitle', $model->metadata && $model->metadata->title ? $model->metadata->title : $model->name);
+                seo()->metaData('metaDescription', $model->metadata->description ?? '');
+                if ($model->metadata && $model->metadata->image) {
+                    seo()->metaData('metaImage', $model->metadata->image);
+                }
+
+                $correctLocale = app()->getLocale();
+                $alternateUrls = [];
+                foreach (Sites::getLocales() as $locale) {
+                    if ($locale['id'] != $correctLocale) {
+                        LaravelLocalization::setLocale($locale['id']);
+                        app()->setLocale($locale['id']);
+                        $alternateUrls[$locale['id']] = $model->getUrl();
+                    }
+                }
+                LaravelLocalization::setLocale($correctLocale);
+                app()->setLocale($correctLocale);
+                seo()->metaData('alternateUrls', $alternateUrls);
+
+                View::share($class, $model);
+                View::share('breadcrumbs', $model->breadcrumbs());
+
+                return view('dashed.' . $class . '.show');
+            } else {
+                return 'pageNotFound';
+            }
+        }
     }
 }
