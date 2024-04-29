@@ -8,6 +8,7 @@ use Dashed\DashedCore\Models\Redirect;
 use Dashed\DashedCore\Models\UrlHistory;
 use Dashed\Seo\Jobs\ScanSpecificResult;
 use Dashed\Seo\Traits\HasSeoScore;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
 use Spatie\Sitemap\Sitemap;
@@ -203,4 +204,8 @@ trait IsVisitable
         return $this->getUrl();
     }
 
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(self::class);
+    }
 }
