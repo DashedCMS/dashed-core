@@ -3,6 +3,7 @@
 namespace Dashed\DashedCore\Models\Concerns;
 
 use Carbon\Carbon;
+use Dashed\DashedArticles\Models\Article;
 use Dashed\DashedCore\Jobs\RunUrlHistoryCheck;
 use Dashed\DashedCore\Models\Redirect;
 use Dashed\DashedCore\Models\UrlHistory;
@@ -209,5 +210,15 @@ trait IsVisitable
     public function parent(): BelongsTo
     {
         return $this->belongsTo(self::class);
+    }
+
+    public static function getResults($limit = 4, $orderBy = 'created_at', $order = 'DESC', int $exceptId = 0)
+    {
+        return self::search()->where('id', '!=', $exceptId)->thisSite()->publicShowable()->limit($limit)->orderBy($orderBy, $order)->get();
+    }
+
+    public static function getAllResults($pagination = 12, $orderBy = 'created_at', $order = 'DESC')
+    {
+        return self::search()->thisSite()->publicShowable()->orderBy($orderBy, $order)->paginate($pagination)->withQueryString();
     }
 }
