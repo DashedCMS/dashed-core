@@ -9,6 +9,7 @@ use Dashed\DashedCore\Models\UrlHistory;
 use Dashed\Seo\Jobs\ScanSpecificResult;
 use Dashed\Seo\Traits\HasSeoScore;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
 use Spatie\Sitemap\Sitemap;
@@ -29,6 +30,7 @@ trait IsVisitable
     use HasSearchScope;
     use LogsActivity;
     use HasSeoScore;
+    use SoftDeletes;
 
     public static function bootIsVisitable()
     {
