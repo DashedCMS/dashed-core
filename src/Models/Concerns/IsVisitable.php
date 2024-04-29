@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 use Spatie\Sitemap\Sitemap;
 use Spatie\Sitemap\Tags\Url;
 use Spatie\Activitylog\LogOptions;
@@ -35,6 +36,20 @@ trait IsVisitable
 
     public static function bootIsVisitable()
     {
+        static::saving(function ($model) {
+            foreach(Locales::getLocales() as $locale){
+                $slug = Str::slug($model->getTranslation('slug', $locale['id']) ?: $model->getTranslation('name', $locale['id']));
+
+                while (self::where('id', '!=', $model->id ?? 0)->where('slug->' . $locale['id'], $slug)->count()) {
+                    $slug .= Str::random(1);
+                }
+
+                $model->setTranslation('slug', $locale['id'], $slug);
+            }
+
+            $model->site_ids = $model->site_ids ?? [Sites::getFirstSite()['id']];
+        });
+
         static::saved(function ($model) {
             if (Customsetting::get('seo_check_models', null, false)) {
                 ScanSpecificResult::dispatch($model);
