@@ -24,7 +24,7 @@ use Illuminate\Support\Str;
 
 trait HasEditableCMSActions
 {
-    public function actions(): array
+    public function CMSActions(): array
     {
         return [
             Action::make('view')
