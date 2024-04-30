@@ -244,7 +244,7 @@ trait IsVisitable
         $slug = $parameters['slug'] ?? '';
         if ($slug && $overviewPage = self::getOverviewPage()) {
             $slugParts = explode('/', $slug);
-            if($overviewPage){
+            if ($overviewPage) {
                 unset($slugParts[0]);
             }
             $parentId = null;
@@ -278,6 +278,9 @@ trait IsVisitable
                 app()->setLocale($correctLocale);
                 seo()->metaData('alternateUrls', $alternateUrls);
 
+                if ($overviewPage ?? false) {
+                    View::share('page', $overviewPage);
+                }
                 View::share($class, $model);
                 View::share('breadcrumbs', $model->breadcrumbs());
 
