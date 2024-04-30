@@ -43,8 +43,8 @@ class Helper
 
     public static function getCurrentUrlInLocale($locale, $url = null)
     {
-        $urlHistory = UrlHistory::where('url', $url ?: str(request()->url())->replace(url('/'), ''))->where('locale', app()->getLocale())->where('site_id', Sites::getActive())->first();
-        if($urlHistory && $newUrl = UrlHistory::where('locale', $locale)->where('site_id', Sites::getActive())->where('model_type', $urlHistory->model_type)->where('model_id', $urlHistory->model_id)->first()){
+        $urlHistory = UrlHistory::where('url', $url ?: str(request()->url())->replace(url('/'), ''))->where('locale', app()->getLocale())->where('site_id', Sites::getActive())->orderBy('batch', 'desc')->first();
+        if($urlHistory && $newUrl = UrlHistory::where('locale', $locale)->where('site_id', Sites::getActive())->where('model_type', $urlHistory->model_type)->where('model_id', $urlHistory->model_id)->where('batch', $urlHistory->batch)->first()){
             return $newUrl->url;
         }
 
