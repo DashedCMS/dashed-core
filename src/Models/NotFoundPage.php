@@ -35,7 +35,7 @@ class NotFoundPage extends Model
         $notFoundPage->occurrences()->create([
             'status_code' => $statusCode,
             'referer' => $referer,
-            'user_agent' => str($userAgent)->limit(255),
+            'user_agent' => str($userAgent)->limit(255, ''),
             'ip_address' => $ipAddress
         ]);
     }
