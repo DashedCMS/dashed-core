@@ -34,6 +34,7 @@ trait IsVisitable
     use LogsActivity;
     use HasSeoScore;
     use SoftDeletes;
+    use HasCustomBlocks;
 
     public static function bootIsVisitable()
     {
