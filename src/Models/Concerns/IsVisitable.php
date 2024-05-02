@@ -35,8 +35,6 @@ trait IsVisitable
     use HasSeoScore;
     use SoftDeletes;
 
-    private $runHistoryCheck = true;
-
     public static function bootIsVisitable()
     {
         static::saving(function ($model) {
@@ -58,7 +56,7 @@ trait IsVisitable
                 ScanSpecificResult::dispatch($model);
             }
 
-            if ($this->runHistoryCheck) {
+            if (self::runHistoryCheck()) {
                 RunUrlHistoryCheck::dispatch();
             }
         });
@@ -68,6 +66,11 @@ trait IsVisitable
     {
         return LogOptions::defaults()
             ->logAll();
+    }
+
+    public static function runHistoryCheck(): bool
+    {
+        return true;
     }
 
     public function scopeThisSite($query, $siteId = null)
