@@ -35,6 +35,8 @@ trait IsVisitable
     use HasSeoScore;
     use SoftDeletes;
 
+    private $runHistoryCheck = true;
+
     public static function bootIsVisitable()
     {
         static::saving(function ($model) {
@@ -55,7 +57,10 @@ trait IsVisitable
             if (Customsetting::get('seo_check_models', null, false)) {
                 ScanSpecificResult::dispatch($model);
             }
-            RunUrlHistoryCheck::dispatch();
+
+            if ($this->runHistoryCheck) {
+                RunUrlHistoryCheck::dispatch();
+            }
         });
     }
 
