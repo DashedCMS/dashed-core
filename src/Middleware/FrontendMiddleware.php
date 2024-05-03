@@ -34,7 +34,7 @@ class FrontendMiddleware
         ]);
         seo()->metaData('robots', env('APP_ENV') == 'local' ? 'noindex, nofollow' : 'index, follow');
         seo()->metaData('metaTitle', Customsetting::get('site_name', Sites::getActive(), 'Website'));
-        if (! seo()->metaData('metaImage') && Customsetting::get('default_meta_data_image', Sites::getActive(), '')) {
+        if (!seo()->metaData('metaImage') && Customsetting::get('default_meta_data_image', Sites::getActive(), '')) {
             seo()->metaData('metaImage', Customsetting::get('default_meta_data_image', Sites::getActive(), ''));
         }
 
@@ -50,6 +50,13 @@ class FrontendMiddleware
                     'keepOriginal',
                 ]))
                 ->address(Customsetting::get('company_street') . ' ' . Customsetting::get('company_street_number') . ', ' . Customsetting::get('company_postal_code') . ' ' . Customsetting::get('company_city') . ', ' . Customsetting::get('company_country'))
+                ->addProperties([
+                    'address' => [
+                        'streetAddress' => Customsetting::get('company_street') . ' ' . Customsetting::get('company_street_number'),
+                        'postalCode' => Customsetting::get('company_postal_code'),
+                        'addressCountry' => Customsetting::get('company_country'),
+                    ]
+                ])
                 ->url($request->url())
                 ->contactPoint(
                     Schema::contactPoint()
