@@ -16,6 +16,8 @@ class CreateRedirectsFromHistoryUrls implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public $timeout = 1200;
+
     public string $siteId;
     public int $batchNumber;
 
