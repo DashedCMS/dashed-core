@@ -13,8 +13,8 @@ return new class extends Migration
     {
 
         Schema::table('dashed__url_history', function (Blueprint $table) {
-            $table->index(['locale', 'site_id', 'model_type', 'model_id', 'batch']);
-            $table->index(['url', 'locale', 'site_id']);
+            $table->index(['locale', 'site_id', 'model_type', 'model_id', 'batch'], 'index_l_s_m_m_b');
+            $table->index(['url', 'locale', 'site_id'], 'index_u_l_s');
         });
     }
 
