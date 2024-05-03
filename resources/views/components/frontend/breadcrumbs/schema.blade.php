@@ -6,7 +6,14 @@
             $items[] = \Spatie\SchemaOrg\Schema::listItem()
                 ->position($loop)
                 ->url($breadcrumb['url'])
-                ->name($breadcrumb['name']);
+                ->name($breadcrumb['name'])
+                ->identifier($breadcrumb['name'])
+                ->item(
+                    \Spatie\SchemaOrg\Schema::webPage()
+                    ->url($breadcrumb['url'])
+                    ->name($breadcrumb['name'])
+                    ->identifier($breadcrumb['name'])
+                );
             $loop++;
         }
         $schema->itemListElement($items);
