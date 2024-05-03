@@ -1,11 +1,13 @@
     @php
         $schema = \Spatie\SchemaOrg\Schema::breadcrumbList();
+            $items = [];
+            $loop = 1;
         foreach($breadcrumbs as $breadcrumb){
-        $schema->itemListElement([
-            \Spatie\SchemaOrg\Schema::listItem()
-                ->position(1)
-                ->item(\Spatie\SchemaOrg\Schema::webPage()->url($breadcrumb['url'])->name($breadcrumb['name'])),
-        ]);
+            $items[] = \Spatie\SchemaOrg\Schema::listItem()
+                ->position($loop)
+                ->item(\Spatie\SchemaOrg\Schema::webPage()->url($breadcrumb['url'])->name($breadcrumb['name']));
+            $loop++;
         }
+        $schema->itemListElement($items);
     @endphp
     {!! $schema !!}
