@@ -48,6 +48,7 @@ class RunUrlHistoryCheck implements ShouldQueue
             }
         }
 
+        UrlHistory::where('batch', '<', $batchNumber - 50)->delete();
         CreateRedirectsFromHistoryUrls::dispatch(Sites::getActive(), $batchNumber);
     }
 }
