@@ -7,8 +7,6 @@
                 ->position($loop)
                 ->url($breadcrumb['url'])
                 ->name($breadcrumb['name'])
-                ->identifier($breadcrumb['name'])
-                ->item(\Spatie\SchemaOrg\Schema::webPage()->url($breadcrumb['url'])->name($breadcrumb['name']));
             $loop++;
         }
         $schema->itemListElement($items);
