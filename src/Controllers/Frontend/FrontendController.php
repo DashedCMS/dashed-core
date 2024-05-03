@@ -34,10 +34,6 @@ class FrontendController extends Controller
 
     public function index($slug = null)
     {
-        if (str($slug)->startsWith('qcommerce') && config('filament.path') != 'qcommerce') {
-            return redirect(config('filament.path'));
-        }
-
         foreach (Locales::getLocales() as $locale) {
             if (Str::startsWith($slug, $locale['id'] . '/') || $slug == $locale['id']) {
                 $slug = Str::substr($slug, strlen($locale['id']) + 1);

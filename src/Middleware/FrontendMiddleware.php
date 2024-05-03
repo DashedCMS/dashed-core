@@ -46,7 +46,9 @@ class FrontendMiddleware
                 ->legalName(Customsetting::get('site_name'))
                 ->email(Customsetting::get('site_to_email'))
                 ->telephone(Customsetting::get('company_phone_number'))
-                ->logo($logo)
+                ->logo(app(\Dashed\Drift\UrlBuilder::class)->url('dashed', $logo, [
+                    'keepOriginal',
+                ]))
                 ->address(Customsetting::get('company_street') . ' ' . Customsetting::get('company_street_number') . ', ' . Customsetting::get('company_postal_code') . ' ' . Customsetting::get('company_city') . ', ' . Customsetting::get('company_country'))
                 ->url($request->url())
                 ->contactPoint(
