@@ -31,6 +31,7 @@ class ImageSettingsPage extends Page
         $sites = Sites::getSites();
 //        foreach ($sites as $site) {
             $formData["image_force_lazy_load"] = Customsetting::get('image_force_lazy_load', null, false);
+            $formData["image_show_sizes"] = Customsetting::get('image_show_sizes', null, false);
 //        }
 
         $this->form->fill($formData);
@@ -67,6 +68,10 @@ class ImageSettingsPage extends Page
                 ->label('Force lazy load')
                 ->helperText('Forceer lazy load voor alle afbeeldingen op de website.')
                 ->default(false),
+            Toggle::make('image_show_sizes')
+                ->label('Toon afbeelding formaten in de image tags')
+                ->helperText('Dit kan de website vertragen')
+                ->default(false),
         ];
 //        return $tabGroups;
     }
@@ -82,6 +87,7 @@ class ImageSettingsPage extends Page
 
         foreach ($sites as $site) {
             Customsetting::set('image_force_lazy_load', $this->form->getState()["image_force_lazy_load"], $site['id']);
+            Customsetting::set('image_show_sizes', $this->form->getState()["image_show_sizes"], $site['id']);
         }
 
         Cache::tags(['custom-settings'])->flush();
