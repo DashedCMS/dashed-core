@@ -1,0 +1,24 @@
+<?php
+
+namespace App\Filament\Resources\{{ MODELCLASS }}Resource\Pages;
+
+use Filament\Actions\CreateAction;
+use Filament\Actions\LocaleSwitcher;
+use Filament\Resources\Pages\ListRecords;
+use App\Filament\Resources\{{ MODELCLASS }}Resource;
+use Filament\Resources\Pages\ListRecords\Concerns\Translatable;
+
+class List{{ PLURAL }} extends ListRecords
+{
+    use Translatable;
+
+    protected static string $resource = {{ MODELCLASS }}Resource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            CreateAction::make(),
+            LocaleSwitcher::make(),
+        ];
+    }
+}

@@ -1,0 +1,28 @@
+<?php
+
+namespace {{ NAMESPACE }};
+
+use Illuminate\Database\Eloquent\Model;
+use Dashed\DashedCore\Models\Concerns\IsVisitable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+class {{ CLASS }} extends Model
+{
+    use HasFactory;
+    use IsVisitable;
+
+    protected $table = 'dashed__{{ TABLE }}';
+
+    protected $casts = [
+        'content' => 'array',
+        'site_ids' => 'array',
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
+    ];
+
+    public $translatable = [
+        'name',
+        'slug',
+        'content',
+    ];
+}

@@ -15,6 +15,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
+use Dashed\DashedCore\Filament\Concerns\HasCustomBlocksTab;
 
 trait HasVisitableTab
 {

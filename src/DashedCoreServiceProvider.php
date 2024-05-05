@@ -4,6 +4,7 @@ namespace Dashed\DashedCore;
 
 use Dashed\DashedCore\Commands\CreateAdminUser;
 use Dashed\DashedCore\Commands\CreateSitemap;
+use Dashed\DashedCore\Commands\CreateVisitableModel;
 use Dashed\DashedCore\Commands\InstallCommand;
 use Dashed\DashedCore\Commands\InvalidatePasswordResetTokens;
 use Dashed\DashedCore\Commands\UpdateCommand;
@@ -140,6 +141,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                 UpdateCommand::class,
                 InvalidatePasswordResetTokens::class,
                 CreateSitemap::class,
+                CreateVisitableModel::class,
             ]);
     }
 }

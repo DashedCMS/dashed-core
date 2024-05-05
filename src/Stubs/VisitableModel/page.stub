@@ -1,0 +1,4 @@
+<x-master>
+    <x-breadcrumbs :breadcrumbs="${{ CLASS }}->breadcrumbs()" />
+    <x-blocks :content="${{ CLASS }}->content"></x-blocks>
+</x-master>

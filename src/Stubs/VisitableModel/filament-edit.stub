@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Filament\Resources\{{ MODELCLASS }}Resource\Pages;
+
+use Filament\Resources\Pages\EditRecord;
+use App\Filament\Resources\{{ MODELCLASS }}Resource;
+use Dashed\DashedCore\Filament\Concerns\HasEditableCMSActions;
+use Filament\Resources\Pages\EditRecord\Concerns\Translatable;
+
+class Edit{{ SINGLE }} extends EditRecord
+{
+    use Translatable;
+    use HasEditableCMSActions;
+
+    protected static string $resource = {{ MODELCLASS }}Resource::class;
+
+    protected function getActions(): array
+    {
+        return self::CMSActions();
+    }
+}

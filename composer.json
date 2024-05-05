@@ -18,6 +18,7 @@
     "require": {
         "php": "^8.2",
         "awcodes/filament-tiptap-editor": "^3.0",
+        "binafy/laravel-stub": "^1.0",
         "dashed/laravel-drift": "^1.0",
         "dashed/laravel-seo-scanner": "dev-main",
         "doctrine/dbal": "^3.3",
