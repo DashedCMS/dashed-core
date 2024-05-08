@@ -58,6 +58,7 @@ trait IsVisitable
             }
 
             if (self::runHistoryCheck()) {
+                Customsetting::set('run_history_check', true);
                 RunUrlHistoryCheck::dispatch();
             }
         });

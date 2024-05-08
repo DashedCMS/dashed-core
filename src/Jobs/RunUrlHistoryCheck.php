@@ -4,18 +4,29 @@ namespace Dashed\DashedCore\Jobs;
 
 use Dashed\DashedCore\Classes\Locales;
 use Dashed\DashedCore\Classes\Sites;
+use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedCore\Models\UrlHistory;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class RunUrlHistoryCheck implements ShouldQueue
+class RunUrlHistoryCheck implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $timeout = 1200;
+    public $uniqueFor = 1200;
+
+    /**
+     * Get the unique ID for the job.
+     */
+    public function uniqueId(): string
+    {
+        return 'url-history-check';
+    }
 
     /**
      * Create a new job instance.
@@ -30,6 +41,8 @@ class RunUrlHistoryCheck implements ShouldQueue
      */
     public function handle(): void
     {
+        Customsetting::set('last_history_check', now());
+
         $batchNumber = UrlHistory::orderBy('batch', 'desc')->first()?->batch + 1;
         foreach (cms()->builder('routeModels') as $routeModel) {
             foreach ($routeModel['class']::publicShowable()->get() as $model) {

@@ -7,6 +7,7 @@ use Dashed\DashedCore\Commands\CreateSitemap;
 use Dashed\DashedCore\Commands\CreateVisitableModel;
 use Dashed\DashedCore\Commands\InstallCommand;
 use Dashed\DashedCore\Commands\InvalidatePasswordResetTokens;
+use Dashed\DashedCore\Commands\RunUrlHistoryCheckCommand;
 use Dashed\DashedCore\Commands\UpdateCommand;
 use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
@@ -63,6 +64,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             $schedule = app(Schedule::class);
             $schedule->command(CreateSitemap::class)->daily();
             $schedule->command(InvalidatePasswordResetTokens::class)->everyFifteenMinutes();
+            $schedule->command(RunUrlHistoryCheckCommand::class)->everyFifteenMinutes();
 //            $schedule->command(SeoScan::class)->daily();
         });
 
@@ -142,6 +144,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                 InvalidatePasswordResetTokens::class,
                 CreateSitemap::class,
                 CreateVisitableModel::class,
+                RunUrlHistoryCheckCommand::class,
             ]);
     }
 }
