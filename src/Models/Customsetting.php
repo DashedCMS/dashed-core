@@ -39,7 +39,7 @@ class Customsetting extends Model
 
         $settings = cache()->get(static::CACHE_KEY);
 
-        if (! $siteId) {
+        if (!$siteId) {
             $siteId = Sites::getActive();
         }
 
@@ -48,7 +48,6 @@ class Customsetting extends Model
         }
 
         $setting = $settings->where('name', $name)->where('site_id', $siteId)->where('locale', $locale)->first();
-//        dump($setting);
         if ($setting && $setting->value !== null) {
             return $setting->value;
         } else {
@@ -68,7 +67,7 @@ class Customsetting extends Model
 
     public static function set($name, $value, $siteId = null, $locale = null)
     {
-        if (! $siteId) {
+        if (!$siteId) {
             $siteId = Sites::getSites()[0]['id'];
         }
 
@@ -95,11 +94,11 @@ class Customsetting extends Model
             return Schema::hasTable('dashed__custom_settings');
         });
 
-        if (! $tableExists) {
+        if (!$tableExists) {
             return;
         }
 
-        if (! cache()->has(static::CACHE_KEY)) {
+        if (!cache()->has(static::CACHE_KEY)) {
             cache()->forever(
                 static::CACHE_KEY,
                 $tableExists ? Customsetting::all() : [],
