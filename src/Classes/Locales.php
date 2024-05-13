@@ -7,13 +7,36 @@ use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 class Locales
 {
-    public static function getLocales()
+    public static function getLocales(): array
     {
         $allLocales = \Mcamara\LaravelLocalization\Facades\LaravelLocalization::getLocalesOrder();
         $locales = [];
         foreach ($allLocales as $key => $locale) {
             $locale['id'] = $key;
             $locales[] = $locale;
+        }
+
+        return $locales;
+    }
+
+    public static function getLocalesArray(): array
+    {
+        $locales = [];
+        foreach (self::getLocales() as $locale) {
+            $locales[$locale['id']] = $locale['name'];
+        }
+
+        return $locales;
+    }
+
+    public static function getLocalesArrayWithoutCurrent(): array
+    {
+        $locales = self::getLocalesArray();
+
+        foreach ($locales as $locale => $name) {
+            if ($locale == LaravelLocalization::getCurrentLocale()) {
+                unset($locales[$locale]);
+            }
         }
 
         return $locales;
@@ -26,7 +49,7 @@ class Locales
 
     public static function getLocale($locale = null)
     {
-        if (! $locale) {
+        if (!$locale) {
             return self::getFirstLocale();
         } else {
             foreach (self::getLocales() as $allLocale) {

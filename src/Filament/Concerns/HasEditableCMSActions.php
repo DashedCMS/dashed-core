@@ -4,9 +4,13 @@ namespace Dashed\DashedCore\Filament\Concerns;
 
 use Dashed\DashedCore\Classes\Locales;
 use Dashed\DashedCore\Filament\Actions\ShowSEOScoreAction;
+use Dashed\DashedTranslations\Classes\AutomatedTranslation;
+use Dashed\DashedTranslations\Jobs\TranslateValueFromModel;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\LocaleSwitcher;
+use Filament\Forms\Components\Select;
+use Filament\Notifications\Notification;
 use Illuminate\Support\Str;
 
 trait HasEditableCMSActions
@@ -23,6 +27,37 @@ trait HasEditableCMSActions
                 ->action('duplicate')
                 ->color('warning'),
             ShowSEOScoreAction::make(),
+            Action::make('translate')
+                ->icon('heroicon-m-language')
+                ->label('Vertaal')
+                ->visible(AutomatedTranslation::automatedTranslationsEnabled())
+                ->form([
+                    Select::make('to_locales')
+                        ->options(Locales::getLocalesArray())
+                        ->preload()
+                        ->searchable()
+                        ->default(collect(Locales::getLocalesArrayWithoutCurrent())->keys()->toArray())
+                        ->required()
+                        ->label('Naar talen')
+                        ->multiple()
+                ])
+                ->action(function (array $data) {
+                    //Todo: content is an array with nesting which does not work, create a function to copy over the content to another language and add hint actions to translate it bit by bit
+                    //Todo: loop through this recursivly and translate it bit by bit
+                    foreach ($this->record->translatable as $column) {
+                        if (!method_exists($this->record, $column)) {
+                            $textToTranslate = $this->record->getTranslation($column, $this->activeLocale);
+                            foreach ($data['to_locales'] as $locale) {
+                                TranslateValueFromModel::dispatch($this->record, $column, $textToTranslate, $locale, $this->activeLocale);
+                            }
+                        }
+                    }
+
+                    Notification::make()
+                        ->title("Item wordt vertaald")
+                        ->success()
+                        ->send();
+                }),
             LocaleSwitcher::make(),
             DeleteAction::make(),
         ];
