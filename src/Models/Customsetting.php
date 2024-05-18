@@ -39,6 +39,10 @@ class Customsetting extends Model
 
         $settings = cache()->get(static::CACHE_KEY);
 
+        if(!$settings){
+            return $default;
+        }
+
         if (!$siteId) {
             $siteId = Sites::getActive();
         }
