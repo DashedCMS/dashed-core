@@ -42,13 +42,25 @@ trait HasEditableCMSActions
                         ->multiple()
                 ])
                 ->action(function (array $data) {
-                    //Todo: content is an array with nesting which does not work, create a function to copy over the content to another language and add hint actions to translate it bit by bit
-                    //Todo: loop through this recursivly and translate it bit by bit
                     foreach ($this->record->translatable as $column) {
                         if (!method_exists($this->record, $column)) {
                             $textToTranslate = $this->record->getTranslation($column, $this->activeLocale);
                             foreach ($data['to_locales'] as $locale) {
                                 TranslateValueFromModel::dispatch($this->record, $column, $textToTranslate, $locale, $this->activeLocale);
+                            }
+                        }
+                    }
+
+                    if ($this->record->metadata) {
+                        $translatableMetaColumns = [
+                            'title',
+                            'description',
+                        ];
+
+                        foreach ($translatableMetaColumns as $column) {
+                            $textToTranslate = $this->record->metadata->getTranslation($column, $this->activeLocale);
+                            foreach ($data['to_locales'] as $locale) {
+                                TranslateValueFromModel::dispatch($this->record->metadata, $column, $textToTranslate, $locale, $this->activeLocale);
                             }
                         }
                     }

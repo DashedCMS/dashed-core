@@ -2,6 +2,8 @@
 
 namespace Dashed\DashedCore\Models;
 
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Activitylog\LogOptions;
 use Dashed\DashedCore\Classes\Sites;
 use Illuminate\Support\Facades\Cache;
@@ -9,7 +11,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-class Customsetting extends Model
+class CustomsettingOld extends Model
 {
     use LogsActivity;
 
@@ -17,22 +19,31 @@ class Customsetting extends Model
 
     protected $table = 'dashed__custom_settings';
 
+    public const CACHE_KEY = 'global_settings';
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults();
     }
 
+    public static function booted()
+    {
+        static::saved(function () {
+            cache()->forget(static::CACHE_KEY);
+        });
+    }
+
     public static function get($name, $siteId = null, $default = null, $locale = null)
     {
-        $tableExists = Cache::remember('dashed__custom_settings_table_exists', 60, function () {
-            return Schema::hasTable('dashed__custom_settings');
-        });
+        self::warm();
 
-        if (! $tableExists) {
+        $settings = cache()->get(static::CACHE_KEY);
+
+        if(!$settings){
             return $default;
         }
 
-        if (! $siteId) {
+        if (!$siteId) {
             $siteId = Sites::getActive();
         }
 
@@ -40,11 +51,14 @@ class Customsetting extends Model
             $locale = $locale['id'];
         }
 
+        $setting = $settings->where('name', $name)->where('site_id', $siteId)->where('locale', $locale)->first();
+        if ($setting && $setting->value !== null) {
+            return $setting->value;
+        } else {
+            return $default;
+        }
+
         return Cache::tags(['custom-settings', "custom-settings-$name"])->rememberForever("$name-$siteId-$locale", function () use ($name, $siteId, $default, $locale) {
-            //Cannot use this because this fails emails etc
-//        if (app()->runningInConsole()) {
-//            return $default;
-//        }
 
             $customSetting = self::where('name', $name)->where('site_id', $siteId)->where('locale', $locale)->first();
             if ($customSetting && $customSetting->value !== null) {
@@ -57,7 +71,7 @@ class Customsetting extends Model
 
     public static function set($name, $value, $siteId = null, $locale = null)
     {
-        if (! $siteId) {
+        if (!$siteId) {
             $siteId = Sites::getSites()[0]['id'];
         }
 
@@ -76,5 +90,23 @@ class Customsetting extends Model
     public function scopeThisSite($query)
     {
         $query->where('site_id', Sites::getActive());
+    }
+
+    public static function warm(): void
+    {
+        $tableExists = Cache::rememberForever('dashed__custom_settings_table_exists', function () {
+            return Schema::hasTable('dashed__custom_settings');
+        });
+
+        if (!$tableExists) {
+            return;
+        }
+
+        if (!cache()->has(static::CACHE_KEY)) {
+            cache()->forever(
+                static::CACHE_KEY,
+                $tableExists ? CustomsettingOld::all() : [],
+            );
+        }
     }
 }
