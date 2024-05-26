@@ -21,53 +21,53 @@ trait HasCustomBlocksTab
 
         $tabs = [];
 
-        //Todo: make it working with a locales array, otherwise it wont work
-        foreach (Locales::getLocalesArray() as $localeKey => $locale) {
-            $tabs[] = Section::make($locale)
-                ->schema($schema)
-                ->relationship('customBlocks')
-                ->saveRelationshipsUsing(function ($record, $data) use ($localeKey) {
-                    dd($record, $data);
-                    $blocks = $record->blocks ?: [];
-                    $blocks[$localeKey] = $relationships;
-                    $record->blocks = $blocks;
-                    $record->save();
-                })
-                ->mutateRelationshipDataBeforeCreateUsing(function ($data, $livewire) {
-                    $blocks = [];
-                    foreach ($data as $key => $item) {
-                        $blocks[$key] = $item;
-                        unset($data[$key]);
-                    }
-                    $data['blocks'] = $blocks;
-
-                    return $data;
-                })
-                ->mutateRelationshipDataBeforeSaveUsing(function ($data, $livewire) {
-                    $blocks = $livewire->record->blocks ?: [];
-                    foreach ($data as $key => $item) {
-                        $blocks[$key] = $item;
-                        unset($data[$key]);
-                    }
-                    $data['blocks'] = $blocks;
-
-                    return $data;
-                })
-                ->mutateRelationshipDataBeforeFillUsing(function ($data) {
-                    if (is_array($data['blocks'])) {
-                        foreach ($data['blocks'] ?? [] as $key => $item) {
-                            $data[$key] = $item;
-                        }
-                    }
-
-                    return $data;
-                });
-        }
-
-        return [
-            Section::make('custom blocks')
-                ->schema($tabs)
-        ];
+//        //Todo: make it working with a locales array, otherwise it wont work
+//        foreach (Locales::getLocalesArray() as $localeKey => $locale) {
+//            $tabs[] = Section::make($locale)
+//                ->schema($schema)
+//                ->relationship('customBlocks')
+//                ->saveRelationshipsUsing(function ($record, $data) use ($localeKey) {
+//                    dd($record, $data);
+//                    $blocks = $record->blocks ?: [];
+//                    $blocks[$localeKey] = $relationships;
+//                    $record->blocks = $blocks;
+//                    $record->save();
+//                })
+//                ->mutateRelationshipDataBeforeCreateUsing(function ($data, $livewire) {
+//                    $blocks = [];
+//                    foreach ($data as $key => $item) {
+//                        $blocks[$key] = $item;
+//                        unset($data[$key]);
+//                    }
+//                    $data['blocks'] = $blocks;
+//
+//                    return $data;
+//                })
+//                ->mutateRelationshipDataBeforeSaveUsing(function ($data, $livewire) {
+//                    $blocks = $livewire->record->blocks ?: [];
+//                    foreach ($data as $key => $item) {
+//                        $blocks[$key] = $item;
+//                        unset($data[$key]);
+//                    }
+//                    $data['blocks'] = $blocks;
+//
+//                    return $data;
+//                })
+//                ->mutateRelationshipDataBeforeFillUsing(function ($data) {
+//                    if (is_array($data['blocks'])) {
+//                        foreach ($data['blocks'] ?? [] as $key => $item) {
+//                            $data[$key] = $item;
+//                        }
+//                    }
+//
+//                    return $data;
+//                });
+//        }
+//
+//        return [
+//            Section::make('custom blocks')
+//                ->schema($tabs)
+//        ];
 
         return [
             Repeater::make('customBlocks')
@@ -104,7 +104,6 @@ trait HasCustomBlocksTab
                     return $data;
                 })
                 ->mutateRelationshipDataBeforeFillUsing(function ($data) {
-                    dump('yes');
                     if (is_array($data['blocks'])) {
                         foreach ($data['blocks'] ?? [] as $key => $item) {
                             $data[$key] = $item;
