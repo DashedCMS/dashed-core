@@ -101,4 +101,25 @@ trait HasEditableCMSActions
 
         return redirect(self::getUrl(['record' => $newModel]));
     }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        dump('fill');
+        dump($this->activeLocale);
+        if ($this->record->customBlocks) {
+//            dd($this->record->customBlocks->getTranslation('blocks', $this->activeLocale));
+            $data[] = $this->record->customBlocks->getTranslation('blocks', $this->activeLocale);
+        }
+
+//        dd($data);
+        return $data;
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        dd($data);
+        //Todo: create function to save customBlocks
+        unset($data['customBlocks']);
+        return parent::mutateFormDataBeforeSave($data);
+    }
 }
