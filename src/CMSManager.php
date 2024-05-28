@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore;
 
+use Filament\Forms\Components\Builder;
 use Illuminate\Support\Facades\Route;
 
 class CMSManager
@@ -20,7 +21,7 @@ class CMSManager
 
     public function model(string $name, ?string $implementation = null): self|string
     {
-        if (! $implementation) {
+        if (!$implementation) {
             return static::$models[$name];
         }
 
@@ -31,13 +32,23 @@ class CMSManager
 
     public function builder(string $name, ?array $blocks = null): self|array
     {
-        if (! $blocks) {
+        if (!$blocks) {
             return static::$builders[$name] ?? [];
         }
 
         static::$builders[$name] = $blocks;
 
         return $this;
+    }
+
+    public function getFilamentBuilderBlock(string $name = 'content', string $blocksName = 'blocks'): Builder
+    {
+        return Builder::make($name)
+            ->blocks(cms()->builder($blocksName))
+            ->collapsible(true)
+            ->blockLabels()
+            ->cloneable()
+            ->columnSpanFull();
     }
 
     public function getSearchResults(?string $query): array
@@ -58,13 +69,13 @@ class CMSManager
         return [
             'results' => $results,
             'count' => collect($results)->sum('count'),
-            'hasResults' => collect($results)->filter(fn ($result) => $result['hasResults'])->count() > 0,
+            'hasResults' => collect($results)->filter(fn($result) => $result['hasResults'])->count() > 0,
         ];
     }
 
     public function isCMSRoute(): bool
     {
-        if(str(request()->url())->contains('form/post')){
+        if (str(request()->url())->contains('form/post')) {
             return false;
         }
 
