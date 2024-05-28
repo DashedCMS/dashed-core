@@ -11,10 +11,29 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\LocaleSwitcher;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
+use Filament\Resources\Pages\EditRecord\Concerns\Translatable;
 use Illuminate\Support\Str;
 
 trait HasEditableCMSActions
 {
+    use Translatable;
+
+    public function updatingActiveLocale($newVal): void
+    {
+        $this->oldActiveLocale = $this->activeLocale;
+        $this->save();
+
+        if (method_exists($this->getRecord(), 'customBlocks')) {
+            $this->data['customBlocks'] = $this->getRecord()->customBlocks->getTranslation('blocks', $newVal);
+        }
+
+        if (method_exists($this->getRecord(), 'metadata')) {
+            foreach ($this->getRecord()->metadata->getTranslatableAttributes() as $attribute) {
+                $this->data['metadata'][$attribute] = $this->getRecord()->metadata->getTranslation($attribute, $newVal);
+            }
+        }
+    }
+
     public function CMSActions(): array
     {
         return [
@@ -45,6 +64,7 @@ trait HasEditableCMSActions
                     foreach ($this->record->translatable as $column) {
                         if (!method_exists($this->record, $column)) {
                             $textToTranslate = $this->record->getTranslation($column, $this->activeLocale);
+
                             foreach ($data['to_locales'] as $locale) {
                                 TranslateValueFromModel::dispatch($this->record, $column, $textToTranslate, $locale, $this->activeLocale);
                             }
@@ -65,10 +85,28 @@ trait HasEditableCMSActions
                         }
                     }
 
+                    if ($this->record->customBlocks) {
+                        $translatableCustomBlockColumns = [
+                            'blocks',
+                        ];
+
+                        foreach ($translatableCustomBlockColumns as $column) {
+                            $textToTranslate = $this->record->customBlocks->getTranslation($column, $this->activeLocale);
+                            foreach ($data['to_locales'] as $locale) {
+                                TranslateValueFromModel::dispatch($this->record->customBlocks, $column, $textToTranslate, $locale, $this->activeLocale, [
+                                    'customBlock' => str($this->record::class . 'Blocks')->explode('\\')->last(),
+                                ]);
+                            }
+                        }
+                    }
+
+                    //Refresh page to make sure saving does not overwrite the translation anymore
                     Notification::make()
-                        ->title("Item wordt vertaald")
+                        ->title("Item wordt vertaald, dit kan even duren. Sla de pagina niet op tot de vertalingen klaar zijn.")
                         ->success()
                         ->send();
+
+                    return redirect()->to(request()->header('Referer'));
                 }),
             LocaleSwitcher::make(),
             DeleteAction::make(),
@@ -100,26 +138,5 @@ trait HasEditableCMSActions
         }
 
         return redirect(self::getUrl(['record' => $newModel]));
-    }
-
-    protected function mutateFormDataBeforeFill(array $data): array
-    {
-        dump('fill');
-        dump($this->activeLocale);
-        if ($this->record->customBlocks) {
-//            dd($this->record->customBlocks->getTranslation('blocks', $this->activeLocale));
-            $data[] = $this->record->customBlocks->getTranslation('blocks', $this->activeLocale);
-        }
-
-//        dd($data);
-        return $data;
-    }
-
-    protected function mutateFormDataBeforeSave(array $data): array
-    {
-        dd($data);
-        //Todo: create function to save customBlocks
-        unset($data['customBlocks']);
-        return parent::mutateFormDataBeforeSave($data);
     }
 }
