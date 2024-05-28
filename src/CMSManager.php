@@ -48,6 +48,7 @@ class CMSManager
             ->collapsible(true)
             ->blockLabels()
             ->cloneable()
+            ->reorderable()
             ->columnSpanFull();
     }
 
