@@ -58,7 +58,7 @@ class CustomsettingOld extends Model
             return $default;
         }
 
-        return Cache::tags(['custom-settings', "custom-settings-$name"])->rememberForever("$name-$siteId-$locale", function () use ($name, $siteId, $default, $locale) {
+        return Cache::rememberForever("$name-$siteId-$locale", function () use ($name, $siteId, $default, $locale) {
 
             $customSetting = self::where('name', $name)->where('site_id', $siteId)->where('locale', $locale)->first();
             if ($customSetting && $customSetting->value !== null) {
@@ -83,8 +83,6 @@ class CustomsettingOld extends Model
             ],
             ['value' => $value]
         );
-
-        Cache::tags(["custom-settings-$name"])->flush();
     }
 
     public function scopeThisSite($query)

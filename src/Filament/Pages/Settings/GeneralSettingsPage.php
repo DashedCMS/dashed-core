@@ -257,8 +257,6 @@ class GeneralSettingsPage extends Page
             Customsetting::set('extra_scripts', $this->form->getState()["extra_scripts_{$site['id']}"], $site['id']);
         }
 
-        Cache::tags(['custom-settings'])->flush();
-
         Notification::make()
             ->title('De algemene instellingen zijn opgeslagen')
             ->success()

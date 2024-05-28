@@ -90,8 +90,6 @@ class ImageSettingsPage extends Page
             Customsetting::set('image_show_sizes', $this->form->getState()["image_show_sizes"], $site['id']);
         }
 
-        Cache::tags(['custom-settings'])->flush();
-
         Notification::make()
             ->title('De afbeelding instellingen zijn opgeslagen')
             ->success()

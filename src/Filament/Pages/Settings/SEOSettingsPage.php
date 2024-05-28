@@ -104,8 +104,6 @@ class SEOSettingsPage extends Page
             Customsetting::set('seo_check_models', $this->form->getState()["seo_check_models"], $site['id']);
         }
 
-        Cache::tags(['custom-settings'])->flush();
-
         Notification::make()
             ->title('De SEO instellingen zijn opgeslagen')
             ->success()

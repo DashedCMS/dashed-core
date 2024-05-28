@@ -40,7 +40,7 @@ class Customsetting extends Model
             $locale = $locale['id'];
         }
 
-        return Cache::tags(['custom-settings', "custom-settings-$name"])->rememberForever("$name-$siteId-$locale", function () use ($name, $siteId, $default, $locale) {
+        return Cache::rememberForever("$name-$siteId-$locale", function () use ($name, $siteId, $default, $locale) {
             //Cannot use this because this fails emails etc
 //        if (app()->runningInConsole()) {
 //            return $default;
@@ -69,8 +69,6 @@ class Customsetting extends Model
             ],
             ['value' => $value]
         );
-
-        Cache::tags(["custom-settings-$name"])->flush();
     }
 
     public function scopeThisSite($query)

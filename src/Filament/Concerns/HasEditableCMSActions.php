@@ -170,6 +170,7 @@ trait HasEditableCMSActions
 
     public function mutateFormDataBeforeSave(array $data): array
     {
+        //Save order for content blocks
         if ($data['content'] ?? false) {
             $data['content'] = self::removeUUIDKeys($data['content']);
         }
