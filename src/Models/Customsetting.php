@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore\Models;
 
+use Dashed\DashedCore\Classes\Locales;
 use Spatie\Activitylog\LogOptions;
 use Dashed\DashedCore\Classes\Sites;
 use Illuminate\Support\Facades\Cache;
@@ -28,11 +29,11 @@ class Customsetting extends Model
             return Schema::hasTable('dashed__custom_settings');
         });
 
-        if (! $tableExists) {
+        if (!$tableExists) {
             return $default;
         }
 
-        if (! $siteId) {
+        if (!$siteId) {
             $siteId = Sites::getActive();
         }
 
@@ -57,7 +58,7 @@ class Customsetting extends Model
 
     public static function set($name, $value, $siteId = null, $locale = null)
     {
-        if (! $siteId) {
+        if (!$siteId) {
             $siteId = Sites::getSites()[0]['id'];
         }
 
@@ -69,6 +70,13 @@ class Customsetting extends Model
             ],
             ['value' => $value]
         );
+
+        Cache::forget("$name-$siteId-$locale");
+        foreach (Sites::getSites() as $site) {
+            foreach (Locales::getLocalesArray() as $locale) {
+                Cache::forget("$name-" . $site['id'] . "-$locale");
+            }
+        }
     }
 
     public function scopeThisSite($query)
