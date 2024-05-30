@@ -35,7 +35,7 @@ class {{ CLASS }} extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
     protected static ?string $navigationIcon = 'heroicon-o-book-open';
-    protected static ?string $navigationGroup = 'Content';
+    protected static ?string $navigationGroup = 'Custom modules';
     protected static ?string $navigationLabel = '{{ PLURAL }}';
     protected static ?string $label = '{{ SINGLE }}';
     protected static ?string $pluralLabel = '{{ PLURAL }}';
