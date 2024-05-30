@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore;
 
+use Dashed\DashedCore\Filament\Pages\Settings\CacheSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\SEOSettingsPage;
@@ -32,6 +33,7 @@ class DashedCorePlugin implements Plugin
                 GeneralSettingsPage::class,
                 SEOSettingsPage::class,
                 ImageSettingsPage::class,
+                CacheSettingsPage::class,
             ])
             ->widgets([
 //                NotFoundPageStats::class,
