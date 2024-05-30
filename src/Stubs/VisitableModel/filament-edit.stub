@@ -9,7 +9,7 @@ use Filament\Resources\Pages\EditRecord\Concerns\Translatable;
 
 class Edit{{ SINGLE }} extends EditRecord
 {
-    use Translatable;
+    use HasEditableCMSActions;
 
     protected static string $resource = {{ MODELCLASS }}Resource::class;
 
