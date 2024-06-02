@@ -137,14 +137,8 @@ class GeneralSettingsPage extends Page
                         'default' => 1,
                         'lg' => 2,
                     ]),
-                FileUpload::make("site_logo_{$site['id']}")
-                    ->label('Logo')
-                    ->downloadable()
-                    ->directory('dashed/branding/logo'),
-                FileUpload::make("site_favicon_{$site['id']}")
-                    ->label('Favicon')
-                    ->downloadable()
-                    ->directory('dashed/branding/favicon'),
+                mediaHelper()->field("site_logo_{$site['id']}", 'Logo', false, false, true),
+                mediaHelper()->field("site_favicon_{$site['id']}", 'Favicon', false, false, true),
             ];
 
             $tabs[] = Tab::make($site['id'])

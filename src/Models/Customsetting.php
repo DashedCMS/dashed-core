@@ -23,6 +23,18 @@ class Customsetting extends Model
         return LogOptions::defaults();
     }
 
+    public static function booted()
+    {
+        static::saved(function (Customsetting $customsetting) {
+            Cache::forget('dashed__custom_settings_table_exists');
+            foreach(Sites::getSites() as $site) {
+                foreach(Locales::getLocalesArray() as $key => $locale) {
+                    Cache::forget($customsetting->name . '-' . $site['id'] . '-' . $key);
+                }
+            }
+        });
+    }
+
     public static function get($name, $siteId = null, $default = null, $locale = null)
     {
         $tableExists = Cache::remember('dashed__custom_settings_table_exists', 60, function () {

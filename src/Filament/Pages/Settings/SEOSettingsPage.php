@@ -59,10 +59,7 @@ class SEOSettingsPage extends Page
                     ->label('Twitter creator')
                     ->maxLength(255)
                     ->helperText('Bijv: @dashed.dev'),
-                FileUpload::make("default_meta_data_image_{$site['id']}")
-                    ->label('Meta image')
-                    ->directory('dashed/metadata')
-                    ->image()
+                mediaHelper()->field("default_meta_data_image_{$site['id']}", 'Meta image', false, false, true)
                     ->helperText('Dit is de placeholder meta afbeelding die gebruikt wordt als er geen meta afbeelding is opgegeven.'),
             ];
 
@@ -79,11 +76,11 @@ class SEOSettingsPage extends Page
 
         $tabGroups[] =
             Section::make('SEO instellingen voor alle sites')
-            ->schema([
-                Toggle::make("seo_check_models")
-                    ->label('Check SEO modellen op score')
-                    ->helperText('Dit kan het opslaan process vertragen, vraag dit na bij je beheerder.')
-            ]);
+                ->schema([
+                    Toggle::make("seo_check_models")
+                        ->label('Check SEO modellen op score')
+                        ->helperText('Dit kan het opslaan process vertragen, vraag dit na bij je beheerder.')
+                ]);
 
         return $tabGroups;
     }
