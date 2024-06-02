@@ -9,6 +9,7 @@ use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
+use RalphJSmit\Filament\MediaLibrary\Forms\Components\MediaPicker;
 
 trait HasMetadataTab
 {
@@ -30,7 +31,7 @@ trait HasMetadataTab
                         ->minLength(5)
                         ->maxLength(170)
                         ->rows(2),
-                    FileUpload::make('image')
+                    MediaPicker::make('image')
                         ->label('Meta afbeelding')
                         ->directory('dashed/metadata')
                         ->image()

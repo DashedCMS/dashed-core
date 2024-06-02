@@ -16,6 +16,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Dashed\DashedCore\Filament\Concerns\HasCustomBlocksTab;
+use RalphJSmit\Filament\MediaLibrary\Forms\Components\MediaPicker;
 
 trait HasVisitableTab
 {
@@ -41,12 +42,11 @@ trait HasVisitableTab
                         ->minLength(5)
                         ->maxLength(170)
                         ->rows(2),
-                    FileUpload::make('image')
+                    MediaPicker::make('image')
                         ->label('Meta afbeelding')
-                        ->directory('dashed/metadata')
-                        ->disk('dashed')
-                        ->image()
                         ->downloadable()
+                        ->acceptedFileTypes(['image/*'])
+                        ->showFileName()
                         ->helperText('De beste afmeting is 1200x630 pixels'),
                     //                        TextInput::make('canonical_url')
                     //                            ->label('Meta canonical URL'),

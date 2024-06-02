@@ -64,6 +64,11 @@ class UpdateCommand extends Command
             '--force' => 'true',
         ]);
 
+        $this->call('vendor:publish', [
+            '--tag' => 'filament-media-library-migrations',
+            '--force' => 'true',
+        ]);
+
         if ($enableMigrations) {
             $this->call('migrate', [
                 '--force' => 'true',
