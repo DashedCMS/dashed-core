@@ -41,7 +41,7 @@ class FrontendMiddleware
         $logo = Customsetting::get('site_logo', Sites::getActive(), '');
         $favicon = Customsetting::get('site_favicon', Sites::getActive(), '');
 
-        dd($logo);
+//        dd($logo);
 
         seo()->metaData('schemas', [
             'localBusiness' => Schema::localBusiness()
