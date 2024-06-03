@@ -47,6 +47,9 @@ class UpdateCommand extends Command
             '--tag' => 'dashed-core-config',
         ]);
         $this->call('vendor:publish', [
+            '--tag' => 'dashed-files-config',
+        ]);
+        $this->call('vendor:publish', [
             '--tag' => 'dashed-core-assets',
         ]);
 
@@ -55,17 +58,7 @@ class UpdateCommand extends Command
         ]);
 
         $this->call('vendor:publish', [
-            '--tag' => 'fm-assets',
-            '--force' => 'true',
-        ]);
-
-        $this->call('vendor:publish', [
             '--tag' => 'filament-forms-tinyeditor-assets',
-            '--force' => 'true',
-        ]);
-
-        $this->call('vendor:publish', [
-            '--tag' => 'filament-media-library-migrations',
             '--force' => 'true',
         ]);
 
