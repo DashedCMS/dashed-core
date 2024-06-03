@@ -36,70 +36,31 @@
 
 @if($favicon)
     <link rel="apple-touch-icon" sizes="57x57"
-          href="{{ app(\Dashed\Drift\UrlBuilder::class)->url('dashed', str_replace('/dashed', 'dashed', $favicon), [
-                        'widen' => 57,
-                        'heighten' => 57
-                    ]) }}">
+          href="{{ $favicon->url ?? false }}">
     <link rel="apple-touch-icon" sizes="60x60"
-          href="{{ app(\Dashed\Drift\UrlBuilder::class)->url('dashed', $favicon, [
-                        'widen' => 60,
-                        'heighten' => 60
-                    ]) }}">
+          href="{{ $favicon->url ?? false }}">
     <link rel="apple-touch-icon" sizes="72x72"
-          href="{{ app(\Dashed\Drift\UrlBuilder::class)->url('dashed', $favicon, [
-                        'widen' => 72,
-                        'heighten' => 72
-                    ]) }}">
+          href="{{ $favicon->url ?? false }}">
     <link rel="apple-touch-icon" sizes="76x76"
-          href="{{ app(\Dashed\Drift\UrlBuilder::class)->url('dashed', $favicon, [
-                        'widen' => 76,
-                        'heighten' => 76
-                    ]) }}">
+          href="{{ $favicon->url ?? false }}">
     <link rel="apple-touch-icon" sizes="114x114"
-          href="{{ app(\Dashed\Drift\UrlBuilder::class)->url('dashed', $favicon, [
-                        'widen' => 114,
-                        'heighten' => 114
-                    ]) }}">
+          href="{{ $favicon->url ?? false }}">
     <link rel="apple-touch-icon" sizes="120x120"
-          href="{{ app(\Dashed\Drift\UrlBuilder::class)->url('dashed', $favicon, [
-                        'widen' => 120,
-                        'heighten' => 120
-                    ]) }}">
+          href="{{ $favicon->url ?? false }}">
     <link rel="apple-touch-icon" sizes="144x144"
-          href="{{ app(\Dashed\Drift\UrlBuilder::class)->url('dashed', $favicon, [
-                        'widen' => 144,
-                        'heighten' => 144
-                    ]) }}">
+          href="{{ $favicon->url ?? false }}">
     <link rel="apple-touch-icon" sizes="152x152"
-          href="{{ app(\Dashed\Drift\UrlBuilder::class)->url('dashed', $favicon, [
-                        'widen' => 152,
-                        'heighten' => 152
-                    ]) }}">
+          href="{{ $favicon->url ?? false }}">
     <link rel="apple-touch-icon" sizes="180x180"
-          href="{{ app(\Dashed\Drift\UrlBuilder::class)->url('dashed', $favicon, [
-                        'widen' => 180,
-                        'heighten' => 180
-                    ]) }}">
+          href="{{ $favicon->url ?? false }}">
     <link rel="icon" type="image/png" sizes="192x192"
-          href="{{ app(\Dashed\Drift\UrlBuilder::class)->url('dashed', $favicon, [
-                        'widen' => 192,
-                        'heighten' => 192
-                    ]) }}">
+          href="{{ $favicon->url ?? false }}">
     <link rel="icon" type="image/png" sizes="32x32"
-          href="{{ app(\Dashed\Drift\UrlBuilder::class)->url('dashed', $favicon, [
-                        'widen' => 32,
-                        'heighten' => 32
-                    ]) }}">
+          href="{{ $favicon->url ?? false }}">
     <link rel="icon" type="image/png" sizes="96x96"
-          href="{{ app(\Dashed\Drift\UrlBuilder::class)->url('dashed', $favicon, [
-                        'widen' => 96,
-                        'heighten' => 96
-                    ]) }}">
+          href="{{ $favicon->url ?? false }}">
     <link rel="icon" type="image/png" sizes="16x16"
-          href="{{ app(\Dashed\Drift\UrlBuilder::class)->url('dashed', $favicon, [
-                        'widen' => 16,
-                        'heighten' => 16
-                    ]) }}">
+          href="{{ $favicon->url ?? false }}">
 @endif
 
 {!! Customsetting::get('extra_scripts') !!}

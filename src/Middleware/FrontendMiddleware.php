@@ -38,19 +38,15 @@ class FrontendMiddleware
             seo()->metaData('metaImage', Customsetting::get('default_meta_data_image', Sites::getActive(), ''));
         }
 
-        $logo = Customsetting::get('site_logo', Sites::getActive(), '');
-        $favicon = Customsetting::get('site_favicon', Sites::getActive(), '');
-
-//        dd($logo);
+        $logo = mediaHelper()->getSingleImage(Customsetting::get('site_logo', Sites::getActive(), ''), 'thumb');
+        $favicon = mediaHelper()->getSingleImage(Customsetting::get('site_favicon', Sites::getActive(), ''), 'thumb');
 
         seo()->metaData('schemas', [
             'localBusiness' => Schema::localBusiness()
                 ->legalName(Customsetting::get('site_name'))
                 ->email(Customsetting::get('site_to_email'))
                 ->telephone(Customsetting::get('company_phone_number'))
-                ->logo(app(\Dashed\Drift\UrlBuilder::class)->url('dashed', $logo, [
-                    'keepOriginal',
-                ]))
+                ->logo($logo->url ?? '')
                 ->address(Customsetting::get('company_street') . ' ' . Customsetting::get('company_street_number') . ', ' . Customsetting::get('company_postal_code') . ' ' . Customsetting::get('company_city') . ', ' . Customsetting::get('company_country'))
                 ->addProperties([
                     'address' => [
