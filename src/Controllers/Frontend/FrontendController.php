@@ -62,12 +62,14 @@ class FrontendController extends Controller
                 $schemas['localBusiness']->name(seo()->metaData('metaTitle'));
 
                 if (seo()->metaData('metaImage')) {
-                    $schemas['localBusiness']->image(app(UrlBuilder::class)->url('dashed', seo()->metaData('metaImage'), [
-                        'widen' => 1200,
-                    ]));
-                    seo()->metaData('metaImage', app(UrlBuilder::class)->url('dashed', seo()->metaData('metaImage'), [
-                        'widen' => 1200,
-                    ]));
+//                    $schemas['localBusiness']->image(app(UrlBuilder::class)->url('dashed', seo()->metaData('metaImage'), [
+//                        'widen' => 1200,
+//                    ]));
+//                    seo()->metaData('metaImage', app(UrlBuilder::class)->url('dashed', seo()->metaData('metaImage'), [
+//                        'widen' => 1200,
+//                    ]));
+                    $schemas['localBusiness']->image(mediaHelper()->getSingleImage(seo()->metaData('metaImage'), 'huge')->url ?? '');
+                    seo()->metaData('metaImage', mediaHelper()->getSingleImage(seo()->metaData('metaImage'), 'huge')->url ?? '');
                 }
                 seo()->metaData('schemas', $schemas);
 
