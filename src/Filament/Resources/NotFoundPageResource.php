@@ -106,7 +106,7 @@ class NotFoundPageResource extends Resource
                     ->label('Maak redirect aan')
                     ->button()
                     ->form([
-                        LinkHelper::field(required: true),
+                        linkHelper()->field(required: true),
 //                        Forms\Components\TextInput::make('to')
 //                            ->required()
 //                            ->label('Naar welke URL moet deze redirect verwijzen?')
@@ -136,7 +136,7 @@ class NotFoundPageResource extends Resource
                     ->action(function ($record, array $data) {
                         $redirect = Redirect::create([
                             'from' => $record->link,
-                            'to' => str(LinkHelper::getUrl($data))->replace(url('/'), ''),
+                            'to' => str(linkHelper()->getUrl($data))->replace(url('/'), ''),
                             'sort' => $data['sort'],
                             'delete_redirect_after' => $data['delete_redirect_after'],
                         ]);

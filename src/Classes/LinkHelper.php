@@ -8,7 +8,7 @@ use Filament\Forms\Components\TextInput;
 
 class LinkHelper
 {
-    public static function field($prefix = 'url', $required = false)
+    public function field($prefix = 'url', $required = false)
     {
         $routeModels = [];
         $routeModelInputs = [];
@@ -42,7 +42,7 @@ class LinkHelper
             ->columns(2);
     }
 
-    public static function getUrl(array $data = [], $prefix = 'url'): string
+    public function getUrl(array $data = [], $prefix = 'url'): string
     {
         if (($data["{$prefix}_type"] ?? 'normal') == 'normal') {
             return $data["{$prefix}_url"] ?? '#';

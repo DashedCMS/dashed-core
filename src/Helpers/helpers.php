@@ -1,6 +1,7 @@
 <?php
 
 
+use Dashed\DashedCore\Classes\LinkHelper;
 use Dashed\DashedCore\CMSManager;
 use Dashed\DashedCore\SeoManager;
 
@@ -11,9 +12,16 @@ if (! function_exists('cms')) {
     }
 }
 
-if (! function_exists('frontend')) {
+if (! function_exists('seo')) {
     function seo(): SeoManager
     {
         return app(SeoManager::class);
+    }
+}
+
+if (! function_exists('linkHelper')) {
+    function linkHelper(): LinkHelper
+    {
+        return app(LinkHelper::class);
     }
 }
