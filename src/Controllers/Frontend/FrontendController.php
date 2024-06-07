@@ -68,8 +68,8 @@ class FrontendController extends Controller
 //                    seo()->metaData('metaImage', app(UrlBuilder::class)->url('dashed', seo()->metaData('metaImage'), [
 //                        'widen' => 1200,
 //                    ]));
-                    $schemas['localBusiness']->image(mediaHelper()->getSingleMedia(seo()->metaData('metaImage'), 'huge')->url ?? '');
-                    seo()->metaData('metaImage', mediaHelper()->getSingleMedia(seo()->metaData('metaImage'), 'huge')->url ?? '');
+                    $schemas['localBusiness']->image(mediaHelper()->getSingleImage(seo()->metaData('metaImage'), 'huge')->url ?? '');
+                    seo()->metaData('metaImage', mediaHelper()->getSingleImage(seo()->metaData('metaImage'), 'huge')->url ?? '');
                 }
                 seo()->metaData('schemas', $schemas);
 

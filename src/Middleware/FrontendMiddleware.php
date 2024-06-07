@@ -38,8 +38,8 @@ class FrontendMiddleware
             seo()->metaData('metaImage', Customsetting::get('default_meta_data_image', Sites::getActive(), ''));
         }
 
-        $logo = mediaHelper()->getSingleMedia(Customsetting::get('site_logo', Sites::getActive(), ''), 'thumb');
-        $favicon = mediaHelper()->getSingleMedia(Customsetting::get('site_favicon', Sites::getActive(), ''), 'thumb');
+        $logo = mediaHelper()->getSingleImage(Customsetting::get('site_logo', Sites::getActive(), ''), 'thumb');
+        $favicon = mediaHelper()->getSingleImage(Customsetting::get('site_favicon', Sites::getActive(), ''), 'thumb');
 
         seo()->metaData('schemas', [
             'localBusiness' => Schema::localBusiness()
