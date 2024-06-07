@@ -22,6 +22,6 @@ if (! function_exists('seo')) {
 if (! function_exists('linkHelper')) {
     function linkHelper(): LinkHelper
     {
-        return app(LinkHelper::class);
+        return app(linkHelper()->class);
     }
 }
