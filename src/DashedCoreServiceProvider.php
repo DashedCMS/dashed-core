@@ -42,15 +42,15 @@ class DashedCoreServiceProvider extends PackageServiceProvider
     {
         Model::unguard();
 
-        $drift = app(DriftManager::class);
-
-        $drift->registerConfig(new Config(
-            name: 'dashed',
-            filesystemDisk: (config('filesystems')['disks']['dashed']['driver'] ?? 'local') == 's3' ? 'dashed' : 'public',
-            cachingStrategy: FilesystemCachingStrategy::class,
-            forceLazyLoad: Customsetting::get('image_force_lazy_load', null, false),
-            showSizes: Customsetting::get('image_show_sizes', null, false),
-        ));
+//        $drift = app(DriftManager::class);
+//
+//        $drift->registerConfig(new Config(
+//            name: 'dashed',
+//            filesystemDisk: (config('filesystems')['disks']['dashed']['driver'] ?? 'local') == 's3' ? 'dashed' : 'public',
+//            cachingStrategy: FilesystemCachingStrategy::class,
+//            forceLazyLoad: Customsetting::get('image_force_lazy_load', null, false),
+//            showSizes: Customsetting::get('image_show_sizes', null, false),
+//        ));
 
         Livewire::component('notification.toastr', Toastr::class);
         Livewire::component('auth.login', Login::class);

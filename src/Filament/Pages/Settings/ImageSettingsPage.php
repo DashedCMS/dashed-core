@@ -31,7 +31,7 @@ class ImageSettingsPage extends Page
         $sites = Sites::getSites();
 //        foreach ($sites as $site) {
             $formData["image_force_lazy_load"] = Customsetting::get('image_force_lazy_load', null, false);
-            $formData["image_show_sizes"] = Customsetting::get('image_show_sizes', null, false);
+//            $formData["image_show_sizes"] = Customsetting::get('image_show_sizes', null, false);
 //        }
 
         $this->form->fill($formData);
