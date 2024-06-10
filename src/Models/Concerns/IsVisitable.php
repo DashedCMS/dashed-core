@@ -10,6 +10,7 @@ use Dashed\DashedCore\Models\UrlHistory;
 use Dashed\Seo\Jobs\ScanSpecificResult;
 use Dashed\Seo\Traits\HasSeoScore;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
@@ -107,9 +108,9 @@ trait IsVisitable
         }
     }
 
-    public function urlHistory()
+    public function urlHistory(): MorphOne
     {
-        return $this->morphMany(UrlHistory::class, 'model');
+        return $this->morphOne(UrlHistory::class, 'model');
     }
 
     public static function getSitemapUrls(Sitemap $sitemap): Sitemap

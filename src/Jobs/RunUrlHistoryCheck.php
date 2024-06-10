@@ -43,25 +43,31 @@ class RunUrlHistoryCheck implements ShouldQueue, ShouldBeUnique
     {
         Customsetting::set('last_history_check', now());
 
-        $batchNumber = UrlHistory::orderBy('batch', 'desc')->first()?->batch + 1;
+//        $batchNumber = UrlHistory::orderBy('batch', 'desc')->first()?->batch + 1;
         foreach (cms()->builder('routeModels') as $routeModel) {
             foreach ($routeModel['class']::publicShowable()->get() as $model) {
                 foreach (Locales::getLocales() as $locale) {
                     if (in_array($locale['id'], Sites::get()['locales'])) {
                         Locales::setLocale($locale['id']);
-                        $model->urlHistory()->create([
-                            'batch' => $batchNumber,
-                            'url' => $model->getUrl(),
+                        $urlHistory = $model->urlHistory()->updateOrCreate([
+//                            'batch' => $batchNumber,
+//                            'url' => $model->getUrl(),
                             'method' => 'getUrl',
                             'site_id' => Sites::getActive(),
                             'locale' => $locale['id'],
                         ]);
+
+                        if ($urlHistory->url) {
+                            $urlHistory->previous_url = $urlHistory->url;
+                        }
+                        $urlHistory->url = $model->url;
+                        $urlHistory->save();
                     }
                 }
             }
         }
 
-        UrlHistory::where('batch', '<', $batchNumber - 50)->delete();
-        CreateRedirectsFromHistoryUrls::dispatch(Sites::getActive(), $batchNumber);
+//        UrlHistory::where('batch', '<', $batchNumber - 50)->delete();
+        CreateRedirectsFromHistoryUrls::dispatch(Sites::getActive());
     }
 }
