@@ -292,6 +292,7 @@ trait IsVisitable
                     View::share('page', $overviewPage);
                 }
                 View::share($class, $model);
+                View::share('model', $model);
                 View::share('breadcrumbs', $model->breadcrumbs());
 
                 return view('dashed.' . $class . '.show');

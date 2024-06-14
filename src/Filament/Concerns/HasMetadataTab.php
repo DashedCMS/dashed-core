@@ -41,6 +41,16 @@ trait HasMetadataTab
 //                            ->label('Meta canonical URL'),
                     Toggle::make('noindex')
                         ->label('Pagina niet indexeren'),
+                    Textarea::make('head_scripts')
+                        ->label('Scripts in head')
+                        ->nullable()
+                        ->maxLength(50000)
+                        ->rows(2),
+                    Textarea::make('top_body_scripts')
+                        ->label('Scripts in top van body')
+                        ->nullable()
+                        ->maxLength(50000)
+                        ->rows(2),
                 ]),
         ];
 
