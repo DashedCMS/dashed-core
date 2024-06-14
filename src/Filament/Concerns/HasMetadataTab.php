@@ -13,6 +13,7 @@ use RalphJSmit\Filament\MediaLibrary\Forms\Components\MediaPicker;
 
 trait HasMetadataTab
 {
+    //DEPRECATED
     protected static function metadataTab(): array
     {
         return [
