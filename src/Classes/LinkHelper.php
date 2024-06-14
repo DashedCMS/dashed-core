@@ -8,7 +8,7 @@ use Filament\Forms\Components\TextInput;
 
 class LinkHelper
 {
-    public function field($prefix = 'url', $required = false)
+    public function field($prefix = 'url', $required = false, $label = '')
     {
         $routeModels = [];
         $routeModelInputs = [];
@@ -21,12 +21,12 @@ class LinkHelper
                     ->required($required)
                     ->options($routeModel['class']::pluck($routeModel['nameField'] ?: 'name', 'id'))
                     ->searchable()
-                    ->visible(fn ($get) => in_array($get("{$prefix}_type"), [$key]));
+                    ->visible(fn($get) => in_array($get("{$prefix}_type"), [$key]));
         }
 
         return Group::make(array_merge([
             Select::make("{$prefix}_type")
-                ->label('Type voor ' . $prefix)
+                ->label($label ?: ('Type voor ' . $prefix))
                 ->default('normal')
                 ->options(array_merge([
                     'normal' => 'Normaal',
@@ -37,7 +37,7 @@ class LinkHelper
                 ->label('Url')
                 ->required($required)
                 ->placeholder('Example: https://example.com of /contact')
-                ->visible(fn ($get) => in_array($get("{$prefix}_type"), ['normal'])),
+                ->visible(fn($get) => in_array($get("{$prefix}_type"), ['normal'])),
         ], $routeModelInputs))
             ->columns(2);
     }
@@ -48,9 +48,11 @@ class LinkHelper
             return $data["{$prefix}_url"] ?? '#';
         }
 
-        $routeModel = cms()->builder('routeModels')[$data["{$prefix}_type"]];
+        if (isset($data["{$prefix}_type"]) && isset(cms()->builder('routeModels')[$data["{$prefix}_type"]])) {
+            $routeModel = cms()->builder('routeModels')[$data["{$prefix}_type"]];
+        }
 
-        if (! $routeModel) {
+        if (!isset($routeModel) || !$routeModel) {
             return '';
         }
 
