@@ -7,4 +7,8 @@
     @endif
 @endif
 
+@if(isset($model))
+    {!! $model->metaData->top_body_scripts ?? '' !!}
+@endif
+
 @include('cookie-consent::index')

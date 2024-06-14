@@ -65,6 +65,10 @@
 
 {!! Customsetting::get('extra_scripts') !!}
 
+@if(isset($model))
+    {!! $model->metaData->head_scripts ?? '' !!}
+@endif
+
 <title>{{ seo()->metaData('metaTitle') }}</title>
 @foreach(seo()->metaData('alternateUrls') as $locale => $url)
     <link rel="alternate" hreflang="{{ $locale }}" href="{{ $url }}"/>
