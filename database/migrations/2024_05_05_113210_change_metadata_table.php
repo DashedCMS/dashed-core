@@ -12,13 +12,11 @@ return new class extends Migration {
      */
     public function up()
     {
-        Schema::create('dashed__metadata', function (Blueprint $table) {
-            $table->id();
+        Schema::table('dashed__metadata', function (Blueprint $table) {
             $table->text('head_scripts')
                 ->nullable();
             $table->text('top_body_scripts')
                 ->nullable();
-            $table->timestamps();
         });
     }
 
