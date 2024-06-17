@@ -15,7 +15,7 @@ class AccountController extends FrontendController
             seo()->metaData('metaTitle', Translation::get('account-page-meta-title', 'account', 'Account'));
             seo()->metaData('metaDescription', Translation::get('account-page-meta-description', 'account', 'View your account here'));
 
-            return view('dashed.account.show');
+            return view(Customsetting::get('site_theme', null, 'dashed') . '.account.show');
         } else {
             return $this->pageNotFound();
         }
