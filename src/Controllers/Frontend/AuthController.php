@@ -3,6 +3,7 @@
 namespace Dashed\DashedCore\Controllers\Frontend;
 
 use Carbon\Carbon;
+use Dashed\DashedCore\Models\Customsetting;
 use Illuminate\Support\Str;
 use Dashed\DashedCore\Models\User;
 use Illuminate\Support\Facades\Auth;
