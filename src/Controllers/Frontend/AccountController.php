@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore\Controllers\Frontend;
 
+use Dashed\DashedCore\Models\Customsetting;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Dashed\DashedTranslations\Models\Translation;
