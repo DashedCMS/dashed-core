@@ -24,12 +24,12 @@ trait HasEditableCMSActions
         $this->save();
 
         if (method_exists($this->getRecord(), 'customBlocks')) {
-            $this->data['customBlocks'] = $this->getRecord()->customBlocks->getTranslation('blocks', $newVal);
+            $this->data['customBlocks'] = $this->getRecord()->customBlocks ? $this->getRecord()->customBlocks->getTranslation('blocks', $newVal) : null;
         }
 
         if (method_exists($this->getRecord(), 'metadata')) {
             foreach ($this->getRecord()->metadata->getTranslatableAttributes() as $attribute) {
-                $this->data['metadata'][$attribute] = $this->getRecord()->metadata->getTranslation($attribute, $newVal);
+                $this->data['metadata'][$attribute] = $this->getRecord()->metadata ? $this->getRecord()->metadata->getTranslation($attribute, $newVal) : null;
             }
         }
     }
