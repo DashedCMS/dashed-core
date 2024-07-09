@@ -71,7 +71,6 @@ trait HasEditableCMSActions
             ->action(function (array $data) {
                 AutomatedTranslation::translateModel($this->record, $this->activeLocale, $data['to_locales']);
 
-                //Refresh page to make sure saving does not overwrite the translation anymore
                 Notification::make()
                     ->title("Item wordt vertaald, dit kan even duren. Sla de pagina niet op tot de vertalingen klaar zijn.")
                     ->warning()

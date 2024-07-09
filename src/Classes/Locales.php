@@ -29,12 +29,16 @@ class Locales
         return $locales;
     }
 
-    public static function getLocalesArrayWithoutCurrent(): array
+    public static function getLocalesArrayWithoutCurrent(?string $currentLocale = null): array
     {
         $locales = self::getLocalesArray();
 
+        if(!$currentLocale){
+            $currentLocale = LaravelLocalization::getCurrentLocale();
+        }
+
         foreach ($locales as $locale => $name) {
-            if ($locale == LaravelLocalization::getCurrentLocale()) {
+            if ($locale == $currentLocale) {
                 unset($locales[$locale]);
             }
         }
