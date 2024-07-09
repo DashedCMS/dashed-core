@@ -69,49 +69,12 @@ trait HasEditableCMSActions
                     ->multiple()
             ])
             ->action(function (array $data) {
-                foreach ($this->record->translatable as $column) {
-                    if (!method_exists($this->record, $column)) {
-                        $textToTranslate = $this->record->getTranslation($column, $this->activeLocale);
-
-                        foreach ($data['to_locales'] as $locale) {
-                            TranslateValueFromModel::dispatch($this->record, $column, $textToTranslate, $locale, $this->activeLocale);
-                        }
-                    }
-                }
-
-                if ($this->record->metadata) {
-                    $translatableMetaColumns = [
-                        'title',
-                        'description',
-                    ];
-
-                    foreach ($translatableMetaColumns as $column) {
-                        $textToTranslate = $this->record->metadata->getTranslation($column, $this->activeLocale);
-                        foreach ($data['to_locales'] as $locale) {
-                            TranslateValueFromModel::dispatch($this->record->metadata, $column, $textToTranslate, $locale, $this->activeLocale);
-                        }
-                    }
-                }
-
-                if ($this->record->customBlocks) {
-                    $translatableCustomBlockColumns = [
-                        'blocks',
-                    ];
-
-                    foreach ($translatableCustomBlockColumns as $column) {
-                        $textToTranslate = $this->record->customBlocks->getTranslation($column, $this->activeLocale);
-                        foreach ($data['to_locales'] as $locale) {
-                            TranslateValueFromModel::dispatch($this->record->customBlocks, $column, $textToTranslate, $locale, $this->activeLocale, [
-                                'customBlock' => str($this->record::class . 'Blocks')->explode('\\')->last(),
-                            ]);
-                        }
-                    }
-                }
+                AutomatedTranslation::translateModel($this->record, $this->activeLocale, $data['to_locales']);
 
                 //Refresh page to make sure saving does not overwrite the translation anymore
                 Notification::make()
                     ->title("Item wordt vertaald, dit kan even duren. Sla de pagina niet op tot de vertalingen klaar zijn.")
-                    ->success()
+                    ->warning()
                     ->send();
 
                 return redirect()->to(request()->header('Referer'));
