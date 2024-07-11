@@ -22,6 +22,10 @@ class FrontendMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
+        if (str($_SERVER['REQUEST_URI'])->endsWith('/')) {
+            return redirect(str($_SERVER['REQUEST_URI'])->replaceLast('/', ''), 301);
+        }
+
         Locales::setLocale(LaravelLocalization::getCurrentLocale());
 
         seo()->metaData('webmasterTags', [
