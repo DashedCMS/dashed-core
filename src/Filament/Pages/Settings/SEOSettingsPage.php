@@ -35,6 +35,7 @@ class SEOSettingsPage extends Page
             $formData["default_meta_data_twitter_creator_{$site['id']}"] = Customsetting::get('default_meta_data_twitter_creator', $site['id']);
             $formData["default_meta_data_image_{$site['id']}"] = Customsetting::get('default_meta_data_image', $site['id']);
             $formData["seo_check_models"] = Customsetting::get('seo_check_models', null, false);
+//            $formData["force_trailing_slash"] = Customsetting::get('force_trailing_slash', null, false);
         }
 
         $this->form->fill($formData);
@@ -79,7 +80,10 @@ class SEOSettingsPage extends Page
                 ->schema([
                     Toggle::make("seo_check_models")
                         ->label('Check SEO modellen op score')
-                        ->helperText('Dit kan het opslaan process vertragen, vraag dit na bij je beheerder.')
+                        ->helperText('Dit kan het opslaan process vertragen, vraag dit na bij je beheerder.'),
+//                    Toggle::make("force_trailing_slash")
+//                        ->label('Forceer trailing slash')
+//                        ->helperText('Forceer een trailing slash op alle URL\'s, dit kan invloed hebben op de SEO score van je website'),
                 ]);
 
         return $tabGroups;
@@ -99,6 +103,7 @@ class SEOSettingsPage extends Page
             Customsetting::set('default_meta_data_twitter_creator', $this->form->getState()["default_meta_data_twitter_creator_{$site['id']}"], $site['id']);
             Customsetting::set('default_meta_data_image', $this->form->getState()["default_meta_data_image_{$site['id']}"], $site['id']);
             Customsetting::set('seo_check_models', $this->form->getState()["seo_check_models"], $site['id']);
+//            Customsetting::set('force_trailing_slash', $this->form->getState()["force_trailing_slash"], $site['id']);
         }
 
         Notification::make()
