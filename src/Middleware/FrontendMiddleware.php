@@ -22,11 +22,17 @@ class FrontendMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if (!Customsetting::get('force_trailing_slash', null, false) && str($_SERVER['REQUEST_URI'])->endsWith('/')) {
-            return redirect(str($_SERVER['REQUEST_URI'])->replaceLast('/', ''));
+        if (preg_match('/.+\/$/', $request->getRequestUri())) {
+            $url = rtrim($request->getRequestUri(), '/');
+
+            return redirect($url, 301);
+        }
+
+//        if (!Customsetting::get('force_trailing_slash', null, false) && str($_SERVER['REQUEST_URI'])->endsWith('/')) {
+//            return redirect(str($_SERVER['REQUEST_URI'])->replaceLast('/', ''));
 //        }elseif(Customsetting::get('force_trailing_slash', null, false) && !str($_SERVER['REQUEST_URI'])->endsWith('/')){
 //            return redirect(str($_SERVER['REQUEST_URI'])->append('/'));
-        }
+//        }
 
         Locales::setLocale(LaravelLocalization::getCurrentLocale());
 
