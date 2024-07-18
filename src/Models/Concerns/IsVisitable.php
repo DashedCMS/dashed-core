@@ -51,6 +51,7 @@ trait IsVisitable
             }
 
             $model->site_ids = $model->site_ids ?? [Sites::getFirstSite()['id']];
+            Cache::forget('page-' . str($model->getUrl())->replace(url('/') . '/', ''));
         });
 
         static::saved(function ($model) {
@@ -288,13 +289,15 @@ trait IsVisitable
                 app()->setLocale($correctLocale);
                 seo()->metaData('alternateUrls', $alternateUrls);
 
-                if ($overviewPage ?? false) {
-                    View::share('page', $overviewPage);
-                }
-                View::share($class, $model);
-                View::share('model', $model);
-                View::share('breadcrumbs', $model->breadcrumbs());
-
+                return [
+                    'view' => Customsetting::get('site_theme', null, 'dashed') . '.' . $class . '.show',
+                    'parameters' => [
+                        'page' => $overviewPage,
+                        'breadcrumbs' => $model->breadcrumbs(),
+                        $class => $model,
+                        'model' => $model,
+                    ]
+                ];
                 return view(Customsetting::get('site_theme', null, 'dashed') . '.' . $class . '.show');
             } else {
                 return 'pageNotFound';
