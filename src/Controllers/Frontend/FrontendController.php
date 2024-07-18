@@ -9,6 +9,7 @@ use Dashed\DashedEcommerceCore\Jobs\UpdateProductInformationJob;
 use Dashed\DashedEcommerceCore\Models\Product;
 use Dashed\DashedPages\Models\Page;
 use Dashed\Seo\Jobs\ScanSpecificResult;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Dashed\Drift\UrlBuilder;
 use App\Http\Controllers\Controller;
@@ -46,37 +47,44 @@ class FrontendController extends Controller
             seo()->metaData('metaImage', Customsetting::get('default_meta_data_image'));
         }
 
-        foreach (cms()->builder('routeModels') as $routeModel) {
-            if (method_exists($routeModel['class'], 'resolveRoute')) {
-                $response = $routeModel['class']::resolveRoute([
-                    'slug' => $slug,
-                ]);
-            } else {
-                $response = $routeModel['routeHandler']::handle([
-                    'slug' => $slug,
-                ]);
-            }
-
-            if (is_a($response, \Illuminate\View\View::class)) {
-                $schemas = seo()->metaData('schemas');
-                $schemas['localBusiness']->name(seo()->metaData('metaTitle'));
-
-                if (seo()->metaData('metaImage')) {
-//                    $schemas['localBusiness']->image(app(UrlBuilder::class)->url('dashed', seo()->metaData('metaImage'), [
-//                        'widen' => 1200,
-//                    ]));
-//                    seo()->metaData('metaImage', app(UrlBuilder::class)->url('dashed', seo()->metaData('metaImage'), [
-//                        'widen' => 1200,
-//                    ]));
-                    $schemas['localBusiness']->image(mediaHelper()->getSingleMedia(seo()->metaData('metaImage'), 'huge')->url ?? '');
-                    seo()->metaData('metaImage', mediaHelper()->getSingleMedia(seo()->metaData('metaImage'), 'huge')->url ?? '');
+        $response = Cache::remember('page-' . $slug, 60, function () use ($slug) {
+            foreach (cms()->builder('routeModels') as $routeModel) {
+                if (method_exists($routeModel['class'], 'resolveRoute')) {
+                    $response = $routeModel['class']::resolveRoute([
+                        'slug' => $slug,
+                    ]);
+                } else {
+                    $response = $routeModel['routeHandler']::handle([
+                        'slug' => $slug,
+                    ]);
                 }
-                seo()->metaData('schemas', $schemas);
 
-                return $response->render();
-            } elseif ($response == 'pageNotFound') {
-                return $this->$response();
+                if ($response) {
+                    return $response;
+                }
             }
+
+            return null;
+        });
+
+        if ($response && is_array($response)) {
+            $schemas = seo()->metaData('schemas');
+            $schemas['localBusiness']->name(seo()->metaData('metaTitle'));
+
+            if (seo()->metaData('metaImage')) {
+                $schemas['localBusiness']->image(mediaHelper()->getSingleMedia(seo()->metaData('metaImage'), 'huge')->url ?? '');
+                seo()->metaData('metaImage', mediaHelper()->getSingleMedia(seo()->metaData('metaImage'), 'huge')->url ?? '');
+            }
+
+            seo()->metaData('schemas', $schemas);
+
+            foreach ($response['parameters'] ?? [] as $key => $value) {
+                view()->share($key, $value);
+            }
+
+            return view($response['view']);
+        } elseif ($response == 'pageNotFound') {
+            return $this->$response();
         }
 
         if ($redirect = Redirect::where('from', $slug)->orWhere('from', '/' . $slug)->orWhere('from', $slug . '/')->orWhere('from', '/' . $slug . '/')->first()) {
