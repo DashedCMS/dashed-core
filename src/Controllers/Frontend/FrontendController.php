@@ -75,6 +75,11 @@ class FrontendController extends Controller
 
                 return $response->render();
             } elseif ($response == 'pageNotFound') {
+
+                if ($redirect = Redirect::where('from', $slug)->orWhere('from', '/' . $slug)->orWhere('from', $slug . '/')->orWhere('from', '/' . $slug . '/')->first()) {
+                    return redirect($redirect->to, $redirect->sort);
+                }
+
                 return $this->$response();
             }
         }
