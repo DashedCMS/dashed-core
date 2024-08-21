@@ -70,9 +70,15 @@
 @endif
 
 <title>{{ seo()->metaData('metaTitle') }}</title>
-@foreach(seo()->metaData('alternateUrls') as $locale => $url)
-    <link rel="alternate" hreflang="{{ $locale }}" href="{{ $url }}"/>
-@endforeach
+@isset($model)
+{{--    @foreach(seo()->metaData('alternateUrls') as $locale => $url)--}}
+{{--        <link rel="alternate" hreflang="{{ $locale }}" href="{{ $url }}"/>--}}
+{{--    @endforeach--}}
+        <link rel="alternate" hreflang="x-default" href="{{ $model->getUrl(\Dashed\DashedCore\Classes\Locales::getFirstLocale()['id']) }}"/>
+    @foreach(\Dashed\DashedCore\Classes\Locales::getLocales() as $locale)
+        <link rel="alternate" hreflang="{{ $locale['id'] }}" href="{{ $model->getUrl($locale['id']) }}"/>
+    @endforeach
+@endisset
 <meta name="description" content="{{ seo()->metaData('metaDescription') }}">
 <link rel="canonical" href="{{ request()->url() }}">
 <meta property="og:url" content="{{ request()->url() }}">
