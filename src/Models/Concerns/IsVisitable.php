@@ -208,24 +208,34 @@ trait IsVisitable
         return Page::publicShowable()->find(Customsetting::get(str(class_basename(self::class))->lower() . '_overview_page_id', Sites::getActive()));
     }
 
-    public function getUrl()
+    public function getUrl($activeLocale = null)
     {
+        $originalLocale = app()->getLocale();
+
+        if (!$activeLocale) {
+            $activeLocale = $originalLocale;
+        }
+
         $overviewPage = self::getOverviewPage();
         if ($overviewPage) {
             if (method_exists($this, 'parent') && $this->parent) {
-                $url = "{$this->parent->getUrl()}/{$this->slug}";
+                $url = "{$this->parent->getUrl($activeLocale)}/{$this->getTranslation('slug', $activeLocale)}";
             } else {
-                $url = "{$overviewPage->getUrl()}/{$this->slug}";
+                $url = "{$overviewPage->getUrl($activeLocale)}/{$this->getTranslation('slug', $activeLocale)}";
             }
         } elseif ($this->is_home) {
             $url = '/';
         } elseif (method_exists($this, 'parent') && $this->parent) {
-            $url = "{$this->parent->getUrl()}/{$this->slug}";
+            $url = "{$this->parent->getUrl($activeLocale)}/{$this->getTranslation('slug', $activeLocale)}";
         } else {
-            $url = $this->slug;
+            $url = $this->getTranslation('slug', $activeLocale);
         }
 
-        return LaravelLocalization::localizeUrl($url);
+        if ($activeLocale != Locales::getFirstLocale()['id']) {
+            $url = $activeLocale . '/' . $url;
+        }
+
+        return url($url);
     }
 
     public function getUrlAttribute()

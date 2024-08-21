@@ -7,6 +7,7 @@ use Dashed\DashedCore\Filament\Actions\ShowSEOScoreAction;
 use Dashed\DashedTranslations\Classes\AutomatedTranslation;
 use Dashed\DashedTranslations\Jobs\TranslateValueFromModel;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\LocaleSwitcher;
 use Filament\Forms\Components\Select;
@@ -36,23 +37,47 @@ trait HasEditableCMSActions
 
     public function CMSActions(): array
     {
-        return [
-            Action::make('view')
+        $actions = [];
+
+        if (count(Locales::getLocalesArray()) > 1) {
+            $viewActions = [];
+
+            foreach (Locales::getLocales() as $locale) {
+                $viewActions[] = Action::make('view')
+                    ->button()
+                    ->label($locale['native'])
+                    ->url($this->record->getUrl($locale['id']))
+                    ->openUrlInNewTab();
+            }
+
+            $actions[] = ActionGroup::make($viewActions)
+                ->label('Bekijk')
+                ->icon('heroicon-o-eye')
+                ->button();
+        } else {
+            $actions[] = Action::make('view')
                 ->button()
                 ->label('Bekijk')
-                ->url($this->record->getUrl())
-                ->openUrlInNewTab(),
+                ->icon('heroicon-o-eye')
+                ->url($this->record->getUrl($this->activeLocale))
+                ->openUrlInNewTab();
+        }
+
+        return array_merge($actions, [
             Action::make('Dupliceer')
                 ->action('duplicate')
+                ->icon('heroicon-o-document-duplicate')
                 ->color('warning'),
             ShowSEOScoreAction::make(),
-            self::duplicateAction(),
-            LocaleSwitcher::make(),
-            DeleteAction::make(),
-        ];
+            self::translateAction(),
+            LocaleSwitcher::make()
+                ->icon('heroicon-o-language'),
+            DeleteAction::make()
+                ->icon('heroicon-o-trash'),
+        ]);
     }
 
-    public function duplicateAction()
+    public function translateAction()
     {
         return Action::make('translate')
             ->icon('heroicon-m-language')
