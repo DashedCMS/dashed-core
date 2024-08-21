@@ -4,6 +4,7 @@ namespace Dashed\DashedCore\Models\Concerns;
 
 use Carbon\Carbon;
 use Dashed\DashedArticles\Models\Article;
+use Dashed\DashedCore\Classes\UrlHelper;
 use Dashed\DashedCore\Jobs\RunUrlHistoryCheck;
 use Dashed\DashedCore\Models\Redirect;
 use Dashed\DashedCore\Models\UrlHistory;
@@ -119,8 +120,11 @@ trait IsVisitable
             foreach (Locales::getLocales() as $locale) {
                 if (in_array($locale['id'], Sites::get()['locales'])) {
                     Locales::setLocale($locale['id']);
-                    $sitemap
-                        ->add(Url::create($model->getUrl()));
+                    $url = $model->getUrl($locale['id']);
+                    if (UrlHelper::checkUrlResponseCode($url) !== 404) {
+                        $sitemap
+                            ->add(Url::create($url));
+                    }
                 }
             }
         }
