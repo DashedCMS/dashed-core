@@ -34,6 +34,10 @@ class FrontendController extends Controller
 
     public function index($slug = null)
     {
+        if(str($slug)->contains('__media/')){
+            return;
+        }
+
         foreach (Locales::getLocales() as $locale) {
             if (Str::startsWith($slug, $locale['id'] . '/') || $slug == $locale['id']) {
                 $slug = Str::substr($slug, strlen($locale['id']) + 1);
@@ -47,10 +51,13 @@ class FrontendController extends Controller
         }
 
         foreach (cms()->builder('routeModels') as $routeModel) {
+            dump($routeModel);
             if (method_exists($routeModel['class'], 'resolveRoute')) {
+                dump('resolveRoute');
                 $response = $routeModel['class']::resolveRoute([
                     'slug' => $slug,
                 ]);
+                dump($response);
             } else {
                 $response = $routeModel['routeHandler']::handle([
                     'slug' => $slug,
