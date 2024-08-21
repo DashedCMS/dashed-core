@@ -51,13 +51,10 @@ class FrontendController extends Controller
         }
 
         foreach (cms()->builder('routeModels') as $routeModel) {
-            dump($routeModel);
             if (method_exists($routeModel['class'], 'resolveRoute')) {
-                dump('resolveRoute');
                 $response = $routeModel['class']::resolveRoute([
                     'slug' => $slug,
                 ]);
-                dump($response);
             } else {
                 $response = $routeModel['routeHandler']::handle([
                     'slug' => $slug,
