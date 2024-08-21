@@ -34,7 +34,7 @@ class FrontendMiddleware
 //            return redirect(str($_SERVER['REQUEST_URI'])->append('/'));
 //        }
 
-        Locales::setLocale(LaravelLocalization::getCurrentLocale());
+//        Locales::setLocale(LaravelLocalization::getCurrentLocale());
 
         seo()->metaData('webmasterTags', [
             'google' => Customsetting::get('webmaster_tag_google'),

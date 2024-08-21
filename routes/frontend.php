@@ -52,6 +52,6 @@ if (config('dashed-core.default_auth_pages_enabled', true)) {
 }
 
 Route::fallback([FrontendController::class, 'index'])
-    ->middleware(array_merge(['web', FrontendMiddleware::class, LocaleSessionRedirect::class, LaravelLocalizationRedirectFilter::class, LaravelLocalizationViewPath::class], cms()->builder('frontendMiddlewares')))
+    ->middleware(array_merge(['web', FrontendMiddleware::class, \Dashed\DashedCore\Middleware\LocaleSessionRedirect::class, LaravelLocalizationRedirectFilter::class, LaravelLocalizationViewPath::class], cms()->builder('frontendMiddlewares')))
     ->name('dashed.frontend.general.index')
     ->where('slug', '.*');
