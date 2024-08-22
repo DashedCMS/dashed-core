@@ -235,8 +235,10 @@ trait IsVisitable
             $url = $this->getTranslation('slug', $activeLocale);
         }
 
-        $url = '/' . $url;
-        if ($activeLocale != Locales::getFirstLocale()['id']) {
+        if (!str($url)->startsWith('/')) {
+            $url = '/' . $url;
+        }
+        if ($activeLocale != Locales::getFirstLocale()['id'] && !str($url)->start("/{$activeLocale}")) {
             $url = '/' . $activeLocale . $url;
         }
 
