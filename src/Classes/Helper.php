@@ -41,14 +41,18 @@ class Helper
         return LaravelLocalization::localizeUrl($url);
     }
 
-    public static function getCurrentUrlInLocale($locale, $url = null)
+    public static function getCurrentUrlInLocale($locale, $url = null, $model = null)
     {
-        $urlHistory = UrlHistory::where('url', $url ?: str(request()->url())->replace(url('/'), ''))->where('locale', app()->getLocale())->where('site_id', Sites::getActive())->first();
-        if($urlHistory && $urlHistory->previous_url){
-            return $urlHistory->previous_url;
+        if ($model) {
+            return $model->getUrl($locale);
+        } else {
+            $urlHistory = UrlHistory::where('url', $url ?: str(request()->url())->replace(url('/'), ''))->where('locale', app()->getLocale())->where('site_id', Sites::getActive())->first();
+            if ($urlHistory && $urlHistory->previous_url) {
+                return $urlHistory->previous_url;
+            }
         }
 
-        if (! $url) {
+        if (!$url) {
             $url = '/' . $locale;
         }
 
