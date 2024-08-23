@@ -24,6 +24,29 @@ trait HasEditableCMSActions
         $this->oldActiveLocale = $this->activeLocale;
         $this->save();
 
+        foreach ($this->getRecord()->resourceRelations ?? [] as $resourceRelation => $relationClass) {
+            foreach ($this->data[$resourceRelation] ?? [] as $key => $relationArray) {
+                $relation = $this->getRecord()->$resourceRelation()->find($relationArray['id'] ?? 0);
+                if ($relation) {
+                    foreach ($relation->translatable as $attribute) {
+                        $this->data[$resourceRelation][$key][$attribute] = $relation->getTranslation($attribute, $newVal);
+                    }
+
+                    foreach ($relationClass['childRelations'] ?? [] as $childRelationName) {
+                        foreach ($this->data[$resourceRelation][$key][$childRelationName] ?? [] as $childKey => $childRelationArray) {
+                            $childRelation = $relation->$childRelationName()->find($childRelationArray['id'] ?? 0);
+                            if ($childRelation) {
+                                foreach ($childRelation->translatable as $childAttribute) {
+//                                    dd($this->data, $resourceRelation, $key, $childRelationName, $childKey, $childAttribute, $childRelation->getTranslation($childAttribute, $newVal));
+                                    $this->data[$resourceRelation][$key][$childRelationName][$childKey][$childAttribute] = $childRelation->getTranslation($childAttribute, $newVal);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         if (method_exists($this->getRecord(), 'customBlocks')) {
             $this->data['customBlocks'] = $this->getRecord()->customBlocks ? $this->getRecord()->customBlocks->getTranslation('blocks', $newVal) : null;
         }
