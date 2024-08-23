@@ -212,7 +212,7 @@ trait IsVisitable
         return Page::publicShowable()->find(Customsetting::get(str(class_basename(self::class))->lower() . '_overview_page_id', Sites::getActive()));
     }
 
-    public function getUrl($activeLocale = null)
+    public function getUrl($activeLocale = null, bool $native = true)
     {
         $originalLocale = app()->getLocale();
 
@@ -242,7 +242,7 @@ trait IsVisitable
             $url = '/' . $activeLocale . $url;
         }
 
-        return $url;
+        return $native ? $url : url($url);
     }
 
     public function getUrlAttribute()

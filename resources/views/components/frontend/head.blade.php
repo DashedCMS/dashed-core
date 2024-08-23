@@ -74,9 +74,9 @@
 {{--    @foreach(seo()->metaData('alternateUrls') as $locale => $url)--}}
 {{--        <link rel="alternate" hreflang="{{ $locale }}" href="{{ $url }}"/>--}}
 {{--    @endforeach--}}
-        <link rel="alternate" hreflang="x-default" href="{{ $model->getUrl(\Dashed\DashedCore\Classes\Locales::getFirstLocale()['id']) }}"/>
+        <link rel="alternate" hreflang="x-default" href="{{ $model->getUrl(\Dashed\DashedCore\Classes\Locales::getFirstLocale()['id'], false) }}"/>
     @foreach(\Dashed\DashedCore\Classes\Locales::getLocales() as $locale)
-        <link rel="alternate" hreflang="{{ $locale['id'] }}" href="{{ $model->getUrl($locale['id']) }}"/>
+        <link rel="alternate" hreflang="{{ $locale['id'] }}" href="{{ $model->getUrl($locale['id'], false) }}"/>
     @endforeach
 @endisset
 <meta name="description" content="{{ seo()->metaData('metaDescription') }}">
