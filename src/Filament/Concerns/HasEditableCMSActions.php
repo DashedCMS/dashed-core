@@ -77,6 +77,33 @@ trait HasEditableCMSActions
         ]);
     }
 
+    public function viewAction(): ActionGroup|Action
+    {
+        if (count(Locales::getLocalesArray()) > 1) {
+            $viewActions = [];
+
+            foreach (Locales::getLocales() as $locale) {
+                $viewActions[] = Action::make('view')
+                    ->button()
+                    ->label($locale['native'])
+                    ->url($this->record->getUrl($locale['id']))
+                    ->openUrlInNewTab();
+            }
+
+            return ActionGroup::make($viewActions)
+                ->label('Bekijk')
+                ->icon('heroicon-o-eye')
+                ->button();
+        } else {
+            return Action::make('view')
+                ->button()
+                ->label('Bekijk')
+                ->icon('heroicon-o-eye')
+                ->url($this->record->getUrl($this->activeLocale))
+                ->openUrlInNewTab();
+        }
+    }
+
     public function translateAction()
     {
         return Action::make('translate')
