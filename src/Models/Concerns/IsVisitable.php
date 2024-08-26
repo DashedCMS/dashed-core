@@ -318,4 +318,30 @@ trait IsVisitable
             }
         }
     }
+
+    public function getPlainContent(): string
+    {
+        $finalString = '';
+
+        foreach ($this->content as $item) {
+            // Check if it's content and add it to the string
+            if (isset($item['data']['content'])) {
+                $finalString .= strip_tags($item['data']['content']) . ' ';
+            }
+
+            // Loop through the data to find any keys containing "title"
+            foreach ($item['data'] as $key => $value) {
+                if (stripos($key, 'title') !== false) { // Check if "title" exists in the key name
+                    $finalString .= strip_tags($value) . ' ';
+                }
+
+                // If the value is an array, pass it through the tiptap_editor function
+                if (is_array($value)) {
+                    $finalString .= tiptap_editor()->asText($value) . ' ';
+                }
+            }
+        }
+
+        return trim($finalString);
+    }
 }
