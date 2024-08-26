@@ -337,7 +337,7 @@ trait IsVisitable
 
                 // If the value is an array, pass it through the tiptap_editor function
                 if (is_array($value)) {
-                    $finalString .= tiptap_editor()->asText($value) . ' ';
+                    $finalString .= tiptap_converter()->asText($value) . ' ';
                 }
             }
         }
