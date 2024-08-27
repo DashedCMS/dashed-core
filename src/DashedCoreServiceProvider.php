@@ -2,7 +2,6 @@
 
 namespace Dashed\DashedCore;
 
-use Dashed\DashedCore\Classes\FileUploadPatch;
 use Dashed\DashedCore\Commands\CreateAdminUser;
 use Dashed\DashedCore\Commands\CreateSitemap;
 use Dashed\DashedCore\Commands\CreateVisitableModel;
@@ -26,7 +25,6 @@ use Dashed\DashedCore\Models\Customsetting;
 use Dashed\Drift\CachingStrategies\FilesystemCachingStrategy;
 use Dashed\Drift\Config;
 use Dashed\Drift\DriftManager;
-use Filament\Forms\Components\FileUpload;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Mail;
@@ -42,15 +40,15 @@ class DashedCoreServiceProvider extends PackageServiceProvider
     {
         Model::unguard();
 
-//        $drift = app(DriftManager::class);
-//
-//        $drift->registerConfig(new Config(
-//            name: 'dashed',
-//            filesystemDisk: (config('filesystems')['disks']['dashed']['driver'] ?? 'local') == 's3' ? 'dashed' : 'public',
-//            cachingStrategy: FilesystemCachingStrategy::class,
-//            forceLazyLoad: Customsetting::get('image_force_lazy_load', null, false),
-//            showSizes: Customsetting::get('image_show_sizes', null, false),
-//        ));
+        //        $drift = app(DriftManager::class);
+        //
+        //        $drift->registerConfig(new Config(
+        //            name: 'dashed',
+        //            filesystemDisk: (config('filesystems')['disks']['dashed']['driver'] ?? 'local') == 's3' ? 'dashed' : 'public',
+        //            cachingStrategy: FilesystemCachingStrategy::class,
+        //            forceLazyLoad: Customsetting::get('image_force_lazy_load', null, false),
+        //            showSizes: Customsetting::get('image_show_sizes', null, false),
+        //        ));
 
         Livewire::component('notification.toastr', Toastr::class);
         Livewire::component('auth.login', Login::class);
@@ -68,10 +66,10 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             $schedule->command(CreateSitemap::class)->daily();
             $schedule->command(InvalidatePasswordResetTokens::class)->everyFifteenMinutes();
             $schedule->command(RunUrlHistoryCheckCommand::class)->everyFifteenMinutes();
-//            $schedule->command(SeoScan::class)->daily();
+            //            $schedule->command(SeoScan::class)->daily();
         });
 
-        if (!$this->app->environment('production')) {
+        if (! $this->app->environment('production')) {
             Mail::alwaysFrom('info@dashed.nl');
             Mail::alwaysTo('info@dashed.nl');
         }
@@ -84,9 +82,9 @@ class DashedCoreServiceProvider extends PackageServiceProvider
 
     public function configurePackage(Package $package): void
     {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
-        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'dashed-core');
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'dashed-core');
 
         cms()->builder(
             'settingPages',

@@ -2,22 +2,22 @@
 
 namespace Dashed\DashedCore\Models;
 
-use Filament\Panel;
-use Spatie\Activitylog\LogOptions;
-use Filament\Models\Contracts\HasAvatar;
-use Illuminate\Notifications\Notifiable;
-use Filament\Models\Contracts\FilamentUser;
-use Spatie\Activitylog\Traits\LogsActivity;
 use Dashed\DashedCore\Traits\HasDynamicRelation;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasAvatar;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class User extends Authenticatable implements FilamentUser, HasAvatar
 {
-    use HasFactory;
-    use Notifiable;
-    use LogsActivity;
     use HasDynamicRelation;
+    use HasFactory;
+    use LogsActivity;
+    use Notifiable;
 
     protected static $logFillable = true;
 
@@ -57,7 +57,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return ($this->role === 'admin');
+        return $this->role === 'admin';
     }
 
     public function getFilamentName(): string
@@ -82,6 +82,6 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
 
     public function getFilamentAvatarUrl(): ?string
     {
-        return 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($this->email)));
+        return 'https://www.gravatar.com/avatar/'.md5(strtolower(trim($this->email)));
     }
 }

@@ -36,13 +36,10 @@ class DashedCorePlugin implements Plugin
                 CacheSettingsPage::class,
             ])
             ->widgets([
-//                NotFoundPageStats::class,
-//                NotFoundPageGlobalStats::class,
+                //                NotFoundPageStats::class,
+                //                NotFoundPageGlobalStats::class,
             ]);
     }
 
-    public function boot(Panel $panel): void
-    {
-
-    }
+    public function boot(Panel $panel): void {}
 }

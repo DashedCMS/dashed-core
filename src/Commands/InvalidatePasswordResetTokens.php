@@ -3,8 +3,8 @@
 namespace Dashed\DashedCore\Commands;
 
 use Carbon\Carbon;
-use Illuminate\Console\Command;
 use Dashed\DashedCore\Models\User;
+use Illuminate\Console\Command;
 
 class InvalidatePasswordResetTokens extends Command
 {
@@ -40,8 +40,8 @@ class InvalidatePasswordResetTokens extends Command
     public function handle()
     {
         User::where('password_reset_requested', '<', Carbon::now()->subHour())->update([
-           'password_reset_token' => null,
-           'password_reset_requested' => null,
+            'password_reset_token' => null,
+            'password_reset_requested' => null,
         ]);
     }
 }

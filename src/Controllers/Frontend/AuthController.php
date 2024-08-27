@@ -3,19 +3,19 @@
 namespace Dashed\DashedCore\Controllers\Frontend;
 
 use Carbon\Carbon;
+use Dashed\DashedCore\Mail\PasswordResetMail;
 use Dashed\DashedCore\Models\Customsetting;
-use Illuminate\Support\Str;
 use Dashed\DashedCore\Models\User;
+use Dashed\DashedCore\Requests\Frontend\ForgotPasswordRequest;
+use Dashed\DashedCore\Requests\Frontend\LoginRequest;
+use Dashed\DashedCore\Requests\Frontend\RegisterRequest;
+use Dashed\DashedCore\Requests\Frontend\ResetPasswordRequest;
+use Dashed\DashedTranslations\Models\Translation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\View;
-use Dashed\DashedCore\Mail\PasswordResetMail;
-use Dashed\DashedTranslations\Models\Translation;
-use Dashed\DashedCore\Requests\Frontend\LoginRequest;
-use Dashed\DashedCore\Requests\Frontend\RegisterRequest;
-use Dashed\DashedCore\Requests\Frontend\ResetPasswordRequest;
-use Dashed\DashedCore\Requests\Frontend\ForgotPasswordRequest;
+use Illuminate\Support\Str;
 
 class AuthController extends FrontendController
 {
@@ -25,11 +25,11 @@ class AuthController extends FrontendController
             return redirect(route('dashed.frontend.account'))->with('success', Translation::get('already-logged-in', 'login', 'You are already logged in'));
         }
 
-        if (View::exists(Customsetting::get('site_theme', null, 'dashed') . '.login.show')) {
+        if (View::exists(Customsetting::get('site_theme', null, 'dashed').'.login.show')) {
             seo()->metaData('metaTitle', Translation::get('login-page-meta-title', 'login', 'Login'));
             seo()->metaData('metaDescription', Translation::get('login-page-meta-description', 'login', 'Login to your account'));
 
-            return view(Customsetting::get('site_theme', null, 'dashed') . '.login.show');
+            return view(Customsetting::get('site_theme', null, 'dashed').'.login.show');
         } else {
             return $this->pageNotFound();
         }
@@ -54,7 +54,7 @@ class AuthController extends FrontendController
 
     public function registerPost(RegisterRequest $request)
     {
-        $user = new User();
+        $user = new User;
         $user->first_name = $request->first_name;
         $user->last_name = $request->last_name;
         $user->email = $request->email;
@@ -83,11 +83,11 @@ class AuthController extends FrontendController
             return redirect(route('dashed.frontend.account'))->with('success', Translation::get('already-logged-in', 'login', 'You are already logged in'));
         }
 
-        if (View::exists(Customsetting::get('site_theme', null, 'dashed') . '.forgot-password.show')) {
+        if (View::exists(Customsetting::get('site_theme', null, 'dashed').'.forgot-password.show')) {
             seo()->metaData('metaTitle', Translation::get('forgot-password-page-meta-title', 'login', 'Forgot password'));
             seo()->metaData('metaDescription', Translation::get('forgot-password-page-meta-description', 'login', 'Forgot your password?'));
 
-            return view(Customsetting::get('site_theme', null, 'dashed') . '.forgot-password.show');
+            return view(Customsetting::get('site_theme', null, 'dashed').'.forgot-password.show');
         } else {
             return $this->pageNotFound();
         }
@@ -116,7 +116,7 @@ class AuthController extends FrontendController
             return redirect(route('dashed.frontend.account'))->with('success', Translation::get('already-logged-in', 'login', 'You are already logged in'));
         }
 
-        if (View::exists(Customsetting::get('site_theme', null, 'dashed') . '.reset-password.show')) {
+        if (View::exists(Customsetting::get('site_theme', null, 'dashed').'.reset-password.show')) {
             seo()->metaData('metaTitle', Translation::get('reset-password-page-meta-title', 'login', 'Reset password'));
             seo()->metaData('metaDescription', Translation::get('reset-password-page-meta-description', 'login', 'Reset your password'));
 
@@ -129,7 +129,7 @@ class AuthController extends FrontendController
             View::share('user', $user);
             View::share('passwordResetToken', $passwordResetToken);
 
-            return view(Customsetting::get('site_theme', null, 'dashed') . '.reset-password.show');
+            return view(Customsetting::get('site_theme', null, 'dashed').'.reset-password.show');
         } else {
             return $this->pageNotFound();
         }

@@ -2,13 +2,11 @@
 
 namespace Dashed\DashedCore\Models;
 
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Storage;
-use Spatie\Activitylog\LogOptions;
 use Dashed\DashedCore\Classes\Sites;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 class CustomsettingOld extends Model
@@ -39,11 +37,11 @@ class CustomsettingOld extends Model
 
         $settings = cache()->get(static::CACHE_KEY);
 
-        if(!$settings){
+        if (! $settings) {
             return $default;
         }
 
-        if (!$siteId) {
+        if (! $siteId) {
             $siteId = Sites::getActive();
         }
 
@@ -71,7 +69,7 @@ class CustomsettingOld extends Model
 
     public static function set($name, $value, $siteId = null, $locale = null)
     {
-        if (!$siteId) {
+        if (! $siteId) {
             $siteId = Sites::getSites()[0]['id'];
         }
 
@@ -96,11 +94,11 @@ class CustomsettingOld extends Model
             return Schema::hasTable('dashed__custom_settings');
         });
 
-        if (!$tableExists) {
+        if (! $tableExists) {
             return;
         }
 
-        if (!cache()->has(static::CACHE_KEY)) {
+        if (! cache()->has(static::CACHE_KEY)) {
             cache()->forever(
                 static::CACHE_KEY,
                 $tableExists ? CustomsettingOld::all() : [],

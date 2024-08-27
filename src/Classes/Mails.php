@@ -2,9 +2,9 @@
 
 namespace Dashed\DashedCore\Classes;
 
-use Illuminate\Support\Facades\Mail;
-use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedCore\Mail\NotificationMail;
+use Dashed\DashedCore\Models\Customsetting;
+use Illuminate\Support\Facades\Mail;
 
 class Mails
 {

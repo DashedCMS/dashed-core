@@ -2,17 +2,17 @@
 
 namespace Dashed\DashedCore\Mail;
 
+use Dashed\DashedCore\Models\Customsetting;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Dashed\DashedCore\Models\Customsetting;
 
 class NotificationMail extends Mailable
 {
     use Queueable;
     use SerializesModels;
 
-    public function __construct(String $notification, string $subject)
+    public function __construct(string $notification, string $subject)
     {
         $this->notification = $notification;
         $this->subject = $subject;
@@ -24,7 +24,7 @@ class NotificationMail extends Mailable
             ->from(Customsetting::get('site_from_email'), Customsetting::get('company_name'))
             ->subject($this->subject)
             ->with([
-            'notification' => $this->notification,
-        ]);
+                'notification' => $this->notification,
+            ]);
     }
 }

@@ -1,6 +1,5 @@
 <?php
 
-
 use Dashed\DashedCore\Classes\LinkHelper;
 use Dashed\DashedCore\CMSManager;
 use Dashed\DashedCore\SeoManager;

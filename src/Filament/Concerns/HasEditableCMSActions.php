@@ -5,7 +5,6 @@ namespace Dashed\DashedCore\Filament\Concerns;
 use Dashed\DashedCore\Classes\Locales;
 use Dashed\DashedCore\Filament\Actions\ShowSEOScoreAction;
 use Dashed\DashedTranslations\Classes\AutomatedTranslation;
-use Dashed\DashedTranslations\Jobs\TranslateValueFromModel;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
@@ -37,7 +36,7 @@ trait HasEditableCMSActions
                             $childRelation = $relation->$childRelationName()->find($childRelationArray['id'] ?? 0);
                             if ($childRelation) {
                                 foreach ($childRelation->translatable as $childAttribute) {
-//                                    dd($this->data, $resourceRelation, $key, $childRelationName, $childKey, $childAttribute, $childRelation->getTranslation($childAttribute, $newVal));
+                                    //                                    dd($this->data, $resourceRelation, $key, $childRelationName, $childKey, $childAttribute, $childRelation->getTranslation($childAttribute, $newVal));
                                     $this->data[$resourceRelation][$key][$childRelationName][$childKey][$childAttribute] = $childRelation->getTranslation($childAttribute, $newVal);
                                 }
                             }
@@ -141,13 +140,13 @@ trait HasEditableCMSActions
                     ->default(collect(Locales::getLocalesArrayWithoutCurrent())->keys()->toArray())
                     ->required()
                     ->label('Naar talen')
-                    ->multiple()
+                    ->multiple(),
             ])
             ->action(function (array $data) {
                 AutomatedTranslation::translateModel($this->record, $this->activeLocale, $data['to_locales']);
 
                 Notification::make()
-                    ->title("Item wordt vertaald, dit kan even duren. Sla de pagina niet op tot de vertalingen klaar zijn.")
+                    ->title('Item wordt vertaald, dit kan even duren. Sla de pagina niet op tot de vertalingen klaar zijn.')
                     ->warning()
                     ->send();
 
@@ -160,8 +159,8 @@ trait HasEditableCMSActions
         $newModel = $this->record->replicate();
         foreach (Locales::getLocales() as $locale) {
             $newModel->setTranslation('slug', $locale['id'], $newModel->getTranslation('slug', $locale['id']));
-            while ($this->record::class::where('slug->' . $locale['id'], $newModel->getTranslation('slug', $locale['id']))->count()) {
-                $newModel->setTranslation('slug', $locale['id'], $newModel->getTranslation('slug', $locale['id']) . Str::random(1));
+            while ($this->record::class::where('slug->'.$locale['id'], $newModel->getTranslation('slug', $locale['id']))->count()) {
+                $newModel->setTranslation('slug', $locale['id'], $newModel->getTranslation('slug', $locale['id']).Str::random(1));
             }
         }
 
@@ -194,7 +193,7 @@ trait HasEditableCMSActions
                     $new_array[$key] = self::removeUUIDKeys($value);
                 }
             } else {
-                if (!preg_match('/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/', $key)) {
+                if (! preg_match('/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/', $key)) {
                     $new_array[$key] = $value;
                 } else {
                     $new_array[] = $value;

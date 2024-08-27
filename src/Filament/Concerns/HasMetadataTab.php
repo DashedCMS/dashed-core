@@ -2,13 +2,13 @@
 
 namespace Dashed\DashedCore\Filament\Concerns;
 
-use Filament\Forms\Components\Group;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Toggle;
 use RalphJSmit\Filament\MediaLibrary\Forms\Components\MediaPicker;
 
 trait HasMetadataTab
@@ -38,8 +38,8 @@ trait HasMetadataTab
                         ->image()
                         ->downloadable()
                         ->helperText('De beste afmeting is 1200x630 pixels'),
-//                        TextInput::make('canonical_url')
-//                            ->label('Meta canonical URL'),
+                    //                        TextInput::make('canonical_url')
+                    //                            ->label('Meta canonical URL'),
                     Toggle::make('noindex')
                         ->label('Pagina niet indexeren'),
                     Textarea::make('head_scripts')
@@ -77,8 +77,8 @@ trait HasMetadataTab
                             ->directory('dashed/metadata')
                             ->image()
                             ->helperText('De beste afmeting is 1200x630 pixels'),
-//                        TextInput::make('canonical_url')
-//                            ->label('Meta canonical URL'),
+                        //                        TextInput::make('canonical_url')
+                        //                            ->label('Meta canonical URL'),
                         Toggle::make('noindex')
                             ->label('Pagina niet indexeren'),
                     ]),

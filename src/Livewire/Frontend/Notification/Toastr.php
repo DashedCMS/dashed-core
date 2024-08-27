@@ -7,6 +7,7 @@ use Livewire\Component;
 class Toastr extends Component
 {
     public $successMessage;
+
     public $errorMessage;
 
     protected $listeners = [

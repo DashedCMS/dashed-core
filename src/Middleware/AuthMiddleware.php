@@ -3,17 +3,15 @@
 namespace Dashed\DashedCore\Middleware;
 
 use Closure;
+use Dashed\DashedCore\Classes\AccountHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Dashed\DashedCore\Classes\AccountHelper;
 
 class AuthMiddleware
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @return mixed
      */
     public function handle(Request $request, Closure $next)

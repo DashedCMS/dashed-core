@@ -33,7 +33,7 @@ class Locales
     {
         $locales = self::getLocalesArray();
 
-        if(!$currentLocale){
+        if (! $currentLocale) {
             $currentLocale = LaravelLocalization::getCurrentLocale();
         }
 
@@ -53,7 +53,7 @@ class Locales
 
     public static function getLocale($locale = null)
     {
-        if (!$locale) {
+        if (! $locale) {
             return self::getFirstLocale();
         } else {
             foreach (self::getLocales() as $allLocale) {

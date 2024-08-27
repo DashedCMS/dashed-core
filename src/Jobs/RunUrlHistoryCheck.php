@@ -13,11 +13,12 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class RunUrlHistoryCheck implements ShouldQueue, ShouldBeUnique
+class RunUrlHistoryCheck implements ShouldBeUnique, ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $timeout = 1200;
+
     public $uniqueFor = 1200;
 
     /**
@@ -31,10 +32,7 @@ class RunUrlHistoryCheck implements ShouldQueue, ShouldBeUnique
     /**
      * Create a new job instance.
      */
-    public function __construct()
-    {
-
-    }
+    public function __construct() {}
 
     /**
      * Execute the job.
@@ -43,15 +41,15 @@ class RunUrlHistoryCheck implements ShouldQueue, ShouldBeUnique
     {
         Customsetting::set('last_history_check', now());
 
-//        $batchNumber = UrlHistory::orderBy('batch', 'desc')->first()?->batch + 1;
+        //        $batchNumber = UrlHistory::orderBy('batch', 'desc')->first()?->batch + 1;
         foreach (cms()->builder('routeModels') as $routeModel) {
             foreach ($routeModel['class']::publicShowable()->get() as $model) {
                 foreach (Locales::getLocales() as $locale) {
                     if (in_array($locale['id'], Sites::get()['locales'])) {
                         Locales::setLocale($locale['id']);
                         $urlHistory = $model->urlHistory()->updateOrCreate([
-//                            'batch' => $batchNumber,
-//                            'url' => $model->getUrl(),
+                            //                            'batch' => $batchNumber,
+                            //                            'url' => $model->getUrl(),
                             'method' => 'getUrl',
                             'site_id' => Sites::getActive(),
                             'locale' => $locale['id'],
@@ -67,7 +65,7 @@ class RunUrlHistoryCheck implements ShouldQueue, ShouldBeUnique
             }
         }
 
-//        UrlHistory::where('batch', '<', $batchNumber - 50)->delete();
+        //        UrlHistory::where('batch', '<', $batchNumber - 50)->delete();
         CreateRedirectsFromHistoryUrls::dispatch(Sites::getActive());
     }
 }

@@ -28,7 +28,7 @@ class Helper
 
     public static function getProfilePicture($email)
     {
-        return 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($email)));
+        return 'https://www.gravatar.com/avatar/'.md5(strtolower(trim($email)));
     }
 
     public static function getAdminUrl()
@@ -52,11 +52,12 @@ class Helper
             }
         }
 
-        if (!$url) {
-            $url = '/' . $locale;
+        if (! $url) {
+            $url = '/'.$locale;
         }
 
         return $url;
+
         //When using below, it removes the defaultLocale from URL, which makes it impossible to switch
         return LaravelLocalization::getLocalizedURL($locale, $url);
     }

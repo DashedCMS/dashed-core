@@ -2,8 +2,8 @@
 
 namespace Dashed\DashedCore\Commands;
 
-use Illuminate\Console\Command;
 use Dashed\DashedCore\Models\User;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 
 class CreateAdminUser extends Command
@@ -45,7 +45,7 @@ class CreateAdminUser extends Command
         $email = $this->ask('What is your email?');
         $password = $this->secret('What is your password?');
 
-        $user = new User();
+        $user = new User;
         $user->first_name = $firstName;
         $user->last_name = $lastName;
         $user->email = $email;

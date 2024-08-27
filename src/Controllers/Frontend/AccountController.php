@@ -3,10 +3,10 @@
 namespace Dashed\DashedCore\Controllers\Frontend;
 
 use Dashed\DashedCore\Models\Customsetting;
+use Dashed\DashedCore\Requests\Frontend\UpdateAccountRequest;
+use Dashed\DashedTranslations\Models\Translation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Dashed\DashedTranslations\Models\Translation;
-use Dashed\DashedCore\Requests\Frontend\UpdateAccountRequest;
 
 class AccountController extends FrontendController
 {
@@ -16,7 +16,7 @@ class AccountController extends FrontendController
             seo()->metaData('metaTitle', Translation::get('account-page-meta-title', 'account', 'Account'));
             seo()->metaData('metaDescription', Translation::get('account-page-meta-description', 'account', 'View your account here'));
 
-            return view(Customsetting::get('site_theme', null, 'dashed') . '.account.show');
+            return view(Customsetting::get('site_theme', null, 'dashed').'.account.show');
         } else {
             return $this->pageNotFound();
         }

@@ -13,9 +13,6 @@ trait HasDynamicRelation
 
     /**
      * Add a new relation
-     *
-     * @param $name
-     * @param $closure
      */
     public static function addDynamicRelation($name, $closure)
     {
@@ -25,7 +22,6 @@ trait HasDynamicRelation
     /**
      * Determine if a relation exists in dynamic relationships list
      *
-     * @param $name
      *
      * @return bool
      */
@@ -39,7 +35,6 @@ trait HasDynamicRelation
      * return call to relation or else
      * return the call to the parent
      *
-     * @param $name
      *
      * @return mixed
      */
@@ -63,8 +58,6 @@ trait HasDynamicRelation
      * return the relation or else
      * return the call to the parent
      *
-     * @param $name
-     * @param $arguments
      *
      * @return mixed
      */

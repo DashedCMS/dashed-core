@@ -3,21 +3,21 @@
 namespace Dashed\DashedCore\Filament\Resources;
 
 use App\Models\User;
-use Filament\Forms\Get;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Section;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
+use Dashed\DashedCore\Filament\Resources\UserResource\Users\CreateUser;
 use Dashed\DashedCore\Filament\Resources\UserResource\Users\EditUser;
 use Dashed\DashedCore\Filament\Resources\UserResource\Users\ListUsers;
-use Dashed\DashedCore\Filament\Resources\UserResource\Users\CreateUser;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Resources\Resource;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class UserResource extends Resource
 {
@@ -26,9 +26,13 @@ class UserResource extends Resource
     protected static ?string $recordTitleAttribute = 'name';
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
+
     protected static ?string $navigationGroup = 'Gebruikers';
+
     protected static ?string $navigationLabel = 'Gebruikers';
+
     protected static ?string $label = 'Gebruiker';
+
     protected static ?string $pluralLabel = 'Gebruikers';
 
     public static function shouldRegisterNavigation(): bool

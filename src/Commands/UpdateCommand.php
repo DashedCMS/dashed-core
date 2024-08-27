@@ -3,9 +3,6 @@
 namespace Dashed\DashedCore\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 
 class UpdateCommand extends Command
 {
@@ -40,7 +37,7 @@ class UpdateCommand extends Command
      */
     public function handle()
     {
-        $enableMigrations = !$this->option('disable-migrations');
+        $enableMigrations = ! $this->option('disable-migrations');
 
         $this->info('Default upgrading...');
         $this->call('vendor:publish', [

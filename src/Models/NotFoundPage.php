@@ -24,11 +24,11 @@ class NotFoundPage extends Model
         }
 
         $notFoundPage = self::withTrashed()->where('link', $link)->where('site', $site)->where('locale', $locale)->first();
-        if (!$notFoundPage) {
+        if (! $notFoundPage) {
             $notFoundPage = self::create([
                 'link' => $link,
                 'site' => $site,
-                'locale' => $locale
+                'locale' => $locale,
             ]);
         }
 
@@ -36,7 +36,7 @@ class NotFoundPage extends Model
             'status_code' => $statusCode,
             'referer' => $referer,
             'user_agent' => $userAgent,
-            'ip_address' => $ipAddress
+            'ip_address' => $ipAddress,
         ]);
     }
 

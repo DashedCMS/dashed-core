@@ -2,19 +2,21 @@
 
 namespace Dashed\DashedCore\Livewire\Frontend\Auth;
 
-use Livewire\Component;
 use Dashed\DashedCore\Models\User;
+use Dashed\DashedTranslations\Models\Translation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Dashed\DashedTranslations\Models\Translation;
+use Livewire\Component;
 
 class ResetPassword extends Component
 {
     public User $user;
+
     public ?string $password = '';
+
     public ?string $passwordConfirmation = '';
 
-    public function mount(string$passwordResetToken)
+    public function mount(string $passwordResetToken)
     {
         $this->user = User::where('password_reset_token', $passwordResetToken)->first();
         if (! $this->user) {

@@ -2,20 +2,15 @@
 
 namespace Dashed\DashedCore\Controllers\Frontend;
 
-use Dashed\DashedCore\Classes\Sites;
-use Dashed\DashedCore\Models\NotFoundOccurence;
-use Dashed\DashedCore\Models\NotFoundPage;
-use Dashed\DashedEcommerceCore\Jobs\UpdateProductInformationJob;
-use Dashed\DashedEcommerceCore\Models\Product;
-use Dashed\DashedPages\Models\Page;
-use Dashed\Seo\Jobs\ScanSpecificResult;
-use Illuminate\Support\Str;
-use Dashed\Drift\UrlBuilder;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\View;
 use Dashed\DashedCore\Classes\Locales;
-use Dashed\DashedCore\Models\Redirect;
+use Dashed\DashedCore\Classes\Sites;
 use Dashed\DashedCore\Models\Customsetting;
+use Dashed\DashedCore\Models\NotFoundPage;
+use Dashed\DashedCore\Models\Redirect;
+use Dashed\Drift\UrlBuilder;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Str;
 
 class FrontendController extends Controller
 {
@@ -25,8 +20,8 @@ class FrontendController extends Controller
 
         seo()->metaData('metaTitle', 'Pagina niet gevonden');
 
-        if (View::exists(Customsetting::get('site_theme', null, 'dashed') . '.not-found.show')) {
-            return response()->view(Customsetting::get('site_theme', null, 'dashed') . '.not-found.show')->setStatusCode(404);
+        if (View::exists(Customsetting::get('site_theme', null, 'dashed').'.not-found.show')) {
+            return response()->view(Customsetting::get('site_theme', null, 'dashed').'.not-found.show')->setStatusCode(404);
         } else {
             abort(404);
         }
@@ -34,12 +29,12 @@ class FrontendController extends Controller
 
     public function index($slug = null)
     {
-        if(str($slug)->contains('__media/')){
+        if (str($slug)->contains('__media/')) {
             return;
         }
 
         foreach (Locales::getLocales() as $locale) {
-            if (Str::startsWith($slug, $locale['id'] . '/') || $slug == $locale['id']) {
+            if (Str::startsWith($slug, $locale['id'].'/') || $slug == $locale['id']) {
                 $slug = Str::substr($slug, strlen($locale['id']) + 1);
             }
         }
@@ -66,12 +61,12 @@ class FrontendController extends Controller
                 $schemas['localBusiness']->name(seo()->metaData('metaTitle'));
 
                 if (seo()->metaData('metaImage')) {
-//                    $schemas['localBusiness']->image(app(UrlBuilder::class)->url('dashed', seo()->metaData('metaImage'), [
-//                        'widen' => 1200,
-//                    ]));
-//                    seo()->metaData('metaImage', app(UrlBuilder::class)->url('dashed', seo()->metaData('metaImage'), [
-//                        'widen' => 1200,
-//                    ]));
+                    //                    $schemas['localBusiness']->image(app(UrlBuilder::class)->url('dashed', seo()->metaData('metaImage'), [
+                    //                        'widen' => 1200,
+                    //                    ]));
+                    //                    seo()->metaData('metaImage', app(UrlBuilder::class)->url('dashed', seo()->metaData('metaImage'), [
+                    //                        'widen' => 1200,
+                    //                    ]));
                     $schemas['localBusiness']->image(mediaHelper()->getSingleMedia(seo()->metaData('metaImage'), 'huge')->url ?? '');
                     seo()->metaData('metaImage', mediaHelper()->getSingleMedia(seo()->metaData('metaImage'), 'huge')->url ?? '');
                 }
@@ -80,7 +75,7 @@ class FrontendController extends Controller
                 return $response->render();
             } elseif ($response == 'pageNotFound') {
 
-                if ($redirect = Redirect::where('from', $slug)->orWhere('from', '/' . $slug)->orWhere('from', $slug . '/')->orWhere('from', '/' . $slug . '/')->first()) {
+                if ($redirect = Redirect::where('from', $slug)->orWhere('from', '/'.$slug)->orWhere('from', $slug.'/')->orWhere('from', '/'.$slug.'/')->first()) {
                     return redirect($redirect->to, $redirect->sort);
                 }
 
@@ -88,7 +83,7 @@ class FrontendController extends Controller
             }
         }
 
-        if ($redirect = Redirect::where('from', $slug)->orWhere('from', '/' . $slug)->orWhere('from', $slug . '/')->orWhere('from', '/' . $slug . '/')->first()) {
+        if ($redirect = Redirect::where('from', $slug)->orWhere('from', '/'.$slug)->orWhere('from', $slug.'/')->orWhere('from', '/'.$slug.'/')->first()) {
             return redirect($redirect->to, $redirect->sort);
         }
 

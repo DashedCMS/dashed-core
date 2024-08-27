@@ -29,15 +29,15 @@ class Redirect extends Model
             return;
         }
 
-        if (!str($newSlug)->startsWith('/')) {
-            $newSlug = '/' . $newSlug;
+        if (! str($newSlug)->startsWith('/')) {
+            $newSlug = '/'.$newSlug;
         }
 
         Redirect::where('to', $oldSlug)->update([
             'to' => $newSlug,
         ]);
 
-        $redirect = new Redirect();
+        $redirect = new Redirect;
         $redirect->from = $oldSlug;
         $redirect->to = $newSlug;
         $redirect->sort = '301';
@@ -57,16 +57,16 @@ class Redirect extends Model
             if (method_exists($routeModel['class'], 'replaceInContent')) {
                 $routeModel['class']::replaceInContent([
                     url($oldSlug) => url($newSlug),
-                    'href="' . url($oldSlug) . '"' => 'href="' . url($newSlug) . '"',
-                    'href="' . $oldSlug . '"' => 'href="' . $newSlug . '"',
-                    'href="/' . $oldSlug . '"' => 'href="' . $newSlug . '"',
+                    'href="'.url($oldSlug).'"' => 'href="'.url($newSlug).'"',
+                    'href="'.$oldSlug.'"' => 'href="'.$newSlug.'"',
+                    'href="/'.$oldSlug.'"' => 'href="'.$newSlug.'"',
                 ]);
             } elseif (isset($routeModel['routeHandler']) && method_exists($routeModel['routeHandler'], 'replaceInContent')) {
                 $routeModel['routeHandler']::replaceInContent([
                     url($oldSlug) => url($newSlug),
-                    'href="' . url($oldSlug) . '"' => 'href="' . url($newSlug) . '"',
-                    'href="' . $oldSlug . '"' => 'href="' . $newSlug . '"',
-                    'href="/' . $oldSlug . '"' => 'href="' . $newSlug . '"',
+                    'href="'.url($oldSlug).'"' => 'href="'.url($newSlug).'"',
+                    'href="'.$oldSlug.'"' => 'href="'.$newSlug.'"',
+                    'href="/'.$oldSlug.'"' => 'href="'.$newSlug.'"',
                 ]);
             }
         }

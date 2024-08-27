@@ -2,9 +2,9 @@
 
 namespace Dashed\DashedCore\Filament\Resources\UserResource\Users;
 
-use Illuminate\Support\Facades\Hash;
-use Filament\Resources\Pages\CreateRecord;
 use Dashed\DashedCore\Filament\Resources\UserResource;
+use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Support\Facades\Hash;
 
 class CreateUser extends CreateRecord
 {

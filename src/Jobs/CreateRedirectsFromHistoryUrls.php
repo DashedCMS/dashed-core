@@ -2,8 +2,6 @@
 
 namespace Dashed\DashedCore\Jobs;
 
-use Dashed\DashedCore\Classes\Locales;
-use Dashed\DashedCore\Classes\Sites;
 use Dashed\DashedCore\Models\Redirect;
 use Dashed\DashedCore\Models\UrlHistory;
 use Illuminate\Bus\Queueable;
@@ -19,7 +17,6 @@ class CreateRedirectsFromHistoryUrls implements ShouldQueue
     public $timeout = 12000;
 
     public string $siteId;
-
 
     /**
      * Create a new job instance.

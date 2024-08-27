@@ -9,7 +9,6 @@ class ViewNotFoundPage extends ViewRecord
 {
     protected static string $resource = NotFoundPageResource::class;
 
-
     protected function getHeaderActions(): array
     {
         return [
@@ -19,7 +18,7 @@ class ViewNotFoundPage extends ViewRecord
     protected function getFooterWidgets(): array
     {
         return [
-          \Dashed\DashedCore\Filament\Widgets\NotFoundPageStats::class,
+            \Dashed\DashedCore\Filament\Widgets\NotFoundPageStats::class,
         ];
     }
 }

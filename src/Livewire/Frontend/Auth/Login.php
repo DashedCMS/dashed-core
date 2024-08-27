@@ -2,39 +2,45 @@
 
 namespace Dashed\DashedCore\Livewire\Frontend\Auth;
 
-use Livewire\Component;
 use Dashed\DashedCore\Models\User;
+use Dashed\DashedEcommerceCore\Classes\ShoppingCart;
+use Dashed\DashedTranslations\Models\Translation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Dashed\DashedTranslations\Models\Translation;
-use Dashed\DashedEcommerceCore\Classes\ShoppingCart;
+use Livewire\Component;
 
 class Login extends Component
 {
     public ?string $loginEmail = '';
+
     public ?string $loginPassword = '';
+
     public ?bool $loginRememberMe = false;
+
     public ?string $registerEmail = '';
+
     public ?string $registerPassword = '';
+
     public ?string $registerPasswordConfirmation = '';
+
     public ?bool $registerRememberMe = false;
 
     public function login()
     {
         $this->validate(
             [
-            'loginEmail' => [
-                'required',
-                'email',
-                'min:3',
-                'max:255',
+                'loginEmail' => [
+                    'required',
+                    'email',
+                    'min:3',
+                    'max:255',
+                ],
+                'loginPassword' => [
+                    'required',
+                    'min:6',
+                    'max:255',
+                ],
             ],
-            'loginPassword' => [
-                'required',
-                'min:6',
-                'max:255',
-            ],
-        ],
             [],
             [
                 'loginEmail' => Translation::get('email', 'validation-attributes', 'email'),
@@ -65,24 +71,24 @@ class Login extends Component
     {
         $this->validate(
             [
-            'registerEmail' => [
-                'unique:users,email',
-                'required',
-                'email:rfc',
-                'max:255',
+                'registerEmail' => [
+                    'unique:users,email',
+                    'required',
+                    'email:rfc',
+                    'max:255',
+                ],
+                'registerPassword' => [
+                    'min:6',
+                    'max:255',
+                    'required',
+                ],
+                'registerPasswordConfirmation' => [
+                    'min:6',
+                    'max:255',
+                    'required',
+                    'same:registerPassword',
+                ],
             ],
-            'registerPassword' => [
-                'min:6',
-                'max:255',
-                'required',
-            ],
-            'registerPasswordConfirmation' => [
-                'min:6',
-                'max:255',
-                'required',
-                'same:registerPassword',
-            ],
-        ],
             [],
             [
                 'registerEmail' => Translation::get('email', 'validation-attributes', 'email'),
@@ -91,7 +97,7 @@ class Login extends Component
             ]
         );
 
-        $user = new User();
+        $user = new User;
         $user->email = $this->registerEmail;
         $user->password = Hash::make($this->registerPassword);
         $user->save();

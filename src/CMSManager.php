@@ -3,7 +3,6 @@
 namespace Dashed\DashedCore;
 
 use Filament\Forms\Components\Builder;
-use Illuminate\Support\Facades\Route;
 
 class CMSManager
 {
@@ -16,13 +15,13 @@ class CMSManager
         'settingPages' => [],
         'frontendMiddlewares' => [],
         'themes' => [
-            'dashed' => 'Dashed'
+            'dashed' => 'Dashed',
         ],
     ];
 
     public function builder(string $name, null|string|array $blocks = null): self|array
     {
-        if (!$blocks) {
+        if (! $blocks) {
             return static::$builders[$name] ?? [];
         }
 
@@ -60,7 +59,7 @@ class CMSManager
         return [
             'results' => $results,
             'count' => collect($results)->sum('count'),
-            'hasResults' => collect($results)->filter(fn($result) => $result['hasResults'])->count() > 0,
+            'hasResults' => collect($results)->filter(fn ($result) => $result['hasResults'])->count() > 0,
         ];
     }
 

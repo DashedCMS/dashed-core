@@ -10,11 +10,11 @@ trait HasSearchScope
             $search = strtolower(request()->get('search') ?: $search);
             $loop = 1;
             foreach (self::getTranslatableAttributes() as $attribute) {
-                if (!method_exists($this, $attribute)) {
+                if (! method_exists($this, $attribute)) {
                     if ($loop == 1) {
-                        $query->whereRaw('LOWER(`' . $attribute . '`) LIKE ? ', ['%' . trim(strtolower($search)) . '%']);
+                        $query->whereRaw('LOWER(`'.$attribute.'`) LIKE ? ', ['%'.trim(strtolower($search)).'%']);
                     } else {
-                        $query->orWhereRaw('LOWER(`' . $attribute . '`) LIKE ? ', ['%' . trim(strtolower($search)) . '%']);
+                        $query->orWhereRaw('LOWER(`'.$attribute.'`) LIKE ? ', ['%'.trim(strtolower($search)).'%']);
                     }
                     $loop++;
                 }

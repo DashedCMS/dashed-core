@@ -3,19 +3,23 @@
 namespace Dashed\DashedCore\Livewire\Frontend\Account;
 
 use App\Models\User;
-use Filament\Notifications\Notification;
-use Livewire\Component;
-use Illuminate\Support\Facades\Hash;
 use Dashed\DashedTranslations\Models\Translation;
+use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Hash;
+use Livewire\Component;
 
 class Account extends Component
 {
     public User $user;
 
     public ?string $email = '';
+
     public ?string $firstName = '';
+
     public ?string $lastName = '';
+
     public ?string $password = '';
+
     public ?string $passwordConfirmation = '';
 
     public function mount()

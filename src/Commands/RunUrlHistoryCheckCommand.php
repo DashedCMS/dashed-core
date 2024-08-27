@@ -2,12 +2,9 @@
 
 namespace Dashed\DashedCore\Commands;
 
-use Cassandra\Custom;
 use Dashed\DashedCore\Jobs\RunUrlHistoryCheck;
 use Dashed\DashedCore\Models\Customsetting;
 use Illuminate\Console\Command;
-use Dashed\DashedCore\Models\User;
-use Illuminate\Support\Facades\Hash;
 
 class RunUrlHistoryCheckCommand extends Command
 {

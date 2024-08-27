@@ -12,11 +12,12 @@ class NotFoundPageOccurrence extends Model
 
     use SoftDeletes;
 
-    public static function booted(){
-        static::saved(function($model){
+    public static function booted()
+    {
+        static::saved(function ($model) {
             $model->notFoundPage->update([
                 'last_occurrence' => $model->created_at,
-                'total_occurrences' => $model->notFoundPage->occurrences()->count()
+                'total_occurrences' => $model->notFoundPage->occurrences()->count(),
             ]);
         });
     }

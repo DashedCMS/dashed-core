@@ -3,11 +3,11 @@
 namespace Dashed\DashedCore\Models;
 
 use Dashed\DashedCore\Classes\Locales;
-use Spatie\Activitylog\LogOptions;
 use Dashed\DashedCore\Classes\Sites;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 class Customsetting extends Model
@@ -27,9 +27,9 @@ class Customsetting extends Model
     {
         static::saved(function (Customsetting $customsetting) {
             Cache::forget('dashed__custom_settings_table_exists');
-            foreach(Sites::getSites() as $site) {
-                foreach(Locales::getLocalesArray() as $key => $locale) {
-                    Cache::forget($customsetting->name . '-' . $site['id'] . '-' . $key);
+            foreach (Sites::getSites() as $site) {
+                foreach (Locales::getLocalesArray() as $key => $locale) {
+                    Cache::forget($customsetting->name.'-'.$site['id'].'-'.$key);
                 }
             }
         });
@@ -41,11 +41,11 @@ class Customsetting extends Model
             return Schema::hasTable('dashed__custom_settings');
         });
 
-        if (!$tableExists) {
+        if (! $tableExists) {
             return $default;
         }
 
-        if (!$siteId) {
+        if (! $siteId) {
             $siteId = Sites::getActive();
         }
 
@@ -55,9 +55,9 @@ class Customsetting extends Model
 
         return Cache::rememberForever("$name-$siteId-$locale", function () use ($name, $siteId, $default, $locale) {
             //Cannot use this because this fails emails etc
-//        if (app()->runningInConsole()) {
-//            return $default;
-//        }
+            //        if (app()->runningInConsole()) {
+            //            return $default;
+            //        }
 
             $customSetting = self::where('name', $name)->where('site_id', $siteId)->where('locale', $locale)->first();
             if ($customSetting && $customSetting->value !== null) {
@@ -70,7 +70,7 @@ class Customsetting extends Model
 
     public static function set($name, $value, $siteId = null, $locale = null)
     {
-        if (!$siteId) {
+        if (! $siteId) {
             $siteId = Sites::getSites()[0]['id'];
         }
 
@@ -86,7 +86,7 @@ class Customsetting extends Model
         Cache::forget("$name-$siteId-$locale");
         foreach (Sites::getSites() as $site) {
             foreach (Locales::getLocalesArray() as $locale) {
-                Cache::forget("$name-" . $site['id'] . "-$locale");
+                Cache::forget("$name-".$site['id']."-$locale");
             }
         }
     }

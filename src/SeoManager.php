@@ -25,7 +25,7 @@ class SeoManager
         'alternateUrls' => [],
     ];
 
-    public function metaData(string $name, string|array $value = null): self|string|array
+    public function metaData(string $name, string|array|null $value = null): self|string|array
     {
         if (! $value) {
             return static::$metaData[$name] ?? '';

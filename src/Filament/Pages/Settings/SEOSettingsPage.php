@@ -2,28 +2,31 @@
 
 namespace Dashed\DashedCore\Filament\Pages\Settings;
 
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Toggle;
-use Filament\Pages\Page;
-use Filament\Forms\Components\Tabs;
 use Dashed\DashedCore\Classes\Sites;
-use Illuminate\Support\Facades\Cache;
+use Dashed\DashedCore\Models\Customsetting;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Placeholder;
-use Dashed\DashedCore\Models\Customsetting;
+use Filament\Pages\Page;
 
 class SEOSettingsPage extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-cog';
+
     protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $navigationLabel = 'Meta data instellingen';
+
     protected static ?string $navigationGroup = 'Overige';
+
     protected static ?string $title = 'Meta data instellingen';
 
     protected static string $view = 'dashed-core::settings.pages.default-settings';
+
     public array $data = [];
 
     public function mount(): void
@@ -34,8 +37,8 @@ class SEOSettingsPage extends Page
             $formData["default_meta_data_twitter_site_{$site['id']}"] = Customsetting::get('default_meta_data_twitter_site', $site['id']);
             $formData["default_meta_data_twitter_creator_{$site['id']}"] = Customsetting::get('default_meta_data_twitter_creator', $site['id']);
             $formData["default_meta_data_image_{$site['id']}"] = Customsetting::get('default_meta_data_image', $site['id']);
-            $formData["seo_check_models"] = Customsetting::get('seo_check_models', null, false);
-//            $formData["force_trailing_slash"] = Customsetting::get('force_trailing_slash', null, false);
+            $formData['seo_check_models'] = Customsetting::get('seo_check_models', null, false);
+            //            $formData["force_trailing_slash"] = Customsetting::get('force_trailing_slash', null, false);
         }
 
         $this->form->fill($formData);
@@ -78,12 +81,12 @@ class SEOSettingsPage extends Page
         $tabGroups[] =
             Section::make('SEO instellingen voor alle sites')
                 ->schema([
-                    Toggle::make("seo_check_models")
+                    Toggle::make('seo_check_models')
                         ->label('Check SEO modellen op score')
                         ->helperText('Dit kan het opslaan process vertragen, vraag dit na bij je beheerder.'),
-//                    Toggle::make("force_trailing_slash")
-//                        ->label('Forceer trailing slash')
-//                        ->helperText('Forceer een trailing slash op alle URL\'s, dit kan invloed hebben op de SEO score van je website'),
+                    //                    Toggle::make("force_trailing_slash")
+                    //                        ->label('Forceer trailing slash')
+                    //                        ->helperText('Forceer een trailing slash op alle URL\'s, dit kan invloed hebben op de SEO score van je website'),
                 ]);
 
         return $tabGroups;
@@ -102,8 +105,8 @@ class SEOSettingsPage extends Page
             Customsetting::set('default_meta_data_twitter_site', $this->form->getState()["default_meta_data_twitter_site_{$site['id']}"], $site['id']);
             Customsetting::set('default_meta_data_twitter_creator', $this->form->getState()["default_meta_data_twitter_creator_{$site['id']}"], $site['id']);
             Customsetting::set('default_meta_data_image', $this->form->getState()["default_meta_data_image_{$site['id']}"], $site['id']);
-            Customsetting::set('seo_check_models', $this->form->getState()["seo_check_models"], $site['id']);
-//            Customsetting::set('force_trailing_slash', $this->form->getState()["force_trailing_slash"], $site['id']);
+            Customsetting::set('seo_check_models', $this->form->getState()['seo_check_models'], $site['id']);
+            //            Customsetting::set('force_trailing_slash', $this->form->getState()["force_trailing_slash"], $site['id']);
         }
 
         Notification::make()

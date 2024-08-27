@@ -3,21 +3,19 @@
 namespace Dashed\DashedCore\Middleware;
 
 use Closure;
-use Illuminate\Http\Request;
-use Spatie\SchemaOrg\Schema;
-use Dashed\DashedCore\Classes\Sites;
-use Illuminate\Support\Facades\View;
 use Dashed\DashedCore\Classes\Locales;
+use Dashed\DashedCore\Classes\Sites;
 use Dashed\DashedCore\Models\Customsetting;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\View;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+use Spatie\SchemaOrg\Schema;
 
 class FrontendMiddleware
 {
     /**
      * Handle an incoming request.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \Closure $next
      * @return mixed
      */
     public function handle(Request $request, Closure $next)
@@ -28,13 +26,13 @@ class FrontendMiddleware
             return redirect($url, 301);
         }
 
-//        if (!Customsetting::get('force_trailing_slash', null, false) && str($_SERVER['REQUEST_URI'])->endsWith('/')) {
-//            return redirect(str($_SERVER['REQUEST_URI'])->replaceLast('/', ''));
-//        }elseif(Customsetting::get('force_trailing_slash', null, false) && !str($_SERVER['REQUEST_URI'])->endsWith('/')){
-//            return redirect(str($_SERVER['REQUEST_URI'])->append('/'));
-//        }
+        //        if (!Customsetting::get('force_trailing_slash', null, false) && str($_SERVER['REQUEST_URI'])->endsWith('/')) {
+        //            return redirect(str($_SERVER['REQUEST_URI'])->replaceLast('/', ''));
+        //        }elseif(Customsetting::get('force_trailing_slash', null, false) && !str($_SERVER['REQUEST_URI'])->endsWith('/')){
+        //            return redirect(str($_SERVER['REQUEST_URI'])->append('/'));
+        //        }
 
-//        Locales::setLocale(LaravelLocalization::getCurrentLocale());
+        //        Locales::setLocale(LaravelLocalization::getCurrentLocale());
 
         seo()->metaData('webmasterTags', [
             'google' => Customsetting::get('webmaster_tag_google'),
@@ -46,7 +44,7 @@ class FrontendMiddleware
         ]);
         seo()->metaData('robots', env('APP_ENV') == 'local' ? 'noindex, nofollow' : 'index, follow');
         seo()->metaData('metaTitle', Customsetting::get('site_name', Sites::getActive(), 'Website'));
-        if (!seo()->metaData('metaImage') && Customsetting::get('default_meta_data_image', Sites::getActive(), '')) {
+        if (! seo()->metaData('metaImage') && Customsetting::get('default_meta_data_image', Sites::getActive(), '')) {
             seo()->metaData('metaImage', Customsetting::get('default_meta_data_image', Sites::getActive(), ''));
         }
 
@@ -59,13 +57,13 @@ class FrontendMiddleware
                 ->email(Customsetting::get('site_to_email'))
                 ->telephone(Customsetting::get('company_phone_number'))
                 ->logo($logo->url ?? '')
-                ->address(Customsetting::get('company_street') . ' ' . Customsetting::get('company_street_number') . ', ' . Customsetting::get('company_postal_code') . ' ' . Customsetting::get('company_city') . ', ' . Customsetting::get('company_country'))
+                ->address(Customsetting::get('company_street').' '.Customsetting::get('company_street_number').', '.Customsetting::get('company_postal_code').' '.Customsetting::get('company_city').', '.Customsetting::get('company_country'))
                 ->addProperties([
                     'address' => [
-                        'streetAddress' => Customsetting::get('company_street') . ' ' . Customsetting::get('company_street_number'),
+                        'streetAddress' => Customsetting::get('company_street').' '.Customsetting::get('company_street_number'),
                         'postalCode' => Customsetting::get('company_postal_code'),
                         'addressCountry' => Customsetting::get('company_country'),
-                    ]
+                    ],
                 ])
                 ->url($request->url())
                 ->contactPoint(
