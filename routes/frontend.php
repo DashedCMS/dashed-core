@@ -1,17 +1,17 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use Dashed\DashedCore\Controllers\Frontend\AccountController;
+use Dashed\DashedCore\Controllers\Frontend\AuthController;
+use Dashed\DashedCore\Controllers\Frontend\FrontendController;
 use Dashed\DashedCore\Middleware\AuthMiddleware;
+use Dashed\DashedCore\Middleware\FrontendMiddleware;
 use Dashed\DashedCore\Middleware\GuestMiddleware;
 use Dashed\DashedTranslations\Models\Translation;
-use Dashed\DashedCore\Middleware\FrontendMiddleware;
-use Dashed\DashedCore\Controllers\Frontend\AuthController;
+use Illuminate\Support\Facades\Route;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
-use Dashed\DashedCore\Controllers\Frontend\AccountController;
-use Dashed\DashedCore\Controllers\Frontend\FrontendController;
-use Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect;
-use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationViewPath;
 use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter;
+use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationViewPath;
+use Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect;
 
 if (config('dashed-core.default_auth_pages_enabled', true)) {
 

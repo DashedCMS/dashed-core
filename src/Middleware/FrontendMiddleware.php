@@ -3,13 +3,13 @@
 namespace Dashed\DashedCore\Middleware;
 
 use Closure;
-use Illuminate\Http\Request;
-use Spatie\SchemaOrg\Schema;
-use Dashed\DashedCore\Classes\Sites;
-use Illuminate\Support\Facades\View;
 use Dashed\DashedCore\Classes\Locales;
+use Dashed\DashedCore\Classes\Sites;
 use Dashed\DashedCore\Models\Customsetting;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\View;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+use Spatie\SchemaOrg\Schema;
 
 class FrontendMiddleware
 {

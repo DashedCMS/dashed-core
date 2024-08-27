@@ -2,9 +2,9 @@
 
 namespace Dashed\DashedCore\Commands;
 
-use Illuminate\Console\Command;
-use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedCore\Jobs\RunUrlHistoryCheck;
+use Dashed\DashedCore\Models\Customsetting;
+use Illuminate\Console\Command;
 
 class RunUrlHistoryCheckCommand extends Command
 {

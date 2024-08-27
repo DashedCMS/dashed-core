@@ -3,12 +3,13 @@
 namespace Dashed\DashedCore\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class NotFoundPageOccurrence extends Model
 {
     use SoftDeletes;
+
     protected $table = 'dashed__not_found_page_occurrences';
 
     public static function booted()

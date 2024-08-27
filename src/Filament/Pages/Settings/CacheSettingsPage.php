@@ -2,10 +2,10 @@
 
 namespace Dashed\DashedCore\Filament\Pages\Settings;
 
+use Filament\Forms\Components\Placeholder;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Cache;
-use Filament\Notifications\Notification;
-use Filament\Forms\Components\Placeholder;
 
 class CacheSettingsPage extends Page
 {
@@ -23,9 +23,7 @@ class CacheSettingsPage extends Page
 
     public array $data = [];
 
-    public function mount(): void
-    {
-    }
+    public function mount(): void {}
 
     protected function getFormSchema(): array
     {

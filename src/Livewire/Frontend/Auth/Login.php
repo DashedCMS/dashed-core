@@ -2,12 +2,12 @@
 
 namespace Dashed\DashedCore\Livewire\Frontend\Auth;
 
-use Livewire\Component;
 use Dashed\DashedCore\Models\User;
+use Dashed\DashedEcommerceCore\Classes\ShoppingCart;
+use Dashed\DashedTranslations\Models\Translation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Dashed\DashedTranslations\Models\Translation;
-use Dashed\DashedEcommerceCore\Classes\ShoppingCart;
+use Livewire\Component;
 
 class Login extends Component
 {

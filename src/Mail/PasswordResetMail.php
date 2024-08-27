@@ -2,12 +2,12 @@
 
 namespace Dashed\DashedCore\Mail;
 
+use Dashed\DashedCore\Models\Customsetting;
+use Dashed\DashedCore\Models\User;
+use Dashed\DashedTranslations\Models\Translation;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
-use Dashed\DashedCore\Models\User;
 use Illuminate\Queue\SerializesModels;
-use Dashed\DashedCore\Models\Customsetting;
-use Dashed\DashedTranslations\Models\Translation;
 
 class PasswordResetMail extends Mailable
 {

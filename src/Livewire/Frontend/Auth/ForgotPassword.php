@@ -3,12 +3,12 @@
 namespace Dashed\DashedCore\Livewire\Frontend\Auth;
 
 use Carbon\Carbon;
-use Livewire\Component;
-use Illuminate\Support\Str;
-use Dashed\DashedCore\Models\User;
-use Illuminate\Support\Facades\Mail;
 use Dashed\DashedCore\Mail\PasswordResetMail;
+use Dashed\DashedCore\Models\User;
 use Dashed\DashedTranslations\Models\Translation;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
+use Livewire\Component;
 
 class ForgotPassword extends Component
 {

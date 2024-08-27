@@ -2,10 +2,10 @@
 
 namespace Dashed\DashedCore\Filament\Concerns;
 
-use Filament\Pages\Page;
 use Dashed\DashedCore\Classes\Locales;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Placeholder;
+use Filament\Pages\Page;
 
 trait HasCustomBlocksTab
 {

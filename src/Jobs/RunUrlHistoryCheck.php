@@ -2,16 +2,16 @@
 
 namespace Dashed\DashedCore\Jobs;
 
-use Illuminate\Bus\Queueable;
-use Dashed\DashedCore\Classes\Sites;
 use Dashed\DashedCore\Classes\Locales;
-use Illuminate\Queue\SerializesModels;
-use Dashed\DashedCore\Models\UrlHistory;
-use Illuminate\Queue\InteractsWithQueue;
+use Dashed\DashedCore\Classes\Sites;
 use Dashed\DashedCore\Models\Customsetting;
+use Dashed\DashedCore\Models\UrlHistory;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class RunUrlHistoryCheck implements ShouldBeUnique, ShouldQueue
 {
@@ -35,9 +35,7 @@ class RunUrlHistoryCheck implements ShouldBeUnique, ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     /**
      * Execute the job.

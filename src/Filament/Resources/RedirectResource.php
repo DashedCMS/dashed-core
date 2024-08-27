@@ -2,20 +2,20 @@
 
 namespace Dashed\DashedCore\Filament\Resources;
 
-use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
-use Dashed\DashedCore\Models\Redirect;
-use Filament\Forms\Components\Section;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
+use Dashed\DashedCore\Filament\Resources\RedirectResource\Pages\CreateRedirect;
 use Dashed\DashedCore\Filament\Resources\RedirectResource\Pages\EditRedirect;
 use Dashed\DashedCore\Filament\Resources\RedirectResource\Pages\ListRedirects;
-use Dashed\DashedCore\Filament\Resources\RedirectResource\Pages\CreateRedirect;
+use Dashed\DashedCore\Models\Redirect;
+use Filament\Forms;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class RedirectResource extends Resource
 {
@@ -38,30 +38,30 @@ class RedirectResource extends Resource
         return $form
             ->schema(
                 [
-                Section::make('content')
-                    ->schema(
-                        array_merge([
-                            Forms\Components\TextInput::make('from')
-                                ->required()
-                                ->label('Vanaf welke URL moet er een redirect komen?')
-                                ->helperText('Bijv: /dit-is-een-oude-url'),
-                            Forms\Components\TextInput::make('to')
-                                ->required()
-                                ->label('Naar welke URL moet deze redirect verwijzen?')
-                                ->helperText('Bijv: /dit-is-een-nieuwe-url of https://dashed.com/wij-programmeren-kei-goed'),
-                            Forms\Components\Select::make('sort')
-                                ->required()
-                                ->label('Type redirect')
-                                ->default('301')
-                                ->options([
-                                    '301' => 'Permanente redirect',
-                                    '302' => 'Tijdelijke redirect',
-                                ]),
-                            Forms\Components\DatePicker::make('delete_redirect_after')
-                                ->label('Verwijder redirect na een datum')
-                                ->default(now()->addMonths(3)),
-                        ])
-                    ), ]
+                    Section::make('content')
+                        ->schema(
+                            array_merge([
+                                Forms\Components\TextInput::make('from')
+                                    ->required()
+                                    ->label('Vanaf welke URL moet er een redirect komen?')
+                                    ->helperText('Bijv: /dit-is-een-oude-url'),
+                                Forms\Components\TextInput::make('to')
+                                    ->required()
+                                    ->label('Naar welke URL moet deze redirect verwijzen?')
+                                    ->helperText('Bijv: /dit-is-een-nieuwe-url of https://dashed.com/wij-programmeren-kei-goed'),
+                                Forms\Components\Select::make('sort')
+                                    ->required()
+                                    ->label('Type redirect')
+                                    ->default('301')
+                                    ->options([
+                                        '301' => 'Permanente redirect',
+                                        '302' => 'Tijdelijke redirect',
+                                    ]),
+                                Forms\Components\DatePicker::make('delete_redirect_after')
+                                    ->label('Verwijder redirect na een datum')
+                                    ->default(now()->addMonths(3)),
+                            ])
+                        ), ]
             );
     }
 

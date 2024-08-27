@@ -2,8 +2,8 @@
 
 namespace Dashed\DashedCore\Commands;
 
-use Illuminate\Console\Command;
 use Dashed\DashedCore\Models\User;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 
 class CreateAdminUser extends Command
