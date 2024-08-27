@@ -1,8 +1,8 @@
 <?php
 
-use Dashed\DashedCore\Classes\LinkHelper;
 use Dashed\DashedCore\CMSManager;
 use Dashed\DashedCore\SeoManager;
+use Dashed\DashedCore\Classes\LinkHelper;
 
 if (! function_exists('cms')) {
     function cms(): CMSManager

@@ -2,20 +2,20 @@
 
 namespace Dashed\DashedCore\Filament\Resources;
 
-use Dashed\DashedCore\Filament\Resources\RedirectResource\Pages\CreateRedirect;
-use Dashed\DashedCore\Filament\Resources\RedirectResource\Pages\EditRedirect;
-use Dashed\DashedCore\Filament\Resources\RedirectResource\Pages\ListRedirects;
-use Dashed\DashedCore\Models\Redirect;
 use Filament\Forms;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
+use Filament\Tables\Table;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
+use Dashed\DashedCore\Models\Redirect;
+use Filament\Forms\Components\Section;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Dashed\DashedCore\Filament\Resources\RedirectResource\Pages\EditRedirect;
+use Dashed\DashedCore\Filament\Resources\RedirectResource\Pages\ListRedirects;
+use Dashed\DashedCore\Filament\Resources\RedirectResource\Pages\CreateRedirect;
 
 class RedirectResource extends Resource
 {

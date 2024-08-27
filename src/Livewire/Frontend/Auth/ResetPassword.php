@@ -2,11 +2,11 @@
 
 namespace Dashed\DashedCore\Livewire\Frontend\Auth;
 
+use Livewire\Component;
 use Dashed\DashedCore\Models\User;
-use Dashed\DashedTranslations\Models\Translation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Livewire\Component;
+use Dashed\DashedTranslations\Models\Translation;
 
 class ResetPassword extends Component
 {

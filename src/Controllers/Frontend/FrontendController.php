@@ -2,15 +2,15 @@
 
 namespace Dashed\DashedCore\Controllers\Frontend;
 
-use App\Http\Controllers\Controller;
-use Dashed\DashedCore\Classes\Locales;
-use Dashed\DashedCore\Classes\Sites;
-use Dashed\DashedCore\Models\Customsetting;
-use Dashed\DashedCore\Models\NotFoundPage;
-use Dashed\DashedCore\Models\Redirect;
-use Dashed\Drift\UrlBuilder;
-use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
+use Dashed\Drift\UrlBuilder;
+use App\Http\Controllers\Controller;
+use Dashed\DashedCore\Classes\Sites;
+use Illuminate\Support\Facades\View;
+use Dashed\DashedCore\Classes\Locales;
+use Dashed\DashedCore\Models\Redirect;
+use Dashed\DashedCore\Models\NotFoundPage;
+use Dashed\DashedCore\Models\Customsetting;
 
 class FrontendController extends Controller
 {

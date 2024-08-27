@@ -2,11 +2,11 @@
 
 namespace Dashed\DashedCore\Filament\Widgets;
 
-use Dashed\DashedCore\Models\NotFoundPageOccurrence;
-use Filament\Widgets\ChartWidget;
-use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Flowframe\Trend\Trend;
+use Filament\Widgets\ChartWidget;
 use Illuminate\Database\Eloquent\Model;
+use Dashed\DashedCore\Models\NotFoundPageOccurrence;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
 
 class NotFoundPageStats extends ChartWidget
 {

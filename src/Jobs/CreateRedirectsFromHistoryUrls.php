@@ -2,13 +2,13 @@
 
 namespace Dashed\DashedCore\Jobs;
 
-use Dashed\DashedCore\Models\Redirect;
-use Dashed\DashedCore\Models\UrlHistory;
 use Illuminate\Bus\Queueable;
+use Dashed\DashedCore\Models\Redirect;
+use Illuminate\Queue\SerializesModels;
+use Dashed\DashedCore\Models\UrlHistory;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 
 class CreateRedirectsFromHistoryUrls implements ShouldQueue
 {

@@ -2,9 +2,9 @@
 
 namespace Dashed\DashedCore\Filament\Resources\RedirectResource\Pages;
 
-use Dashed\DashedCore\Filament\Resources\RedirectResource;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
+use Dashed\DashedCore\Filament\Resources\RedirectResource;
 
 class EditRedirect extends EditRecord
 {

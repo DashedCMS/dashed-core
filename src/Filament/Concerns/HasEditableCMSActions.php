@@ -2,17 +2,17 @@
 
 namespace Dashed\DashedCore\Filament\Concerns;
 
-use Dashed\DashedCore\Classes\Locales;
-use Dashed\DashedCore\Filament\Actions\ShowSEOScoreAction;
-use Dashed\DashedTranslations\Classes\AutomatedTranslation;
+use Illuminate\Support\Str;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\LocaleSwitcher;
 use Filament\Forms\Components\Select;
+use Dashed\DashedCore\Classes\Locales;
 use Filament\Notifications\Notification;
+use Dashed\DashedCore\Filament\Actions\ShowSEOScoreAction;
+use Dashed\DashedTranslations\Classes\AutomatedTranslation;
 use Filament\Resources\Pages\EditRecord\Concerns\Translatable;
-use Illuminate\Support\Str;
 
 trait HasEditableCMSActions
 {

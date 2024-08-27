@@ -2,35 +2,35 @@
 
 namespace Dashed\DashedCore;
 
-use Dashed\DashedCore\Commands\CreateAdminUser;
-use Dashed\DashedCore\Commands\CreateSitemap;
-use Dashed\DashedCore\Commands\CreateVisitableModel;
-use Dashed\DashedCore\Commands\InstallCommand;
-use Dashed\DashedCore\Commands\InvalidatePasswordResetTokens;
-use Dashed\DashedCore\Commands\RunUrlHistoryCheckCommand;
-use Dashed\DashedCore\Commands\UpdateCommand;
-use Dashed\DashedCore\Filament\Pages\Settings\CacheSettingsPage;
-use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
-use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
-use Dashed\DashedCore\Filament\Pages\Settings\SEOSettingsPage;
-use Dashed\DashedCore\Filament\Widgets\NotFoundPageGlobalStats;
-use Dashed\DashedCore\Filament\Widgets\NotFoundPageStats;
-use Dashed\DashedCore\Livewire\Frontend\Account\Account;
-use Dashed\DashedCore\Livewire\Frontend\Auth\ForgotPassword;
-use Dashed\DashedCore\Livewire\Frontend\Auth\Login;
-use Dashed\DashedCore\Livewire\Frontend\Auth\ResetPassword;
-use Dashed\DashedCore\Livewire\Frontend\Notification\Toastr;
-use Dashed\DashedCore\Livewire\Infolists\SEO\SEOScoreInfoList;
-use Dashed\DashedCore\Models\Customsetting;
-use Dashed\Drift\CachingStrategies\FilesystemCachingStrategy;
+use Livewire\Livewire;
 use Dashed\Drift\Config;
 use Dashed\Drift\DriftManager;
-use Illuminate\Console\Scheduling\Schedule;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Mail;
-use Livewire\Livewire;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\LaravelPackageTools\Package;
+use Dashed\DashedCore\Models\Customsetting;
+use Illuminate\Console\Scheduling\Schedule;
+use Dashed\DashedCore\Commands\CreateSitemap;
+use Dashed\DashedCore\Commands\UpdateCommand;
+use Dashed\DashedCore\Commands\InstallCommand;
+use Dashed\DashedCore\Commands\CreateAdminUser;
+use Dashed\DashedCore\Livewire\Frontend\Auth\Login;
+use Dashed\DashedCore\Commands\CreateVisitableModel;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Dashed\DashedCore\Livewire\Frontend\Account\Account;
+use Dashed\DashedCore\Commands\RunUrlHistoryCheckCommand;
+use Dashed\DashedCore\Filament\Widgets\NotFoundPageStats;
+use Dashed\DashedCore\Livewire\Frontend\Auth\ResetPassword;
+use Dashed\DashedCore\Livewire\Frontend\Auth\ForgotPassword;
+use Dashed\DashedCore\Livewire\Frontend\Notification\Toastr;
+use Dashed\DashedCore\Commands\InvalidatePasswordResetTokens;
+use Dashed\Drift\CachingStrategies\FilesystemCachingStrategy;
+use Dashed\DashedCore\Filament\Pages\Settings\SEOSettingsPage;
+use Dashed\DashedCore\Livewire\Infolists\SEO\SEOScoreInfoList;
+use Dashed\DashedCore\Filament\Widgets\NotFoundPageGlobalStats;
+use Dashed\DashedCore\Filament\Pages\Settings\CacheSettingsPage;
+use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
+use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
 
 class DashedCoreServiceProvider extends PackageServiceProvider
 {
