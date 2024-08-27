@@ -97,7 +97,7 @@ class Login extends Component
             ]
         );
 
-        $user = new User;
+        $user = new User();
         $user->email = $this->registerEmail;
         $user->password = Hash::make($this->registerPassword);
         $user->save();

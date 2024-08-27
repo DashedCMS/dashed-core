@@ -36,7 +36,8 @@ class RedirectResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
+            ->schema(
+                [
                 Section::make('content')
                     ->schema(
                         array_merge([

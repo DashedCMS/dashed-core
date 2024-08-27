@@ -8,9 +8,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class NotFoundPageOccurrence extends Model
 {
-    protected $table = 'dashed__not_found_page_occurrences';
-
     use SoftDeletes;
+    protected $table = 'dashed__not_found_page_occurrences';
 
     public static function booted()
     {

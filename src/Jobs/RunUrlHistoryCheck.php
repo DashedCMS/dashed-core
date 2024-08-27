@@ -15,7 +15,10 @@ use Illuminate\Queue\SerializesModels;
 
 class RunUrlHistoryCheck implements ShouldBeUnique, ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     public $timeout = 1200;
 
@@ -32,7 +35,9 @@ class RunUrlHistoryCheck implements ShouldBeUnique, ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct() {}
+    public function __construct()
+    {
+    }
 
     /**
      * Execute the job.

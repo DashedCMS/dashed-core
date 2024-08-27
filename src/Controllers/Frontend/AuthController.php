@@ -54,7 +54,7 @@ class AuthController extends FrontendController
 
     public function registerPost(RegisterRequest $request)
     {
-        $user = new User;
+        $user = new User();
         $user->first_name = $request->first_name;
         $user->last_name = $request->last_name;
         $user->email = $request->email;

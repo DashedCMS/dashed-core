@@ -37,7 +37,7 @@ class Redirect extends Model
             'to' => $newSlug,
         ]);
 
-        $redirect = new Redirect;
+        $redirect = new Redirect();
         $redirect->from = $oldSlug;
         $redirect->to = $newSlug;
         $redirect->sort = '301';
