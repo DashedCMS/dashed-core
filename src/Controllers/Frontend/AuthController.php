@@ -3,19 +3,19 @@
 namespace Dashed\DashedCore\Controllers\Frontend;
 
 use Carbon\Carbon;
-use Illuminate\Support\Str;
+use Dashed\DashedCore\Mail\PasswordResetMail;
+use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedCore\Models\User;
+use Dashed\DashedCore\Requests\Frontend\ForgotPasswordRequest;
+use Dashed\DashedCore\Requests\Frontend\LoginRequest;
+use Dashed\DashedCore\Requests\Frontend\RegisterRequest;
+use Dashed\DashedCore\Requests\Frontend\ResetPasswordRequest;
+use Dashed\DashedTranslations\Models\Translation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\View;
-use Dashed\DashedCore\Models\Customsetting;
-use Dashed\DashedCore\Mail\PasswordResetMail;
-use Dashed\DashedTranslations\Models\Translation;
-use Dashed\DashedCore\Requests\Frontend\LoginRequest;
-use Dashed\DashedCore\Requests\Frontend\RegisterRequest;
-use Dashed\DashedCore\Requests\Frontend\ResetPasswordRequest;
-use Dashed\DashedCore\Requests\Frontend\ForgotPasswordRequest;
+use Illuminate\Support\Str;
 
 class AuthController extends FrontendController
 {

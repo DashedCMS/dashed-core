@@ -2,10 +2,10 @@
 
 namespace Dashed\DashedCore\Commands;
 
-use Illuminate\Console\Command;
-use Illuminate\Support\Pluralizer;
-use Illuminate\Support\Facades\File;
 use Binafy\LaravelStub\Facades\LaravelStub;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Pluralizer;
 
 class CreateVisitableModel extends Command
 {

@@ -2,13 +2,13 @@
 
 namespace Dashed\DashedCore\Filament\Concerns;
 
-use Filament\Forms\Components\Group;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Toggle;
 use RalphJSmit\Filament\MediaLibrary\Forms\Components\MediaPicker;
 
 trait HasMetadataTab

@@ -2,9 +2,9 @@
 
 namespace Dashed\DashedCore\Filament\Resources\RedirectResource\Pages;
 
+use Dashed\DashedCore\Filament\Resources\RedirectResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
-use Dashed\DashedCore\Filament\Resources\RedirectResource;
 
 class ListRedirects extends ListRecords
 {

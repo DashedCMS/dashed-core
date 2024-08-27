@@ -2,10 +2,10 @@
 
 namespace Dashed\DashedCore\Filament\Widgets;
 
-use Flowframe\Trend\Trend;
-use Filament\Widgets\ChartWidget;
 use Dashed\DashedCore\Models\NotFoundPageOccurrence;
+use Filament\Widgets\ChartWidget;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
+use Flowframe\Trend\Trend;
 
 class NotFoundPageGlobalStats extends ChartWidget
 {
