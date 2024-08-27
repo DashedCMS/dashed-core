@@ -23,7 +23,9 @@ class CacheSettingsPage extends Page
 
     public array $data = [];
 
-    public function mount(): void {}
+    public function mount(): void
+    {
+    }
 
     protected function getFormSchema(): array
     {
