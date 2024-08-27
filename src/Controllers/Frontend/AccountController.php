@@ -2,11 +2,11 @@
 
 namespace Dashed\DashedCore\Controllers\Frontend;
 
-use Dashed\DashedCore\Models\Customsetting;
-use Dashed\DashedCore\Requests\Frontend\UpdateAccountRequest;
-use Dashed\DashedTranslations\Models\Translation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Dashed\DashedCore\Models\Customsetting;
+use Dashed\DashedTranslations\Models\Translation;
+use Dashed\DashedCore\Requests\Frontend\UpdateAccountRequest;
 
 class AccountController extends FrontendController
 {

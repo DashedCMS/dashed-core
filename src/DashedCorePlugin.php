@@ -2,16 +2,16 @@
 
 namespace Dashed\DashedCore;
 
-use Dashed\DashedCore\Filament\Pages\Settings\CacheSettingsPage;
-use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
-use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
-use Dashed\DashedCore\Filament\Pages\Settings\SEOSettingsPage;
-use Dashed\DashedCore\Filament\Pages\Settings\SettingsPage;
-use Dashed\DashedCore\Filament\Resources\NotFoundPageResource;
-use Dashed\DashedCore\Filament\Resources\RedirectResource;
-use Dashed\DashedCore\Filament\Resources\UserResource;
-use Filament\Contracts\Plugin;
 use Filament\Panel;
+use Filament\Contracts\Plugin;
+use Dashed\DashedCore\Filament\Resources\UserResource;
+use Dashed\DashedCore\Filament\Resources\RedirectResource;
+use Dashed\DashedCore\Filament\Pages\Settings\SettingsPage;
+use Dashed\DashedCore\Filament\Pages\Settings\SEOSettingsPage;
+use Dashed\DashedCore\Filament\Resources\NotFoundPageResource;
+use Dashed\DashedCore\Filament\Pages\Settings\CacheSettingsPage;
+use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
+use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
 
 class DashedCorePlugin implements Plugin
 {
@@ -41,5 +41,7 @@ class DashedCorePlugin implements Plugin
             ]);
     }
 
-    public function boot(Panel $panel): void {}
+    public function boot(Panel $panel): void
+    {
+    }
 }

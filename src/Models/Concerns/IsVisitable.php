@@ -3,25 +3,25 @@
 namespace Dashed\DashedCore\Models\Concerns;
 
 use Carbon\Carbon;
-use Dashed\DashedCore\Classes\Locales;
-use Dashed\DashedCore\Classes\Sites;
-use Dashed\DashedCore\Classes\UrlHelper;
-use Dashed\DashedCore\Models\Customsetting;
-use Dashed\DashedCore\Models\UrlHistory;
-use Dashed\DashedPages\Models\Page;
-use Dashed\Seo\Jobs\ScanSpecificResult;
-use Dashed\Seo\Traits\HasSeoScore;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
-use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
-use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Sitemap\Sitemap;
 use Spatie\Sitemap\Tags\Url;
+use Dashed\Seo\Traits\HasSeoScore;
+use Spatie\Activitylog\LogOptions;
+use Dashed\DashedPages\Models\Page;
+use Dashed\DashedCore\Classes\Sites;
+use Illuminate\Support\Facades\View;
+use Dashed\DashedCore\Classes\Locales;
+use Dashed\Seo\Jobs\ScanSpecificResult;
+use Dashed\DashedCore\Classes\UrlHelper;
+use Dashed\DashedCore\Models\UrlHistory;
 use Spatie\Translatable\HasTranslations;
+use Dashed\DashedCore\Models\Customsetting;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 trait IsVisitable
 {

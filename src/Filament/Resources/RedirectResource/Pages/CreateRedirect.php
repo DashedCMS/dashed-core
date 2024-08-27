@@ -2,8 +2,8 @@
 
 namespace Dashed\DashedCore\Filament\Resources\RedirectResource\Pages;
 
-use Dashed\DashedCore\Filament\Resources\RedirectResource;
 use Filament\Resources\Pages\CreateRecord;
+use Dashed\DashedCore\Filament\Resources\RedirectResource;
 
 class CreateRedirect extends CreateRecord
 {

@@ -3,8 +3,8 @@
 namespace Dashed\DashedCore\Middleware;
 
 use Closure;
-use Dashed\DashedCore\Classes\Locales;
 use Illuminate\Http\RedirectResponse;
+use Dashed\DashedCore\Classes\Locales;
 use Mcamara\LaravelLocalization\LanguageNegotiator;
 
 class LocaleSessionRedirect

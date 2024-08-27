@@ -3,8 +3,8 @@
 namespace Dashed\DashedCore\Commands;
 
 use Carbon\Carbon;
-use Dashed\DashedCore\Models\User;
 use Illuminate\Console\Command;
+use Dashed\DashedCore\Models\User;
 
 class InvalidatePasswordResetTokens extends Command
 {
