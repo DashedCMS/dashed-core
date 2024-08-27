@@ -3,21 +3,31 @@ name: Format code with PHP CS Fixer
 on: [push]
 
 jobs:
-  php-cs-fixer:
+  lint:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        php: [8.3]
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
 
-      - name: Run PHP CS Fixer
-        uses: docker://oskarstark/php-cs-fixer-ga
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
         with:
-          args: --config=.php_cs.dist.php --allow-risky=yes
+          php-version: ${{ matrix.php }}
+          extensions: json, dom, curl, libxml, mbstring
+          coverage: none
 
-      - name: Commit changes
+      - name: Install Pint
+        run: composer global require laravel/pint
+
+      - name: Run Pint
+        run: pint
+
+      - name: Commit linted files
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: Styling fixed with PHP CS Fixer
+          commit_message: "Fixes coding style"
