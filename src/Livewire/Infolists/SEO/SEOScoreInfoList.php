@@ -2,15 +2,15 @@
 
 namespace Dashed\DashedCore\Livewire\Infolists\SEO;
 
-use Filament\Forms\Concerns\InteractsWithForms;
+use Livewire\Component;
+use Filament\Infolists\Infolist;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Infolists\Components\KeyValueEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
-use Filament\Infolists\Infolist;
-use Livewire\Component;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Infolists\Components\KeyValueEntry;
+use Filament\Infolists\Concerns\InteractsWithInfolists;
 
 class SEOScoreInfoList extends Component implements HasForms, HasInfolists
 {

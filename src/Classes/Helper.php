@@ -2,8 +2,8 @@
 
 namespace Dashed\DashedCore\Classes;
 
-use Dashed\DashedCore\Models\UrlHistory;
 use Illuminate\Support\Facades\Request;
+use Dashed\DashedCore\Models\UrlHistory;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 class Helper

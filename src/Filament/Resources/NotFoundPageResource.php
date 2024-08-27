@@ -2,29 +2,29 @@
 
 namespace Dashed\DashedCore\Filament\Resources;
 
-use Dashed\DashedCore\Classes\UrlHelper;
-use Dashed\DashedCore\Filament\Resources\NotFoundPageResource\Pages\ListNotFoundPage;
-use Dashed\DashedCore\Filament\Resources\NotFoundPageResource\Pages\ViewNotFoundPage;
-use Dashed\DashedCore\Models\NotFoundPage;
-use Dashed\DashedCore\Models\Redirect;
 use Filament\Forms;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
-use Filament\Notifications\Notification;
+use Filament\Tables\Table;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\ForceDeleteAction;
-use Filament\Tables\Actions\ForceDeleteBulkAction;
-use Filament\Tables\Actions\RestoreAction;
-use Filament\Tables\Actions\RestoreBulkAction;
+use Dashed\DashedCore\Models\Redirect;
+use Filament\Forms\Components\Section;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\TrashedFilter;
-use Filament\Tables\Table;
+use Dashed\DashedCore\Classes\UrlHelper;
+use Filament\Notifications\Notification;
+use Filament\Tables\Actions\DeleteAction;
 use Illuminate\Database\Eloquent\Builder;
+use Dashed\DashedCore\Models\NotFoundPage;
+use Filament\Tables\Actions\RestoreAction;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\ForceDeleteAction;
+use Filament\Tables\Actions\RestoreBulkAction;
+use Filament\Tables\Actions\ForceDeleteBulkAction;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Dashed\DashedCore\Filament\Resources\NotFoundPageResource\Pages\ListNotFoundPage;
+use Dashed\DashedCore\Filament\Resources\NotFoundPageResource\Pages\ViewNotFoundPage;
 
 class NotFoundPageResource extends Resource
 {

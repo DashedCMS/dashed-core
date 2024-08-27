@@ -2,8 +2,8 @@
 
 namespace Dashed\DashedCore\Filament\Resources\NotFoundPageResource\Pages;
 
-use Dashed\DashedCore\Filament\Resources\NotFoundPageResource;
 use Filament\Resources\Pages\ViewRecord;
+use Dashed\DashedCore\Filament\Resources\NotFoundPageResource;
 
 class ViewNotFoundPage extends ViewRecord
 {

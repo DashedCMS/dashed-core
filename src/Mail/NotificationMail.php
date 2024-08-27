@@ -2,10 +2,10 @@
 
 namespace Dashed\DashedCore\Mail;
 
-use Dashed\DashedCore\Models\Customsetting;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Dashed\DashedCore\Models\Customsetting;
 
 class NotificationMail extends Mailable
 {

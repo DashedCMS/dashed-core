@@ -2,8 +2,8 @@
 
 namespace Dashed\DashedCore\Commands;
 
-use Dashed\DashedCore\Classes\Sitemap;
 use Illuminate\Console\Command;
+use Dashed\DashedCore\Classes\Sitemap;
 
 class CreateSitemap extends Command
 {

@@ -2,10 +2,10 @@
 
 namespace Dashed\DashedCore\Filament\Actions;
 
-use Dashed\DashedCore\Models\Customsetting;
 use Filament\Actions\Action;
-use Filament\Actions\Concerns\CanCustomizeProcess;
 use Illuminate\Database\Eloquent\Model;
+use Dashed\DashedCore\Models\Customsetting;
+use Filament\Actions\Concerns\CanCustomizeProcess;
 
 class ShowSEOScoreAction extends Action
 {

@@ -3,10 +3,10 @@
 namespace Dashed\DashedCore\Livewire\Frontend\Account;
 
 use App\Models\User;
-use Dashed\DashedTranslations\Models\Translation;
-use Filament\Notifications\Notification;
-use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
+use Illuminate\Support\Facades\Hash;
+use Filament\Notifications\Notification;
+use Dashed\DashedTranslations\Models\Translation;
 
 class Account extends Component
 {
