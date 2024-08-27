@@ -10,6 +10,7 @@ class UrlHelper
 {
     public static function checkUrlResponseCode(string $url): int
     {
+        //How are we gonna handle this with multisite?
         if(!self::isAbsolute($url)) {
             $url = url($url);
         }
