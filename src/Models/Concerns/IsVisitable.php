@@ -3,29 +3,24 @@
 namespace Dashed\DashedCore\Models\Concerns;
 
 use Carbon\Carbon;
-use Dashed\DashedArticles\Models\Article;
-use Dashed\DashedCore\Classes\UrlHelper;
-use Dashed\DashedCore\Jobs\RunUrlHistoryCheck;
-use Dashed\DashedCore\Models\Redirect;
-use Dashed\DashedCore\Models\UrlHistory;
-use Dashed\Seo\Jobs\ScanSpecificResult;
-use Dashed\Seo\Traits\HasSeoScore;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 use Spatie\Sitemap\Sitemap;
 use Spatie\Sitemap\Tags\Url;
+use Dashed\Seo\Traits\HasSeoScore;
 use Spatie\Activitylog\LogOptions;
 use Dashed\DashedPages\Models\Page;
 use Dashed\DashedCore\Classes\Sites;
+use Illuminate\Support\Facades\View;
 use Dashed\DashedCore\Classes\Locales;
+use Dashed\Seo\Jobs\ScanSpecificResult;
+use Dashed\DashedCore\Classes\UrlHelper;
+use Dashed\DashedCore\Models\UrlHistory;
 use Spatie\Translatable\HasTranslations;
 use Dashed\DashedCore\Models\Customsetting;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 trait IsVisitable
@@ -78,7 +73,7 @@ trait IsVisitable
 
     public function scopeThisSite($query, $siteId = null)
     {
-        if (!$siteId) {
+        if (! $siteId) {
             $siteId = Sites::getActive();
         }
 
@@ -87,7 +82,7 @@ trait IsVisitable
 
     public function scopeSlug($query, string $slug = '')
     {
-        if (!$slug) {
+        if (! $slug) {
             //Should not be found
             $query->where('id', 0);
         } else {
@@ -134,7 +129,7 @@ trait IsVisitable
 
     public function getStatusAttribute(): bool
     {
-        if (!$this->start_date && !$this->end_date) {
+        if (! $this->start_date && ! $this->end_date) {
             return 1;
         } else {
             if ($this->start_date && $this->end_date) {
@@ -185,7 +180,7 @@ trait IsVisitable
         if (method_exists($model, 'parent')) {
             $parentBreadcrumbs = [];
             while ($model->parent) {
-                if (!$model->parent->is_home) {
+                if (! $model->parent->is_home) {
                     $parentBreadcrumbs[] = [
                         'name' => $model->parent->name,
                         'url' => $model->parent->getUrl(),
@@ -216,7 +211,7 @@ trait IsVisitable
     {
         $originalLocale = app()->getLocale();
 
-        if (!$activeLocale) {
+        if (! $activeLocale) {
             $activeLocale = $originalLocale;
         }
 
@@ -235,10 +230,10 @@ trait IsVisitable
             $url = $this->getTranslation('slug', $activeLocale);
         }
 
-        if (!str($url)->startsWith('/')) {
+        if (! str($url)->startsWith('/')) {
             $url = '/' . $url;
         }
-        if ($activeLocale != Locales::getFirstLocale()['id'] && !str($url)->startsWith("/{$activeLocale}")) {
+        if ($activeLocale != Locales::getFirstLocale()['id'] && ! str($url)->startsWith("/{$activeLocale}")) {
             $url = '/' . $activeLocale . $url;
         }
 
@@ -278,7 +273,7 @@ trait IsVisitable
             foreach ($slugParts as $slugPart) {
                 $model = self::publicShowable()->slug($slugPart)->where('parent_id', $parentId)->first();
                 $parentId = $model?->id;
-                if (!$model) {
+                if (! $model) {
                     return;
                 }
             }
@@ -323,7 +318,7 @@ trait IsVisitable
     {
         $finalString = '';
 
-        if(!is_array($this->content)){
+        if(! is_array($this->content)) {
             return '';
         }
 
@@ -341,7 +336,7 @@ trait IsVisitable
 
                 // If the value is an array, pass it through the tiptap_editor function
                 if (is_array($value) && $value) {
-//                    $finalString .= tiptap_converter()->asText($value) . ' ';
+                    //                    $finalString .= tiptap_converter()->asText($value) . ' ';
                 }
             }
         }
