@@ -3,35 +3,40 @@
 namespace Dashed\DashedCore\Models\Concerns;
 
 use Carbon\Carbon;
+use Dashed\DashedArticles\Models\Article;
+use Dashed\DashedCore\Classes\UrlHelper;
+use Dashed\DashedCore\Jobs\RunUrlHistoryCheck;
+use Dashed\DashedCore\Models\Redirect;
+use Dashed\DashedCore\Models\UrlHistory;
+use Dashed\Seo\Jobs\ScanSpecificResult;
+use Dashed\Seo\Traits\HasSeoScore;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 use Spatie\Sitemap\Sitemap;
 use Spatie\Sitemap\Tags\Url;
-use Dashed\Seo\Traits\HasSeoScore;
 use Spatie\Activitylog\LogOptions;
 use Dashed\DashedPages\Models\Page;
 use Dashed\DashedCore\Classes\Sites;
-use Illuminate\Support\Facades\View;
 use Dashed\DashedCore\Classes\Locales;
-use Dashed\Seo\Jobs\ScanSpecificResult;
-use Dashed\DashedCore\Classes\UrlHelper;
-use Dashed\DashedCore\Models\UrlHistory;
 use Spatie\Translatable\HasTranslations;
 use Dashed\DashedCore\Models\Customsetting;
 use Spatie\Activitylog\Traits\LogsActivity;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 trait IsVisitable
 {
-    use HasCustomBlocks;
     use HasMetadata;
-    use HasSearchScope;
-    use HasSeoScore;
     use HasTranslations;
+    use HasSearchScope;
     use LogsActivity;
+    use HasSeoScore;
     use SoftDeletes;
+    use HasCustomBlocks;
 
     public static function bootIsVisitable()
     {
@@ -39,7 +44,7 @@ trait IsVisitable
             foreach (Locales::getLocales() as $locale) {
                 $slug = Str::slug($model->getTranslation('slug', $locale['id']) ?: $model->getTranslation('name', $locale['id']));
 
-                while (self::where('id', '!=', $model->id ?? 0)->where('slug->'.$locale['id'], $slug)->count()) {
+                while (self::where('id', '!=', $model->id ?? 0)->where('slug->' . $locale['id'], $slug)->count()) {
                     $slug .= Str::random(1);
                 }
 
@@ -73,7 +78,7 @@ trait IsVisitable
 
     public function scopeThisSite($query, $siteId = null)
     {
-        if (! $siteId) {
+        if (!$siteId) {
             $siteId = Sites::getActive();
         }
 
@@ -82,11 +87,11 @@ trait IsVisitable
 
     public function scopeSlug($query, string $slug = '')
     {
-        if (! $slug) {
+        if (!$slug) {
             //Should not be found
             $query->where('id', 0);
         } else {
-            $query->where('slug->'.app()->getLocale(), $slug);
+            $query->where('slug->' . app()->getLocale(), $slug);
         }
     }
 
@@ -129,7 +134,7 @@ trait IsVisitable
 
     public function getStatusAttribute(): bool
     {
-        if (! $this->start_date && ! $this->end_date) {
+        if (!$this->start_date && !$this->end_date) {
             return 1;
         } else {
             if ($this->start_date && $this->end_date) {
@@ -180,7 +185,7 @@ trait IsVisitable
         if (method_exists($model, 'parent')) {
             $parentBreadcrumbs = [];
             while ($model->parent) {
-                if (! $model->parent->is_home) {
+                if (!$model->parent->is_home) {
                     $parentBreadcrumbs[] = [
                         'name' => $model->parent->name,
                         'url' => $model->parent->getUrl(),
@@ -204,14 +209,14 @@ trait IsVisitable
 
     public static function getOverviewPage(): ?Page
     {
-        return Page::publicShowable()->find(Customsetting::get(str(class_basename(self::class))->lower().'_overview_page_id', Sites::getActive()));
+        return Page::publicShowable()->find(Customsetting::get(str(class_basename(self::class))->lower() . '_overview_page_id', Sites::getActive()));
     }
 
     public function getUrl($activeLocale = null, bool $native = true)
     {
         $originalLocale = app()->getLocale();
 
-        if (! $activeLocale) {
+        if (!$activeLocale) {
             $activeLocale = $originalLocale;
         }
 
@@ -230,11 +235,11 @@ trait IsVisitable
             $url = $this->getTranslation('slug', $activeLocale);
         }
 
-        if (! str($url)->startsWith('/')) {
-            $url = '/'.$url;
+        if (!str($url)->startsWith('/')) {
+            $url = '/' . $url;
         }
-        if ($activeLocale != Locales::getFirstLocale()['id'] && ! str($url)->startsWith("/{$activeLocale}")) {
-            $url = '/'.$activeLocale.$url;
+        if ($activeLocale != Locales::getFirstLocale()['id'] && !str($url)->startsWith("/{$activeLocale}")) {
+            $url = '/' . $activeLocale . $url;
         }
 
         return $native ? $url : url($url);
@@ -273,14 +278,14 @@ trait IsVisitable
             foreach ($slugParts as $slugPart) {
                 $model = self::publicShowable()->slug($slugPart)->where('parent_id', $parentId)->first();
                 $parentId = $model?->id;
-                if (! $model) {
+                if (!$model) {
                     return;
                 }
             }
         }
 
         if ($model ?? false) {
-            if (View::exists(Customsetting::get('site_theme', null, 'dashed').'.'.$class.'.show')) {
+            if (View::exists(Customsetting::get('site_theme', null, 'dashed') . '.' . $class . '.show')) {
                 seo()->metaData('metaTitle', $model->metadata && $model->metadata->title ? $model->metadata->title : $model->name);
                 seo()->metaData('metaDescription', $model->metadata->description ?? '');
                 if ($model->metadata && $model->metadata->image) {
@@ -307,7 +312,7 @@ trait IsVisitable
                 View::share('model', $model);
                 View::share('breadcrumbs', $model->breadcrumbs());
 
-                return view(Customsetting::get('site_theme', null, 'dashed').'.'.$class.'.show');
+                return view(Customsetting::get('site_theme', null, 'dashed') . '.' . $class . '.show');
             } else {
                 return 'pageNotFound';
             }
@@ -318,21 +323,25 @@ trait IsVisitable
     {
         $finalString = '';
 
+        if(!is_array($this->content)){
+            return '';
+        }
+
         foreach ($this->content as $item) {
             // Check if it's content and add it to the string
             if (isset($item['data']['content'])) {
-                $finalString .= strip_tags($item['data']['content']).' ';
+                $finalString .= strip_tags($item['data']['content']) . ' ';
             }
 
             // Loop through the data to find any keys containing "title"
             foreach ($item['data'] as $key => $value) {
                 if (stripos($key, 'title') !== false) { // Check if "title" exists in the key name
-                    $finalString .= strip_tags($value).' ';
+                    $finalString .= strip_tags($value) . ' ';
                 }
 
                 // If the value is an array, pass it through the tiptap_editor function
                 if (is_array($value) && $value) {
-                    //                    $finalString .= tiptap_converter()->asText($value) . ' ';
+//                    $finalString .= tiptap_converter()->asText($value) . ' ';
                 }
             }
         }
