@@ -331,7 +331,7 @@ trait IsVisitable
 
             // Loop through the data to find any keys containing "title"
             foreach ($item['data'] as $key => $value) {
-                if (stripos($key, 'title') !== false) { // Check if "title" exists in the key name
+                if (stripos($key, 'title') !== false && $value) { // Check if "title" exists in the key name
                     $finalString .= strip_tags(tiptap_converter()->asHTML($value)) . ' ';
                 }
 
