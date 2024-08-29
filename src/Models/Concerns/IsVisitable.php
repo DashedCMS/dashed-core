@@ -336,10 +336,10 @@ trait IsVisitable
                 }
 
                 //DO NOT USE
-//                // If the value is an array, pass it through the tiptap_editor function
-//                if (is_array($value) && $value) {
-//                    $finalString .= tiptap_converter()->asText($value) . ' ';
-//                }
+                //                // If the value is an array, pass it through the tiptap_editor function
+                //                if (is_array($value) && $value) {
+                //                    $finalString .= tiptap_converter()->asText($value) . ' ';
+                //                }
             }
         }
 
