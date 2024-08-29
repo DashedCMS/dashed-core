@@ -29,6 +29,7 @@
         "league/flysystem-aws-s3-v3": "^3.28",
         "mcamara/laravel-localization": "^2.0",
         "psr/simple-cache": "^3.0",
+        "ryangjchandler/blade-cache-directive": "^1.0",
         "spatie/laravel-activitylog": "^4.8",
         "spatie/laravel-cookie-consent": "^3.3",
         "spatie/laravel-ignition": "^2.8",
