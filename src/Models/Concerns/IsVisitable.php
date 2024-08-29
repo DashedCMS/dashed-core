@@ -116,6 +116,7 @@ trait IsVisitable
                 if (in_array($locale['id'], Sites::get()['locales'])) {
                     Locales::setLocale($locale['id']);
                     $url = $model->getUrl($locale['id']);
+                    //Todo: create another check to see if the page is okay. This is just a quick fix. Maybe do a better check if there is a slug and name available for the item
                     if (UrlHelper::checkUrlResponseCode($url) !== 404) {
                         $sitemap
                             ->add(Url::create($url));
