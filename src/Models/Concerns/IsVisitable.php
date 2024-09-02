@@ -319,7 +319,7 @@ trait IsVisitable
     {
         $finalString = '';
 
-        if(! is_array($this->content)) {
+        if (! is_array($this->content)) {
             return '';
         }
 
