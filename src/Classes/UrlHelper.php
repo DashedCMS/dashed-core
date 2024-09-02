@@ -7,7 +7,7 @@ class UrlHelper
     public static function checkUrlResponseCode(string $url): int
     {
         //How are we gonna handle this with multisite?
-        if (! self::isAbsolute($url)) {
+        if (!self::isAbsolute($url)) {
             $url = url($url);
         }
 
@@ -20,9 +20,13 @@ class UrlHelper
             ]);
         }
 
-        $headers = get_headers($url.'?disableNotFoundLog');
+        try {
+            $headers = get_headers($url . '?disableNotFoundLog');
+        } catch (\Exception $e) {
+            return 404;
+        }
 
-        return (int) substr($headers[0], 9, 3);
+        return (int)substr($headers[0], 9, 3);
     }
 
     public static function isAbsolute(string $url): bool
