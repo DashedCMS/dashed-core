@@ -52,7 +52,8 @@ class FrontendMiddleware
         $favicon = mediaHelper()->getSingleMedia(Customsetting::get('site_favicon', Sites::getActive(), ''), 'thumb');
 
         seo()->metaData('schemas', [
-            'localBusiness' => Schema::localBusiness()
+            'localBusiness' => Schema::organization()
+                ->identifier(request()->url() . '#Organization')
                 ->legalName(Customsetting::get('site_name'))
                 ->email(Customsetting::get('site_to_email'))
                 ->telephone(Customsetting::get('company_phone_number'))
