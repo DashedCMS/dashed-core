@@ -112,6 +112,7 @@ class {{ CLASS }} extends Resource
                     ForceDeleteBulkAction::make(),
                 ]),
             ])
+            ->reorderable('order')
             ->actions([
                 EditAction::make()
                     ->button(),

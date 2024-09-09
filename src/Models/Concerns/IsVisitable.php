@@ -268,7 +268,13 @@ trait IsVisitable
         if ($slug && $overviewPage = self::getOverviewPage()) {
             $slugParts = explode('/', $slug);
             if ($overviewPage) {
-                unset($slugParts[0]);
+                $unsetCount = 0;
+                $toUnsetCount = str($overviewPage->getUrl())->explode('/')->count();
+                while($toUnsetCount > 1){
+                    unset($slugParts[$unsetCount]);
+                    $toUnsetCount--;
+                    $unsetCount++;
+                }
             }
             $parentId = null;
             foreach ($slugParts as $slugPart) {

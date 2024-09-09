@@ -43,6 +43,8 @@ class {{ CLASS }}SettingsPage extends Page
             $schema = [
                 Select::make("{{ SINGLELOW }}_overview_page_id_{$site['id']}")
                     ->label('{{ SINGLE }} pagina')
+                    ->searchable()
+                    ->preload()
                     ->options(PageModel::thisSite($site['id'])->pluck('name', 'id')),
             ];
 
