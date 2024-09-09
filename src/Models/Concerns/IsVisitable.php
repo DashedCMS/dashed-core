@@ -270,7 +270,7 @@ trait IsVisitable
             if ($overviewPage) {
                 $unsetCount = 0;
                 $toUnsetCount = str($overviewPage->getUrl())->explode('/')->count();
-                while($toUnsetCount > 1){
+                while ($toUnsetCount > 1) {
                     unset($slugParts[$unsetCount]);
                     $toUnsetCount--;
                     $unsetCount++;
