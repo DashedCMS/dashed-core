@@ -13,6 +13,7 @@ use Filament\Notifications\Notification;
 use Filament\Forms\Components\Placeholder;
 use Dashed\DashedCore\Models\Customsetting;
 use Filament\Forms\Components\Actions\Action;
+use Illuminate\Support\Facades\Artisan;
 
 class GeneralSettingsPage extends Page
 {
@@ -284,6 +285,8 @@ class GeneralSettingsPage extends Page
             Customsetting::set('extra_scripts', $this->form->getState()["extra_scripts_{$site['id']}"], $site['id']);
             Customsetting::set('site_theme', $this->form->getState()["site_theme_{$site['id']}"], $site['id']);
         }
+
+        Artisan::call('dashed:sync-google-reviews');
 
         Notification::make()
             ->title('De algemene instellingen zijn opgeslagen')
