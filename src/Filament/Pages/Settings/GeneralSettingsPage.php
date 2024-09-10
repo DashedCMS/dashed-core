@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore\Filament\Pages\Settings;
 
+use Filament\Forms\Components\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Forms\Components\Tabs;
 use Dashed\DashedCore\Classes\Sites;
@@ -49,6 +50,8 @@ class GeneralSettingsPage extends Page
             $formData["company_country_{$site['id']}"] = Customsetting::get('company_country', $site['id']);
             $formData["google_analytics_id_{$site['id']}"] = Customsetting::get('google_analytics_id', $site['id']);
             $formData["google_tagmanager_id_{$site['id']}"] = Customsetting::get('google_tagmanager_id', $site['id']);
+            $formData["google_maps_places_key_{$site['id']}"] = Customsetting::get('google_maps_places_key', $site['id']);
+            $formData["google_maps_places_id_{$site['id']}"] = Customsetting::get('google_maps_places_id', $site['id']);
             $formData["facebook_pixel_conversion_id_{$site['id']}"] = Customsetting::get('facebook_pixel_conversion_id', $site['id']);
             $formData["facebook_pixel_site_id_{$site['id']}"] = Customsetting::get('facebook_pixel_site_id', $site['id']);
             $formData["webmaster_tag_google_{$site['id']}"] = Customsetting::get('webmaster_tag_google', $site['id']);
@@ -173,6 +176,25 @@ class GeneralSettingsPage extends Page
                 TextInput::make("google_tagmanager_id_{$site['id']}")
                     ->label('Google Tagmanager ID')
                     ->maxLength(255),
+                TextInput::make("google_maps_places_key_{$site['id']}")
+                    ->label('Google Maps Places key')
+                    ->helperText('Deze key is nodig om de Google Maps Reviews te syncen')
+                    ->hintActions([
+                        Action::make('retrieveKey')
+                            ->label('Verkrijg een key')
+                            ->url('https://developers.google.com/maps/documentation/places/web-service/get-api-key')
+                            ->openUrlInNewTab(),
+                    ])
+                    ->maxLength(255),
+                TextInput::make("google_maps_places_id_{$site['id']}")
+                    ->label('Google Maps Places ID')
+                    ->hintActions([
+                        Action::make('retrieveId')
+                            ->label('Zoek Google Place ID')
+                            ->url('https://developers.google.com/maps/documentation/javascript/examples/places-placeid-finder')
+                            ->openUrlInNewTab(),
+                    ])
+                    ->maxLength(255),
                 TextInput::make("facebook_pixel_conversion_id_{$site['id']}")
                     ->label('Facebook Pixel Conversion ID')
                     ->maxLength(255),
@@ -249,6 +271,8 @@ class GeneralSettingsPage extends Page
             Customsetting::set('company_country', $this->form->getState()["company_country_{$site['id']}"], $site['id']);
             Customsetting::set('google_analytics_id', $this->form->getState()["google_analytics_id_{$site['id']}"], $site['id']);
             Customsetting::set('google_tagmanager_id', $this->form->getState()["google_tagmanager_id_{$site['id']}"], $site['id']);
+            Customsetting::set('google_maps_places_key', $this->form->getState()["google_maps_places_key_{$site['id']}"], $site['id']);
+            Customsetting::set('google_maps_places_id', $this->form->getState()["google_maps_places_id_{$site['id']}"], $site['id']);
             Customsetting::set('facebook_pixel_conversion_id', $this->form->getState()["facebook_pixel_conversion_id_{$site['id']}"], $site['id']);
             Customsetting::set('facebook_pixel_site_id', $this->form->getState()["facebook_pixel_site_id_{$site['id']}"], $site['id']);
             Customsetting::set('webmaster_tag_google', $this->form->getState()["webmaster_tag_google_{$site['id']}"], $site['id']);

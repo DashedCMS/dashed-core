@@ -44,35 +44,48 @@ class FrontendMiddleware
         ]);
         seo()->metaData('robots', env('APP_ENV') == 'local' ? 'noindex, nofollow' : 'index, follow');
         seo()->metaData('metaTitle', Customsetting::get('site_name', Sites::getActive(), 'Website'));
-        if (! seo()->metaData('metaImage') && Customsetting::get('default_meta_data_image', Sites::getActive(), '')) {
+        if (!seo()->metaData('metaImage') && Customsetting::get('default_meta_data_image', Sites::getActive(), '')) {
             seo()->metaData('metaImage', Customsetting::get('default_meta_data_image', Sites::getActive(), ''));
         }
 
         $logo = mediaHelper()->getSingleMedia(Customsetting::get('site_logo', Sites::getActive(), ''), 'thumb');
         $favicon = mediaHelper()->getSingleMedia(Customsetting::get('site_favicon', Sites::getActive(), ''), 'thumb');
 
-        seo()->metaData('schemas', [
-            'localBusiness' => Schema::organization()
-                ->identifier(request()->url() . '#Organization')
-                ->legalName(Customsetting::get('site_name'))
-                ->email(Customsetting::get('site_to_email'))
-                ->telephone(Customsetting::get('company_phone_number'))
-                ->logo($logo->url ?? '')
-                ->address(Customsetting::get('company_street').' '.Customsetting::get('company_street_number').', '.Customsetting::get('company_postal_code').' '.Customsetting::get('company_city').', '.Customsetting::get('company_country'))
-                ->addProperties([
-                    'address' => [
-                        'streetAddress' => Customsetting::get('company_street').' '.Customsetting::get('company_street_number'),
-                        'postalCode' => Customsetting::get('company_postal_code'),
-                        'addressCountry' => Customsetting::get('company_country'),
-                    ],
-                ])
-                ->url($request->url())
-                ->contactPoint(
-                    Schema::contactPoint()
-                        ->telephone(Customsetting::get('company_phone_number'))
-                        ->email(Customsetting::get('site_to_email'))
-                ),
-        ]);
+        $schema = Schema::organization()
+            ->identifier(request()->url() . '#Organization')
+            ->legalName(Customsetting::get('site_name'))
+            ->email(Customsetting::get('site_to_email'))
+            ->telephone(Customsetting::get('company_phone_number'))
+            ->logo($logo->url ?? '')
+            ->address(Customsetting::get('company_street') . ' ' . Customsetting::get('company_street_number') . ', ' . Customsetting::get('company_postal_code') . ' ' . Customsetting::get('company_city') . ', ' . Customsetting::get('company_country'))
+            ->addProperties([
+                'address' => [
+                    'streetAddress' => Customsetting::get('company_street') . ' ' . Customsetting::get('company_street_number'),
+                    'postalCode' => Customsetting::get('company_postal_code'),
+                    'addressCountry' => Customsetting::get('company_country'),
+                ],
+            ])
+            ->url($request->url())
+            ->contactPoint(
+                Schema::contactPoint()
+                    ->telephone(Customsetting::get('company_phone_number'))
+                    ->email(Customsetting::get('site_to_email'))
+            );
+
+        if (Customsetting::get('google_maps_reviews_synced', false)) {
+            $schema->aggregateRating(
+                Schema::aggregateRating()
+                    ->ratingValue(Customsetting::get('google_maps_rating'))
+                    ->bestRating(5)
+                    ->worstRating(1)
+                    ->reviewCount(Customsetting::get('google_maps_review_count'))
+                    ->url('https://www.google.com/')
+            );
+        }
+
+        seo()->metaData('schemas', array_merge([
+            'localBusiness' => $schema
+        ], seo()->metaData('schemas')));
 
         View::share('logo', $logo);
         View::share('favicon', $favicon);

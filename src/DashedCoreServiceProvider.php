@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore;
 
+use Dashed\DashedCore\Commands\SyncGoogleReviews;
 use Livewire\Livewire;
 use Dashed\Drift\Config;
 use Dashed\Drift\DriftManager;
@@ -163,6 +164,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                 CreateSitemap::class,
                 CreateVisitableModel::class,
                 RunUrlHistoryCheckCommand::class,
+                SyncGoogleReviews::class,
             ]);
     }
 }
