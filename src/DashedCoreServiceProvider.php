@@ -2,7 +2,6 @@
 
 namespace Dashed\DashedCore;
 
-use Dashed\DashedCore\Commands\SyncGoogleReviews;
 use Livewire\Livewire;
 use Dashed\Drift\Config;
 use Dashed\Drift\DriftManager;
@@ -15,6 +14,7 @@ use Dashed\DashedCore\Commands\CreateSitemap;
 use Dashed\DashedCore\Commands\UpdateCommand;
 use Dashed\DashedCore\Commands\InstallCommand;
 use Dashed\DashedCore\Commands\CreateAdminUser;
+use Dashed\DashedCore\Commands\SyncGoogleReviews;
 use Dashed\DashedCore\Livewire\Frontend\Auth\Login;
 use Dashed\DashedCore\Commands\CreateVisitableModel;
 use Spatie\LaravelPackageTools\PackageServiceProvider;

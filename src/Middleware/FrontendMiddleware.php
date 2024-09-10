@@ -44,7 +44,7 @@ class FrontendMiddleware
         ]);
         seo()->metaData('robots', env('APP_ENV') == 'local' ? 'noindex, nofollow' : 'index, follow');
         seo()->metaData('metaTitle', Customsetting::get('site_name', Sites::getActive(), 'Website'));
-        if (!seo()->metaData('metaImage') && Customsetting::get('default_meta_data_image', Sites::getActive(), '')) {
+        if (! seo()->metaData('metaImage') && Customsetting::get('default_meta_data_image', Sites::getActive(), '')) {
             seo()->metaData('metaImage', Customsetting::get('default_meta_data_image', Sites::getActive(), ''));
         }
 
@@ -84,7 +84,7 @@ class FrontendMiddleware
         }
 
         seo()->metaData('schemas', array_merge([
-            'localBusiness' => $schema
+            'localBusiness' => $schema,
         ], seo()->metaData('schemas')));
 
         View::share('logo', $logo);

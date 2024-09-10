@@ -2,11 +2,10 @@
 
 namespace Dashed\DashedCore\Commands;
 
-use Dashed\DashedCore\Helpers\Http\UrlBuilderTrait;
 use Illuminate\Console\Command;
-use Dashed\DashedCore\Models\Customsetting;
-use Dashed\DashedCore\Jobs\RunUrlHistoryCheck;
 use Illuminate\Support\Facades\Http;
+use Dashed\DashedCore\Models\Customsetting;
+use Dashed\DashedCore\Helpers\Http\UrlBuilderTrait;
 
 class SyncGoogleReviews extends Command
 {
@@ -51,7 +50,7 @@ class SyncGoogleReviews extends Command
             ]);
 
             $reviews = Http::get($url)->json();
-            if($reviews['status'] === 'OK') {
+            if ($reviews['status'] === 'OK') {
                 $reviews = $reviews['result'];
                 Customsetting::set('google_maps_rating', $reviews['rating']);
                 Customsetting::set('google_maps_review_count', $reviews['user_ratings_total']);
