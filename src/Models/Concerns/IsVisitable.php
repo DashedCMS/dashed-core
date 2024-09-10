@@ -3,6 +3,7 @@
 namespace Dashed\DashedCore\Models\Concerns;
 
 use Carbon\Carbon;
+use Dashed\DashedCore\Jobs\ClearContentBlocksCache;
 use Illuminate\Support\Str;
 use Spatie\Sitemap\Sitemap;
 use Spatie\Sitemap\Tags\Url;
@@ -57,6 +58,14 @@ trait IsVisitable
             if (self::runHistoryCheck()) {
                 Customsetting::set('run_history_check', true);
             }
+
+            foreach (config('dashed-core.blocks.relations', []) as $modelClass => $relation) {
+                if ($model instanceof $modelClass) {
+                    if ($relation['id'] == '*' || (is_array($relation['id']) && in_array($model->id, $relation['id'])) || $relation['id'] == $model->id) {
+                        ClearContentBlocksCache::dispatch($model, $relation['blocks']);
+                    }
+                }
+            }
         });
     }
 
@@ -73,7 +82,7 @@ trait IsVisitable
 
     public function scopeThisSite($query, $siteId = null)
     {
-        if (! $siteId) {
+        if (!$siteId) {
             $siteId = Sites::getActive();
         }
 
@@ -82,7 +91,7 @@ trait IsVisitable
 
     public function scopeSlug($query, string $slug = '')
     {
-        if (! $slug) {
+        if (!$slug) {
             //Should not be found
             $query->where('id', 0);
         } else {
@@ -130,7 +139,7 @@ trait IsVisitable
 
     public function getStatusAttribute(): bool
     {
-        if (! $this->start_date && ! $this->end_date) {
+        if (!$this->start_date && !$this->end_date) {
             return 1;
         } else {
             if ($this->start_date && $this->end_date) {
@@ -181,7 +190,7 @@ trait IsVisitable
         if (method_exists($model, 'parent')) {
             $parentBreadcrumbs = [];
             while ($model->parent) {
-                if (! $model->parent->is_home) {
+                if (!$model->parent->is_home) {
                     $parentBreadcrumbs[] = [
                         'name' => $model->parent->name,
                         'url' => $model->parent->getUrl(),
@@ -212,7 +221,7 @@ trait IsVisitable
     {
         $originalLocale = app()->getLocale();
 
-        if (! $activeLocale) {
+        if (!$activeLocale) {
             $activeLocale = $originalLocale;
         }
 
@@ -231,10 +240,10 @@ trait IsVisitable
             $url = $this->getTranslation('slug', $activeLocale);
         }
 
-        if (! str($url)->startsWith('/')) {
+        if (!str($url)->startsWith('/')) {
             $url = '/' . $url;
         }
-        if ($activeLocale != Locales::getFirstLocale()['id'] && ! str($url)->startsWith("/{$activeLocale}")) {
+        if ($activeLocale != Locales::getFirstLocale()['id'] && !str($url)->startsWith("/{$activeLocale}")) {
             $url = '/' . $activeLocale . $url;
         }
 
@@ -280,7 +289,7 @@ trait IsVisitable
             foreach ($slugParts as $slugPart) {
                 $model = self::publicShowable()->slug($slugPart)->where('parent_id', $parentId)->first();
                 $parentId = $model?->id;
-                if (! $model) {
+                if (!$model) {
                     return;
                 }
             }
@@ -325,7 +334,7 @@ trait IsVisitable
     {
         $finalString = '';
 
-        if (! is_array($this->content)) {
+        if (!is_array($this->content)) {
             return '';
         }
 
@@ -350,5 +359,40 @@ trait IsVisitable
         }
 
         return trim($finalString);
+    }
+
+    public function getContentBlockCacheKey(int $iteration, string $block, ?string $locale = null): string
+    {
+        $block = str($block)->slug();
+        $locale = $locale ?: app()->getLocale();
+        $updatedAt = $this->updated_at->timestamp;
+
+        return "block_{$iteration}_{$block}_{$this->id}_{$updatedAt}_{$locale}";
+    }
+
+    public function clearContentBlockCache(array $blocks): void
+    {
+        foreach (cms()->builder('routeModels') as $routeModel) {
+            $routeModel['class']::select('id', 'content', 'updated_at')->chunk(1000, function ($results) use ($routeModel, $blocks) {
+                foreach ($results as $result) {
+                    foreach (Locales::getLocales() as $locale) {
+                        $contentBlocks = $result->getOriginal('content')[$locale['id']] ?? [];
+                        $blocksToClear = collect($contentBlocks)->pluck('type')->filter(function ($block) use ($blocks) {
+                            return in_array($block, $blocks);
+                        })->unique()->toArray();
+                        foreach ($blocksToClear as $block) {
+                            $block = str($block)->slug()->toString();
+                            $iteration = count($contentBlocks);
+                            if ($routeModel['class'] == Page::class && $result->id == 2) {
+                                while ($iteration > 0) {
+                                    cache()->forget($result->getContentBlockCacheKey($iteration, $block, $locale['id']));
+                                    $iteration--;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
     }
 }

@@ -7,6 +7,14 @@ return [
     'blocks' => [
         'caching_disabled' => [
             'example-block'
+        ],
+        'relations' => [
+            \Dashed\DashedPages\Models\Page::class => [ //if this model is updated, clear all blocks defined below
+                'id' => 0,//or '*' for all or array of ids
+                'blocks' => [ //Blocknames to clear
+                    'block-name',
+                ],
+            ]
         ]
     ]
 ];
