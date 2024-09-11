@@ -5,6 +5,7 @@ return [
     'default_auth_pages_enabled' => true,
 
     'blocks' => [
+        'disable_caching' => env('DISABLE_BLOCK_CACHING', false),
         'caching_disabled' => [
             'example-block'
         ],
