@@ -82,7 +82,7 @@ trait IsVisitable
 
     public function scopeThisSite($query, $siteId = null)
     {
-        if (!$siteId) {
+        if (! $siteId) {
             $siteId = Sites::getActive();
         }
 
@@ -91,7 +91,7 @@ trait IsVisitable
 
     public function scopeSlug($query, string $slug = '')
     {
-        if (!$slug) {
+        if (! $slug) {
             //Should not be found
             $query->where('id', 0);
         } else {
@@ -139,7 +139,7 @@ trait IsVisitable
 
     public function getStatusAttribute(): bool
     {
-        if (!$this->start_date && !$this->end_date) {
+        if (! $this->start_date && ! $this->end_date) {
             return 1;
         } else {
             if ($this->start_date && $this->end_date) {
@@ -190,7 +190,7 @@ trait IsVisitable
         if (method_exists($model, 'parent')) {
             $parentBreadcrumbs = [];
             while ($model->parent) {
-                if (!$model->parent->is_home) {
+                if (! $model->parent->is_home) {
                     $parentBreadcrumbs[] = [
                         'name' => $model->parent->name,
                         'url' => $model->parent->getUrl(),
@@ -221,7 +221,7 @@ trait IsVisitable
     {
         $originalLocale = app()->getLocale();
 
-        if (!$activeLocale) {
+        if (! $activeLocale) {
             $activeLocale = $originalLocale;
         }
 
@@ -240,10 +240,10 @@ trait IsVisitable
             $url = $this->getTranslation('slug', $activeLocale);
         }
 
-        if (!str($url)->startsWith('/')) {
+        if (! str($url)->startsWith('/')) {
             $url = '/' . $url;
         }
-        if ($activeLocale != Locales::getFirstLocale()['id'] && !str($url)->startsWith("/{$activeLocale}")) {
+        if ($activeLocale != Locales::getFirstLocale()['id'] && ! str($url)->startsWith("/{$activeLocale}")) {
             $url = '/' . $activeLocale . $url;
         }
 
@@ -297,7 +297,7 @@ trait IsVisitable
             foreach ($slugParts as $slugPart) {
                 $model = self::publicShowable()->slug($slugPart)->where('parent_id', $parentId)->first();
                 $parentId = $model?->id;
-                if (!$model) {
+                if (! $model) {
                     return;
                 }
             }
@@ -342,7 +342,7 @@ trait IsVisitable
     {
         $finalString = '';
 
-        if (!is_array($this->content)) {
+        if (! is_array($this->content)) {
             return '';
         }
 
