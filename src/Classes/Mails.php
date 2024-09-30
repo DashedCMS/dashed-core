@@ -24,10 +24,10 @@ class Mails
 
     public static function getAdminNotificationEmails(): array
     {
-        $emails = Customsetting::get('notification_invoice_emails', Sites::getActive(), '[]');
+        $emails = Customsetting::get('notification_invoice_emails', Sites::getActive(), '{}');
 
         if ($emails) {
-            return json_decode($emails);
+            return json_decode($emails, true);
         }
 
         return [];
@@ -36,10 +36,10 @@ class Mails
     //Todo: move to ecommerce package
     public static function getAdminLowStockNotificationEmails(): array
     {
-        $emails = Customsetting::get('notification_low_stock_emails', Sites::getActive(), '[]');
+        $emails = Customsetting::get('notification_low_stock_emails', Sites::getActive(), '{}');
 
         if ($emails) {
-            return json_decode($emails);
+            return json_decode($emails, true);
         }
 
         return [];
@@ -47,10 +47,10 @@ class Mails
 
     public static function getAdminFormInputEmails(): array
     {
-        $emails = Customsetting::get('notification_form_inputs_emails', Sites::getActive(), '[]');
+        $emails = Customsetting::get('notification_form_inputs_emails', Sites::getActive(), '{}');
 
         if ($emails) {
-            return json_decode($emails);
+            return json_decode($emails, true);
         }
 
         return [];
