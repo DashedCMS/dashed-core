@@ -417,4 +417,15 @@ trait IsVisitable
             });
         }
     }
+    public function getNameWithParentsAttribute(): string
+    {
+        $name = $this->name;
+        $model = $this;
+        while ($model->parent) {
+            $name = $model->parent->name . ' > ' . $name;
+            $model = $model->parent;
+        }
+
+        return $name;
+    }
 }
