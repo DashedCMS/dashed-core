@@ -417,6 +417,7 @@ trait IsVisitable
             });
         }
     }
+
     public function getNameWithParentsAttribute(): string
     {
         $name = $this->name;
