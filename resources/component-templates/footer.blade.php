@@ -76,10 +76,10 @@
                 </p>
             </div>
             <div class="">
-                <h3 class="text-lg font-bold">Meld je aan voor onze nieuwsbrief</h3>
-                <p class="text-sm text-gray-500">Krijg updates over onze voorraad, nieuwe vissen of andere handige weetjes</p>
+                <h3 class="text-lg font-bold">{{ Translation::get('sign-up-for-our-newsletter', 'footer', 'Meld je aan voor onze nieuwsbrief') }}</h3>
+                <p class="text-sm text-gray-500">{{ Translation::get('sign-up-for-our-newsletter-content', 'footer', 'Krijg updates over onze voorraad, nieuwe vissen of andere handige weetjes') }}</p>
                 <form class="mt-2 flex sm:max-w-md">
-                    <label for="email-address" class="sr-only">Email address</label>
+                    <label for="email-address" class="sr-only">Email adres</label>
                     <input id="email-address" type="text" autocomplete="email" required="" class="w-full min-w-0 appearance-none rounded-md border border-white bg-white px-4 py-2 text-base text-gray-900 placeholder-gray-500 shadow-sm focus:border-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-900">
                     <div class="ml-4 flex-shrink-0">
                         <button type="submit" class="flex w-full items-center justify-center rounded-md border border-transparent bg-primary-600 px-4 py-2 text-base font-bold text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-gray-900">Sign up</button>
