@@ -3,6 +3,7 @@
 namespace Dashed\DashedCore\Controllers\Frontend;
 
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Support\Str;
 use Dashed\DashedCore\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -37,6 +38,8 @@ class AuthController extends FrontendController
 
     public function loginPost(LoginRequest $request)
     {
+        throw new Exception('The loginPost method is outdated, use Livewire instead');
+
         $user = User::where('email', $request->email)->first();
 
         if (! $user) {
@@ -54,6 +57,8 @@ class AuthController extends FrontendController
 
     public function registerPost(RegisterRequest $request)
     {
+        throw new Exception('The registerPost method is outdated, use Livewire instead');
+
         $user = new User();
         $user->first_name = $request->first_name;
         $user->last_name = $request->last_name;
@@ -95,6 +100,8 @@ class AuthController extends FrontendController
 
     public function forgotPasswordPost(ForgotPasswordRequest $request)
     {
+        throw new Exception('The forgotPasswordPost method is outdated, use Livewire instead');
+
         if (Auth::check()) {
             return redirect(route('dashed.frontend.account'))->with('success', Translation::get('already-logged-in', 'login', 'You are already logged in'));
         }
@@ -137,6 +144,8 @@ class AuthController extends FrontendController
 
     public function resetPasswordPost(ResetPasswordRequest $request, $passwordResetToken)
     {
+        throw new Exception('The resetPasswordPost method is outdated, use Livewire instead');
+
         if (Auth::check()) {
             return redirect(route('dashed.frontend.account'))->with('success', Translation::get('already-logged-in', 'login', 'You are already logged in'));
         }
