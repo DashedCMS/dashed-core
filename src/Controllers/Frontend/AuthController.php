@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\View;
-use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedCore\Mail\PasswordResetMail;
 use Dashed\DashedTranslations\Models\Translation;
 use Dashed\DashedCore\Requests\Frontend\LoginRequest;

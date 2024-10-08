@@ -5,7 +5,6 @@ namespace Dashed\DashedCore\Controllers\Frontend;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedTranslations\Models\Translation;
 use Dashed\DashedCore\Requests\Frontend\UpdateAccountRequest;
 
