@@ -86,8 +86,8 @@ class DashedCoreServiceProvider extends PackageServiceProvider
     {
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
-//        $this->loadViewsFrom(__DIR__.'/../resources/views/frontend', 'dashed-core-frontend');
-//        $this->loadViewsFrom(__DIR__.'/../resources/views/emails', 'dashed-core-emails');
+        //        $this->loadViewsFrom(__DIR__.'/../resources/views/frontend', 'dashed-core-frontend');
+        //        $this->loadViewsFrom(__DIR__.'/../resources/views/emails', 'dashed-core-emails');
         $this->publishes([
             __DIR__.'/../resources/views/frontend' => resource_path('views/' . env('SITE_THEME', 'dashed')),
             __DIR__.'/../resources/views/emails' => resource_path('views/' . env('SITE_THEME', 'dashed') . '/emails'),

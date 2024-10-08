@@ -3,11 +3,11 @@
 namespace Dashed\DashedCore\Livewire\Frontend\Auth;
 
 use Carbon\Carbon;
-use Filament\Notifications\Notification;
 use Livewire\Component;
 use Illuminate\Support\Str;
 use Dashed\DashedCore\Models\User;
 use Illuminate\Support\Facades\Mail;
+use Filament\Notifications\Notification;
 use Dashed\DashedCore\Mail\PasswordResetMail;
 use Dashed\DashedTranslations\Models\Translation;
 
