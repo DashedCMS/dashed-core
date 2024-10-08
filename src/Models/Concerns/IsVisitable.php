@@ -304,7 +304,7 @@ trait IsVisitable
         }
 
         if ($model ?? false) {
-            if (View::exists(Customsetting::get('site_theme', null, 'dashed') . '.' . $class . '.show')) {
+            if (View::exists(env('SITE_THEME', 'dashed') . '.' . $class . '.show')) {
                 seo()->metaData('metaTitle', $model->metadata && $model->metadata->title ? $model->metadata->title : $model->name);
                 seo()->metaData('metaDescription', $model->metadata->description ?? '');
                 if ($model->metadata && $model->metadata->image) {
@@ -331,7 +331,7 @@ trait IsVisitable
                 View::share('model', $model);
                 View::share('breadcrumbs', $model->breadcrumbs());
 
-                return view(Customsetting::get('site_theme', null, 'dashed') . '.' . $class . '.show');
+                return view(env('SITE_THEME', 'dashed') . '.' . $class . '.show');
             } else {
                 return 'pageNotFound';
             }
