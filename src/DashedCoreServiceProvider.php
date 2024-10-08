@@ -41,16 +41,6 @@ class DashedCoreServiceProvider extends PackageServiceProvider
     {
         Model::unguard();
 
-        //        $drift = app(DriftManager::class);
-        //
-        //        $drift->registerConfig(new Config(
-        //            name: 'dashed',
-        //            filesystemDisk: (config('filesystems')['disks']['dashed']['driver'] ?? 'local') == 's3' ? 'dashed' : 'public',
-        //            cachingStrategy: FilesystemCachingStrategy::class,
-        //            forceLazyLoad: Customsetting::get('image_force_lazy_load', null, false),
-        //            showSizes: Customsetting::get('image_show_sizes', null, false),
-        //        ));
-
         Livewire::component('notification.toastr', Toastr::class);
         Livewire::component('auth.login', Login::class);
         Livewire::component('auth.forgot-password', ForgotPassword::class);
@@ -71,7 +61,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             //            $schedule->command(SeoScan::class)->daily();
         });
 
-        if (! $this->app->environment('production')) {
+        if (!$this->app->environment('production')) {
             Mail::alwaysFrom('info@dashed.nl');
             Mail::alwaysTo('info@dashed.nl');
         }
@@ -84,14 +74,13 @@ class DashedCoreServiceProvider extends PackageServiceProvider
 
     public function configurePackage(Package $package): void
     {
-        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
-        //        $this->loadViewsFrom(__DIR__.'/../resources/views/frontend', 'dashed-core-frontend');
-        //        $this->loadViewsFrom(__DIR__.'/../resources/views/emails', 'dashed-core-emails');
+//        $this->loadViewsFrom(__DIR__ . '/../resources/views/frontend', 'dashed-core');
+
         $this->publishes([
-            __DIR__.'/../resources/views/frontend' => resource_path('views/' . env('SITE_THEME', 'dashed')),
-            __DIR__.'/../resources/views/emails' => resource_path('views/' . env('SITE_THEME', 'dashed') . '/emails'),
-        ], 'dashed-core-views');
+            __DIR__ . '/../resources/templates' => resource_path('views/' . env('SITE_THEME', 'dashed')),
+        ], 'dashed-core-templates');
 
         cms()->builder(
             'settingPages',
@@ -160,6 +149,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             ->hasRoutes([
                 'frontend',
             ])
+            ->hasViews()
             ->hasAssets()
             ->hasCommands([
                 CreateAdminUser::class,
