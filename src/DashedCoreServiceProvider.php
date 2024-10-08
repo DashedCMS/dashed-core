@@ -3,12 +3,9 @@
 namespace Dashed\DashedCore;
 
 use Livewire\Livewire;
-use Dashed\Drift\Config;
-use Dashed\Drift\DriftManager;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\LaravelPackageTools\Package;
-use Dashed\DashedCore\Models\Customsetting;
 use Illuminate\Console\Scheduling\Schedule;
 use Dashed\DashedCore\Commands\CreateSitemap;
 use Dashed\DashedCore\Commands\UpdateCommand;
@@ -25,7 +22,6 @@ use Dashed\DashedCore\Livewire\Frontend\Auth\ResetPassword;
 use Dashed\DashedCore\Livewire\Frontend\Auth\ForgotPassword;
 use Dashed\DashedCore\Livewire\Frontend\Notification\Toastr;
 use Dashed\DashedCore\Commands\InvalidatePasswordResetTokens;
-use Dashed\Drift\CachingStrategies\FilesystemCachingStrategy;
 use Dashed\DashedCore\Filament\Pages\Settings\SEOSettingsPage;
 use Dashed\DashedCore\Livewire\Infolists\SEO\SEOScoreInfoList;
 use Dashed\DashedCore\Filament\Widgets\NotFoundPageGlobalStats;
@@ -61,7 +57,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             //            $schedule->command(SeoScan::class)->daily();
         });
 
-        if (!$this->app->environment('production')) {
+        if (! $this->app->environment('production')) {
             Mail::alwaysFrom('info@dashed.nl');
             Mail::alwaysTo('info@dashed.nl');
         }
@@ -76,7 +72,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
     {
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
-//        $this->loadViewsFrom(__DIR__ . '/../resources/views/frontend', 'dashed-core');
+        //        $this->loadViewsFrom(__DIR__ . '/../resources/views/frontend', 'dashed-core');
 
         $this->publishes([
             __DIR__ . '/../resources/templates' => resource_path('views/' . env('SITE_THEME', 'dashed')),
