@@ -3,6 +3,7 @@
 namespace Dashed\DashedCore\Livewire\Frontend\Account;
 
 use App\Models\User;
+use Dashed\DashedCore\Models\Customsetting;
 use Livewire\Component;
 use Illuminate\Support\Facades\Hash;
 use Filament\Notifications\Notification;
@@ -75,6 +76,6 @@ class Account extends Component
 
     public function render()
     {
-        return view('dashed-core::frontend.account.account');
+        return view(env('SITE_THEME', 'dashed') . '.account.account');
     }
 }

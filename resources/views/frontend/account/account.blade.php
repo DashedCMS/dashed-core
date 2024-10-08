@@ -1,23 +1,25 @@
 <x-container>
-    <div class="grid grid-cols-6 gap-8 py-16 sm:py-24">
-        <div class="col-span-2">
+    <div class="grid md:grid-cols-6 gap-8 py-16 sm:py-24">
+        <div class="md:col-span-2">
             <nav class="grid space-y-2" aria-label="Tabs">
                 <a href="{{AccountHelper::getAccountUrl()}}"
-                   class="button button-primary-ghost">
-                    {{Translation::get('my-account', 'account', 'My account')}}
+                   class="button button--primary-light">
+                    {{Translation::get('my-account', 'account', 'Mijn account')}}
                 </a>
                 <a href="{{EcommerceAccountHelper::getAccountOrdersUrl()}}"
-                   class="button button-white-on-primary">
-                    {{Translation::get('my-orders', 'account', 'My orders')}}
+                   class="button button--primary-dark">
+                    {{Translation::get('my-orders', 'account', 'Mijn bestellingen')}}
                 </a>
                 <a href="{{AccountHelper::getLogoutUrl()}}"
-                   class="button button-white-on-primary">
-                    {{Translation::get('logout', 'login', 'Logout')}}
+                   class="button button--primary-dark">
+                    {{Translation::get('logout', 'login', 'Uitloggen')}}
                 </a>
             </nav>
         </div>
-        <div class="col-span-4">
-            <h1 class="text-2xl">{{Translation::get('welcome', 'account', 'Welcome')}} {{$user->name}}</h1>
+        <div class="md:col-span-4">
+            <h1 class="text-2xl">{{Translation::get('welcome', 'account', 'Welkom :name:', 'text', [
+    'name' => $user->name,
+])}}</h1>
             <form class="mt-4 space-y-4" wire:submit.prevent="submit">
                 <div class="grid md:grid-cols-2 gap-4">
                     <div class="md:col-span-2">
@@ -34,7 +36,7 @@
                             type="text"
                             model="firstName"
                             id="firstName"
-                            placeholder="{{Translation::get('first-name', 'account', 'First name')}}"
+                            placeholder="{{Translation::get('first-name', 'account', 'Voornaam')}}"
                         />
                     </div>
                     <div class="">
@@ -42,21 +44,21 @@
                             type="text"
                             model="lastName"
                             id="lastName"
-                            placeholder="{{Translation::get('last-name', 'account', 'Last name')}}"
+                            placeholder="{{Translation::get('last-name', 'account', 'Achternaam')}}"
                         />
                     </div>
                     <div class="">
                         <x-fields.input
-                            placeholder="{{Translation::get('password', 'account', 'Password')}}"
+                            placeholder="{{Translation::get('password', 'account', 'Wachtwoord')}}"
                             type="password"
                             model="password"
                             id="password"
-                            :helperText="Translation::get('password-not-changed-if-empty', 'account', 'If you do not enter a password this will not be changed!')"
+                            :helperText="Translation::get('password-not-changed-if-empty', 'account', 'Als je geen wachtwoord invoert, veranderd dit niet!')"
                         />
                     </div>
                     <div class="">
                         <x-fields.input
-                            placeholder="{{Translation::get('repeat-password', 'account', 'Repeat password')}}"
+                            placeholder="{{Translation::get('repeat-password', 'account', 'Wachtwoord herhalen')}}"
                             type="password"
                             model="passwordConfirmation"
                             id="passwordConfirmation"
@@ -65,8 +67,8 @@
                 </div>
                 <div class="flex">
                     <button
-                        class="button button-white-on-primary">
-                        {{Translation::get('update-account', 'account', 'Update account')}}
+                        class="button button--primary-dark">
+                        {{Translation::get('update-account', 'account', 'Account bijwerken')}}
                     </button>
                 </div>
             </form>

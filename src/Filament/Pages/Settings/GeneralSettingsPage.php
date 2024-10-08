@@ -62,7 +62,7 @@ class GeneralSettingsPage extends Page
             $formData["webmaster_tag_yandex_{$site['id']}"] = Customsetting::get('webmaster_tag_yandex', $site['id']);
             $formData["webmaster_tag_norton_{$site['id']}"] = Customsetting::get('webmaster_tag_norton', $site['id']);
             $formData["extra_scripts_{$site['id']}"] = Customsetting::get('extra_scripts', $site['id']);
-            $formData["site_theme_{$site['id']}"] = Customsetting::get('site_theme', $site['id'], 'dashed');
+//            $formData["site_theme_{$site['id']}"] = Customsetting::get('site_theme', $site['id'], 'dashed');
         }
 
         $this->form->fill($formData);
@@ -227,10 +227,10 @@ class GeneralSettingsPage extends Page
                         'default' => 1,
                         'lg' => 2,
                     ]),
-                Select::make("site_theme_{$site['id']}")
-                    ->label('Selecteer het frontend thema voor deze website')
-                    ->required()
-                    ->options(cms()->builder('themes')),
+//                Select::make("site_theme_{$site['id']}")
+//                    ->label('Selecteer het frontend thema voor deze website')
+//                    ->required()
+//                    ->options(cms()->builder('themes')),
             ];
 
             $tabs[] = Tab::make($site['id'])
@@ -283,7 +283,7 @@ class GeneralSettingsPage extends Page
             Customsetting::set('webmaster_tag_yandex', $this->form->getState()["webmaster_tag_yandex_{$site['id']}"], $site['id']);
             Customsetting::set('webmaster_tag_norton', $this->form->getState()["webmaster_tag_norton_{$site['id']}"], $site['id']);
             Customsetting::set('extra_scripts', $this->form->getState()["extra_scripts_{$site['id']}"], $site['id']);
-            Customsetting::set('site_theme', $this->form->getState()["site_theme_{$site['id']}"], $site['id']);
+//            Customsetting::set('site_theme', $this->form->getState()["site_theme_{$site['id']}"], $site['id']);
         }
 
         Artisan::call('dashed:sync-google-reviews');

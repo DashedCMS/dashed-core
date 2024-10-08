@@ -47,6 +47,6 @@ class ResetPassword extends Component
 
     public function render()
     {
-        return view('dashed-core::frontend.auth.reset-password');
+        return view(env('SITE_THEME', 'dashed') . '.auth.reset-password');
     }
 }

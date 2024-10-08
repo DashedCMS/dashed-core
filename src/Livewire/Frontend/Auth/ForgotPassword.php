@@ -3,6 +3,7 @@
 namespace Dashed\DashedCore\Livewire\Frontend\Auth;
 
 use Carbon\Carbon;
+use Filament\Notifications\Notification;
 use Livewire\Component;
 use Illuminate\Support\Str;
 use Dashed\DashedCore\Models\User;
@@ -34,11 +35,15 @@ class ForgotPassword extends Component
 
         $this->reset('email');
 
-        $this->dispatch('showAlert', 'success', Translation::get('forgot-password-post-success', 'login', 'If we can find an account with your email you will receive a email to reset your password.'));
+        Notification::make()
+            ->success()
+            ->body(Translation::get('forgot-password-post-success', 'login', 'Als we een account gekoppeld aan het ingevulde emailadres vinden, sturen we je een mail om je wachtwoord te resetten.'))
+            ->send();
+        $this->dispatch('showAlert', 'success', Translation::get('forgot-password-post-success', 'login', 'Als we een account gekoppeld aan het ingevulde emailadres vinden, sturen we je een mail om je wachtwoord te resetten.'));
     }
 
     public function render()
     {
-        return view('dashed-core::frontend.auth.forgot-password');
+        return view(env('SITE_THEME', 'dashed') . '.auth.forgot-password');
     }
 }

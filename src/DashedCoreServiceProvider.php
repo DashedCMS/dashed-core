@@ -86,7 +86,12 @@ class DashedCoreServiceProvider extends PackageServiceProvider
     {
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'dashed-core');
+//        $this->loadViewsFrom(__DIR__.'/../resources/views/frontend', 'dashed-core-frontend');
+//        $this->loadViewsFrom(__DIR__.'/../resources/views/emails', 'dashed-core-emails');
+        $this->publishes([
+            __DIR__.'/../resources/views/frontend' => resource_path('views/' . env('SITE_THEME', 'dashed')),
+            __DIR__.'/../resources/views/emails' => resource_path('views/' . env('SITE_THEME', 'dashed') . '/emails'),
+        ], 'dashed-core-views');
 
         cms()->builder(
             'settingPages',
@@ -155,7 +160,6 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             ->hasRoutes([
                 'frontend',
             ])
-            ->hasViews()
             ->hasAssets()
             ->hasCommands([
                 CreateAdminUser::class,
