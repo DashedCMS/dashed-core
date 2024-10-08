@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore\Controllers\Frontend;
 
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Dashed\DashedCore\Models\Customsetting;
@@ -24,6 +25,8 @@ class AccountController extends FrontendController
 
     public function accountPost(UpdateAccountRequest $request)
     {
+        throw new Exception('The accountPost method is outdated, use Livewire instead');
+
         $user = Auth::user();
         $user->first_name = $request->first_name;
         $user->last_name = $request->last_name;
