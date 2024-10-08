@@ -2,8 +2,8 @@
 
 namespace Dashed\DashedCore\Controllers\Frontend;
 
-use Carbon\Carbon;
 use Exception;
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Dashed\DashedCore\Models\User;
 use Illuminate\Support\Facades\Auth;
