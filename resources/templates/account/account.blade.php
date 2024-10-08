@@ -6,10 +6,10 @@
                    class="button button--primary-light">
                     {{Translation::get('my-account', 'account', 'Mijn account')}}
                 </a>
-                <a href="{{EcommerceAccountHelper::getAccountOrdersUrl()}}"
-                   class="button button--primary-dark">
-                    {{Translation::get('my-orders', 'account', 'Mijn bestellingen')}}
-                </a>
+{{--                <a href="{{EcommerceAccountHelper::getAccountOrdersUrl()}}"--}}
+{{--                   class="button button--primary-dark">--}}
+{{--                    {{Translation::get('my-orders', 'account', 'Mijn bestellingen')}}--}}
+{{--                </a>--}}
                 <a href="{{AccountHelper::getLogoutUrl()}}"
                    class="button button--primary-dark">
                     {{Translation::get('logout', 'login', 'Uitloggen')}}

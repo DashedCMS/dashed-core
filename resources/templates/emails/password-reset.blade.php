@@ -239,7 +239,7 @@
                                                                                    style="font-family: Open Sans, Helvetica, Tahoma, Arial, sans-serif; padding: 0 10px;">
                                                                         <img alt="{{Customsetting::get('site_name')}}"
                                                                              height="auto"
-                                                                             src="{{mediaHelper()->getSingleImage($logo, 'medium')->url ?? ''}}"
+                                                                             src="{{mediaHelper()->getSingleMedia($logo, 'medium')->url ?? ''}}"
                                                                              style="border:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;font-size:13px;"
                                                                              width="160"> </a></td>
                                                             @endif
@@ -336,7 +336,7 @@
                                                                 style="font-family: Open Sans, Helvetica, Tahoma, Arial, sans-serif; font-size: 0px; padding: 0; word-break: break-word;">
                                                                 <div
                                                                     style="font-family: Open Sans, Helvetica, Tahoma, Arial, sans-serif; font-size: 26px; font-weight: bold; line-height: 30px; text-align: left; color: #4F4F4F;">
-                                                                    {{Translation::get('password-reset-email-title', 'login', 'Reset your password', 'text')}}
+                                                                    {{Translation::get('password-reset-email-title', 'login', 'Reset je wachtwoord', 'text')}}
                                                                 </div>
                                                             </td>
                                                         </tr>
@@ -346,7 +346,7 @@
                                                                 <div
                                                                     style="font-family: Open Sans, Helvetica, Tahoma, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 25px; text-align: left; color: #4F4F4F;">
                                                                     <br>
-                                                                    {!! nl2br(Translation::get('password-reset-email-content', 'login', 'Click the button below to reset your password!', 'textarea')) !!}
+                                                                    {!! nl2br(Translation::get('password-reset-email-content', 'login', 'Klik op de knop hieronder om je wachtwoord opnieuw in te stellen!', 'textarea')) !!}
                                                                 </div>
                                                             </td>
                                                         </tr>
@@ -364,7 +364,7 @@
                                                                             valign="middle"><a
                                                                                 href="{{route('dashed.frontend.auth.reset-password', ['passwordResetToken' => $user->password_reset_token])}}"
                                                                                 style="display: inline-block; background: {{Translation::get('primary-color-code', 'emails', '#A0131C')}}; color: #ffffff; font-family: Open Sans, Helvetica, Tahoma, Arial, sans-serif; font-size: 18px; font-weight: bold; line-height: 120%; margin: 0; text-decoration: none; text-transform: none; padding: 10px 25px; mso-padding-alt: 0px; border-radius: 3px;"
-                                                                                target="_blank"> {{Translation::get('reset-password', 'login', 'Reset password')}} </a>
+                                                                                target="_blank"> {{Translation::get('reset-password', 'login', 'Reset wachtwoord')}} </a>
                                                                         </td>
                                                                     </tr>
                                                                 </table>
