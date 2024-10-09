@@ -59,6 +59,10 @@ class UpdateCommand extends Command
             '--force' => 'true',
         ]);
 
+        $this->call('vendor:publish', [
+            '--tag' => 'dashed-templates',
+        ]);
+
         if ($enableMigrations) {
             $this->call('migrate', [
                 '--force' => 'true',
