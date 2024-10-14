@@ -71,10 +71,10 @@
 
 <title>{{ seo()->metaData('metaTitle') }}</title>
 @isset($model)
-{{--    @foreach(seo()->metaData('alternateUrls') as $locale => $url)--}}
-{{--        <link rel="alternate" hreflang="{{ $locale }}" href="{{ $url }}"/>--}}
-{{--    @endforeach--}}
-        <link rel="alternate" hreflang="x-default" href="{{ $model->getUrl(\Dashed\DashedCore\Classes\Locales::getFirstLocale()['id'], false) }}"/>
+    {{--    @foreach(seo()->metaData('alternateUrls') as $locale => $url)--}}
+    {{--        <link rel="alternate" hreflang="{{ $locale }}" href="{{ $url }}"/>--}}
+    {{--    @endforeach--}}
+    <link rel="alternate" hreflang="x-default" href="{{ $model->getUrl(\Dashed\DashedCore\Classes\Locales::getFirstLocale()['id'], false) }}"/>
     @foreach(\Dashed\DashedCore\Classes\Locales::getLocales() as $locale)
         <link rel="alternate" hreflang="{{ $locale['id'] }}" href="{{ $model->getUrl($locale['id'], false) }}"/>
     @endforeach
@@ -112,7 +112,7 @@
 @if(seo()->metaData('metaImage'))
     <meta itemprop="image" content="{!! seo()->metaData('metaImage') !!}">
 @endif
-<meta name="robots" content="{{ seo()->metaData('robots') }}">
+<meta name="robots" content="{{ env('APP_ENV') == 'local' || $model->metaData->noindex ? 'noindex, nofollow' : 'index, follow' }}">
 
 @foreach(seo()->metaData('webmasterTags') as $platform => $webmasterTag)
     @if($webmasterTag)
