@@ -112,7 +112,7 @@
 @if(seo()->metaData('metaImage'))
     <meta itemprop="image" content="{!! seo()->metaData('metaImage') !!}">
 @endif
-<meta name="robots" content="{{ env('APP_ENV') == 'local' || $model->metaData->noindex ? 'noindex, nofollow' : 'index, follow' }}">
+<meta name="robots" content="{{ (env('APP_ENV') == 'local' || (isset($model) && $model->metaData->noindex)) ? 'noindex, nofollow' : 'index, follow' }}">
 
 @foreach(seo()->metaData('webmasterTags') as $platform => $webmasterTag)
     @if($webmasterTag)
