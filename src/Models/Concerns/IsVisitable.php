@@ -275,17 +275,17 @@ trait IsVisitable
         $class = str(self::class)->lower()->explode('\\')->last();
         $slug = $parameters['slug'] ?? '';
         if ($slug && $overviewPage = self::getOverviewPage()) {
-            if($overviewPage->id == 13){
-//                $overviewPageUrl = str($overviewPage->getUrl(app()->getLocale()))->whenStartsWith('/', function($string){
-//                    return str($string)->replaceFirst('/', '');
-//                })->explode('/');
-//                dump($overviewPageUrl);
-//                dd($overviewPage->getUrl(app()->getLocale()));
+            if ($overviewPage->id == 13) {
+                //                $overviewPageUrl = str($overviewPage->getUrl(app()->getLocale()))->whenStartsWith('/', function($string){
+                //                    return str($string)->replaceFirst('/', '');
+                //                })->explode('/');
+                //                dump($overviewPageUrl);
+                //                dd($overviewPage->getUrl(app()->getLocale()));
             }
             $slugParts = explode('/', $slug);
             if ($overviewPage) {
                 $unsetCount = 0;
-                $overviewPageUrl = str($overviewPage->getUrl(app()->getLocale()))->whenStartsWith('/', function($string){
+                $overviewPageUrl = str($overviewPage->getUrl(app()->getLocale()))->whenStartsWith('/', function ($string) {
                     return str($string)->replaceFirst('/', '');
                 })->explode('/');
                 $toUnsetCount = $overviewPageUrl->count();
@@ -295,8 +295,8 @@ trait IsVisitable
                             $toUnsetCount--;
                         }
                     }
-                    foreach($overviewPageUrl as $overviewPageUrlSlugPartKey => $overviewPageUrlSlugPart){
-                        if($overviewPageUrlSlugPart == $locale['id']){
+                    foreach ($overviewPageUrl as $overviewPageUrlSlugPartKey => $overviewPageUrlSlugPart) {
+                        if ($overviewPageUrlSlugPart == $locale['id']) {
                             unset($overviewPageUrl[$overviewPageUrlSlugPartKey]);
                         }
                     }
@@ -307,12 +307,12 @@ trait IsVisitable
                     $unsetCount++;
                 }
             }
-            if($overviewPage->id == 13){
+            if ($overviewPage->id == 13) {
                 $overviewPageSlugPartKey = 0;
-                foreach($overviewPageUrl as $overviewPageSlugPart){
-                    if(isset($slugParts[$overviewPageSlugPartKey]) && $slugParts[$overviewPageSlugPartKey] == $overviewPageSlugPart){
+                foreach ($overviewPageUrl as $overviewPageSlugPart) {
+                    if (isset($slugParts[$overviewPageSlugPartKey]) && $slugParts[$overviewPageSlugPartKey] == $overviewPageSlugPart) {
                         unset($slugParts[$overviewPageSlugPartKey]);
-                    }else{
+                    } else {
                         return;
                     }
                     $overviewPageSlugPartKey++;
