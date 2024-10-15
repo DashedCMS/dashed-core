@@ -2,8 +2,6 @@
 
 namespace Dashed\DashedCore\Controllers\Frontend;
 
-use Dashed\DashedEcommerceCore\Livewire\Frontend\Products\ShowProduct;
-use Dashed\DashedEcommerceCore\Models\Product;
 use Illuminate\Support\Str;
 use Dashed\Drift\UrlBuilder;
 use App\Http\Controllers\Controller;
@@ -13,7 +11,6 @@ use Dashed\DashedCore\Classes\Locales;
 use Dashed\DashedCore\Models\Redirect;
 use Dashed\DashedCore\Models\NotFoundPage;
 use Dashed\DashedCore\Models\Customsetting;
-use Livewire\Livewire;
 
 class FrontendController extends Controller
 {
@@ -83,7 +80,7 @@ class FrontendController extends Controller
                 }
 
                 return $this->$response();
-            }elseif(is_array($response) && isset($response['livewireComponent'])){
+            } elseif (is_array($response) && isset($response['livewireComponent'])) {
                 return view('dashed-core::layouts.livewire-master', [
                     'livewireComponent' => $response['livewireComponent'],
                     'parameters' => $response['parameters'] ?? [],
