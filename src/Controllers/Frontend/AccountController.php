@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore\Controllers\Frontend;
 
+use Dashed\DashedCore\Livewire\Frontend\Account\Account;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -12,10 +13,13 @@ class AccountController extends FrontendController
 {
     public function account()
     {
-        if (view()->exists('dashed.account.show')) {
+        if (view()->exists('dashed.account.account')) {
             seo()->metaData('metaTitle', Translation::get('account-page-meta-title', 'account', 'Account'));
             seo()->metaData('metaDescription', Translation::get('account-page-meta-description', 'account', 'View your account here'));
 
+            return view('dashed-core::layouts.livewire-master', [
+                'livewireComponent' => Account::class,
+            ]);
             return view(env('SITE_THEME', 'dashed').'.account.show');
         } else {
             return $this->pageNotFound();

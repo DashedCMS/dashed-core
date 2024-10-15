@@ -1,3 +1,3 @@
 <x-master>
-    @livewire($livewireComponent, $parameters)
+    @livewire($livewireComponent, $parameters ?? [])
 </x-master>

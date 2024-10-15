@@ -2,6 +2,10 @@
 
 namespace Dashed\DashedCore\Controllers\Frontend;
 
+use Dashed\DashedCore\Livewire\Frontend\Auth\ForgotPassword;
+use Dashed\DashedCore\Livewire\Frontend\Auth\Login;
+use Dashed\DashedCore\Livewire\Frontend\Auth\ResetPassword;
+use Dashed\DashedEcommerceCore\Livewire\Frontend\Account\Orders;
 use Exception;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
@@ -25,11 +29,14 @@ class AuthController extends FrontendController
             return redirect(route('dashed.frontend.account'))->with('success', Translation::get('already-logged-in', 'login', 'You are already logged in'));
         }
 
-        if (View::exists(env('SITE_THEME', 'dashed').'.login.show')) {
+        if (View::exists(env('SITE_THEME', 'dashed').'.auth.login')) {
             seo()->metaData('metaTitle', Translation::get('login-page-meta-title', 'login', 'Login'));
             seo()->metaData('metaDescription', Translation::get('login-page-meta-description', 'login', 'Login to your account'));
 
-            return view(env('SITE_THEME', 'dashed').'.login.show');
+            return view('dashed-core::layouts.livewire-master', [
+                'livewireComponent' => Login::class,
+            ]);
+            return view(env('SITE_THEME', 'dashed').'.auth.login');
         } else {
             return $this->pageNotFound();
         }
@@ -87,11 +94,15 @@ class AuthController extends FrontendController
             return redirect(route('dashed.frontend.account'))->with('success', Translation::get('already-logged-in', 'login', 'You are already logged in'));
         }
 
-        if (View::exists(env('SITE_THEME', 'dashed').'.forgot-password.show')) {
+        if (View::exists(env('SITE_THEME', 'dashed').'.auth.forgot-password')) {
             seo()->metaData('metaTitle', Translation::get('forgot-password-page-meta-title', 'login', 'Forgot password'));
             seo()->metaData('metaDescription', Translation::get('forgot-password-page-meta-description', 'login', 'Forgot your password?'));
 
-            return view(env('SITE_THEME', 'dashed').'.forgot-password.show');
+            return view('dashed-core::layouts.livewire-master', [
+                'livewireComponent' => ForgotPassword::class,
+            ]);
+
+            return view(env('SITE_THEME', 'dashed').'.auth.forgot-password');
         } else {
             return $this->pageNotFound();
         }
@@ -122,7 +133,7 @@ class AuthController extends FrontendController
             return redirect(route('dashed.frontend.account'))->with('success', Translation::get('already-logged-in', 'login', 'You are already logged in'));
         }
 
-        if (View::exists(env('SITE_THEME', 'dashed').'.reset-password.show')) {
+        if (View::exists(env('SITE_THEME', 'dashed').'.auth.reset-password')) {
             seo()->metaData('metaTitle', Translation::get('reset-password-page-meta-title', 'login', 'Reset password'));
             seo()->metaData('metaDescription', Translation::get('reset-password-page-meta-description', 'login', 'Reset your password'));
 
@@ -135,7 +146,15 @@ class AuthController extends FrontendController
             View::share('user', $user);
             View::share('passwordResetToken', $passwordResetToken);
 
-            return view(env('SITE_THEME', 'dashed').'.reset-password.show');
+            return view('dashed-core::layouts.livewire-master', [
+                'livewireComponent' => ResetPassword::class,
+                'parameters' => [
+                    'passwordResetToken' => $passwordResetToken,
+                    'user' => $user
+                ]
+            ]);
+
+            return view(env('SITE_THEME', 'dashed').'.auth.reset-password');
         } else {
             return $this->pageNotFound();
         }
