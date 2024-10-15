@@ -2,10 +2,6 @@
 
 namespace Dashed\DashedCore\Controllers\Frontend;
 
-use Dashed\DashedCore\Livewire\Frontend\Auth\ForgotPassword;
-use Dashed\DashedCore\Livewire\Frontend\Auth\Login;
-use Dashed\DashedCore\Livewire\Frontend\Auth\ResetPassword;
-use Dashed\DashedEcommerceCore\Livewire\Frontend\Account\Orders;
 use Exception;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
@@ -16,8 +12,11 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\View;
 use Dashed\DashedCore\Mail\PasswordResetMail;
 use Dashed\DashedTranslations\Models\Translation;
+use Dashed\DashedCore\Livewire\Frontend\Auth\Login;
 use Dashed\DashedCore\Requests\Frontend\LoginRequest;
 use Dashed\DashedCore\Requests\Frontend\RegisterRequest;
+use Dashed\DashedCore\Livewire\Frontend\Auth\ResetPassword;
+use Dashed\DashedCore\Livewire\Frontend\Auth\ForgotPassword;
 use Dashed\DashedCore\Requests\Frontend\ResetPasswordRequest;
 use Dashed\DashedCore\Requests\Frontend\ForgotPasswordRequest;
 
@@ -36,6 +35,7 @@ class AuthController extends FrontendController
             return view('dashed-core::layouts.livewire-master', [
                 'livewireComponent' => Login::class,
             ]);
+
             return view(env('SITE_THEME', 'dashed').'.auth.login');
         } else {
             return $this->pageNotFound();
@@ -150,8 +150,8 @@ class AuthController extends FrontendController
                 'livewireComponent' => ResetPassword::class,
                 'parameters' => [
                     'passwordResetToken' => $passwordResetToken,
-                    'user' => $user
-                ]
+                    'user' => $user,
+                ],
             ]);
 
             return view(env('SITE_THEME', 'dashed').'.auth.reset-password');

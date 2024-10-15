@@ -2,11 +2,11 @@
 
 namespace Dashed\DashedCore\Controllers\Frontend;
 
-use Dashed\DashedCore\Livewire\Frontend\Account\Account;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Dashed\DashedTranslations\Models\Translation;
+use Dashed\DashedCore\Livewire\Frontend\Account\Account;
 use Dashed\DashedCore\Requests\Frontend\UpdateAccountRequest;
 
 class AccountController extends FrontendController
@@ -20,6 +20,7 @@ class AccountController extends FrontendController
             return view('dashed-core::layouts.livewire-master', [
                 'livewireComponent' => Account::class,
             ]);
+
             return view(env('SITE_THEME', 'dashed').'.account.show');
         } else {
             return $this->pageNotFound();
