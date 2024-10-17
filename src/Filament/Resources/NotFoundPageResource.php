@@ -39,6 +39,7 @@ class NotFoundPageResource extends Resource
     protected static ?string $label = 'Niet gevonden pagina hit';
 
     protected static ?string $pluralLabel = 'Niet gevonden pagina hits';
+    protected static ?int $navigationSort = 5;
 
     public static function form(Form $form): Form
     {
