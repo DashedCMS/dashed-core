@@ -34,6 +34,7 @@ class UserResource extends Resource
     protected static ?string $label = 'Gebruiker';
 
     protected static ?string $pluralLabel = 'Gebruikers';
+    protected static ?int $navigationSort = 100;
 
     public static function shouldRegisterNavigation(): bool
     {
