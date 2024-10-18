@@ -3,6 +3,7 @@
 namespace Dashed\DashedCore\Livewire\Frontend\Auth;
 
 use Carbon\Carbon;
+use Exception;
 use Livewire\Component;
 use Illuminate\Support\Str;
 use Dashed\DashedCore\Models\User;
@@ -30,7 +31,11 @@ class ForgotPassword extends Component
             $user->password_reset_token = Str::random(64);
             $user->password_reset_requested = Carbon::now();
             $user->save();
-            Mail::to($user->email)->send(new PasswordResetMail($user));
+            try{
+                Mail::to($user->email)->send(new PasswordResetMail($user));
+            }catch(Exception $e){
+
+            }
         }
 
         $this->reset('email');
