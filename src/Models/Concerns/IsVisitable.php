@@ -275,13 +275,13 @@ trait IsVisitable
         $class = str(self::class)->lower()->explode('\\')->last();
         $slug = $parameters['slug'] ?? '';
         if ($slug && $overviewPage = self::getOverviewPage()) {
-//            dump($overviewPage);
+            //            dump($overviewPage);
             if ($overviewPage->id == 10) {
-//                                $overviewPageUrl = str($overviewPage->getUrl(app()->getLocale()))->whenStartsWith('/', function($string){
-//                                    return str($string)->replaceFirst('/', '');
-//                                })->explode('/');
-//                                dump($overviewPageUrl);
-//                                dd($overviewPage->getUrl(app()->getLocale()));
+                //                                $overviewPageUrl = str($overviewPage->getUrl(app()->getLocale()))->whenStartsWith('/', function($string){
+                //                                    return str($string)->replaceFirst('/', '');
+                //                                })->explode('/');
+                //                                dump($overviewPageUrl);
+                //                                dd($overviewPage->getUrl(app()->getLocale()));
             }
             $slugParts = explode('/', $slug);
             if ($overviewPage) {
@@ -290,8 +290,8 @@ trait IsVisitable
                     return str($string)->replaceFirst('/', '');
                 })->explode('/');
                 $toUnsetCount = $overviewPageUrl->count();
-//                dump($slugParts, $overviewPageUrl);
-//                dump('unsetcount: ' .$toUnsetCount);
+                //                dump($slugParts, $overviewPageUrl);
+                //                dump('unsetcount: ' .$toUnsetCount);
                 foreach (Locales::getLocales() as $locale) {
                     foreach ($overviewPageUrl as $part) {
                         if ($part == $locale['id']) {
@@ -304,31 +304,32 @@ trait IsVisitable
                         }
                     }
                 }
-//                dump('unsetcount: ' .$toUnsetCount);
-//                dump($slugParts, $toUnsetCount);
+                //                dump('unsetcount: ' .$toUnsetCount);
+                //                dump($slugParts, $toUnsetCount);
                 while ($toUnsetCount > 1) {
-//                    dump('unset ' . $unsetCount);
-//                    unset($slugParts[$unsetCount]);
+                    //                    dump('unset ' . $unsetCount);
+                    //                    unset($slugParts[$unsetCount]);
                     $toUnsetCount--;
                     $unsetCount++;
                 }
-//                dump($slugParts);
+                //                dump($slugParts);
             }
             $overviewPageSlugPartKey = 0;
-//            dump($slugParts);
+            //            dump($slugParts);
             foreach ($overviewPageUrl as $overviewPageSlugPart) {
                 if (isset($slugParts[$overviewPageSlugPartKey]) && $slugParts[$overviewPageSlugPartKey] == $overviewPageSlugPart) {
                     unset($slugParts[$overviewPageSlugPartKey]);
                 } else {
-                    if($overviewPage->id == 10){
-//                        dd('done', $slugParts);
+                    if ($overviewPage->id == 10) {
+                        //                        dd('done', $slugParts);
                     }
+
                     return;
                 }
                 $overviewPageSlugPartKey++;
             }
             $parentId = null;
-//            dump($slugParts, $overviewPage);
+            //            dump($slugParts, $overviewPage);
             foreach ($slugParts as $slugPart) {
                 $model = self::publicShowable()->slug($slugPart)->where('parent_id', $parentId)->first();
                 $parentId = $model?->id;
