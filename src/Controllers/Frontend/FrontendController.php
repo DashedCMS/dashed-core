@@ -29,6 +29,8 @@ class FrontendController extends Controller
 
     public function index($slug = null)
     {
+        $originalSlug = $slug;
+
         if (str($slug)->contains('__media/')) {
             return;
         }
@@ -77,6 +79,8 @@ class FrontendController extends Controller
 
                 if ($redirect = Redirect::where('from', $slug)->orWhere('from', '/'.$slug)->orWhere('from', $slug.'/')->orWhere('from', '/'.$slug.'/')->first()) {
                     return redirect($redirect->to, $redirect->sort);
+                }elseif ($redirect = Redirect::where('from', $originalSlug)->orWhere('from', '/'.$originalSlug)->orWhere('from', $originalSlug.'/')->orWhere('from', '/'.$originalSlug.'/')->first()) {
+                    return redirect($redirect->to, $redirect->sort);
                 }
 
                 return $this->$response();
@@ -89,6 +93,8 @@ class FrontendController extends Controller
         }
 
         if ($redirect = Redirect::where('from', $slug)->orWhere('from', '/'.$slug)->orWhere('from', $slug.'/')->orWhere('from', '/'.$slug.'/')->first()) {
+            return redirect($redirect->to, $redirect->sort);
+        }elseif ($redirect = Redirect::where('from', $originalSlug)->orWhere('from', '/'.$originalSlug)->orWhere('from', $originalSlug.'/')->orWhere('from', '/'.$originalSlug.'/')->first()) {
             return redirect($redirect->to, $redirect->sort);
         }
 
