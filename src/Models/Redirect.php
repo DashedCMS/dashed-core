@@ -29,7 +29,7 @@ class Redirect extends Model
             return;
         }
 
-        if (!str($newSlug)->startsWith('/')) {
+        if (! str($newSlug)->startsWith('/')) {
             $newSlug = '/' . $newSlug;
         }
 
@@ -37,7 +37,7 @@ class Redirect extends Model
             'to' => $newSlug,
         ]);
 
-        if (!Redirect::where('from', $oldSlug)->where('to', $newSlug)->exists()) {
+        if (! Redirect::where('from', $oldSlug)->where('to', $newSlug)->exists()) {
             $redirect = new Redirect();
             $redirect->from = $oldSlug;
             $redirect->to = $newSlug;
