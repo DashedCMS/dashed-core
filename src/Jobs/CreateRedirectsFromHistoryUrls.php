@@ -34,7 +34,7 @@ class CreateRedirectsFromHistoryUrls implements ShouldQueue
      */
     public function handle(): void
     {
-        foreach (UrlHistory::whereNotNull('previous_url')->where('site_id', $this->siteId)->get() as $urlHistory) {
+        foreach (UrlHistory::whereNotNull('previous_url')->whereColumn('previous_url', '!=', 'url')->where('site_id', $this->siteId)->get() as $urlHistory) {
             Redirect::handleSlugChange($urlHistory->previous_url, $urlHistory->url);
         }
     }

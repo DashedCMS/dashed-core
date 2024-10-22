@@ -20,8 +20,8 @@ class FrontendController extends Controller
 
         seo()->metaData('metaTitle', 'Pagina niet gevonden');
 
-        if (View::exists(env('SITE_THEME', 'dashed').'.not-found.show')) {
-            return response()->view(env('SITE_THEME', 'dashed').'.not-found.show')->setStatusCode(404);
+        if (View::exists(env('SITE_THEME', 'dashed') . '.not-found.show')) {
+            return response()->view(env('SITE_THEME', 'dashed') . '.not-found.show')->setStatusCode(404);
         } else {
             abort(404);
         }
@@ -36,7 +36,7 @@ class FrontendController extends Controller
         }
 
         foreach (Locales::getLocales() as $locale) {
-            if (Str::startsWith($slug, $locale['id'].'/') || $slug == $locale['id']) {
+            if (Str::startsWith($slug, $locale['id'] . '/') || $slug == $locale['id']) {
                 $slug = Str::substr($slug, strlen($locale['id']) + 1);
             }
         }
@@ -77,9 +77,9 @@ class FrontendController extends Controller
                 return $response->render();
             } elseif ($response == 'pageNotFound') {
 
-                if ($redirect = Redirect::where('from', $slug)->orWhere('from', '/'.$slug)->orWhere('from', $slug.'/')->orWhere('from', '/'.$slug.'/')->first()) {
+                if ($redirect = Redirect::where('from', $slug)->orWhere('from', '/' . $slug)->orWhere('from', $slug . '/')->orWhere('from', '/' . $slug . '/')->first()) {
                     return redirect($redirect->to, $redirect->sort);
-                }elseif ($redirect = Redirect::where('from', $originalSlug)->orWhere('from', '/'.$originalSlug)->orWhere('from', $originalSlug.'/')->orWhere('from', '/'.$originalSlug.'/')->first()) {
+                } elseif ($redirect = Redirect::where('from', $originalSlug)->orWhere('from', '/' . $originalSlug)->orWhere('from', $originalSlug . '/')->orWhere('from', '/' . $originalSlug . '/')->first()) {
                     return redirect($redirect->to, $redirect->sort);
                 }
 
@@ -92,9 +92,9 @@ class FrontendController extends Controller
             }
         }
 
-        if ($redirect = Redirect::where('from', $slug)->orWhere('from', '/'.$slug)->orWhere('from', $slug.'/')->orWhere('from', '/'.$slug.'/')->first()) {
+        if ($redirect = Redirect::where('from', $slug)->orWhere('from', '/' . $slug)->orWhere('from', $slug . '/')->orWhere('from', '/' . $slug . '/')->first()) {
             return redirect($redirect->to, $redirect->sort);
-        }elseif ($redirect = Redirect::where('from', $originalSlug)->orWhere('from', '/'.$originalSlug)->orWhere('from', $originalSlug.'/')->orWhere('from', '/'.$originalSlug.'/')->first()) {
+        } elseif ($redirect = Redirect::where('from', $originalSlug)->orWhere('from', '/' . $originalSlug)->orWhere('from', $originalSlug . '/')->orWhere('from', '/' . $originalSlug . '/')->first()) {
             return redirect($redirect->to, $redirect->sort);
         }
 
