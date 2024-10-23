@@ -7,7 +7,7 @@
                 ->position($loop)
                 ->url($breadcrumb['url'])
                 ->name($breadcrumb['name'])
-                ->identifier($breadcrumb['name'])
+                ->identifier($breadcrumb['url'])
                 ->item(
                     \Spatie\SchemaOrg\Schema::webPage()
                     ->url($breadcrumb['url'])
