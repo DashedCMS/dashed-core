@@ -14,10 +14,8 @@ use Dashed\DashedCore\Models\Customsetting;
 
 class FrontendController extends Controller
 {
-    public function pageNotFound()
+    public static function pageNotFoundView()
     {
-        NotFoundPage::saveOccurrence(str(request()->fullUrl())->replace(request()->root(), ''), 404, request()->header('referer'), request()->userAgent(), request()->ip(), Sites::getActive(), app()->getLocale());
-
         seo()->metaData('metaTitle', 'Pagina niet gevonden');
 
         if (View::exists(env('SITE_THEME', 'dashed') . '.not-found.show')) {
@@ -25,6 +23,13 @@ class FrontendController extends Controller
         } else {
             abort(404);
         }
+    }
+
+    public function pageNotFound()
+    {
+        NotFoundPage::saveOccurrence(str(request()->fullUrl())->replace(request()->root(), ''), 404, request()->header('referer'), request()->userAgent(), request()->ip(), Sites::getActive(), app()->getLocale());
+
+        return self::pageNotFoundView();
     }
 
     public function index($slug = null)
