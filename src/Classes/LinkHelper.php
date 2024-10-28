@@ -2,7 +2,6 @@
 
 namespace Dashed\DashedCore\Classes;
 
-use Dashed\DashedCore\Models\Customsetting;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -22,7 +21,7 @@ class LinkHelper
                     ->required($required)
                     ->options($routeModel['class']::pluck($routeModel['nameField'] ?: 'name', 'id'))
                     ->searchable()
-                    ->visible(fn($get) => in_array($get("{$prefix}_type"), [$key]));
+                    ->visible(fn ($get) => in_array($get("{$prefix}_type"), [$key]));
         }
 
         return Group::make(array_merge([
@@ -38,7 +37,7 @@ class LinkHelper
                 ->label('Url')
                 ->required($required)
                 ->placeholder('Example: https://example.com of /contact')
-                ->visible(fn($get) => in_array($get("{$prefix}_type"), ['normal'])),
+                ->visible(fn ($get) => in_array($get("{$prefix}_type"), ['normal'])),
         ], $routeModelInputs))
             ->columns(2);
     }
@@ -59,7 +58,7 @@ class LinkHelper
             $routeModel = cms()->builder('routeModels')[$data["{$prefix}type"]];
         }
 
-        if (!isset($routeModel) || !$routeModel) {
+        if (! isset($routeModel) || ! $routeModel) {
             return '';
         }
 
@@ -72,7 +71,7 @@ class LinkHelper
     {
         $dataToSave = [];
 
-        if (!$siteId) {
+        if (! $siteId) {
             $siteId = Sites::getActive()['id'];
         }
 
