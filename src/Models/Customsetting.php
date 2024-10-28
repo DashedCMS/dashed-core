@@ -18,6 +18,10 @@ class Customsetting extends Model
 
     protected $table = 'dashed__custom_settings';
 
+    protected $casts = [
+        'json' => 'array',
+    ];
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults();
@@ -29,23 +33,23 @@ class Customsetting extends Model
             Cache::forget('dashed__custom_settings_table_exists');
             foreach (Sites::getSites() as $site) {
                 foreach (Locales::getLocalesArray() as $key => $locale) {
-                    Cache::forget($customsetting->name.'-'.$site['id'].'-'.$key);
+                    Cache::forget($customsetting->name . '-' . $site['id'] . '-' . $key);
                 }
             }
         });
     }
 
-    public static function get($name, $siteId = null, $default = null, $locale = null)
+    public static function get(string $name, ?string $siteId = null, null|string|array $default = null, ?string $locale = null, string $type = 'default')
     {
         $tableExists = Cache::remember('dashed__custom_settings_table_exists', 60, function () {
             return Schema::hasTable('dashed__custom_settings');
         });
 
-        if (! $tableExists) {
+        if (!$tableExists) {
             return $default;
         }
 
-        if (! $siteId) {
+        if (!$siteId) {
             $siteId = Sites::getActive();
         }
 
@@ -53,25 +57,39 @@ class Customsetting extends Model
             $locale = $locale['id'];
         }
 
-        return Cache::rememberForever("$name-$siteId-$locale", function () use ($name, $siteId, $default, $locale) {
+        $value = Cache::rememberForever("$name-$siteId-$locale", function () use ($name, $siteId, $default, $locale) {
             //Cannot use this because this fails emails etc
             //        if (app()->runningInConsole()) {
             //            return $default;
             //        }
 
             $customSetting = self::where('name', $name)->where('site_id', $siteId)->where('locale', $locale)->first();
-            if ($customSetting && $customSetting->value !== null) {
+            if ($customSetting && $customSetting->json !== null) {
+                return $customSetting->json;
+            } elseif ($customSetting && $customSetting->value !== null) {
                 return $customSetting->value;
             } else {
                 return $default;
             }
         });
+
+        if ($type == 'link') {
+            $value = linkHelper()->getUrl($value);
+        }
+
+        return $value;
     }
 
-    public static function set($name, $value, $siteId = null, $locale = null)
+    public static function set(string $name, string $value, ?string $siteId = null, ?string $locale = null)
     {
-        if (! $siteId) {
+        if (!$siteId) {
             $siteId = Sites::getSites()[0]['id'];
+        }
+
+        if ($value && is_array($value)) {
+            $valueField = 'json';
+        } else {
+            $valueField = 'value';
         }
 
         self::updateOrCreate(
@@ -80,13 +98,13 @@ class Customsetting extends Model
                 'site_id' => $siteId,
                 'locale' => $locale,
             ],
-            ['value' => $value]
+            [$valueField => $value]
         );
 
         Cache::forget("$name-$siteId-$locale");
         foreach (Sites::getSites() as $site) {
             foreach (Locales::getLocalesArray() as $locale) {
-                Cache::forget("$name-".$site['id']."-$locale");
+                Cache::forget("$name-" . $site['id'] . "-$locale");
             }
         }
     }
