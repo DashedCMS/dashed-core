@@ -80,7 +80,7 @@ class Customsetting extends Model
         return $value;
     }
 
-    public static function set(string $name, string $value, ?string $siteId = null, ?string $locale = null)
+    public static function set(string $name, null|array|string $value, ?string $siteId = null, ?string $locale = null)
     {
         if (! $siteId) {
             $siteId = Sites::getSites()[0]['id'];
