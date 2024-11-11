@@ -45,11 +45,11 @@ class Customsetting extends Model
             return Schema::hasTable('dashed__custom_settings');
         });
 
-        if (! $tableExists) {
+        if (!$tableExists) {
             return $default;
         }
 
-        if (! $siteId) {
+        if (!$siteId) {
             $siteId = Sites::getActive();
         }
 
@@ -67,6 +67,9 @@ class Customsetting extends Model
             if ($customSetting && $customSetting->json !== null) {
                 return $customSetting->json;
             } elseif ($customSetting && $customSetting->value !== null) {
+                if ($customSetting->value == '[]') {
+                    return [];
+                }
                 return $customSetting->value;
             } else {
                 return $default;
@@ -82,7 +85,7 @@ class Customsetting extends Model
 
     public static function set(string $name, null|array|string $value, ?string $siteId = null, ?string $locale = null)
     {
-        if (! $siteId) {
+        if (!$siteId) {
             $siteId = Sites::getSites()[0]['id'];
         }
 
