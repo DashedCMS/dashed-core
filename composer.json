@@ -20,7 +20,7 @@
         "awcodes/filament-tiptap-editor": "^3.4",
         "binafy/laravel-stub": "^1.0",
         "dashed/laravel-drift": "^1.0",
-        "dashed/dashed-localization": "dev-master",
+        "dashed/dashed-localization": "^1.0",
         "dashed/laravel-seo-scanner": "dev-main",
         "doctrine/dbal": "^4.1",
         "filament/filament": "^3.2",
