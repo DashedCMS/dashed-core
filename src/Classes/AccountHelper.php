@@ -3,7 +3,7 @@
 namespace Dashed\DashedCore\Classes;
 
 use Illuminate\Support\Facades\Auth;
-use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+use Dashed\LaravelLocalization\Facades\LaravelLocalization;
 
 class AccountHelper
 {

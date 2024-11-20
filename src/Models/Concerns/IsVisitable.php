@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Dashed\DashedCore\Jobs\ClearContentBlocksCache;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+use Dashed\LaravelLocalization\Facades\LaravelLocalization;
 
 trait IsVisitable
 {

@@ -10,7 +10,7 @@ use Dashed\DashedCore\Classes\Sites;
 use Illuminate\Support\Facades\View;
 use Dashed\DashedCore\Classes\Locales;
 use Dashed\DashedCore\Models\Customsetting;
-use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+use Dashed\LaravelLocalization\Facades\LaravelLocalization;
 
 class FrontendMiddleware
 {

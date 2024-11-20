@@ -5,7 +5,7 @@ namespace Dashed\DashedCore\Middleware;
 use Closure;
 use Illuminate\Http\RedirectResponse;
 use Dashed\DashedCore\Classes\Locales;
-use Mcamara\LaravelLocalization\LanguageNegotiator;
+use Dashed\LaravelLocalization\LanguageNegotiator;
 
 class LocaleSessionRedirect
 {

@@ -3,13 +3,13 @@
 namespace Dashed\DashedCore\Classes;
 
 use Illuminate\Support\Facades\App;
-use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+use Dashed\LaravelLocalization\Facades\LaravelLocalization;
 
 class Locales
 {
     public static function getLocales(): array
     {
-        $allLocales = \Mcamara\LaravelLocalization\Facades\LaravelLocalization::getLocalesOrder();
+        $allLocales = \Dashed\LaravelLocalization\Facades\LaravelLocalization::getLocalesOrder();
         $locales = [];
         foreach ($allLocales as $key => $locale) {
             $locale['id'] = $key;

@@ -6,12 +6,12 @@ use Dashed\DashedCore\Middleware\GuestMiddleware;
 use Dashed\DashedTranslations\Models\Translation;
 use Dashed\DashedCore\Middleware\FrontendMiddleware;
 use Dashed\DashedCore\Controllers\Frontend\AuthController;
-use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+use Dashed\LaravelLocalization\Facades\LaravelLocalization;
 use Dashed\DashedCore\Controllers\Frontend\AccountController;
 use Dashed\DashedCore\Controllers\Frontend\FrontendController;
-use Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect;
-use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationViewPath;
-use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter;
+use Dashed\LaravelLocalization\Middleware\LocaleSessionRedirect;
+use Dashed\LaravelLocalization\Middleware\LaravelLocalizationViewPath;
+use Dashed\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter;
 
 if (config('dashed-core.default_auth_pages_enabled', true)) {
 
