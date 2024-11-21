@@ -73,6 +73,10 @@ class Customsetting extends Model
 
                 return $customSetting->value;
             } else {
+                if ($default == '[]') {
+                    return [];
+                }
+
                 return $default;
             }
         });
