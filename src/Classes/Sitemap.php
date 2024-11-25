@@ -8,6 +8,7 @@ class Sitemap
     {
         $sitemap = \Spatie\Sitemap\Sitemap::create();
 
+        //Todo: rebuild this to receive the model results, and then just add them to the sitemap
         foreach (cms()->builder('routeModels') as $routeModel) {
             if (method_exists($routeModel['class'], 'getSitemapUrls')) {
                 $sitemap = $routeModel['class']::getSitemapUrls($sitemap);
