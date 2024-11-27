@@ -117,24 +117,24 @@ trait IsVisitable
         return $this->morphOne(UrlHistory::class, 'model');
     }
 
-//    public static function getSitemapUrls(Sitemap $sitemap): Sitemap
-//    {
-//        foreach (self::publicShowable()->get() as $model) {
-//            foreach (Locales::getLocales() as $locale) {
-//                if (in_array($locale['id'], Sites::get()['locales'])) {
-//                    Locales::setLocale($locale['id']);
-//                    $url = $model->getUrl($locale['id']);
-//                    //Todo: create another check to see if the page is okay. This is just a quick fix. Maybe do a better check if there is a slug and name available for the item
-//                    if (UrlHelper::checkUrlResponseCode($url) !== 404) {
-//                        $sitemap
-//                            ->add(Url::create($url));
-//                    }
-//                }
-//            }
-//        }
-//
-//        return $sitemap;
-//    }
+    //    public static function getSitemapUrls(Sitemap $sitemap): Sitemap
+    //    {
+    //        foreach (self::publicShowable()->get() as $model) {
+    //            foreach (Locales::getLocales() as $locale) {
+    //                if (in_array($locale['id'], Sites::get()['locales'])) {
+    //                    Locales::setLocale($locale['id']);
+    //                    $url = $model->getUrl($locale['id']);
+    //                    //Todo: create another check to see if the page is okay. This is just a quick fix. Maybe do a better check if there is a slug and name available for the item
+    //                    if (UrlHelper::checkUrlResponseCode($url) !== 404) {
+    //                        $sitemap
+    //                            ->add(Url::create($url));
+    //                    }
+    //                }
+    //            }
+    //        }
+    //
+    //        return $sitemap;
+    //    }
 
     public function getStatusAttribute(): bool
     {
