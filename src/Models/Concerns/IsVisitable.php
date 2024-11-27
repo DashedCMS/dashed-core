@@ -5,7 +5,6 @@ namespace Dashed\DashedCore\Models\Concerns;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Spatie\Sitemap\Sitemap;
-use Spatie\Sitemap\Tags\Url;
 use Dashed\Seo\Traits\HasSeoScore;
 use Spatie\Activitylog\LogOptions;
 use Dashed\DashedPages\Models\Page;
@@ -118,24 +117,24 @@ trait IsVisitable
         return $this->morphOne(UrlHistory::class, 'model');
     }
 
-    public static function getSitemapUrls(Sitemap $sitemap): Sitemap
-    {
-        foreach (self::publicShowable()->get() as $model) {
-            foreach (Locales::getLocales() as $locale) {
-                if (in_array($locale['id'], Sites::get()['locales'])) {
-                    Locales::setLocale($locale['id']);
-                    $url = $model->getUrl($locale['id']);
-                    //Todo: create another check to see if the page is okay. This is just a quick fix. Maybe do a better check if there is a slug and name available for the item
-                    if (UrlHelper::checkUrlResponseCode($url) !== 404) {
-                        $sitemap
-                            ->add(Url::create($url));
-                    }
-                }
-            }
-        }
-
-        return $sitemap;
-    }
+//    public static function getSitemapUrls(Sitemap $sitemap): Sitemap
+//    {
+//        foreach (self::publicShowable()->get() as $model) {
+//            foreach (Locales::getLocales() as $locale) {
+//                if (in_array($locale['id'], Sites::get()['locales'])) {
+//                    Locales::setLocale($locale['id']);
+//                    $url = $model->getUrl($locale['id']);
+//                    //Todo: create another check to see if the page is okay. This is just a quick fix. Maybe do a better check if there is a slug and name available for the item
+//                    if (UrlHelper::checkUrlResponseCode($url) !== 404) {
+//                        $sitemap
+//                            ->add(Url::create($url));
+//                    }
+//                }
+//            }
+//        }
+//
+//        return $sitemap;
+//    }
 
     public function getStatusAttribute(): bool
     {
@@ -275,14 +274,6 @@ trait IsVisitable
         $class = str(self::class)->lower()->explode('\\')->last();
         $slug = $parameters['slug'] ?? '';
         if ($slug && $overviewPage = self::getOverviewPage()) {
-            //            dump($overviewPage);
-            if ($overviewPage->id == 10) {
-                //                                $overviewPageUrl = str($overviewPage->getUrl(app()->getLocale()))->whenStartsWith('/', function($string){
-                //                                    return str($string)->replaceFirst('/', '');
-                //                                })->explode('/');
-                //                                dump($overviewPageUrl);
-                //                                dd($overviewPage->getUrl(app()->getLocale()));
-            }
             $slugParts = explode('/', $slug);
             if ($overviewPage) {
                 $unsetCount = 0;
@@ -290,8 +281,6 @@ trait IsVisitable
                     return str($string)->replaceFirst('/', '');
                 })->explode('/');
                 $toUnsetCount = $overviewPageUrl->count();
-                //                dump($slugParts, $overviewPageUrl);
-                //                dump('unsetcount: ' .$toUnsetCount);
                 foreach (Locales::getLocales() as $locale) {
                     foreach ($overviewPageUrl as $part) {
                         if ($part == $locale['id']) {
@@ -304,32 +293,20 @@ trait IsVisitable
                         }
                     }
                 }
-                //                dump('unsetcount: ' .$toUnsetCount);
-                //                dump($slugParts, $toUnsetCount);
                 while ($toUnsetCount > 1) {
-                    //                    dump('unset ' . $unsetCount);
-                    //                    unset($slugParts[$unsetCount]);
                     $toUnsetCount--;
-                    $unsetCount++;
                 }
-                //                dump($slugParts);
             }
             $overviewPageSlugPartKey = 0;
-            //            dump($slugParts);
             foreach ($overviewPageUrl as $overviewPageSlugPart) {
                 if (isset($slugParts[$overviewPageSlugPartKey]) && $slugParts[$overviewPageSlugPartKey] == $overviewPageSlugPart) {
                     unset($slugParts[$overviewPageSlugPartKey]);
                 } else {
-                    if ($overviewPage->id == 10) {
-                        //                        dd('done', $slugParts);
-                    }
-
                     return;
                 }
                 $overviewPageSlugPartKey++;
             }
             $parentId = null;
-            //            dump($slugParts, $overviewPage);
             foreach ($slugParts as $slugPart) {
                 $model = self::publicShowable()->slug($slugPart)->where('parent_id', $parentId)->first();
                 $parentId = $model?->id;
@@ -383,7 +360,6 @@ trait IsVisitable
         }
 
         foreach ($this->content as $item) {
-            // Check if it's content and add it to the string
             if (isset($item['data']['content'])) {
                 try {
                     $finalString .= strip_tags(tiptap_converter()->asHTML($item['data']['content'])) . ' ';
@@ -402,12 +378,10 @@ trait IsVisitable
                 }
             }
 
-            // Loop through the data to find any keys containing "title"
             foreach ($item['data'] as $key => $value) {
                 if (stripos($key, 'title') !== false && $value) { // Check if "title" exists in the key name
                     $finalString .= strip_tags(tiptap_converter()->asHTML($value)) . ' ';
                 }
-
                 //DO NOT USE
                 //                // If the value is an array, pass it through the tiptap_editor function
                 //                if (is_array($value) && $value) {
