@@ -1,5 +1,5 @@
 <div class="relative isolate
-overflow-hidden bg-gray-900 @if($data['top_margin']) pt-24 sm:pt-36 @endif @if($data['bottom_margin']) pb-24 sm:pb-36 @endif">
+overflow-hidden bg-gray-900 @if($data['top_margin'] ?? true) pt-24 sm:pt-36 @endif @if($data['bottom_margin'] ?? true) pb-24 sm:pb-36 @endif">
     <x-container :show="$data['in_container'] ?? false">
         <x-dashed-files::image
                 class="absolute inset-0 -z-10 h-full w-full object-cover opacity-80"

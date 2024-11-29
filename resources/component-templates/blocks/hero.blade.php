@@ -1,4 +1,4 @@
-<div class="@if($data['top_margin']) pt-32 @endif @if($data['bottom_margin']) pb-64 @endif relative overflow-hidden">
+<div class="@if($data['top_margin'] ?? true) pt-32 @endif @if($data['bottom_margin'] ?? true) pb-64 @endif relative overflow-hidden">
     <x-drift::image
             class="absolute inset-0 -z-10 h-full w-full object-cover"
             config="dashed"
