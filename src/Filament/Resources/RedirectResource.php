@@ -34,6 +34,8 @@ class RedirectResource extends Resource
     protected static ?string $pluralLabel = 'Redirects';
     protected static ?int $navigationSort = 5;
 
+    protected static bool $isGloballySearchable = false;
+
     public static function form(Form $form): Form
     {
         return $form

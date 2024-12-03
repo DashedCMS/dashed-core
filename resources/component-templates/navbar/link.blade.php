@@ -13,8 +13,8 @@
             x-bind:data-active="open"
             {{ $active ? 'data-active' : '' }}
             @class([
-                'h-16 flex items-center justify-center relative',
-                'data-[active]:text-gray-800',
+                'h-24 flex items-center justify-center relative font-bold uppercase',
+                'data-[active]:text-primary-500',
                 'data-[active]:after:opacity-100',
                 'hover:after:opacity-100',
                 'after:opacity-100' => $menuItem['active'],
@@ -27,7 +27,7 @@
         @if($menuItem['hasChilds'])
             <span>
                 <x-lucide-chevron-down
-                        class="w-4 h-4 text-gray-400 transition group-open:rotate-90 group-open:text-primary-500"
+                        class="w-4 h-4 text-white transition group-data-[active]:rotate-90 group-data-[active]:text-primary-500"
                 />
         </span>
         @endif

@@ -1,24 +1,14 @@
 <div @class([
-    'absolute inset-x-0 bg-white/90 top-16 py-8 ring-1 ring-gray-950/5 z-40',
-    'opacity-0 invisible',
+    'absolute inset-x-0 bg-white/90 top-24 py-8 ring-1 ring-gray-950/5 z-40',
     'group-data-[active]:visible group-data-[active]:opacity-100',
     'group-focus-within:visible group-focus-within:opacity-100',
-])>
+])
+     x-show="open"
+     x-cloak
+     x-transition.opacity.scale.origin.top>
+    @php($count = 0)
     <x-container>
-        @php
-            $columns = count($menuItem['childs']);
-            if($columns > 10){
-                $columns = 10;
-            }
-            if($columns > 4){
-            if ($columns % 2 == 0) {
-                $columns = $columns / 2;
-            } else {
-                $columns = ($columns + 1) / 2;
-            }
-            }
-        @endphp
-        <div class="grid grid-cols-{{ $columns }} gap-4">
+        <div class="grid grid-cols-3 gap-4">
             @foreach ($menuItem['childs'] as $item)
                 <div class="">
                     <a href="{{ $item['url'] }}"
@@ -36,6 +26,30 @@
                             </li>
                         @endforeach
                     </ul>
+                </div>
+                @php($count++)
+            @endforeach
+            @php($count += count($menuItem['contentBlocks']['submenu_images'] ?? []))
+            @while($count < 3)
+                <div></div>
+                @php($count++)
+            @endwhile
+            @foreach($menuItem['contentBlocks']['submenu_images'] ?? [] as $image)
+                <div class="relative group">
+                    <a href="{{ linkHelper()->getUrl($image) }}">
+                        <div class="px-8 py-4 bg-primary-600 text-white font-bold uppercase absolute bottom-[50px] left-0">
+                            <p>{{ $image['title'] }}</p>
+                        </div>
+                        <x-drift::image
+                                class="w-full"
+                                config="dashed"
+                                :path="$image['image']"
+                                :alt="$image['title']"
+                                :manipulations="[
+                            'widen' => 300,
+                        ]"
+                        />
+                    </a>
                 </div>
             @endforeach
         </div>
