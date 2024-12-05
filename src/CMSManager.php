@@ -2,7 +2,11 @@
 
 namespace Dashed\DashedCore;
 
+use Dashed\DashedCore\Models\GlobalBlock;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Get;
 
 class CMSManager
 {
@@ -21,7 +25,7 @@ class CMSManager
 
     public function builder(string $name, null|string|array $blocks = null): self|array
     {
-        if (! $blocks) {
+        if (!$blocks) {
             return static::$builders[$name] ?? [];
         }
 
@@ -30,11 +34,38 @@ class CMSManager
         return $this;
     }
 
-    public function getFilamentBuilderBlock(string $name = 'content', string $blocksName = 'blocks'): Builder
+    public function getFilamentBuilderBlock(string $name = 'content', string $blocksName = 'blocks', bool $globalBlockChooser = true): Builder
     {
         return Builder::make($name)
-            ->blocks(cms()->builder($blocksName))
+            ->blocks(array_merge([
+                Builder\Block::make('globalBlock')
+                    ->label('Globaal blok')
+                    ->visible(GlobalBlock::count() > 0)
+                    ->schema([
+                        Select::make('globalBlock')
+                            ->label('Globaal blok')
+                            ->options(GlobalBlock::all()->mapWithKeys(fn($block) => [$block->id => $block->name]))
+                            ->placeholder('Kies een globaal blok')
+                            ->hintAction(
+                                Action::make('editGlobalBlock')
+                                ->label('Bewerk globaal blok')
+                                ->url(fn(Get $get) => route('filament.dashed.resources.global-blocks.edit', ['record' => $get('globalBlock')]))
+                                ->openUrlInNewTab()
+                                ->visible(fn(Get $get) => $get('globalBlock'))
+                            )
+                            ->reactive()
+                            ->required()
+                            ->searchable()
+                            ->preload()
+                            ->lazy()
+                            ->reactive()
+                            ->columnSpanFull(),
+                    ])
+            ], cms()->builder($blocksName)))
             ->collapsible(true)
+            ->blockIcons()
+            ->blockNumbers()
+            ->blockPickerColumns(3)
             ->blockLabels()
             ->cloneable()
             ->reorderable()
@@ -59,7 +90,7 @@ class CMSManager
         return [
             'results' => $results,
             'count' => collect($results)->sum('count'),
-            'hasResults' => collect($results)->filter(fn ($result) => $result['hasResults'])->count() > 0,
+            'hasResults' => collect($results)->filter(fn($result) => $result['hasResults'])->count() > 0,
         ];
     }
 

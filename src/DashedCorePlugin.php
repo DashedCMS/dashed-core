@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore;
 
+use Dashed\DashedCore\Filament\Resources\GlobalBlockResource;
 use Filament\Panel;
 use Filament\Contracts\Plugin;
 use Dashed\DashedCore\Filament\Resources\UserResource;
@@ -28,6 +29,7 @@ class DashedCorePlugin implements Plugin
                 UserResource::class,
                 RedirectResource::class,
                 NotFoundPageResource::class,
+                GlobalBlockResource::class,
             ])
             ->pages([
                 SettingsPage::class,

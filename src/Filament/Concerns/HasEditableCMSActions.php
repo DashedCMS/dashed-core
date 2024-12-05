@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore\Filament\Concerns;
 
+use Dashed\DashedCore\Models\GlobalBlock;
 use Illuminate\Support\Str;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -61,36 +62,73 @@ trait HasEditableCMSActions
     {
         $actions = [];
 
-        if (count(Locales::getLocalesArray()) > 1) {
-            $viewActions = [];
+        if (method_exists($this->record, 'getUrl')) {
+            if (count(Locales::getLocalesArray()) > 1) {
+                $viewActions = [];
 
-            foreach (Locales::getLocales() as $locale) {
-                $viewActions[] = Action::make('view')
+                foreach (Locales::getLocales() as $locale) {
+                    $viewActions[] = Action::make('view')
+                        ->button()
+                        ->label($locale['native'])
+                        ->url($this->record->getUrl($locale['id']))
+                        ->openUrlInNewTab();
+                }
+
+                if (count($viewActions)) {
+                    $actions[] = ActionGroup::make($viewActions)
+                        ->label('Bekijk')
+                        ->icon('heroicon-o-eye')
+                        ->button();
+                }
+            } else {
+                $actions[] = Action::make('view')
                     ->button()
-                    ->label($locale['native'])
-                    ->url($this->record->getUrl($locale['id']))
+                    ->label('Bekijk')
+                    ->icon('heroicon-o-eye')
+                    ->url($this->record->getUrl($this->activeLocale))
                     ->openUrlInNewTab();
             }
+        }
 
-            $actions[] = ActionGroup::make($viewActions)
-                ->label('Bekijk')
-                ->icon('heroicon-o-eye')
-                ->button();
-        } else {
-            $actions[] = Action::make('view')
-                ->button()
-                ->label('Bekijk')
-                ->icon('heroicon-o-eye')
-                ->url($this->record->getUrl($this->activeLocale))
-                ->openUrlInNewTab();
+        $actions[] = Action::make('Dupliceer')
+            ->action('duplicate')
+            ->icon('heroicon-o-document-duplicate')
+            ->color('warning');
+
+        if (method_exists($this->record, 'getUrl')) {
+            $actions[] = Action::make('insertTemplateBlock')
+                ->label('Template blok invoegen')
+                ->visible(GlobalBlock::count() > 0)
+                ->form([
+                    Select::make('templateBlock')
+                        ->options(GlobalBlock::all()->mapWithKeys(fn($block) => [$block->id => $block->name]))
+                        ->required()
+                        ->preload()
+                        ->searchable()
+                        ->label('Template blok')
+                        ->helperText('Let op: dit refreshed de pagina, sla dus eerst op!'),
+                ])
+                ->action(function (array $data) {
+                    $globalBlock = GlobalBlock::find($data['templateBlock']);
+                    $this->record->setTranslation('content', $this->activeLocale, array_merge($this->record->getTranslation('content', $this->activeLocale) ?: [], $globalBlock->getTranslation('content', $this->activeLocale) ?: []));
+                    $this->record->save();
+
+                    Notification::make()
+                        ->title('Template blok is toegevoegd')
+                        ->success()
+                        ->send();
+
+                    return redirect()->to(request()->header('Referer'));
+                })
+                ->icon('heroicon-o-globe-alt')
+                ->color('primary');
+        }
+
+        if (method_exists($this->record, 'getUrl')) {
+            $actions[] = ShowSEOScoreAction::make();
         }
 
         return array_merge($actions, [
-            Action::make('Dupliceer')
-                ->action('duplicate')
-                ->icon('heroicon-o-document-duplicate')
-                ->color('warning'),
-            ShowSEOScoreAction::make(),
             self::translateAction(),
             LocaleSwitcher::make()
                 ->icon('heroicon-o-language'),
@@ -157,10 +195,13 @@ trait HasEditableCMSActions
     public function duplicate()
     {
         $newModel = $this->record->replicate();
-        foreach (Locales::getLocales() as $locale) {
-            $newModel->setTranslation('slug', $locale['id'], $newModel->getTranslation('slug', $locale['id']));
-            while ($this->record::class::where('slug->'.$locale['id'], $newModel->getTranslation('slug', $locale['id']))->count()) {
-                $newModel->setTranslation('slug', $locale['id'], $newModel->getTranslation('slug', $locale['id']).Str::random(1));
+
+        if (in_array('slug', $this->record->translatable)) {
+            foreach (Locales::getLocales() as $locale) {
+                $newModel->setTranslation('slug', $locale['id'], $newModel->getTranslation('slug', $locale['id']));
+                while ($this->record::class::where('slug->' . $locale['id'], $newModel->getTranslation('slug', $locale['id']))->count()) {
+                    $newModel->setTranslation('slug', $locale['id'], $newModel->getTranslation('slug', $locale['id']) . Str::random(1));
+                }
             }
         }
 
@@ -193,7 +234,7 @@ trait HasEditableCMSActions
                     $new_array[$key] = self::removeUUIDKeys($value);
                 }
             } else {
-                if (! preg_match('/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/', $key)) {
+                if (!preg_match('/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/', $key)) {
                     $new_array[$key] = $value;
                 } else {
                     $new_array[] = $value;
