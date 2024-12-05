@@ -2,7 +2,6 @@
 
 namespace Dashed\DashedCore\Filament\Concerns;
 
-use Dashed\DashedCore\Models\GlobalBlock;
 use Illuminate\Support\Str;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -11,6 +10,7 @@ use Filament\Actions\LocaleSwitcher;
 use Filament\Forms\Components\Select;
 use Dashed\DashedCore\Classes\Locales;
 use Filament\Notifications\Notification;
+use Dashed\DashedCore\Models\GlobalBlock;
 use Dashed\DashedCore\Filament\Actions\ShowSEOScoreAction;
 use Dashed\DashedTranslations\Classes\AutomatedTranslation;
 use Filament\Resources\Pages\EditRecord\Concerns\Translatable;
@@ -101,7 +101,7 @@ trait HasEditableCMSActions
                 ->visible(GlobalBlock::count() > 0)
                 ->form([
                     Select::make('templateBlock')
-                        ->options(GlobalBlock::all()->mapWithKeys(fn($block) => [$block->id => $block->name]))
+                        ->options(GlobalBlock::all()->mapWithKeys(fn ($block) => [$block->id => $block->name]))
                         ->required()
                         ->preload()
                         ->searchable()
@@ -234,7 +234,7 @@ trait HasEditableCMSActions
                     $new_array[$key] = self::removeUUIDKeys($value);
                 }
             } else {
-                if (!preg_match('/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/', $key)) {
+                if (! preg_match('/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/', $key)) {
                     $new_array[$key] = $value;
                 } else {
                     $new_array[] = $value;

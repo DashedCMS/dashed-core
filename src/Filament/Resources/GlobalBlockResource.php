@@ -2,21 +2,14 @@
 
 namespace Dashed\DashedCore\Filament\Resources;
 
-use Dashed\DashedCore\Filament\Resources\GlobalBlockResource\Pages\CreateGlobalBlock;
-use Dashed\DashedCore\Filament\Resources\GlobalBlockResource\Pages\EditGlobalBlock;
-use Dashed\DashedCore\Filament\Resources\GlobalBlockResource\Pages\ListGlobalBlocks;
-use Dashed\DashedCore\Models\GlobalBlock;
-use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Illuminate\Support\Str;
 use Filament\Resources\Resource;
-use Dashed\DashedPages\Models\Page;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use Dashed\DashedCore\Models\GlobalBlock;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -25,9 +18,9 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Actions\ForceDeleteBulkAction;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Dashed\DashedCore\Classes\QueryHelpers\SearchQuery;
-use Dashed\DashedCore\Filament\Concerns\HasVisitableTab;
-use Dashed\DashedCore\Filament\Concerns\HasCustomBlocksTab;
+use Dashed\DashedCore\Filament\Resources\GlobalBlockResource\Pages\EditGlobalBlock;
+use Dashed\DashedCore\Filament\Resources\GlobalBlockResource\Pages\ListGlobalBlocks;
+use Dashed\DashedCore\Filament\Resources\GlobalBlockResource\Pages\CreateGlobalBlock;
 
 class GlobalBlockResource extends Resource
 {

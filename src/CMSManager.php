@@ -2,11 +2,11 @@
 
 namespace Dashed\DashedCore;
 
+use Filament\Forms\Get;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Builder;
 use Dashed\DashedCore\Models\GlobalBlock;
 use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Builder;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Get;
 
 class CMSManager
 {
@@ -25,7 +25,7 @@ class CMSManager
 
     public function builder(string $name, null|string|array $blocks = null): self|array
     {
-        if (!$blocks) {
+        if (! $blocks) {
             return static::$builders[$name] ?? [];
         }
 
@@ -44,14 +44,14 @@ class CMSManager
                     ->schema([
                         Select::make('globalBlock')
                             ->label('Globaal blok')
-                            ->options(GlobalBlock::all()->mapWithKeys(fn($block) => [$block->id => $block->name]))
+                            ->options(GlobalBlock::all()->mapWithKeys(fn ($block) => [$block->id => $block->name]))
                             ->placeholder('Kies een globaal blok')
                             ->hintAction(
                                 Action::make('editGlobalBlock')
                                 ->label('Bewerk globaal blok')
-                                ->url(fn(Get $get) => route('filament.dashed.resources.global-blocks.edit', ['record' => $get('globalBlock')]))
+                                ->url(fn (Get $get) => route('filament.dashed.resources.global-blocks.edit', ['record' => $get('globalBlock')]))
                                 ->openUrlInNewTab()
-                                ->visible(fn(Get $get) => $get('globalBlock'))
+                                ->visible(fn (Get $get) => $get('globalBlock'))
                             )
                             ->reactive()
                             ->required()
@@ -60,7 +60,7 @@ class CMSManager
                             ->lazy()
                             ->reactive()
                             ->columnSpanFull(),
-                    ])
+                    ]),
             ], cms()->builder($blocksName)))
             ->collapsible(true)
             ->blockIcons()
@@ -90,7 +90,7 @@ class CMSManager
         return [
             'results' => $results,
             'count' => collect($results)->sum('count'),
-            'hasResults' => collect($results)->filter(fn($result) => $result['hasResults'])->count() > 0,
+            'hasResults' => collect($results)->filter(fn ($result) => $result['hasResults'])->count() > 0,
         ];
     }
 
