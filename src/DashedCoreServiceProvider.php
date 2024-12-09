@@ -2,6 +2,17 @@
 
 namespace Dashed\DashedCore;
 
+use App\Providers\AppServiceProvider;
+use Dashed\DashedEcommerceCore\Models\Product;
+use Dashed\DashedForms\Classes\Forms;
+use Filament\Forms\Components\Builder\Block;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use FilamentTiptapEditor\TiptapEditor;
+use Illuminate\Support\Facades\View;
 use Livewire\Livewire;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Model;
@@ -57,10 +68,200 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             //            $schedule->command(SeoScan::class)->daily();
         });
 
-        if (! $this->app->environment('production')) {
+        if (!$this->app->environment('production')) {
             Mail::alwaysFrom('info@dashed.nl');
             Mail::alwaysTo('info@dashed.nl');
         }
+
+        if (!cms()->isCMSRoute() || app()->runningInConsole()) {
+            return;
+        }
+
+        $defaultBlocks = [
+            Block::make('hero')
+                ->label('Hero')
+                ->schema([
+                    AppServiceProvider::getDefaultBlockFields(),
+                    TextInput::make('toptitle')
+                        ->label('Top title'),
+                    mediaHelper()->field('title_image', 'Titel afbeelding', isImage: true),
+                    TextInput::make('title')
+                        ->label('Titel')
+                        ->required(),
+                    TextInput::make('subtitle')
+                        ->label('Sub titel')
+                        ->required(),
+                    AppServiceProvider::getButtonRepeater('buttons', 'Buttons'),
+                    mediaHelper()->field('image', 'Afbeelding', required: true, isImage: true),
+                ]),
+            Block::make('header')
+                ->label('Header')
+                ->schema([
+                    TextInput::make('title')
+                        ->label('Titel')
+                        ->required(),
+                    Textarea::make('subtitle')
+                        ->label('Subtitel'),
+                    AppServiceProvider::getButtonRepeater('buttons', 'Buttons'),
+                    mediaHelper()->field('image', 'Afbeelding', isImage: true, required: true),
+                    AppServiceProvider::getDefaultBlockFields(),
+                ]),
+            Block::make('spacer')
+                ->label('Spacer')
+                ->schema([]),
+            Block::make('small-spacer')
+                ->label('Kleine spacer')
+                ->schema([]),
+            Block::make('content-with-image')
+                ->label('Content with image')
+                ->schema([
+                    AppServiceProvider::getDefaultBlockFields(),
+                    TextInput::make('title')
+                        ->label('Titel')
+                        ->required(),
+                    TextInput::make('subtitle')
+                        ->label('Subtitel'),
+                    Toggle::make('image-left')
+                        ->label('Afbeelding links'),
+                    TiptapEditor::make('content')
+                        ->label('Content'),
+                    mediaHelper()->field('image', 'Afbeelding', isImage: true, required: true),
+                    AppServiceProvider::getButtonRepeater('buttons', 'Buttons'),
+                ]),
+            Block::make('content')
+                ->label('Content')
+                ->schema([
+                    AppServiceProvider::getDefaultBlockFields(),
+                    Toggle::make('full-width')
+                        ->label('Afbeelding links'),
+                    TiptapEditor::make('content')
+                        ->label('Content')
+                        ->required(),
+                ]),
+            Block::make('contact-form')
+                ->label('Contact form')
+                ->schema([
+                    AppServiceProvider::getDefaultBlockFields(),
+                    TextInput::make('title')
+                        ->label('Titel')
+                        ->required(),
+                    TiptapEditor::make('content')
+                        ->label('Content'),
+                    Toggle::make('show_side_info')
+                        ->default(true),
+                    Forms::formSelecter(),
+                    mediaHelper()->field('image', 'Afbeelding', isImage: true, required: true),
+                ]),
+            Block::make('media')
+                ->label('Afbeelding / video')
+                ->schema([
+                    mediaHelper()->field('media', 'Afbeelding of video', required: true),
+                    AppServiceProvider::getDefaultBlockFields(),
+                    TextInput::make('max_width_number')
+                        ->label('Max breedte nummer')
+                        ->default(500)
+                        ->integer()
+                        ->minValue(0)
+                        ->maxValue(10000),
+                    Select::make('max_width_type')
+                        ->label('Max breedte type')
+                        ->default('px')
+                        ->options([
+                            'px' => 'px',
+                            '%' => '%',
+                        ]),
+                ]),
+            Block::make('usps-with-icon')
+                ->label('USPs met iconen')
+                ->schema([
+                    AppServiceProvider::getDefaultBlockFields(),
+                    Repeater::make('usps')
+                        ->label('USPs')
+                        ->schema([
+                            TextInput::make('title')
+                                ->label('Titel')
+                                ->required(),
+                            TextInput::make('subtitle')
+                                ->label('Subtitel')
+                                ->required(),
+                            TextInput::make('icon')
+                                ->label('Icoon')
+                                ->helperText('Lucide icons')
+                                ->required(),
+                        ]),
+                ]),
+            Block::make('image-blocks-with-info')
+                ->label('Afbeelding blokken met info')
+                ->schema([
+                    AppServiceProvider::getDefaultBlockFields(),
+                    Repeater::make('blocks')
+                        ->label('Blokken')
+                        ->schema([
+                            TextInput::make('title')
+                                ->label('Titel')
+                                ->required(),
+                            TextInput::make('subtitle')
+                                ->label('Subtitel')
+                                ->required(),
+                            mediaHelper()->field('image', 'Afbeelding', isImage: true, required: true),
+                            AppServiceProvider::getButtonRepeater('buttons', 'Buttons'),
+                        ]),
+                ]),
+            Block::make('logo-cloud')
+                ->label('Logo cloud')
+                ->schema([
+                    TextInput::make('title')
+                        ->label('Titel')
+                        ->required(),
+                    Repeater::make('logos')
+                        ->label('Logos')
+                        ->minItems(0)
+                        ->maxItems(100)
+                        ->schema([
+                            mediaHelper()->field('image', 'Afbeelding', required: true, isImage: true),
+                            linkHelper()->field('url', true),
+                        ]),
+                ]),
+            Block::make('team')
+                ->label('Team')
+                ->schema([
+                    TextInput::make('title')
+                        ->label('Titel')
+                        ->required(),
+                    TiptapEditor::make('subtitle')
+                        ->label('Subtitel'),
+
+                    Repeater::make('team')
+                        ->label('Team')
+                        ->required()
+                        ->minItems(1)
+                        ->schema([
+                            TextInput::make('name')
+                                ->label('Naam')
+                                ->required(),
+                            TextInput::make('function')
+                                ->required()
+                                ->label('Functie'),
+                            mediaHelper()->field('image', 'Afbeelding', required: true, isImage: true),
+                            mediaHelper()->field('image-2', 'Afbeelding 2', required: true, isImage: true),
+                        ]),
+                ]),
+            Block::make('maps-embed')
+                ->label('Maps embed')
+                ->schema([]),
+            Block::make('html')
+                ->label('HTML')
+                ->schema([
+                    AppServiceProvider::getDefaultBlockFields(),
+                    Textarea::make('html')
+                        ->label('HTML')
+                        ->required()
+                        ->rows(5),
+                ]),
+        ];
+
+        cms()
+            ->builder('blocks', $defaultBlocks);
     }
 
     public function register()

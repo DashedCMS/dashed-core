@@ -49,6 +49,9 @@ class UpdateCommand extends Command
         $this->call('vendor:publish', [
             '--tag' => 'dashed-core-assets',
         ]);
+        $this->call('vendor:publish', [
+            '--tag' => 'dashed-ecommerce-core-assets',
+        ]);
 
         $this->call('vendor:publish', [
             '--tag' => 'filament-translations',
@@ -59,9 +62,9 @@ class UpdateCommand extends Command
             '--force' => 'true',
         ]);
 
-        $this->call('vendor:publish', [
-            '--tag' => 'dashed-templates',
-        ]);
+//        $this->call('vendor:publish', [
+//            '--tag' => 'dashed-templates',
+//        ]);
 
         if ($enableMigrations) {
             $this->call('migrate', [
