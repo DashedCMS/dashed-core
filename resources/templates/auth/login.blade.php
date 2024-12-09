@@ -36,3 +36,5 @@
         </div>
     </x-container>
 </section>
+
+<x-dashed-core::global-blocks name="login-page"/>

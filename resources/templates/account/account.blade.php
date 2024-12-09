@@ -75,3 +75,5 @@
         </div>
     </div>
 </x-container>
+
+<x-dashed-core::global-blocks name="account-page"/>

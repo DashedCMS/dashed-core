@@ -16,3 +16,5 @@
         </div>
     </div>
 </x-container>
+
+<x-dashed-core::global-blocks name="reset-password-page"/>

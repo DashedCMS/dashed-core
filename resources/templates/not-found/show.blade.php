@@ -20,4 +20,6 @@
             </div>
         </div>
     </main>
+
+    <x-dashed-core::global-blocks name="not-found-page"/>
 </x-master>
