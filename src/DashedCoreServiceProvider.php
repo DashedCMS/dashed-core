@@ -66,12 +66,12 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             //            $schedule->command(SeoScan::class)->daily();
         });
 
-        if (!$this->app->environment('production')) {
+        if (! $this->app->environment('production')) {
             Mail::alwaysFrom('info@dashed.nl');
             Mail::alwaysTo('info@dashed.nl');
         }
 
-        if (!cms()->isCMSRoute() || app()->runningInConsole()) {
+        if (! cms()->isCMSRoute() || app()->runningInConsole()) {
             return;
         }
 
