@@ -2,22 +2,20 @@
 
 namespace Dashed\DashedCore;
 
-use App\Providers\AppServiceProvider;
-use Dashed\DashedEcommerceCore\Models\Product;
-use Dashed\DashedForms\Classes\Forms;
-use Filament\Forms\Components\Builder\Block;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use FilamentTiptapEditor\TiptapEditor;
-use Illuminate\Support\Facades\View;
 use Livewire\Livewire;
 use Illuminate\Support\Facades\Mail;
+use App\Providers\AppServiceProvider;
+use Dashed\DashedForms\Classes\Forms;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
+use FilamentTiptapEditor\TiptapEditor;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Textarea;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\LaravelPackageTools\Package;
+use Filament\Forms\Components\TextInput;
 use Illuminate\Console\Scheduling\Schedule;
+use Filament\Forms\Components\Builder\Block;
 use Dashed\DashedCore\Commands\CreateSitemap;
 use Dashed\DashedCore\Commands\UpdateCommand;
 use Dashed\DashedCore\Commands\InstallCommand;
@@ -68,12 +66,12 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             //            $schedule->command(SeoScan::class)->daily();
         });
 
-        if (!$this->app->environment('production')) {
+        if (! $this->app->environment('production')) {
             Mail::alwaysFrom('info@dashed.nl');
             Mail::alwaysTo('info@dashed.nl');
         }
 
-        if (!cms()->isCMSRoute() || app()->runningInConsole()) {
+        if (! cms()->isCMSRoute() || app()->runningInConsole()) {
             return;
         }
 
