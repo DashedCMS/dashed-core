@@ -42,7 +42,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
 {
     public static string $name = 'dashed-core';
 
-    public function packageBooted()
+    public function bootingPackage()
     {
         Model::unguard();
 
@@ -71,10 +71,13 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             Mail::alwaysTo('info@dashed.nl');
         }
 
-        if (! cms()->isCMSRoute() || app()->runningInConsole()) {
-            return;
-        }
+        cms()->builder('builderBlockClasses', [
+            self::class => 'builderBlocks',
+        ]);
+    }
 
+    public static function builderBlocks()
+    {
         $defaultBlocks = [
             Block::make('hero')
                 ->label('Hero')

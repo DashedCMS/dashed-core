@@ -15,6 +15,7 @@ class CMSManager
         'sites' => [],
         'forms' => [],
         'blocks' => [],
+        'builderBlockClasses' => [],
         'content' => [],
         'routeModels' => [],
         'settingPages' => [],
@@ -37,6 +38,10 @@ class CMSManager
 
     public function getFilamentBuilderBlock(string $name = 'content', string $blocksName = 'blocks', bool $globalBlockChooser = true): Builder
     {
+        foreach(cms()->builder('builderBlockClasses') as $class => $method) {
+            $class::$method();
+        }
+
         $blocks = cms()->builder($blocksName);
 
         foreach ($blocks as $key => $block) {
