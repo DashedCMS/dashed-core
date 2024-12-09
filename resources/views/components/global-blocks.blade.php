@@ -4,5 +4,5 @@
 @if($globalBlock)
     <x-dashed-core::content-blocks :content="$globalBlock->content" {{ $attributes->merge() }}/>
 @else
-    @php(\Dashed\DashedCore\Models\GlobalBlock::create(['name' => $name]))
+    @php(\Dashed\DashedCore\Models\GlobalBlock::create(['name' => $name, 'content' => []]))
 @endif
