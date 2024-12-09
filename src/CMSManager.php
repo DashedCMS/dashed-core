@@ -38,7 +38,7 @@ class CMSManager
 
     public function getFilamentBuilderBlock(string $name = 'content', string $blocksName = 'blocks', bool $globalBlockChooser = true): Builder
     {
-        foreach(cms()->builder('builderBlockClasses') as $class => $method) {
+        foreach (cms()->builder('builderBlockClasses') as $class => $method) {
             $class::$method();
         }
 
