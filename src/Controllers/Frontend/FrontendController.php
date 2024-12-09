@@ -37,7 +37,7 @@ class FrontendController extends Controller
         $originalSlug = $slug;
 
         if (str($slug)->contains('__media/')) {
-            return;
+            abort(404);
         }
 
         foreach (Locales::getLocales() as $locale) {
