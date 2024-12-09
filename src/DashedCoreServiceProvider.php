@@ -66,12 +66,12 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             //            $schedule->command(SeoScan::class)->daily();
         });
 
-        if (! $this->app->environment('production')) {
+        if (!$this->app->environment('production')) {
             Mail::alwaysFrom('info@dashed.nl');
             Mail::alwaysTo('info@dashed.nl');
         }
 
-        if (! cms()->isCMSRoute() || app()->runningInConsole()) {
+        if (!cms()->isCMSRoute() || app()->runningInConsole()) {
             return;
         }
 
@@ -280,50 +280,32 @@ class DashedCoreServiceProvider extends PackageServiceProvider
 
         cms()->builder(
             'settingPages',
-            array_merge(cms()->builder('settingPages'), [
+            [
                 'general' => [
                     'name' => 'Algemeen',
                     'description' => 'Algemene informatie van de website',
                     'icon' => 'cog',
                     'page' => GeneralSettingsPage::class,
                 ],
-            ])
-        );
-
-        cms()->builder(
-            'settingPages',
-            array_merge(cms()->builder('settingPages'), [
                 'seo' => [
                     'name' => 'SEO',
                     'description' => 'SEO van de website',
                     'icon' => 'identification',
                     'page' => SEOSettingsPage::class,
                 ],
-            ])
-        );
-
-        cms()->builder(
-            'settingPages',
-            array_merge(cms()->builder('settingPages'), [
                 'image' => [
                     'name' => 'Afbeelding',
                     'description' => 'Afbeelding van de website',
                     'icon' => 'photo',
                     'page' => ImageSettingsPage::class,
                 ],
-            ])
-        );
-
-        cms()->builder(
-            'settingPages',
-            array_merge(cms()->builder('settingPages'), [
                 'cache' => [
                     'name' => 'Cache',
                     'description' => 'Cache van de website',
                     'icon' => 'photo',
                     'page' => CacheSettingsPage::class,
                 ],
-            ])
+            ]
         );
 
         $package
