@@ -41,7 +41,7 @@ class UpdateCommand extends Command
 
         $this->info('Default upgrading...');
 
-        foreach(cms()->builder('publishOnUpdate') as $asset){
+        foreach (cms()->builder('publishOnUpdate') as $asset) {
             $this->call('vendor:publish', [
                 '--tag' => $asset,
             ]);
