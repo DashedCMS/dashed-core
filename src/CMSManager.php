@@ -16,6 +16,7 @@ class CMSManager
         'forms' => [],
         'blocks' => [],
         'builderBlockClasses' => [],
+        'publishOnUpdate' => [],
         'content' => [],
         'routeModels' => [],
         'settingPages' => [],

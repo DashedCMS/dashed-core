@@ -66,7 +66,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             //            $schedule->command(SeoScan::class)->daily();
         });
 
-        if (! $this->app->environment('production')) {
+        if (!$this->app->environment('production')) {
             Mail::alwaysFrom('info@dashed.nl');
             Mail::alwaysTo('info@dashed.nl');
         }
@@ -76,6 +76,11 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                 self::class => 'builderBlocks',
             ]);
         }
+
+        cms()->builder('publishOnUpdate', [
+            'dashed-core-config',
+            'dashed-core-assets',
+        ]);
     }
 
     public static function builderBlocks()

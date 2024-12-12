@@ -40,31 +40,16 @@ class UpdateCommand extends Command
         $enableMigrations = ! $this->option('disable-migrations');
 
         $this->info('Default upgrading...');
-        $this->call('vendor:publish', [
-            '--tag' => 'dashed-core-config',
-        ]);
-        $this->call('vendor:publish', [
-            '--tag' => 'dashed-files-config',
-        ]);
-        $this->call('vendor:publish', [
-            '--tag' => 'dashed-core-assets',
-        ]);
-        $this->call('vendor:publish', [
-            '--tag' => 'dashed-ecommerce-core-assets',
-        ]);
+
+        foreach(cms()->builder('publishOnUpdate') as $asset){
+            $this->call('vendor:publish', [
+                '--tag' => $asset,
+            ]);
+        }
 
         $this->call('vendor:publish', [
             '--tag' => 'filament-translations',
         ]);
-
-        $this->call('vendor:publish', [
-            '--tag' => 'filament-forms-tinyeditor-assets',
-            '--force' => 'true',
-        ]);
-
-        //        $this->call('vendor:publish', [
-        //            '--tag' => 'dashed-templates',
-        //        ]);
 
         if ($enableMigrations) {
             $this->call('migrate', [
