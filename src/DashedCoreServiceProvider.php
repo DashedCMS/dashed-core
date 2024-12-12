@@ -66,14 +66,16 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             //            $schedule->command(SeoScan::class)->daily();
         });
 
-        if (! $this->app->environment('production')) {
+        if (!$this->app->environment('production')) {
             Mail::alwaysFrom('info@dashed.nl');
             Mail::alwaysTo('info@dashed.nl');
         }
 
-        cms()->builder('builderBlockClasses', [
-            self::class => 'builderBlocks',
-        ]);
+        if (config('dashed-core.registerDefaultBuilderBlocks', true)) {
+            cms()->builder('builderBlockClasses', [
+                self::class => 'builderBlocks',
+            ]);
+        }
     }
 
     public static function builderBlocks()
