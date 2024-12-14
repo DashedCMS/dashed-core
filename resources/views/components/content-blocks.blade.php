@@ -6,7 +6,7 @@
                 <x-dashed-core::content-blocks :content="$globalBlockContent->content" {{ $attributes->merge() }}/>
             @endif
         @else
-            @if(config('dashed-core.blocks.disable_caching') || in_array($block['type'], config('dashed-core.blocks.caching_disabled', [])))
+            @if(config('dashed-core.blocks.disable_caching') || in_array($block['type'], config('dashed-core.blocks.caching_disabled', [])) || !isset($model))
                 <x-dynamic-component :component="'blocks.' . $block['type']" :type="$block['type']"
                                      :data="$block['data']" {{ $attributes->merge() }}/>
             @else

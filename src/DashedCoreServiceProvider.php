@@ -189,7 +189,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                             TextInput::make('title')
                                 ->label('Titel')
                                 ->required(),
-                            TextInput::make('subtitle')
+                            TiptapEditor::make('subtitle')
                                 ->label('Subtitel')
                                 ->required(),
                             TextInput::make('icon')
