@@ -280,16 +280,16 @@ class DashedCoreServiceProvider extends PackageServiceProvider
     public static function defaultPageBuilderBlocks()
     {
         $defaultBlocks = [
-            Block::make('account')
+            Block::make('account-block')
                 ->label('Account')
                 ->schema([]),
-            Block::make('login')
+            Block::make('login-block')
                 ->label('Login')
                 ->schema([]),
-            Block::make('forgot-password')
+            Block::make('forgot-password-block')
                 ->label('Wachtwoord vergeten')
                 ->schema([]),
-            Block::make('reset-password')
+            Block::make('reset-password-block')
                 ->label('Reset wachtwoord')
                 ->schema([]),
         ];

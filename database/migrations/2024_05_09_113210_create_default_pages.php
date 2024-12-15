@@ -31,7 +31,7 @@ return new class () extends Migration {
         $page->setTranslation('content', 'nl', [
             [
                 'data' => [],
-                'type' => 'login',
+                'type' => 'login-block',
             ]
         ]);
         $page->save();
@@ -44,7 +44,7 @@ return new class () extends Migration {
         $page->setTranslation('content', 'nl', [
             [
                 'data' => [],
-                'type' => 'account',
+                'type' => 'account-block',
             ]
         ]);
         $page->save();
@@ -57,7 +57,7 @@ return new class () extends Migration {
         $page->setTranslation('content', 'nl', [
             [
                 'data' => [],
-                'type' => 'forgot-password',
+                'type' => 'forgot-password-block',
             ]
         ]);
         $page->save();
@@ -70,7 +70,7 @@ return new class () extends Migration {
         $page->setTranslation('content', 'nl', [
             [
                 'data' => [],
-                'type' => 'reset-password',
+                'type' => 'reset-password-block',
             ]
         ]);
         $page->save();
