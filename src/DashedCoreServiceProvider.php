@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore;
 
+use Dashed\DashedCore\Filament\Pages\Settings\AccountSettingsPage;
 use Livewire\Livewire;
 use Illuminate\Support\Facades\Mail;
 use App\Providers\AppServiceProvider;
@@ -265,6 +266,18 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                         ->required()
                         ->rows(5),
                 ]),
+            Block::make('account')
+                ->label('Account')
+                ->schema([]),
+            Block::make('login')
+                ->label('Login')
+                ->schema([]),
+            Block::make('forgot-password')
+                ->label('Wachtwoord vergeten')
+                ->schema([]),
+            Block::make('reset-password')
+                ->label('Reset wachtwoord')
+                ->schema([]),
         ];
 
         cms()
@@ -295,6 +308,12 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                     'description' => 'Algemene informatie van de website',
                     'icon' => 'cog',
                     'page' => GeneralSettingsPage::class,
+                ],
+                'account' => [
+                    'name' => 'Account',
+                    'description' => 'Account instellingen van de website',
+                    'icon' => 'user',
+                    'page' => AccountSettingsPage::class,
                 ],
                 'seo' => [
                     'name' => 'SEO',

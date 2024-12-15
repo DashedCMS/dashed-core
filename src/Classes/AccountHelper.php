@@ -2,55 +2,64 @@
 
 namespace Dashed\DashedCore\Classes;
 
+use Dashed\DashedCore\Models\Customsetting;
+use Dashed\DashedPages\Models\Page;
 use Illuminate\Support\Facades\Auth;
 
 class AccountHelper
 {
-    public static function getAccountUrl()
+    public static function getAccountUrl(): string
     {
-        if (Auth::check()) {
-            return route('dashed.frontend.account');
-        } else {
-            return route('dashed.frontend.auth.login');
-        }
+        $pageId = auth()->check() ? Customsetting::get('account_page_id') : Customsetting::get('login_page_id');
+        $page = Page::publicShowable()->where('id', $pageId)->first();
+        return $page->getUrl() ?? '#';
     }
 
-    public static function getUpdateAccountUrl()
-    {
-        if (Auth::check()) {
-            return route('dashed.frontend.account.post');
-        } else {
-            return route('dashed.frontend.auth.login');
-        }
-    }
+//    public static function getUpdateAccountUrl()
+//    {
+//        if (Auth::check()) {
+//            return route('dashed.frontend.account.post');
+//        } else {
+//            return route('dashed.frontend.auth.login');
+//        }
+//    }
 
-    public static function getLoginPostUrl()
-    {
-        return route('dashed.frontend.auth.login.post');
-    }
+//    public static function getLoginPostUrl()
+//    {
+//        return route('dashed.frontend.auth.login.post');
+//    }
 
     public static function getLogoutUrl()
     {
         return route('dashed.frontend.auth.logout');
     }
 
-    public static function getRegisterPostUrl()
-    {
-        return route('dashed.frontend.auth.register.post');
-    }
+//    public static function getRegisterPostUrl()
+//    {
+//        return route('dashed.frontend.auth.register.post');
+//    }
 
     public static function getForgotPasswordUrl()
     {
-        return route('dashed.frontend.auth.forgot-password');
+        $pageId = Customsetting::get('forgot_password_page_id');
+        $page = Page::publicShowable()->where('id', $pageId)->first();
+        return $page->getUrl() ?? '#';
     }
 
-    public static function getForgotPasswordPostUrl()
+    public static function getResetPasswordUrl()
     {
-        return route('dashed.frontend.auth.forgot-password.post');
+        $pageId = Customsetting::get('reset_password_page_id');
+        $page = Page::publicShowable()->where('id', $pageId)->first();
+        return $page->getUrl() ?? '#';
     }
 
-    public static function getResetPasswordPostUrl($token)
-    {
-        return route('dashed.frontend.auth.reset-password.post', ['passwordResetToken' => $token]);
-    }
+//    public static function getForgotPasswordPostUrl()
+//    {
+//        return route('dashed.frontend.auth.forgot-password.post');
+//    }
+
+//    public static function getResetPasswordPostUrl($token)
+//    {
+//        return route('dashed.frontend.auth.reset-password.post', ['passwordResetToken' => $token]);
+//    }
 }

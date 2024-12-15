@@ -1,0 +1,1 @@
+<livewire:auth.reset-password />
