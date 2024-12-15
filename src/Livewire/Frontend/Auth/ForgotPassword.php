@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore\Livewire\Frontend\Auth;
 
+use Dashed\DashedCore\Classes\AccountHelper;
 use Exception;
 use Carbon\Carbon;
 use Livewire\Component;
@@ -15,6 +16,13 @@ use Dashed\DashedTranslations\Models\Translation;
 class ForgotPassword extends Component
 {
     public ?string $email = '';
+
+    public function mount()
+    {
+        if (Auth::check()) {
+            return redirect(AccountHelper::getAccountUrl())->with('success', 'Je bent succesvol ingelogd');
+        }
+    }
 
     public function submit()
     {

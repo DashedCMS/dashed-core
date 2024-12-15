@@ -3,6 +3,7 @@
 namespace Dashed\DashedCore\Livewire\Frontend\Account;
 
 use App\Models\User;
+use Dashed\DashedCore\Classes\AccountHelper;
 use Livewire\Component;
 use Illuminate\Support\Facades\Hash;
 use Filament\Notifications\Notification;
@@ -24,6 +25,10 @@ class Account extends Component
 
     public function mount()
     {
+        if (auth()->guest()) {
+            return redirect(AccountHelper::getAccountUrl());
+        }
+
         $this->user = auth()->user();
         $this->email = $this->user->email;
         $this->firstName = $this->user->first_name;

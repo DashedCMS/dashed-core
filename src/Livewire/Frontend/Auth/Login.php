@@ -26,6 +26,13 @@ class Login extends Component
 
     public ?bool $registerRememberMe = false;
 
+    public function mount()
+    {
+        if (Auth::check()) {
+            return redirect(AccountHelper::getAccountUrl())->with('success', 'Je bent succesvol ingelogd');
+        }
+    }
+
     public function login()
     {
         $this->validate(
@@ -51,11 +58,11 @@ class Login extends Component
 
         $user = User::where('email', $this->loginEmail)->first();
 
-        if (! $user) {
+        if (!$user) {
             return redirect()->back()->with('error', Translation::get('no-user-found', 'login', 'We could not find a user matching these criteria'));
         }
 
-        if (! Hash::check($this->loginPassword, $user->password)) {
+        if (!Hash::check($this->loginPassword, $user->password)) {
             return redirect()->back()->with('error', Translation::get('no-user-found', 'login', 'We could not find a user matching these criteria'));
         }
 

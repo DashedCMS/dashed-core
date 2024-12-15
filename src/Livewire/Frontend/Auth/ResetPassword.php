@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore\Livewire\Frontend\Auth;
 
+use Dashed\DashedCore\Classes\AccountHelper;
 use Livewire\Component;
 use Dashed\DashedCore\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -18,6 +19,10 @@ class ResetPassword extends Component
 
     public function mount(string $passwordResetToken)
     {
+        if (Auth::check()) {
+            return redirect(AccountHelper::getAccountUrl())->with('success', 'Je bent succesvol ingelogd');
+        }
+
         $this->user = User::where('password_reset_token', $passwordResetToken)->first();
         if (! $this->user) {
             abort(404);
