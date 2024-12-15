@@ -2,6 +2,8 @@
 
 namespace Dashed\DashedCore\Livewire\Frontend\Auth;
 
+use Dashed\DashedCore\Classes\AccountHelper;
+use Dashed\DashedCore\Livewire\Frontend\Account\Account;
 use Livewire\Component;
 use Dashed\DashedCore\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -63,7 +65,7 @@ class Login extends Component
         if (ShoppingCart::cartItemsCount() > 0) {
             return redirect(ShoppingCart::getCartUrl())->with('success', Translation::get('succesfully-logged-in', 'login', 'You are logged in!'));
         } else {
-            return redirect(route('dashed.frontend.account'))->with('success', Translation::get('succesfully-logged-in', 'login', 'You are logged in!'));
+            return redirect(AccountHelper::getAccountUrl())->with('success', Translation::get('succesfully-logged-in', 'login', 'You are logged in!'));
         }
     }
 
@@ -104,7 +106,7 @@ class Login extends Component
 
         Auth::login($user, $this->registerRememberMe);
 
-        return redirect(route('dashed.frontend.account'))->with('success', Translation::get('succesfully-logged-in', 'login', 'You are logged in!'));
+        return redirect(AccountHelper::getAccountUrl())->with('success', Translation::get('succesfully-logged-in', 'login', 'You are logged in!'));
     }
 
     public function render()
