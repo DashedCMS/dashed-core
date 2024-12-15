@@ -72,11 +72,16 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             Mail::alwaysTo('info@dashed.nl');
         }
 
+        $builderBlockClasses = [];
         if (config('dashed-core.registerDefaultBuilderBlocks', true)) {
-            cms()->builder('builderBlockClasses', [
-                self::class => 'builderBlocks',
-            ]);
+            $builderBlockClasses[] = 'builderBlocks';
         }
+
+        $builderBlockClasses[] = 'defaultPageBuilderBlocks';
+
+        cms()->builder('builderBlockClasses', [
+            self::class => $builderBlockClasses,
+        ]);
 
         cms()->builder('publishOnUpdate', [
             'dashed-core-config',
@@ -266,6 +271,15 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                         ->required()
                         ->rows(5),
                 ]),
+        ];
+
+        cms()
+            ->builder('blocks', $defaultBlocks);
+    }
+
+    public static function defaultPageBuilderBlocks()
+    {
+        $defaultBlocks = [
             Block::make('account')
                 ->label('Account')
                 ->schema([]),
