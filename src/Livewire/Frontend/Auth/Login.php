@@ -2,12 +2,11 @@
 
 namespace Dashed\DashedCore\Livewire\Frontend\Auth;
 
-use Dashed\DashedCore\Classes\AccountHelper;
-use Dashed\DashedCore\Livewire\Frontend\Account\Account;
 use Livewire\Component;
 use Dashed\DashedCore\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Dashed\DashedCore\Classes\AccountHelper;
 use Dashed\DashedTranslations\Models\Translation;
 use Dashed\DashedEcommerceCore\Classes\ShoppingCart;
 
