@@ -48,12 +48,12 @@ class AccountHelper
         return $page->getUrl() ?? '#';
     }
 
-    public static function getResetPasswordUrl()
+    public static function getResetPasswordUrl($resetToken)
     {
         $pageId = Customsetting::get('reset_password_page_id');
         $page = Page::publicShowable()->where('id', $pageId)->first();
 
-        return $page->getUrl() ?? '#';
+        return ($page->getUrl() ?? '#') . '?passwordResetToken=' . $resetToken;
     }
 
     //    public static function getForgotPasswordPostUrl()
