@@ -36,7 +36,7 @@ return new class () extends Migration {
         ]);
         $page->save();
 
-        \Dashed\DashedCore\Models\Customsetting::set('account_page_id', $page->id);
+        \Dashed\DashedCore\Models\Customsetting::set('login_page_id', $page->id);
 
         $page = new \Dashed\DashedPages\Models\Page();
         $page->setTranslation('name', 'nl', 'Account');
@@ -49,7 +49,7 @@ return new class () extends Migration {
         ]);
         $page->save();
 
-        \Dashed\DashedCore\Models\Customsetting::set('login_page_id', $page->id);
+        \Dashed\DashedCore\Models\Customsetting::set('account_page_id', $page->id);
 
         $page = new \Dashed\DashedPages\Models\Page();
         $page->setTranslation('name', 'nl', 'Wachtwoord vergeten');

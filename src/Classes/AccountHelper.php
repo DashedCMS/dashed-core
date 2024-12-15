@@ -25,6 +25,14 @@ class AccountHelper
     //        }
     //    }
 
+    public static function getLoginUrl()
+    {
+        $pageId = Customsetting::get('login_page_id');
+        $page = Page::publicShowable()->where('id', $pageId)->first();
+
+        return $page->getUrl() ?? '#';
+    }
+
     //    public static function getLoginPostUrl()
     //    {
     //        return route('dashed.frontend.auth.login.post');
