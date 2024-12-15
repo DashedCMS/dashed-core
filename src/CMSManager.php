@@ -26,9 +26,11 @@ class CMSManager
         ],
     ];
 
+    protected $builderBlocksActivated = false;
+
     public function builder(string $name, null|string|array $blocks = null): self|array
     {
-        if (! $blocks) {
+        if (!$blocks) {
             return static::$builders[$name] ?? [];
         }
 
@@ -37,11 +39,22 @@ class CMSManager
         return $this;
     }
 
-    public function getFilamentBuilderBlock(string $name = 'content', string $blocksName = 'blocks', bool $globalBlockChooser = true): Builder
+    public function activateBuilderBlockClasses(): void
     {
+        if ($this->builderBlocksActivated) {
+            return;
+        }
+
         foreach (collect(cms()->builder('builderBlockClasses'))->sortKeysDesc()->toArray() as $class => $method) {
             $class::$method();
         }
+
+        $this->builderBlocksActivated = true;
+    }
+
+    public function getFilamentBuilderBlock(string $name = 'content', string $blocksName = 'blocks', bool $globalBlockChooser = true): Builder
+    {
+        self::activateBuilderBlockClasses();
 
         $blocks = cms()->builder($blocksName);
 
@@ -54,7 +67,7 @@ class CMSManager
         }
 
         foreach ($blocks as $key => $block) {
-            if (! View::exists('components.blocks.'.$block->getName())) {
+            if (!View::exists('components.blocks.' . $block->getName())) {
                 unset($blocks[$key]);
             }
         }
@@ -67,14 +80,14 @@ class CMSManager
                     ->schema([
                         Select::make('globalBlock')
                             ->label('Globaal blok')
-                            ->options(GlobalBlock::all()->mapWithKeys(fn ($block) => [$block->id => $block->name]))
+                            ->options(GlobalBlock::all()->mapWithKeys(fn($block) => [$block->id => $block->name]))
                             ->placeholder('Kies een globaal blok')
                             ->hintAction(
                                 Action::make('editGlobalBlock')
                                     ->label('Bewerk globaal blok')
-                                    ->url(fn (Get $get) => route('filament.dashed.resources.global-blocks.edit', ['record' => $get('globalBlock')]))
+                                    ->url(fn(Get $get) => route('filament.dashed.resources.global-blocks.edit', ['record' => $get('globalBlock')]))
                                     ->openUrlInNewTab()
-                                    ->visible(fn (Get $get) => $get('globalBlock'))
+                                    ->visible(fn(Get $get) => $get('globalBlock'))
                             )
                             ->reactive()
                             ->required()
@@ -113,7 +126,7 @@ class CMSManager
         return [
             'results' => $results,
             'count' => collect($results)->sum('count'),
-            'hasResults' => collect($results)->filter(fn ($result) => $result['hasResults'])->count() > 0,
+            'hasResults' => collect($results)->filter(fn($result) => $result['hasResults'])->count() > 0,
         ];
     }
 

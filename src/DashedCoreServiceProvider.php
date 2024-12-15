@@ -92,7 +92,6 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                     AppServiceProvider::getDefaultBlockFields(),
                     TextInput::make('toptitle')
                         ->label('Top title'),
-                    mediaHelper()->field('title_image', 'Titel afbeelding', isImage: true),
                     TextInput::make('title')
                         ->label('Titel')
                         ->required(),

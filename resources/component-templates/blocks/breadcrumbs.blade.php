@@ -1,4 +1,4 @@
-@if(request()->url() != url('/'))
+@if(!isset($page) || (isset($page) && !$page->is_home))
     @if($breadcrumbs ?? false)
         <nav class="py-4 text-sm xl:rounded-md bg-white">
             <x-container>

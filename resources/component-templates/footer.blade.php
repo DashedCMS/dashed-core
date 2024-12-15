@@ -10,8 +10,8 @@
                                 :path="$logo"
                                 :alt="Customsetting::get('site_name')"
                                 :manipulations="[
-                            'widen' => 300,
-                        ]"
+                                    'widen' => 300,
+                                ]"
                         />
                     </a>
 
@@ -77,7 +77,7 @@
             </div>
             <div class="">
                 <h3 class="text-lg font-bold">{{ Translation::get('sign-up-for-our-newsletter', 'footer', 'Meld je aan voor onze nieuwsbrief') }}</h3>
-                <p class="text-sm text-gray-500">{{ Translation::get('sign-up-for-our-newsletter-content', 'footer', 'Krijg updates over onze voorraad, nieuwe vissen of andere handige weetjes') }}</p>
+                <p class="text-sm text-gray-500">{{ Translation::get('sign-up-for-our-newsletter-content', 'footer', 'Krijg updates over onze voorraad, nieuwe producten of andere handige weetjes') }}</p>
                 <form class="mt-2 flex sm:max-w-md">
                     <label for="email-address" class="sr-only">Email adres</label>
                     <input id="email-address" type="text" autocomplete="email" required="" class="w-full min-w-0 appearance-none rounded-md border border-white bg-white px-4 py-2 text-base text-gray-900 placeholder-gray-500 shadow-sm focus:border-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-900">
@@ -95,7 +95,7 @@
     <x-container>
         <div class="flex items-center flex-wrap gap-x-2 gap-y-4">
             <p class="text-sm text-gray-500 grow w-full md:w-auto">
-                ©{{ now()->format('Y') }} {{ Customsetting::get('site_name') }} - Realisatie door <a class="uppercase italic font-bold text-primary-500 hover:text-primary-700" href="https://dashed.nl?ref={{ url('/') }}" rel="nofollow">DASHED</a></p>
+                ©{{ now()->format('Y') }} {{ Customsetting::get('site_name') }} - {{ Translation::get('design-by', 'footer', 'Design en realisatie door') }} <a class="uppercase italic font-bold text-primary-500 hover:text-primary-700" href="https://dashed.nl?ref={{ url('/') }}" rel="nofollow">DASHED</a></p>
 
 {{--            <a--}}
 {{--                    class="size-8 grid place-content-center bg-primary-400 text-white rounded-full hover:bg-primary-800 transition"--}}

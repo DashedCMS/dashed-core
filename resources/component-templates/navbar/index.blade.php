@@ -1,54 +1,60 @@
-<div class="bg-gradient-to-r from-primary-800 to-primary-500 px-4 md:px-8" wire:ignore>
-    <x-container>
-        <div class="py-2 swiper swiper-usps">
-            <ul
-                    class="gap-4 text-xs md:text-sm font-bold text-white swiper-wrapper">
-                <li class="swiper-slide">
-                    <div class="flex items-center justify-center gap-2 drop-shadow">
-                        <x-lucide-gift class="size-4"/>
+<div class="bg-gradient-to-r from-primary-600 to-primary-300 px-4 md:px-8 py-4" wire:ignore>
+    <div class="py-2 swiper swiper-usps">
+        <ul
+            class="gap-4 text-sm md:text-base text-white swiper-wrapper">
+            <li class="swiper-slide">
+                <div class="flex items-center justify-center gap-2 drop-shadow">
+                    <x-lucide-gift class="size-6 text-primary-800"/>
 
-                        <div class="font-bold">{!! Translation::get('usp-1', 'navbar', 'Gratis verzending vanaf &euro;99') !!}</div>
-                    </div>
-                </li>
+                    <div class="">{!! Translation::get('usp-1', 'navbar', 'Gratis verzending vanaf &euro;99', 'editor') !!}</div>
+                </div>
+            </li>
 
-                <li class="swiper-slide">
-                    <div class="flex items-center justify-center gap-2 drop-shadow">
-                        <x-lucide-wallet class="size-4"/>
+            <li class="swiper-slide">
+                <div class="flex items-center justify-center gap-2 drop-shadow">
+                    <x-lucide-wallet class="size-6 text-primary-800"/>
 
-                        <div class="font-bold">{!! Translation::get('usp-2', 'navbar', 'Veilig betalen') !!}</div>
-                    </div>
-                </li>
+                    <div class="">{!! Translation::get('usp-2', 'navbar', 'Veilig betalen', 'editor') !!}</div>
+                </div>
+            </li>
 
-                <li class="swiper-slide">
-                    <div class="flex items-center justify-center gap-2 drop-shadow">
-                        <x-lucide-heart-handshake class="size-4"/>
+            <li class="swiper-slide">
+                <div class="flex items-center justify-center gap-2 drop-shadow">
+                    <x-lucide-heart-handshake class="size-6 text-primary-800"/>
 
-                        <div class="font-bold">{!! Translation::get('usp-3', 'navbar', 'Persoonlijke service') !!}</div>
-                    </div>
-                </li>
+                    <div class="">{!! Translation::get('usp-3', 'navbar', 'Persoonlijke service', 'editor') !!}</div>
+                </div>
+            </li>
 
-                <li class="swiper-slide">
-                    <div class="flex items-center justify-center gap-2 drop-shadow">
-                        <x-lucide-store class="size-4"/>
+            <li class="swiper-slide">
+                <div class="flex items-center justify-center gap-2 drop-shadow">
+                    <x-lucide-store class="size-6 text-primary-800"/>
 
-                        <div class="font-bold">{!! Translation::get('usp-4', 'navbar', 'Alleen de beste kwaliteit') !!}</div>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </x-container>
+                    <div class="">{!! Translation::get('usp-4', 'navbar', 'Alleen de beste kwaliteit', 'editor') !!}</div>
+                </div>
+            </li>
+
+            <li class="swiper-slide">
+                <div class="flex items-center justify-center gap-2 drop-shadow">
+                    <x-lucide-undo-2 class="size-6 text-primary-800"/>
+
+                    <div class="">{!! Translation::get('usp-5', 'navbar', 'Gratis retourneren', 'editor') !!}</div>
+                </div>
+            </li>
+        </ul>
+    </div>
 </div>
 
 @php($headerInset = isset($page) && ($page->contentBlocks['header_inset'] ?? false) ? true : false)
 <header
-        class=" @if($headerInset) bg-black/70 @else bg-black @endif text-white backdrop-blur backdrop-saturate-200 sticky top-0 z-40 transform-gpu ring-1 ring-gray-900/5 py-4"
-        x-data="{ open: false }"
+    class=" @if($headerInset) bg-primary-800/70 @else bg-primary-800 @endif text-white backdrop-blur backdrop-saturate-200 sticky top-0 z-40 transform-gpu ring-1 ring-primary-900/5 py-4"
+    x-data="{ open: false }"
 >
     <div
-            x-cloak
-            x-show="open"
-            x-transition.opacity.scale.origin.top
-            class="absolute inset-x-0 bg-black top-24 ring-1 ring-gray-950/5 z-40 max-h-[calc(100dvh-5rem)] overflow-y-auto lg:hidden"
+        x-cloak
+        x-show="open"
+        x-transition.opacity.scale.origin.top
+        class="absolute inset-x-0 bg-black top-24 ring-1 ring-gray-950/5 z-40 max-h-[calc(100dvh-5rem)] overflow-y-auto lg:hidden"
     >
         <x-container>
             <ul class="divide-y divide-gray-950/5 -mx-4">
@@ -56,11 +62,11 @@
                     <li>
                         <details class="group open:border-b-2 open:border-primary-500">
                             <summary
-                                    class="font-bold p-4 md:hover:bg-gray-100 transition text-sm marker:content-none flex items-center gap-2"
+                                class="font-bold p-4 md:hover:bg-gray-100 transition text-sm marker:content-none flex items-center gap-2"
                             >
                                 @if($menuItem['hasChilds'])
                                     <x-lucide-chevron-right
-                                            class="w-4 h-4 text-white transition group-open:rotate-90 group-open:text-primary-500"
+                                        class="w-4 h-4 text-white transition group-open:rotate-90 group-open:text-primary-500"
                                     />
 
                                     <span>{{ $menuItem['name'] }}</span>
@@ -77,7 +83,7 @@
                                                href="{{ $child['url'] }}"
                                             >
                                                 <x-lucide-chevron-right
-                                                        class="w-4 h-4 text-white transition"
+                                                    class="w-4 h-4 text-white transition"
                                                 />
                                                 <span>{{ $child['name'] }}</span>
                                             </a>
@@ -91,7 +97,7 @@
                                                            href="{{ $baby['url'] }}"
                                                         >
                                                             <x-lucide-chevron-right
-                                                                    class="w-4 h-4 text-white transition"
+                                                                class="w-4 h-4 text-white transition"
                                                             />
                                                             <span>{{ $baby['name'] }}</span>
                                                         </a>
@@ -113,11 +119,11 @@
         <nav class="h-16 items-center flex gap-8 justify-start">
             <a href="/">
                 <x-drift::image
-                        class="h-12"
-                        config="dashed"
-                        :path="Translation::get('light-logo', 'branding', null, 'image')"
-                        :alt="Customsetting::get('site_name')"
-                        :manipulations="[
+                    class="h-12"
+                    config="dashed"
+                    :path="Translation::get('light-logo', 'branding', null, 'image')"
+                    :alt="Customsetting::get('site_name')"
+                    :manipulations="[
                             'widen' => 300,
                         ]"
                 />
@@ -126,7 +132,7 @@
             <ul class="hidden lg:flex items-center text-white text-sm justify-center">
                 @foreach (Menus::getMenuItems('main-menu') as $menuItem)
                     <x-navbar.link
-                            :menuItem="$menuItem">
+                        :menuItem="$menuItem">
                         @if($menuItem['hasChilds'])
                             @if($menuItem['contentBlocks']['normal_submenu'] ?? false)
                                 <div class="relative">
@@ -187,9 +193,9 @@
 
             <div class="flex items-center gap-4 relative rounded-full bg-primary-500 p-2 lg:hidden">
                 <x-icon-button
-                        x-on:click="open = !open"
-                        class="text-white hover:text-white size-6"
-                        icon="lucide-menu"
+                    x-on:click="open = !open"
+                    class="text-white hover:text-white size-6"
+                    icon="lucide-menu"
                 />
             </div>
         </nav>
