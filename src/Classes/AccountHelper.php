@@ -10,9 +10,9 @@ class AccountHelper
     public static function getAccountUrl()
     {
         if (Auth::check()) {
-            return LaravelLocalization::localizeUrl(route('dashed.frontend.account'));
+            return route('dashed.frontend.account');
         } else {
-            return LaravelLocalization::localizeUrl(route('dashed.frontend.auth.login'));
+            return route('dashed.frontend.auth.login');
         }
     }
 
@@ -42,7 +42,7 @@ class AccountHelper
 
     public static function getForgotPasswordUrl()
     {
-        return LaravelLocalization::localizeUrl(route('dashed.frontend.auth.forgot-password'));
+        return route('dashed.frontend.auth.forgot-password');
     }
 
     public static function getForgotPasswordPostUrl()
