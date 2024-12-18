@@ -2,24 +2,14 @@
 
 namespace Dashed\DashedCore\Controllers\Frontend;
 
-use Dashed\DashedCore\Classes\AccountHelper;
-use Exception;
-use Carbon\Carbon;
-use Illuminate\Support\Str;
 use Dashed\DashedCore\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\View;
-use Dashed\DashedCore\Mail\PasswordResetMail;
+use Dashed\DashedCore\Classes\AccountHelper;
 use Dashed\DashedTranslations\Models\Translation;
 use Dashed\DashedCore\Livewire\Frontend\Auth\Login;
-use Dashed\DashedCore\Requests\Frontend\LoginRequest;
-use Dashed\DashedCore\Requests\Frontend\RegisterRequest;
 use Dashed\DashedCore\Livewire\Frontend\Auth\ResetPassword;
 use Dashed\DashedCore\Livewire\Frontend\Auth\ForgotPassword;
-use Dashed\DashedCore\Requests\Frontend\ResetPasswordRequest;
-use Dashed\DashedCore\Requests\Frontend\ForgotPasswordRequest;
 
 class AuthController extends FrontendController
 {
@@ -45,7 +35,7 @@ class AuthController extends FrontendController
 
     public function logout()
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect(AccountHelper::getLoginUrl())->with('success', Translation::get('already-logged-out', 'login', 'You are already logged out'));
         }
 
@@ -86,7 +76,7 @@ class AuthController extends FrontendController
 
             $user = User::where('password_reset_token', $passwordResetToken)->first();
 
-            if (!$user) {
+            if (! $user) {
                 return redirect(route('dashed.frontend.auth.forgot-password'))->with('success', Translation::get('reset-token-invalid', 'login', 'The token that was provided is invalid'));
             }
 
