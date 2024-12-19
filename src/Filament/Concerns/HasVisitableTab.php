@@ -12,6 +12,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Dashed\DashedCore\Models\Customsetting;
+use Illuminate\Support\Facades\Schema;
 use RalphJSmit\Filament\MediaLibrary\Forms\Components\MediaPicker;
 
 trait HasVisitableTab
@@ -20,7 +21,10 @@ trait HasVisitableTab
     {
         return [
             Group::make()
-                ->columns(1)
+                ->columns([
+                    'default' => 1,
+                    'lg' => 6,
+                ])
                 ->relationship('metadata')
                 ->saveRelationshipsUsing(function (array $state, $livewire, $record) {
                     $record->metadata->setlocale($livewire->getActiveFormsLocale());
@@ -31,33 +35,54 @@ trait HasVisitableTab
                         ->label('Meta titel')
                         ->nullable()
                         ->minLength(5)
-                        ->maxLength(70),
+                        ->maxLength(70)
+                        ->columnSpan([
+                            'default' => 1,
+                            'lg' => 2,
+                        ]),
                     Textarea::make('description')
                         ->label('Meta omschrijving')
                         ->nullable()
                         ->minLength(5)
                         ->maxLength(170)
-                        ->rows(2),
+                        ->rows(2)
+                        ->columnSpan([
+                            'default' => 1,
+                            'lg' => 2,
+                        ]),
                     MediaPicker::make('image')
                         ->label('Meta afbeelding')
                         ->downloadable()
                         ->acceptedFileTypes(['image/*'])
                         ->showFileName()
-                        ->helperText('De beste afmeting is 1200x630 pixels'),
+                        ->helperText('De beste afmeting is 1200x630 pixels')
+                        ->columnSpan([
+                            'default' => 1,
+                            'lg' => 2,
+                        ]),
                     //                        TextInput::make('canonical_url')
                     //                            ->label('Meta canonical URL'),
                     Toggle::make('noindex')
-                        ->label('Pagina niet indexeren'),
+                        ->label('Pagina niet indexeren')
+                        ->columnSpanFull(),
                     Textarea::make('head_scripts')
                         ->label('Scripts in head')
                         ->nullable()
                         ->maxLength(50000)
-                        ->rows(2),
+                        ->rows(2)
+                        ->columnSpan([
+                            'default' => 1,
+                            'lg' => 3,
+                        ]),
                     Textarea::make('top_body_scripts')
                         ->label('Scripts in top van body')
                         ->nullable()
                         ->maxLength(50000)
-                        ->rows(2),
+                        ->rows(2)
+                        ->columnSpan([
+                            'default' => 1,
+                            'lg' => 3,
+                        ]),
                 ]),
         ];
     }
@@ -80,7 +105,7 @@ trait HasVisitableTab
                 ->label('Actief op sites')
                 ->options(collect(Sites::getSites())->pluck('name', 'id'))
                 ->multiple()
-                ->hidden(fn () => ! (Sites::getAmountOfSites() > 1))
+                ->hidden(fn() => !(Sites::getAmountOfSites() > 1))
                 ->required(),
         ];
 
@@ -88,7 +113,7 @@ trait HasVisitableTab
             $schema[] =
                 Select::make('parent_id')
                     ->relationship('parent', 'name')
-                    ->options(fn ($record) => self::$model::where('id', '!=', $record->id ?? 0)->pluck('name', 'id'))
+                    ->options(fn($record) => self::$model::where('id', '!=', $record->id ?? 0)->pluck('name', 'id'))
                     ->label('Bovenliggende item');
         }
 
@@ -101,7 +126,7 @@ trait HasVisitableTab
 
     protected static function visitableTableColumns(): array
     {
-        if (method_exists(self::$model, 'parent')) {
+        if (method_exists(self::$model, 'parent') && Schema::hasColumn(app(self::$model)->getTable(), 'parent_id')) {
             $schema[] =
                 TextColumn::make('parent.name')
                     ->label('Bovenliggende item')
@@ -112,7 +137,7 @@ trait HasVisitableTab
                 ->label('Actief op sites')
                 ->sortable()
                 ->badge()
-                ->hidden(! (Sites::getAmountOfSites() > 1))
+                ->hidden(!(Sites::getAmountOfSites() > 1))
                 ->searchable();
         $schema[] = IconColumn::make('status')
             ->label('Status')
@@ -126,7 +151,7 @@ trait HasVisitableTab
         if (Customsetting::get('seo_check_models', null, false)) {
             $schema[] = TextColumn::make('seo_score')
                 ->label('SEO score')
-                ->getStateUsing(fn ($record) => $record->getActualScore());
+                ->getStateUsing(fn($record) => $record->getActualScore());
         }
 
         return $schema;
