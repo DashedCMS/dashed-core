@@ -81,7 +81,7 @@ trait IsVisitable
 
     public function scopeThisSite($query, $siteId = null)
     {
-        if (! $siteId) {
+        if (!$siteId) {
             $siteId = Sites::getActive();
         }
 
@@ -90,7 +90,7 @@ trait IsVisitable
 
     public function scopeSlug($query, string $slug = '')
     {
-        if (! $slug) {
+        if (!$slug) {
             //Should not be found
             $query->where('id', 0);
         } else {
@@ -138,7 +138,7 @@ trait IsVisitable
 
     public function getStatusAttribute(): bool
     {
-        if (! $this->start_date && ! $this->end_date) {
+        if (!$this->start_date && !$this->end_date) {
             return 1;
         } else {
             if ($this->start_date && $this->end_date) {
@@ -189,7 +189,7 @@ trait IsVisitable
         if (method_exists($model, 'parent')) {
             $parentBreadcrumbs = [];
             while ($model->parent) {
-                if (! $model->parent->is_home) {
+                if (!$model->parent->is_home) {
                     $parentBreadcrumbs[] = [
                         'name' => $model->parent->name,
                         'url' => $model->parent->getUrl(),
@@ -220,7 +220,7 @@ trait IsVisitable
     {
         $originalLocale = app()->getLocale();
 
-        if (! $activeLocale) {
+        if (!$activeLocale) {
             $activeLocale = $originalLocale;
         }
 
@@ -239,10 +239,10 @@ trait IsVisitable
             $url = $this->getTranslation('slug', $activeLocale);
         }
 
-        if (! str($url)->startsWith('/')) {
+        if (!str($url)->startsWith('/')) {
             $url = '/' . $url;
         }
-        if ($activeLocale != Locales::getFirstLocale()['id'] && ! str($url)->startsWith("/{$activeLocale}")) {
+        if ($activeLocale != Locales::getFirstLocale()['id'] && !str($url)->startsWith("/{$activeLocale}")) {
             $url = '/' . $activeLocale . $url;
         }
 
@@ -272,6 +272,7 @@ trait IsVisitable
     public static function resolveRoute($parameters = [])
     {
         $class = str(self::class)->lower()->explode('\\')->last();
+        $className = str(str(self::class)->explode('\\')->last())->lcfirst()->toString();
         $slug = $parameters['slug'] ?? '';
         if ($slug && $overviewPage = self::getOverviewPage()) {
             $slugParts = explode('/', $slug);
@@ -308,16 +309,37 @@ trait IsVisitable
             }
             $parentId = null;
             foreach ($slugParts as $slugPart) {
-                $model = self::publicShowable()->slug($slugPart)->where('parent_id', $parentId)->first();
+                if (self::canHaveParent()) {
+                    $model = self::publicShowable()->slug($slugPart)->where('parent_id', $parentId)->first();
+                } else {
+                    $model = self::publicShowable()->slug($slugPart)->first();
+                }
                 $parentId = $model?->id;
-                if (! $model) {
+                if (!$model) {
                     return;
                 }
             }
         }
 
         if ($model ?? false) {
-            if (View::exists(env('SITE_THEME', 'dashed') . '.' . $class . '.show')) {
+            if (method_exists($model, 'returnForRoute')) {
+                $returnForRoute = self::returnForRoute();
+                if (is_array($returnForRoute)) {
+                    $returnForRoute = array_merge($returnForRoute, [
+                        'parameters' => [
+                            'model' => $model,
+                            $className => $model,
+                            'breadcrumbs' => $model->breadcrumbs(),
+                        ]
+                    ]);
+                }
+            } else {
+                if (View::exists(env('SITE_THEME', 'dashed') . '.' . $class . '.show')) {
+                    $returnForRoute = view(env('SITE_THEME', 'dashed') . '.' . $class . '.show');
+                }
+            }
+
+            if ($returnForRoute ?? false) {
                 seo()->metaData('metaTitle', $model->metadata && $model->metadata->title ? $model->metadata->title : $model->name);
                 seo()->metaData('metaDescription', $model->metadata->description ?? '');
                 if ($model->metadata && $model->metadata->image) {
@@ -344,9 +366,9 @@ trait IsVisitable
                 View::share('model', $model);
                 View::share('breadcrumbs', $model->breadcrumbs());
 
-                return view(env('SITE_THEME', 'dashed') . '.' . $class . '.show');
+                return $returnForRoute;
             } else {
-                return 'pageNotFound';
+                return;
             }
         }
     }
@@ -355,7 +377,7 @@ trait IsVisitable
     {
         $finalString = '';
 
-        if (! is_array($this->content)) {
+        if (!is_array($this->content)) {
             return '';
         }
 
@@ -438,5 +460,10 @@ trait IsVisitable
         }
 
         return $name;
+    }
+
+    public static function canHaveParent(): bool
+    {
+        return true;
     }
 }
