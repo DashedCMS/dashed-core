@@ -26,7 +26,9 @@ class CMSManager
         ],
     ];
 
-    protected $builderBlocksActivated = false;
+    protected static $builderBlocksActivated = [
+        'active' => false
+    ];
 
     public function builder(string $name, null|string|array $blocks = null): self|array
     {
@@ -39,10 +41,10 @@ class CMSManager
         return $this;
     }
 
-    public function activateBuilderBlockClasses(): void
+    public function activateBuilderBlockClasses(): self|array
     {
-        if ($this->builderBlocksActivated) {
-            return;
+        if (static::$builderBlocksActivated['active']) {
+            return $this;
         }
 
         foreach (collect(cms()->builder('builderBlockClasses'))->sortKeysDesc()->toArray() as $class => $method) {
@@ -55,7 +57,9 @@ class CMSManager
             }
         }
 
-        $this->builderBlocksActivated = true;
+        static::$builderBlocksActivated['active'] = true;
+
+        return $this;
     }
 
     public function getFilamentBuilderBlock(string $name = 'content', string $blocksName = 'blocks', bool $globalBlockChooser = true): Builder
