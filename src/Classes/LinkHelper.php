@@ -19,7 +19,9 @@ class LinkHelper
                 Select::make("{$prefix}_{$key}_id")
                     ->label('Kies een ' . strtolower($routeModel['name']))
                     ->required($required)
-                    ->options($routeModel['class']::pluck($routeModel['nameField'] ?: 'name', 'id'))
+                    ->getSearchResultsUsing(fn (string $search): array => $routeModel['class']::where('name', 'like', "%{$search}%")->limit(50)->pluck('name', 'id')->toArray())
+                    ->getOptionLabelUsing(fn ($value): ?string => $routeModel['class']::find($value)?->nameWithParents)
+//                    ->options($routeModel['class']::pluck($routeModel['nameField'] ?: 'name', 'id'))
                     ->searchable()
                     ->visible(fn ($get) => in_array($get("{$prefix}_type"), [$key]));
         }
