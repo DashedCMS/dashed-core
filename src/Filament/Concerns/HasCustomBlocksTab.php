@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore\Filament\Concerns;
 
+use Dashed\DashedCore\CMSManager;
 use Filament\Pages\Page;
 use Dashed\DashedCore\Classes\Locales;
 use Filament\Forms\Components\Fieldset;
@@ -9,8 +10,12 @@ use Filament\Forms\Components\Placeholder;
 
 trait HasCustomBlocksTab
 {
-    protected static function customBlocksTab(array $schema = []): array
+    protected static function customBlocksTab(string $blocks): array
     {
+        cms()->activateBuilderBlockClasses();
+
+        $schema = cms()->builder($blocks);
+
         if (! count($schema)) {
             return [];
         }

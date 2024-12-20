@@ -84,7 +84,7 @@ class {{ CLASS }} extends Resource
                             ->blockLabels()
                             ->cloneable()
                             ->columnSpanFull(),
-                    ], static::customBlocksTab(cms()->builder('{{ SINGLELOW }}Blocks'))))
+                    ], static::customBlocksTab('{{ SINGLELOW }}Blocks'))
                     ->columns(2),
                 Section::make('Globale informatie')
                     ->schema(static::publishTab()),
