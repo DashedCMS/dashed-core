@@ -17,10 +17,14 @@ class ResetPassword extends Component
 
     public ?string $passwordConfirmation = '';
 
-    public function mount(string $passwordResetToken)
+    public function mount(?string $passwordResetToken = null)
     {
         if (Auth::check()) {
             return redirect(AccountHelper::getAccountUrl())->with('success', 'Je bent succesvol ingelogd');
+        }
+
+        if (! $passwordResetToken) {
+            abort(404);
         }
 
         $this->user = User::where('password_reset_token', $passwordResetToken)->first();
