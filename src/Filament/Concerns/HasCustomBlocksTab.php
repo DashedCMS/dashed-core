@@ -2,7 +2,6 @@
 
 namespace Dashed\DashedCore\Filament\Concerns;
 
-use Dashed\DashedCore\CMSManager;
 use Filament\Pages\Page;
 use Dashed\DashedCore\Classes\Locales;
 use Filament\Forms\Components\Fieldset;
