@@ -27,7 +27,7 @@ class CMSManager
     ];
 
     protected static $builderBlocksActivated = [
-        'active' => false
+        'active' => false,
     ];
 
     public function builder(string $name, null|string|array $blocks = null): self|array
