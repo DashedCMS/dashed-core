@@ -30,6 +30,7 @@
         "league/flysystem-aws-s3-v3": "^3.29",
         "mallardduck/blade-lucide-icons": "^1.23",
         "psr/simple-cache": "^3.0",
+        "pxlrbt/filament-excel": "^2.3",
         "ryangjchandler/blade-cache-directive": "^1.0",
         "spatie/laravel-activitylog": "^4.9",
         "spatie/laravel-cookie-consent": "^3.3",
