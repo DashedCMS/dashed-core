@@ -18,5 +18,5 @@ return [
             ],
         ],
     ],
-    'registerDefaultBuilderBlocks' => true,
+    'registerDefaultBuilderBlocks' => false,
 ];
