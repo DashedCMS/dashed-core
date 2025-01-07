@@ -19,7 +19,7 @@ class ResetPassword extends Component
 
     public function mount(?string $passwordResetToken = null)
     {
-        if (Auth::check()) {
+        if (auth()->check()) {
             return redirect(AccountHelper::getAccountUrl())->with('success', 'Je bent succesvol ingelogd');
         }
 
@@ -49,7 +49,7 @@ class ResetPassword extends Component
         $this->user->password = Hash::make($this->password);
         $this->user->save();
 
-        Auth::login($this->user);
+        auth()->login($this->user);
 
         return redirect(route('dashed.frontend.account'))->with('success', Translation::get('reset-password-post-success', 'login', 'Your password has been reset!'));
     }

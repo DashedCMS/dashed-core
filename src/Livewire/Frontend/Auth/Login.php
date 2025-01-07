@@ -28,7 +28,7 @@ class Login extends Component
 
     public function mount()
     {
-        if (Auth::check()) {
+        if (auth()->check()) {
             return redirect(AccountHelper::getAccountUrl())->with('success', 'Je bent succesvol ingelogd');
         }
     }
@@ -66,7 +66,7 @@ class Login extends Component
             return redirect()->back()->with('error', Translation::get('no-user-found', 'login', 'We could not find a user matching these criteria'));
         }
 
-        Auth::login($user, $this->loginRememberMe);
+        auth()->login($user, $this->loginRememberMe);
 
         if (ShoppingCart::cartItemsCount() > 0) {
             return redirect(ShoppingCart::getCartUrl())->with('success', Translation::get('succesfully-logged-in', 'login', 'You are logged in!'));
@@ -110,7 +110,7 @@ class Login extends Component
         $user->password = Hash::make($this->registerPassword);
         $user->save();
 
-        Auth::login($user, $this->registerRememberMe);
+        auth()->login($user, $this->registerRememberMe);
 
         return redirect(AccountHelper::getAccountUrl())->with('success', Translation::get('succesfully-logged-in', 'login', 'You are logged in!'));
     }

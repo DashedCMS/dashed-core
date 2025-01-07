@@ -19,7 +19,7 @@ class ForgotPassword extends Component
 
     public function mount()
     {
-        if (Auth::check()) {
+        if (auth()->check()) {
             return redirect(AccountHelper::getAccountUrl())->with('success', 'Je bent succesvol ingelogd');
         }
     }
