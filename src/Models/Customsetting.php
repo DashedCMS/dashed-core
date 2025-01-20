@@ -117,6 +117,22 @@ class Customsetting extends Model
         }
     }
 
+    public static function reset(string $name, ?string $siteId = null, ?string $locale = null)
+    {
+        if (! $siteId) {
+            $siteId = Sites::getSites()[0]['id'];
+        }
+
+        self::where('name', $name)->where('site_id', $siteId)->where('locale', $locale)->delete();
+
+        Cache::forget("$name-$siteId-$locale");
+        foreach (Sites::getSites() as $site) {
+            foreach (Locales::getLocalesArray() as $locale) {
+                Cache::forget("$name-" . $site['id'] . "-$locale");
+            }
+        }
+    }
+
     public function scopeThisSite($query)
     {
         $query->where('site_id', Sites::getActive());
