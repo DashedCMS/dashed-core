@@ -1,10 +1,13 @@
-@props(['href', 'onclick', 'type'])
+@props(['href', 'onclick', 'type', 'button' => []])
 
 @php($tag = isset($href) ? 'a' : 'button')
 
 <{{$tag}}
     @if($href ?? false)
     href="{{ $href }}"
+@endif
+@if($button['new_tab'] ?? false)
+    target="_blank"
 @endif
 @if($onclick ?? false)
     onclick="{{ $onclick }}"

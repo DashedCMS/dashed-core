@@ -4,6 +4,7 @@
             config="dashed"
             :path="$data['image']"
             :alt="$data['title']"
+            loading="eager"
             :manipulations="[
                             'widen' => 1000,
                         ]"
@@ -29,6 +30,7 @@
                     <x-button
                             type="button button--{{ $button['type'] }}"
                             href="{{ linkHelper()->getUrl($button) }}"
+                            :button="$button"
                     >{{ $button['title'] }}</x-button>
                 @endforeach
             </div>

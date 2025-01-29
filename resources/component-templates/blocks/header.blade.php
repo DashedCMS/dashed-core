@@ -6,6 +6,7 @@ overflow-hidden bg-gray-900 @if($data['top_margin'] ?? true) pt-24 sm:pt-36 @end
                 config="dashed"
                 :mediaId="$data['image']"
                 :alt="$data['title']"
+                loading="eager"
                 :manipulations="[
                             'widen' => 1000,
                         ]"
@@ -26,6 +27,7 @@ overflow-hidden bg-gray-900 @if($data['top_margin'] ?? true) pt-24 sm:pt-36 @end
                     <x-button
                             type="button {{ $button['type'] }}"
                             href="{{ linkHelper()->getUrl($button) }}"
+                            :button="$button"
                     >{{ $button['title'] }}</x-button>
                 @endforeach
             </div>

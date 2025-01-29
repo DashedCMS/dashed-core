@@ -21,6 +21,7 @@
                                         <x-button
                                                 type="button button--{{ $button['type'] }}"
                                                 href="{{ linkHelper()->getUrl($button) }}"
+                                                :button="$button"
                                         >{{ $button['title'] }}</x-button>
                                     @endforeach
                                 </div>

@@ -99,6 +99,10 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             'login-block',
             'account-block',
         ]);
+
+        cms()->builder('plugins', [
+            new DashedCorePlugin(),
+        ]);
     }
 
     public static function builderBlocks()
