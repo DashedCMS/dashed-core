@@ -79,12 +79,8 @@ class {{ CLASS }} extends Resource
                             ->unique('dashed__{{ TABLE }}', 'slug', fn ($record) => $record)
                             ->helperText('Laat leeg om automatisch te laten genereren')
                             ->maxLength(255),
-                        \Filament\Forms\Components\Builder::make('content')
-                            ->blocks(cms()->builder('blocks'))
-                            ->blockLabels()
-                            ->cloneable()
-                            ->columnSpanFull(),
-                    ], static::customBlocksTab('{{ SINGLELOW }}Blocks'))
+                        cms()->getFilamentBuilderBlock(),
+                    ], static::customBlocksTab('{{ SINGLELOW }}Blocks')))
                     ->columns(2),
                 Section::make('Globale informatie')
                     ->schema(static::publishTab()),
