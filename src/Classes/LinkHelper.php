@@ -19,11 +19,11 @@ class LinkHelper
                 Select::make("{$prefix}_{$key}_id")
                     ->label('Kies een ' . strtolower($routeModel['name']))
                     ->required($required)
-                    ->getSearchResultsUsing(fn(string $search): array => $routeModel['class']::where('name', 'like', "%{$search}%")->limit(50)->pluck('name', 'id')->toArray())
-                    ->getOptionLabelUsing(fn($value): ?string => $routeModel['class']::find($value)?->nameWithParents)
+                    ->getSearchResultsUsing(fn (string $search): array => $routeModel['class']::where('name', 'like', "%{$search}%")->limit(50)->pluck('name', 'id')->toArray())
+                    ->getOptionLabelUsing(fn ($value): ?string => $routeModel['class']::find($value)?->nameWithParents)
 //                    ->options($routeModel['class']::pluck($routeModel['nameField'] ?: 'name', 'id'))
                     ->searchable()
-                    ->visible(fn($get) => in_array($get("{$prefix}_type"), [$key]));
+                    ->visible(fn ($get) => in_array($get("{$prefix}_type"), [$key]));
         }
 
         return Group::make(array_merge([
@@ -39,7 +39,7 @@ class LinkHelper
                 ->label('Url')
                 ->required($required)
                 ->placeholder('Example: https://example.com of /contact')
-                ->visible(fn($get) => in_array($get("{$prefix}_type"), ['normal'])),
+                ->visible(fn ($get) => in_array($get("{$prefix}_type"), ['normal'])),
         ], $routeModelInputs))
             ->columns(2);
     }
@@ -60,7 +60,7 @@ class LinkHelper
             $routeModel = cms()->builder('routeModels')[$data["{$prefix}type"]];
         }
 
-        if (!isset($routeModel) || !$routeModel) {
+        if (! isset($routeModel) || ! $routeModel) {
             return '';
         }
 
@@ -73,7 +73,7 @@ class LinkHelper
     {
         $dataToSave = [];
 
-        if (!$siteId) {
+        if (! $siteId) {
             $siteId = Sites::getActive()['id'];
         }
 
@@ -91,15 +91,15 @@ class LinkHelper
 
     public function isExternalUrl(array|string $url): bool
     {
-        if(is_array($url)){
+        if (is_array($url)) {
             $url = linkHelper()->getUrl($url);
         }
 
-        if (!str($url)->startsWith(['http://', 'https://'])) {
+        if (! str($url)->startsWith(['http://', 'https://'])) {
             $url = 'http://' . $url;
         }
 
-        if (!filter_var($url, FILTER_VALIDATE_URL)) {
+        if (! filter_var($url, FILTER_VALIDATE_URL)) {
             return false;
         }
 
