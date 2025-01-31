@@ -74,9 +74,9 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         }
 
         $builderBlockClasses = [];
-//        if (config('dashed-core.registerDefaultBuilderBlocks', true)) {
-//            $builderBlockClasses[] = 'builderBlocks';
-//        }
+        //        if (config('dashed-core.registerDefaultBuilderBlocks', true)) {
+        //            $builderBlockClasses[] = 'builderBlocks';
+        //        }
 
         $builderBlockClasses[] = 'defaultPageBuilderBlocks';
 
