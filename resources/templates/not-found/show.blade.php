@@ -2,10 +2,10 @@
     @livewireStyles
     @livewireScripts
     <main class="relative isolate h-[100vh] bg-gradient-to-br from-primary-500 to-primary-200 flex items-center justify-center">
-        <x-drift::image
+        <x-dashed-files::image
             class="absolute inset-0 -z-10 h-full w-full object-cover object-top mix-blend-multiply"
             config="dashed"
-            :path="Translation::get('image', 'not-found', '', 'image')"
+            :mediaId="Translation::get('image', 'not-found', '', 'image')"
             :manipulations="[
                             'widen' => 300,
                         ]"

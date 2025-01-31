@@ -118,10 +118,10 @@
     <x-container>
         <nav class="h-16 items-center flex gap-8 justify-start">
             <a href="/">
-                <x-drift::image
+                <x-dashed-files::image
                     class="h-12"
                     config="dashed"
-                    :path="Translation::get('light-logo', 'branding', null, 'image')"
+                    :mediaId="Translation::get('light-logo', 'branding', null, 'image')"
                     :alt="Customsetting::get('site_name')"
                     :manipulations="[
                             'widen' => 300,

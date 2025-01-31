@@ -1,8 +1,8 @@
 <div class="@if($data['top_margin'] ?? true) pt-32 @endif @if($data['bottom_margin'] ?? true) pb-64 @endif relative overflow-hidden">
-    <x-drift::image
+    <x-dashed-files::image
             class="absolute inset-0 -z-10 h-full w-full object-cover"
             config="dashed"
-            :path="$data['image']"
+            :mediaId="$data['image']"
             :alt="$data['title']"
             loading="eager"
             :manipulations="[

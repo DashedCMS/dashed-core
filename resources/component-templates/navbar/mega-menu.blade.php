@@ -40,10 +40,10 @@
                         <div class="px-8 py-4 bg-primary-600 text-white font-bold uppercase absolute bottom-[50px] left-0">
                             <p>{{ $image['title'] }}</p>
                         </div>
-                        <x-drift::image
+                        <x-dashed-files::image
                                 class="w-full"
                                 config="dashed"
-                                :path="$image['image']"
+                                :mediaId="$image['image']"
                                 :alt="$image['title']"
                                 :manipulations="[
                             'widen' => 300,
