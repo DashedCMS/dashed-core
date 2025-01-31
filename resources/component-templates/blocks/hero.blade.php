@@ -18,9 +18,9 @@
             </h1>
 
             @if($data['subtitle'] ?? false)
-                <p class="mt-4 text-xl text-white font-bold">
-                    {{ $data['subtitle'] }}
-                </p>
+                <div class="mt-4 text-xl text-white font-bold">
+                    {!! tiptap_converter()->asHTML($data['subtitle']) !!}
+                </div>
             @endif
         </div>
 

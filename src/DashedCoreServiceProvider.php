@@ -74,9 +74,9 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         }
 
         $builderBlockClasses = [];
-        if (config('dashed-core.registerDefaultBuilderBlocks', true)) {
-            $builderBlockClasses[] = 'builderBlocks';
-        }
+//        if (config('dashed-core.registerDefaultBuilderBlocks', true)) {
+//            $builderBlockClasses[] = 'builderBlocks';
+//        }
 
         $builderBlockClasses[] = 'defaultPageBuilderBlocks';
 
@@ -117,9 +117,8 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                     TextInput::make('title')
                         ->label('Titel')
                         ->required(),
-                    TextInput::make('subtitle')
-                        ->label('Sub titel')
-                        ->required(),
+                    TiptapEditor::make('subtitle')
+                        ->label('Sub titel'),
                     AppServiceProvider::getButtonRepeater('buttons', 'Buttons'),
                     mediaHelper()->field('image', 'Afbeelding', required: true, isImage: true),
                 ]),
@@ -129,8 +128,8 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                     TextInput::make('title')
                         ->label('Titel')
                         ->required(),
-                    Textarea::make('subtitle')
-                        ->label('Subtitel'),
+                    TiptapEditor::make('subtitle')
+                        ->label('Sub titel'),
                     AppServiceProvider::getButtonRepeater('buttons', 'Buttons'),
                     mediaHelper()->field('image', 'Afbeelding', isImage: true, required: true),
                     AppServiceProvider::getDefaultBlockFields(),
