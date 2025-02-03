@@ -21,7 +21,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Dashed\DashedCore\Jobs\ClearContentBlocksCache;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Dashed\LaravelLocalization\Facades\LaravelLocalization;
 
 trait IsVisitable
 {
@@ -81,7 +80,7 @@ trait IsVisitable
 
     public function scopeThisSite($query, $siteId = null)
     {
-        if (!$siteId) {
+        if (! $siteId) {
             $siteId = Sites::getActive();
         }
 
@@ -90,7 +89,7 @@ trait IsVisitable
 
     public function scopeSlug($query, string $slug = '')
     {
-        if (!$slug) {
+        if (! $slug) {
             //Should not be found
             $query->where('id', 0);
         } else {
@@ -138,7 +137,7 @@ trait IsVisitable
 
     public function getStatusAttribute(): bool
     {
-        if (!$this->start_date && !$this->end_date) {
+        if (! $this->start_date && ! $this->end_date) {
             return 1;
         } else {
             if ($this->start_date && $this->end_date) {
@@ -189,7 +188,7 @@ trait IsVisitable
         if (method_exists($model, 'parent')) {
             $parentBreadcrumbs = [];
             while ($model->parent) {
-                if (!$model->parent->is_home) {
+                if (! $model->parent->is_home) {
                     $parentBreadcrumbs[] = [
                         'name' => $model->parent->name,
                         'url' => $model->parent->getUrl(),
@@ -220,7 +219,7 @@ trait IsVisitable
     {
         $originalLocale = app()->getLocale();
 
-        if (!$activeLocale) {
+        if (! $activeLocale) {
             $activeLocale = $originalLocale;
         }
 
@@ -239,10 +238,10 @@ trait IsVisitable
             $url = $this->getTranslation('slug', $activeLocale);
         }
 
-        if (!str($url)->startsWith('/')) {
+        if (! str($url)->startsWith('/')) {
             $url = '/' . $url;
         }
-        if ($activeLocale != Locales::getFirstLocale()['id'] && !str($url)->startsWith("/{$activeLocale}")) {
+        if ($activeLocale != Locales::getFirstLocale()['id'] && ! str($url)->startsWith("/{$activeLocale}")) {
             $url = '/' . $activeLocale . $url;
         }
 
@@ -278,7 +277,7 @@ trait IsVisitable
 
         if ($slug) {
             $model = self::resolveModelFromSlug($slug, $overviewPage);
-            if (!$model) {
+            if (! $model) {
                 return null;
             }
         }
@@ -304,9 +303,9 @@ trait IsVisitable
     private static function getOverviewPageUrl($overviewPage)
     {
         return Str::of($overviewPage->getUrl(app()->getLocale()))
-            ->whenStartsWith('/', fn($string) => $string->replaceFirst('/', ''))
+            ->whenStartsWith('/', fn ($string) => $string->replaceFirst('/', ''))
             ->explode('/')
-            ->reject(fn($part) => in_array($part, collect(Locales::getLocales())->pluck('id')->toArray()))
+            ->reject(fn ($part) => in_array($part, collect(Locales::getLocales())->pluck('id')->toArray()))
             ->values();
     }
 
@@ -319,6 +318,7 @@ trait IsVisitable
                 return [];
             }
         }
+
         return array_values($slugParts);
     }
 
@@ -331,18 +331,19 @@ trait IsVisitable
                 $query->where('parent_id', $parentId);
             }
             $model = $query->first();
-            if (!$model) {
+            if (! $model) {
                 return null;
             }
             $parentId = $model->id;
         }
+
         return $model ?? null;
     }
 
     private static function prepareRouteResponse($model, $class, $className, $overviewPage)
     {
         $returnForRoute = self::getReturnForRoute($model, $class, $className);
-        if (!$returnForRoute) {
+        if (! $returnForRoute) {
             return null;
         }
 
@@ -366,10 +367,12 @@ trait IsVisitable
                     ],
                 ]);
             }
+
             return $returnForRoute;
         }
 
         $view = env('SITE_THEME', 'dashed') . '.' . str($class)->snake('-')->replace('_', '-') . '.show';
+
         return View::exists($view) ? view($view) : null;
     }
 
@@ -386,11 +389,12 @@ trait IsVisitable
     {
         $currentLocale = app()->getLocale();
         $alternateUrls = Sites::getLocales()
-            ->reject(fn($locale) => $locale['id'] === $currentLocale)
+            ->reject(fn ($locale) => $locale['id'] === $currentLocale)
             ->mapWithKeys(function ($locale) use ($model, $currentLocale) {
                 app()->setLocale($locale['id']);
                 $url = $model->getUrl();
                 app()->setLocale($currentLocale);
+
                 return [$locale['id'] => $url];
             });
         seo()->metaData('alternateUrls', $alternateUrls);
@@ -408,12 +412,11 @@ trait IsVisitable
         ]);
     }
 
-
     public function getPlainContent(): string
     {
         $finalString = '';
 
-        if (!is_array($this->content)) {
+        if (! is_array($this->content)) {
             return '';
         }
 
