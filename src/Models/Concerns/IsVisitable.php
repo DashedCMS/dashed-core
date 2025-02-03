@@ -81,7 +81,7 @@ trait IsVisitable
 
     public function scopeThisSite($query, $siteId = null)
     {
-        if (! $siteId) {
+        if (!$siteId) {
             $siteId = Sites::getActive();
         }
 
@@ -90,7 +90,7 @@ trait IsVisitable
 
     public function scopeSlug($query, string $slug = '')
     {
-        if (! $slug) {
+        if (!$slug) {
             //Should not be found
             $query->where('id', 0);
         } else {
@@ -138,7 +138,7 @@ trait IsVisitable
 
     public function getStatusAttribute(): bool
     {
-        if (! $this->start_date && ! $this->end_date) {
+        if (!$this->start_date && !$this->end_date) {
             return 1;
         } else {
             if ($this->start_date && $this->end_date) {
@@ -189,7 +189,7 @@ trait IsVisitable
         if (method_exists($model, 'parent')) {
             $parentBreadcrumbs = [];
             while ($model->parent) {
-                if (! $model->parent->is_home) {
+                if (!$model->parent->is_home) {
                     $parentBreadcrumbs[] = [
                         'name' => $model->parent->name,
                         'url' => $model->parent->getUrl(),
@@ -213,14 +213,14 @@ trait IsVisitable
 
     public static function getOverviewPage(): ?Page
     {
-        return Page::publicShowable()->find(Customsetting::get(str(class_basename(self::class))->lower() . '_overview_page_id', Sites::getActive()));
+        return Page::publicShowable()->find(Customsetting::get(str(class_basename(self::class))->snake()->lower() . '_overview_page_id', Sites::getActive()));
     }
 
     public function getUrl($activeLocale = null, bool $native = true)
     {
         $originalLocale = app()->getLocale();
 
-        if (! $activeLocale) {
+        if (!$activeLocale) {
             $activeLocale = $originalLocale;
         }
 
@@ -239,10 +239,10 @@ trait IsVisitable
             $url = $this->getTranslation('slug', $activeLocale);
         }
 
-        if (! str($url)->startsWith('/')) {
+        if (!str($url)->startsWith('/')) {
             $url = '/' . $url;
         }
-        if ($activeLocale != Locales::getFirstLocale()['id'] && ! str($url)->startsWith("/{$activeLocale}")) {
+        if ($activeLocale != Locales::getFirstLocale()['id'] && !str($url)->startsWith("/{$activeLocale}")) {
             $url = '/' . $activeLocale . $url;
         }
 
@@ -271,113 +271,149 @@ trait IsVisitable
 
     public static function resolveRoute($parameters = [])
     {
-        $class = str(self::class)->lower()->explode('\\')->last();
-        $className = str(str(self::class)->explode('\\')->last())->lcfirst()->toString();
+        $class = str(class_basename(self::class))->snake()->lower();
+        $className = lcfirst(class_basename(self::class));
         $slug = $parameters['slug'] ?? '';
-        if ($slug && $overviewPage = self::getOverviewPage()) {
-            $slugParts = explode('/', $slug);
-            if ($overviewPage) {
-                $unsetCount = 0;
-                $overviewPageUrl = str($overviewPage->getUrl(app()->getLocale()))->whenStartsWith('/', function ($string) {
-                    return str($string)->replaceFirst('/', '');
-                })->explode('/');
-                $toUnsetCount = $overviewPageUrl->count();
-                foreach (Locales::getLocales() as $locale) {
-                    foreach ($overviewPageUrl as $part) {
-                        if ($part == $locale['id']) {
-                            $toUnsetCount--;
-                        }
-                    }
-                    foreach ($overviewPageUrl as $overviewPageUrlSlugPartKey => $overviewPageUrlSlugPart) {
-                        if ($overviewPageUrlSlugPart == $locale['id']) {
-                            unset($overviewPageUrl[$overviewPageUrlSlugPartKey]);
-                        }
-                    }
-                }
-                while ($toUnsetCount > 1) {
-                    $toUnsetCount--;
-                }
-            }
-            $overviewPageSlugPartKey = 0;
-            foreach ($overviewPageUrl as $overviewPageSlugPart) {
-                if (isset($slugParts[$overviewPageSlugPartKey]) && $slugParts[$overviewPageSlugPartKey] == $overviewPageSlugPart) {
-                    unset($slugParts[$overviewPageSlugPartKey]);
-                } else {
-                    return;
-                }
-                $overviewPageSlugPartKey++;
-            }
-            $parentId = null;
-            foreach ($slugParts as $slugPart) {
-                if (self::canHaveParent()) {
-                    $model = self::publicShowable()->slug($slugPart)->where('parent_id', $parentId)->first();
-                } else {
-                    $model = self::publicShowable()->slug($slugPart)->first();
-                }
-                $parentId = $model?->id;
-                if (! $model) {
-                    return;
-                }
+        $overviewPage = self::getOverviewPage();
+
+        if ($slug) {
+            $model = self::resolveModelFromSlug($slug, $overviewPage);
+            if (!$model) {
+                return null;
             }
         }
 
-        if ($model ?? false) {
-            if (method_exists($model, 'returnForRoute')) {
-                $returnForRoute = self::returnForRoute();
-                if (is_array($returnForRoute)) {
-                    $returnForRoute = array_merge($returnForRoute, [
-                        'parameters' => [
-                            'model' => $model,
-                            $className => $model,
-                            'breadcrumbs' => $model->breadcrumbs(),
-                        ],
-                    ]);
-                }
+        if (isset($model)) {
+            return self::prepareRouteResponse($model, $class, $className, $overviewPage);
+        }
+
+        return null;
+    }
+
+    private static function resolveModelFromSlug($slug, $overviewPage)
+    {
+        $slugParts = explode('/', $slug);
+        if ($overviewPage) {
+            $overviewPageUrl = self::getOverviewPageUrl($overviewPage);
+            $slugParts = self::removeOverviewPagePartsFromSlug($slugParts, $overviewPageUrl);
+        }
+
+        return self::findModelFromSlugParts($slugParts);
+    }
+
+    private static function getOverviewPageUrl($overviewPage)
+    {
+        return Str::of($overviewPage->getUrl(app()->getLocale()))
+            ->whenStartsWith('/', fn($string) => $string->replaceFirst('/', ''))
+            ->explode('/')
+            ->reject(fn($part) => in_array($part, collect(Locales::getLocales())->pluck('id')->toArray()))
+            ->values();
+    }
+
+    private static function removeOverviewPagePartsFromSlug($slugParts, $overviewPageUrl)
+    {
+        foreach ($overviewPageUrl as $index => $part) {
+            if (isset($slugParts[$index]) && $slugParts[$index] === $part) {
+                unset($slugParts[$index]);
             } else {
-                if (View::exists(env('SITE_THEME', 'dashed') . '.' . $class . '.show')) {
-                    $returnForRoute = view(env('SITE_THEME', 'dashed') . '.' . $class . '.show');
-                }
+                return [];
             }
+        }
+        return array_values($slugParts);
+    }
 
-            if ($returnForRoute ?? false) {
-                seo()->metaData('metaTitle', $model->metadata && $model->metadata->title ? $model->metadata->title : $model->name);
-                seo()->metaData('metaDescription', $model->metadata->description ?? '');
-                if ($model->metadata && $model->metadata->image) {
-                    seo()->metaData('metaImage', $model->metadata->image);
-                }
-
-                $correctLocale = app()->getLocale();
-                $alternateUrls = [];
-                foreach (Sites::getLocales() as $locale) {
-                    if ($locale['id'] != $correctLocale) {
-                        LaravelLocalization::setLocale($locale['id']);
-                        app()->setLocale($locale['id']);
-                        $alternateUrls[$locale['id']] = $model->getUrl();
-                    }
-                }
-                LaravelLocalization::setLocale($correctLocale);
-                app()->setLocale($correctLocale);
-                seo()->metaData('alternateUrls', $alternateUrls);
-
-                if ($overviewPage ?? false) {
-                    View::share('page', $overviewPage);
-                }
-                View::share($class, $model);
-                View::share('model', $model);
-                View::share('breadcrumbs', $model->breadcrumbs());
-
-                return $returnForRoute;
-            } else {
-                return;
+    private static function findModelFromSlugParts($slugParts)
+    {
+        $parentId = null;
+        foreach ($slugParts as $slugPart) {
+            $query = self::publicShowable()->slug($slugPart);
+            if (self::canHaveParent()) {
+                $query->where('parent_id', $parentId);
             }
+            $model = $query->first();
+            if (!$model) {
+                return null;
+            }
+            $parentId = $model->id;
+        }
+        return $model ?? null;
+    }
+
+    private static function prepareRouteResponse($model, $class, $className, $overviewPage)
+    {
+        $returnForRoute = self::getReturnForRoute($model, $class, $className);
+        if (!$returnForRoute) {
+            return null;
+        }
+
+        self::setSeoMetadata($model);
+        self::setAlternateUrls($model);
+        self::shareViewData($model, $className, $overviewPage);
+
+        return $returnForRoute;
+    }
+
+    private static function getReturnForRoute($model, $class, $className)
+    {
+        if (method_exists($model, 'returnForRoute')) {
+            $returnForRoute = self::returnForRoute();
+            if (is_array($returnForRoute)) {
+                return array_merge($returnForRoute, [
+                    'parameters' => [
+                        'model' => $model,
+                        $className => $model,
+                        'breadcrumbs' => $model->breadcrumbs(),
+                    ],
+                ]);
+            }
+            return $returnForRoute;
+        }
+
+        $view = env('SITE_THEME', 'dashed') . '.' . str($class)->snake('-')->replace('_', '-') . '.show';
+        return View::exists($view) ? view($view) : null;
+    }
+
+    private static function setSeoMetadata($model)
+    {
+        seo()->metaData('metaTitle', $model->metadata->title ?? $model->name);
+        seo()->metaData('metaDescription', $model->metadata->description ?? '');
+        if ($model->metadata && $model->metadata->image) {
+            seo()->metaData('metaImage', $model->metadata->image);
         }
     }
+
+    private static function setAlternateUrls($model)
+    {
+        $currentLocale = app()->getLocale();
+        $alternateUrls = Sites::getLocales()
+            ->reject(fn($locale) => $locale['id'] === $currentLocale)
+            ->mapWithKeys(function ($locale) use ($model, $currentLocale) {
+                app()->setLocale($locale['id']);
+                $url = $model->getUrl();
+                app()->setLocale($currentLocale);
+                return [$locale['id'] => $url];
+            });
+        seo()->metaData('alternateUrls', $alternateUrls);
+    }
+
+    private static function shareViewData($model, $className, $overviewPage)
+    {
+        if ($overviewPage) {
+            View::share('page', $overviewPage);
+        }
+        View::share([
+            $className => $model,
+            'model' => $model,
+            'breadcrumbs' => $model->breadcrumbs(),
+        ]);
+    }
+
 
     public function getPlainContent(): string
     {
         $finalString = '';
 
-        if (! is_array($this->content)) {
+        if (!is_array($this->content)) {
             return '';
         }
 

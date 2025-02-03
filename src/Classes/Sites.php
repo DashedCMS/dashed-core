@@ -63,6 +63,6 @@ class Sites
             }
         }
 
-        return $locales;
+        return collect($locales);
     }
 }
