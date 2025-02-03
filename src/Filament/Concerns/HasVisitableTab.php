@@ -109,7 +109,7 @@ trait HasVisitableTab
                 ->required(),
         ];
 
-        if (method_exists(self::$model, 'parent')) {
+        if (method_exists(self::$model, 'parent') && self::$model::canHaveParent()) {
             $schema[] =
                 Select::make('parent_id')
                     ->relationship('parent', 'name')
