@@ -10,7 +10,7 @@
                     <p class="text-gray-400 mb-6">
                         {{ Translation::get('sign-up-for-our-newsletter-content', 'footer', 'Krijg updates over onze voorraad, kortingen en meer') }}
                     </p>
-                    <livewire:dashed-forms.form :formId="2"/>
+{{--                    <livewire:dashed-forms.form :formId="2"/>--}}
                 </div>
 
                 @foreach (range(1, 2) as $i)
