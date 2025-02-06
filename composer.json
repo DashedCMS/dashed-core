@@ -26,6 +26,7 @@
         "filament/filament": "^3.2",
         "filament/spatie-laravel-translatable-plugin": "^3.2",
         "flowframe/laravel-trend": "^0.3",
+        "guava/filament-icon-picker": "^2.0",
         "laravel/horizon": "^5.29",
         "league/flysystem-aws-s3-v3": "^3.29",
         "mallardduck/blade-lucide-icons": "^1.23",
