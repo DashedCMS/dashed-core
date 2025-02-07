@@ -2,6 +2,8 @@
 
 namespace Dashed\DashedCore;
 
+use Dashed\DashedArticles\Filament\Pages\Settings\ArticlesSettingsPage;
+use Dashed\DashedPages\Models\Page;
 use Filament\Panel;
 use Filament\Forms\Get;
 use Filament\Pages\Dashboard;
@@ -67,7 +69,7 @@ class CMSManager
 
     public function builder(string $name, null|string|array $blocks = null): self|array
     {
-        if (! $blocks) {
+        if (!$blocks) {
             return static::$builders[$name] ?? [];
         }
 
@@ -112,7 +114,7 @@ class CMSManager
         }
 
         foreach ($blocks as $key => $block) {
-            if (! View::exists('components.blocks.' . $block->getName())) {
+            if (!View::exists('components.blocks.' . $block->getName())) {
                 unset($blocks[$key]);
             }
         }
@@ -125,14 +127,14 @@ class CMSManager
                     ->schema([
                         Select::make('globalBlock')
                             ->label('Globaal blok')
-                            ->options(GlobalBlock::all()->mapWithKeys(fn ($block) => [$block->id => $block->name]))
+                            ->options(GlobalBlock::all()->mapWithKeys(fn($block) => [$block->id => $block->name]))
                             ->placeholder('Kies een globaal blok')
                             ->hintAction(
                                 Action::make('editGlobalBlock')
                                     ->label('Bewerk globaal blok')
-                                    ->url(fn (Get $get) => route('filament.dashed.resources.global-blocks.edit', ['record' => $get('globalBlock')]))
+                                    ->url(fn(Get $get) => route('filament.dashed.resources.global-blocks.edit', ['record' => $get('globalBlock')]))
                                     ->openUrlInNewTab()
-                                    ->visible(fn (Get $get) => $get('globalBlock'))
+                                    ->visible(fn(Get $get) => $get('globalBlock'))
                             )
                             ->reactive()
                             ->required()
@@ -171,7 +173,7 @@ class CMSManager
         return [
             'results' => $results,
             'count' => collect($results)->sum('count'),
-            'hasResults' => collect($results)->filter(fn ($result) => $result['hasResults'])->count() > 0,
+            'hasResults' => collect($results)->filter(fn($result) => $result['hasResults'])->count() > 0,
         ];
     }
 
@@ -257,5 +259,33 @@ class CMSManager
             new DashedTranslationsPlugin(),
             new DashedTernairPlugin(),
         ];
+    }
+
+    public function registerRouteModel($class, $name, $nameField = 'name'): void
+    {
+        $className = str(str($class)->explode("\\")->last())->camel()->singular()->toString();
+
+        cms()->builder('routeModels', [
+            $className => [
+                'name' => $name,
+                'pluralName' => str($name)->plural(),
+                'class' => $class,
+                'nameField' => $nameField,
+            ],
+        ]);
+    }
+
+    public function registerSettingsPage($settingsPage, $name, $icon = 'rss', $description = ''): void
+    {
+        $className = str(str($settingsPage)->explode("\\")->last())->camel()->singular()->toString();
+
+        cms()->builder('settingPages', [
+            $className => [
+                'name' => $name,
+                'description' => $description ?: 'Instellingen voor ' . str($name)->plural()->lower(),
+                'icon' => $icon,
+                'page' => $settingsPage,
+            ],
+        ]);
     }
 }

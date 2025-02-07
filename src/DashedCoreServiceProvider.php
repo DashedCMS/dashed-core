@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore;
 
+use Guava\FilamentIconPicker\Forms\IconPicker;
 use Livewire\Livewire;
 use Illuminate\Support\Facades\Mail;
 use App\Providers\AppServiceProvider;
@@ -68,7 +69,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             //            $schedule->command(SeoScan::class)->daily();
         });
 
-        if (! $this->app->environment('production')) {
+        if (!$this->app->environment('production')) {
             Mail::alwaysFrom('info@dashed.nl');
             Mail::alwaysTo('info@dashed.nl');
         }
@@ -125,6 +126,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             Block::make('header')
                 ->label('Header')
                 ->schema([
+                    AppServiceProvider::getDefaultBlockFields(),
                     TextInput::make('title')
                         ->label('Titel')
                         ->required(),
@@ -132,7 +134,6 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                         ->label('Sub titel'),
                     AppServiceProvider::getButtonRepeater('buttons', 'Buttons'),
                     mediaHelper()->field('image', 'Afbeelding', isImage: true, required: true),
-                    AppServiceProvider::getDefaultBlockFields(),
                 ]),
             Block::make('spacer')
                 ->label('Spacer')
@@ -183,8 +184,8 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             Block::make('media')
                 ->label('Afbeelding / video')
                 ->schema([
-                    mediaHelper()->field('media', 'Afbeelding of video', required: true),
                     AppServiceProvider::getDefaultBlockFields(),
+                    mediaHelper()->field('media', 'Afbeelding of video', required: true),
                     TextInput::make('max_width_number')
                         ->label('Max breedte nummer')
                         ->default(500)
@@ -212,9 +213,8 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                             TiptapEditor::make('subtitle')
                                 ->label('Subtitel')
                                 ->required(),
-                            TextInput::make('icon')
+                            IconPicker::make('icon')
                                 ->label('Icoon')
-                                ->helperText('Lucide icons')
                                 ->required(),
                         ]),
                 ]),
@@ -238,6 +238,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             Block::make('logo-cloud')
                 ->label('Logo cloud')
                 ->schema([
+                    AppServiceProvider::getDefaultBlockFields(),
                     TextInput::make('title')
                         ->label('Titel')
                         ->required(),
@@ -253,6 +254,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             Block::make('team')
                 ->label('Team')
                 ->schema([
+                    AppServiceProvider::getDefaultBlockFields(),
                     TextInput::make('title')
                         ->label('Titel')
                         ->required(),
@@ -276,7 +278,9 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                 ]),
             Block::make('maps-embed')
                 ->label('Maps embed')
-                ->schema([]),
+                ->schema([
+                    AppServiceProvider::getDefaultBlockFields(),
+                ]),
             Block::make('html')
                 ->label('HTML')
                 ->schema([
@@ -329,41 +333,11 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             __DIR__ . '/../resources/component-templates' => resource_path('views/components'),
         ], 'dashed-templates');
 
-        cms()->builder(
-            'settingPages',
-            [
-                'general' => [
-                    'name' => 'Algemeen',
-                    'description' => 'Algemene informatie van de website',
-                    'icon' => 'cog',
-                    'page' => GeneralSettingsPage::class,
-                ],
-                'account' => [
-                    'name' => 'Account',
-                    'description' => 'Account instellingen van de website',
-                    'icon' => 'user',
-                    'page' => AccountSettingsPage::class,
-                ],
-                'seo' => [
-                    'name' => 'SEO',
-                    'description' => 'SEO van de website',
-                    'icon' => 'identification',
-                    'page' => SEOSettingsPage::class,
-                ],
-                'image' => [
-                    'name' => 'Afbeelding',
-                    'description' => 'Afbeelding van de website',
-                    'icon' => 'photo',
-                    'page' => ImageSettingsPage::class,
-                ],
-                'cache' => [
-                    'name' => 'Cache',
-                    'description' => 'Cache van de website',
-                    'icon' => 'photo',
-                    'page' => CacheSettingsPage::class,
-                ],
-            ]
-        );
+        cms()->registerSettingsPage(GeneralSettingsPage::class, 'Algemeen', 'cog', 'Algemene informatie van de website');
+        cms()->registerSettingsPage(AccountSettingsPage::class, 'Account', 'user', 'Account instellingen van de website');
+        cms()->registerSettingsPage(SEOSettingsPage::class, 'SEO', 'identification', 'SEO van de website');
+        cms()->registerSettingsPage(ImageSettingsPage::class, 'Afbeelding', 'photo', 'Afbeelding van de website');
+        cms()->registerSettingsPage(CacheSettingsPage::class, 'Cache', 'photo', 'Cache van de website');
 
         $package
             ->name(static::$name)
@@ -401,7 +375,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
 
     public static function createDefaultPages(): void
     {
-        if (! \Dashed\DashedPages\Models\Page::where('is_home', 1)->count()) {
+        if (!\Dashed\DashedPages\Models\Page::where('is_home', 1)->count()) {
             $page = new \Dashed\DashedPages\Models\Page();
             $page->setTranslation('name', 'nl', 'Home');
             $page->setTranslation('slug', 'nl', 'home');
@@ -414,7 +388,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             $page->save();
         }
 
-        if (! \Dashed\DashedCore\Models\Customsetting::get('login_page_id')) {
+        if (!\Dashed\DashedCore\Models\Customsetting::get('login_page_id')) {
             $page = new \Dashed\DashedPages\Models\Page();
             $page->setTranslation('name', 'nl', 'Login');
             $page->setTranslation('slug', 'nl', 'login');
@@ -429,7 +403,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             \Dashed\DashedCore\Models\Customsetting::set('login_page_id', $page->id);
         }
 
-        if (! \Dashed\DashedCore\Models\Customsetting::get('account_page_id')) {
+        if (!\Dashed\DashedCore\Models\Customsetting::get('account_page_id')) {
             $page = new \Dashed\DashedPages\Models\Page();
             $page->setTranslation('name', 'nl', 'Account');
             $page->setTranslation('slug', 'nl', 'account');
@@ -445,7 +419,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             \Dashed\DashedCore\Models\Customsetting::set('account_page_id', $page->id);
         }
 
-        if (! \Dashed\DashedCore\Models\Customsetting::get('forgot_password_page_id')) {
+        if (!\Dashed\DashedCore\Models\Customsetting::get('forgot_password_page_id')) {
             $page = new \Dashed\DashedPages\Models\Page();
             $page->setTranslation('name', 'nl', 'Wachtwoord vergeten');
             $page->setTranslation('slug', 'nl', 'wachtwoord-vergeten');
@@ -460,7 +434,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             \Dashed\DashedCore\Models\Customsetting::set('forgot_password_page_id', $page->id);
         }
 
-        if (! \Dashed\DashedCore\Models\Customsetting::get('reset_password_page_id')) {
+        if (!\Dashed\DashedCore\Models\Customsetting::get('reset_password_page_id')) {
             $page = new \Dashed\DashedPages\Models\Page();
             $page->setTranslation('name', 'nl', 'Reset wachtwoord');
             $page->setTranslation('slug', 'nl', 'reset-wachtwoord');

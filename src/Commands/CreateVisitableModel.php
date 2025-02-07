@@ -138,6 +138,7 @@ class CreateVisitableModel extends Command
             ->generate();
 
         $this->info('Visitable model created successfully.');
-        $this->info('Dont forget to register the settings page and visitable model in the AppPanelProvider & AppServiceProvider');
+        $this->info('Dont forget to register the settings page in the AppPanelProvider');
+        $this->info('Register the model and settings page in the AppServiceProvider with cms()->registerRouteModel() & cms()->registerSettingsPage()');
     }
 }

@@ -22,15 +22,17 @@ overflow-hidden bg-gray-900 @if($data['top_margin'] ?? true) pt-24 sm:pt-36 @end
                 </p>
             @endif
 
-            <div class="grid items-center gap-4 md:flex mt-6 justify-center">
-                @foreach ($data['buttons'] ?? [] as $button)
-                    <x-button
+            @if(count($blockData['buttons'] ?? []))
+                <div class="grid items-center gap-4 md:flex mt-4 justify-center">
+                    @foreach ($blockData['buttons'] ?? [] as $button)
+                        <x-button
                             type="button {{ $button['type'] }}"
                             href="{{ linkHelper()->getUrl($button) }}"
                             :button="$button"
-                    >{{ $button['title'] }}</x-button>
-                @endforeach
-            </div>
+                        >{{ $button['title'] }}</x-button>
+                    @endforeach
+                </div>
+            @endif
         </div>
     </x-container>
 </div>
