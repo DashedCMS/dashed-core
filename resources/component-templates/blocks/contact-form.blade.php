@@ -1,5 +1,5 @@
 <div class="relative isolate bg-white @if($data['top_margin'] ?? true) pt-16 sm:pt-24 @endif @if($data['bottom_margin'] ?? true) pb-16 sm:pb-24 @endif">
-    <x-container :show="$data['in_container'] ?? false">
+    <x-container :show="$data['in_container'] ?? true">
         <div class="mx-auto grid max-w-7xl grid-cols-1 lg:grid-cols-2">
             <div class="relative lg:static">
                 <div class="mx-auto max-w-xl lg:mx-0 lg:max-w-lg">

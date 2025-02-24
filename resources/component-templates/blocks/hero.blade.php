@@ -11,7 +11,7 @@
     />
     <div class="absolute inset-0 -z-10 h-full w-full bg-black/20"></div>
 
-    <x-container :show="$data['in_container'] ?? false">
+    <x-container :show="$data['in_container'] ?? true">
         <div class="max-w-3xl mx-auto text-center">
             <h1 class="text-4xl font-bold tracking-tight text-white lg:text-6xl">
                 {{ $data['title'] }}

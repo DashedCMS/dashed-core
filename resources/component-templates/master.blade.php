@@ -44,6 +44,8 @@
 
 <body class="font-sans antialiased min-h-dvh text-gray-800 bg-primary-100/10">
 <x-dashed-core::frontend.body-extend/>
+{{--<livewire:cart.cart-popup/>--}}
+{{--<x-cart.added-to-cart-popup />--}}
 {{--<x-dashed-ecommerce-core::frontend.body-extend/>--}}
 
 
@@ -64,5 +66,6 @@
 @livewire('notifications')
 @filamentScripts
 {{--<x-livewire-range-slider::scripts />--}}
+@stack('bottom-scripts')
 </body>
 </html>

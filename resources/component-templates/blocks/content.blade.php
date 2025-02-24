@@ -1,6 +1,6 @@
 <section
     class="@if($data['top_margin'] ?? true) pt-16 sm:pt-24 @endif @if($data['bottom_margin'] ?? true) pb-16 sm:pb-24 @endif">
-    <x-container :show="$data['in_container'] ?? false">
+    <x-container :show="$data['in_container'] ?? true">
         <article
             class="@if($data['full-width'] ?? false) max-w-full @endif prose md:prose-lg mx-auto prose-headings:font-normal prose-li:marker:text-primary prose-blockquote:border-primary prose-blockquote:not-italic prose-blockquote:font-normal prose-blockquote:text-gray-600 overflow-hidden"
         >

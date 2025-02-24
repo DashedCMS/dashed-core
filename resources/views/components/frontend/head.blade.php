@@ -34,6 +34,8 @@
     @endif
 @endif
 
+{!! Customsetting::get('extra_scripts') !!}
+
 @if($favicon)
     <link rel="apple-touch-icon" sizes="57x57"
           href="{{ $favicon->url ?? false }}">
@@ -62,8 +64,6 @@
     <link rel="icon" type="image/png" sizes="16x16"
           href="{{ $favicon->url ?? false }}">
 @endif
-
-{!! Customsetting::get('extra_scripts') !!}
 
 @if(isset($model))
     {!! $model->metaData->head_scripts ?? '' !!}

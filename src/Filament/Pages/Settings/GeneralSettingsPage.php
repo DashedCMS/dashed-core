@@ -62,6 +62,7 @@ class GeneralSettingsPage extends Page
             $formData["webmaster_tag_yandex_{$site['id']}"] = Customsetting::get('webmaster_tag_yandex', $site['id']);
             $formData["webmaster_tag_norton_{$site['id']}"] = Customsetting::get('webmaster_tag_norton', $site['id']);
             $formData["extra_scripts_{$site['id']}"] = Customsetting::get('extra_scripts', $site['id']);
+            $formData["extra_body_scripts_{$site['id']}"] = Customsetting::get('extra_body_scripts', $site['id']);
             //            $formData["site_theme_{$site['id']}"] = Customsetting::get('site_theme', $site['id'], 'dashed');
         }
 
@@ -222,6 +223,15 @@ class GeneralSettingsPage extends Page
                     ->maxLength(255),
                 Textarea::make("extra_scripts_{$site['id']}")
                     ->label('Laad extra scripts in op alle pagina`s')
+                    ->helperText('Bovenin de head tag van de website')
+                    ->rows(10)
+                    ->columnSpan([
+                        'default' => 1,
+                        'lg' => 2,
+                    ]),
+                Textarea::make("extra_body_scripts_{$site['id']}")
+                    ->label('Laad extra scripts in op alle pagina`s')
+                    ->helperText('Bovenin de body tag van de website')
                     ->rows(10)
                     ->columnSpan([
                         'default' => 1,
@@ -283,6 +293,7 @@ class GeneralSettingsPage extends Page
             Customsetting::set('webmaster_tag_yandex', $this->form->getState()["webmaster_tag_yandex_{$site['id']}"], $site['id']);
             Customsetting::set('webmaster_tag_norton', $this->form->getState()["webmaster_tag_norton_{$site['id']}"], $site['id']);
             Customsetting::set('extra_scripts', $this->form->getState()["extra_scripts_{$site['id']}"], $site['id']);
+            Customsetting::set('extra_body_scripts', $this->form->getState()["extra_body_scripts_{$site['id']}"], $site['id']);
             //            Customsetting::set('site_theme', $this->form->getState()["site_theme_{$site['id']}"], $site['id']);
         }
 

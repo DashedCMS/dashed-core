@@ -1,6 +1,6 @@
 <section
         class="border-t border-gray-200 bg-gray-50 @if($data['top_margin'] ?? false) pt-16 sm:pt-24 @endif @if($data['bottom_margin'] ?? false) pb-16 sm:pb-24 @endif">
-    <x-container :show="$data['in_container'] ?? false">
+    <x-container :show="$data['in_container'] ?? true">
         <div class="grid grid-cols-1 gap-8 sm:grid-cols-2">
             @foreach($data['blocks'] as $block)
                 <div class="text-center relative bg-cover min-h-[350px]"

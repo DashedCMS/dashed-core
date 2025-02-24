@@ -7,6 +7,8 @@
     @endif
 @endif
 
+{!! Customsetting::get('extra_body_scripts') !!}
+
 @if(isset($model))
     {!! $model->metaData->top_body_scripts ?? '' !!}
 @endif

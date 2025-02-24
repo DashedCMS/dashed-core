@@ -69,7 +69,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             //            $schedule->command(SeoScan::class)->daily();
         });
 
-        if (! $this->app->environment('production')) {
+        if (!$this->app->environment('production')) {
             Mail::alwaysFrom('info@dashed.nl');
             Mail::alwaysTo('info@dashed.nl');
         }
@@ -265,6 +265,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                         ->label('Team')
                         ->required()
                         ->minItems(1)
+                        ->cloneable()
                         ->schema([
                             TextInput::make('name')
                                 ->label('Naam')
@@ -375,7 +376,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
 
     public static function createDefaultPages(): void
     {
-        if (! \Dashed\DashedPages\Models\Page::where('is_home', 1)->count()) {
+        if (!\Dashed\DashedPages\Models\Page::where('is_home', 1)->count()) {
             $page = new \Dashed\DashedPages\Models\Page();
             $page->setTranslation('name', 'nl', 'Home');
             $page->setTranslation('slug', 'nl', 'home');
@@ -388,13 +389,17 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             $page->save();
         }
 
-        if (! \Dashed\DashedCore\Models\Customsetting::get('login_page_id')) {
+        if (!\Dashed\DashedCore\Models\Customsetting::get('login_page_id')) {
             $page = new \Dashed\DashedPages\Models\Page();
             $page->setTranslation('name', 'nl', 'Login');
             $page->setTranslation('slug', 'nl', 'login');
             $page->setTranslation('content', 'nl', [
                 [
-                    'data' => [],
+                    'data' => [
+                        'in_container' => true,
+                        'top_margin' => true,
+                        'bottom_margin' => true,
+                    ],
                     'type' => 'login-block',
                 ],
             ]);
@@ -403,13 +408,17 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             \Dashed\DashedCore\Models\Customsetting::set('login_page_id', $page->id);
         }
 
-        if (! \Dashed\DashedCore\Models\Customsetting::get('account_page_id')) {
+        if (!\Dashed\DashedCore\Models\Customsetting::get('account_page_id')) {
             $page = new \Dashed\DashedPages\Models\Page();
             $page->setTranslation('name', 'nl', 'Account');
             $page->setTranslation('slug', 'nl', 'account');
             $page->setTranslation('content', 'nl', [
                 [
-                    'data' => [],
+                    'data' => [
+                        'in_container' => true,
+                        'top_margin' => true,
+                        'bottom_margin' => true,
+                    ],
                     'type' => 'account-block',
                 ],
             ]);
@@ -419,13 +428,17 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             \Dashed\DashedCore\Models\Customsetting::set('account_page_id', $page->id);
         }
 
-        if (! \Dashed\DashedCore\Models\Customsetting::get('forgot_password_page_id')) {
+        if (!\Dashed\DashedCore\Models\Customsetting::get('forgot_password_page_id')) {
             $page = new \Dashed\DashedPages\Models\Page();
             $page->setTranslation('name', 'nl', 'Wachtwoord vergeten');
             $page->setTranslation('slug', 'nl', 'wachtwoord-vergeten');
             $page->setTranslation('content', 'nl', [
                 [
-                    'data' => [],
+                    'data' => [
+                        'in_container' => true,
+                        'top_margin' => true,
+                        'bottom_margin' => true,
+                    ],
                     'type' => 'forgot-password-block',
                 ],
             ]);
@@ -434,13 +447,17 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             \Dashed\DashedCore\Models\Customsetting::set('forgot_password_page_id', $page->id);
         }
 
-        if (! \Dashed\DashedCore\Models\Customsetting::get('reset_password_page_id')) {
+        if (!\Dashed\DashedCore\Models\Customsetting::get('reset_password_page_id')) {
             $page = new \Dashed\DashedPages\Models\Page();
             $page->setTranslation('name', 'nl', 'Reset wachtwoord');
             $page->setTranslation('slug', 'nl', 'reset-wachtwoord');
             $page->setTranslation('content', 'nl', [
                 [
-                    'data' => [],
+                    'data' => [
+                        'in_container' => true,
+                        'top_margin' => true,
+                        'bottom_margin' => true,
+                    ],
                     'type' => 'reset-password-block',
                 ],
             ]);

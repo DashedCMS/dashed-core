@@ -1,5 +1,5 @@
 <div class="@if($data['top_margin'] ?? true) pt-16 sm:pt-24 @endif @if($data['bottom_margin'] ?? true) pb-16 sm:pb-24 @endif bg-gradient-to-tr from-primary-400 to-primary-600">
-    <x-container :show="$data['in_container'] ?? false">
+    <x-container :show="$data['in_container'] ?? true">
         <div class="px-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8 xl:px-0">
             <div></div>
             <h2>

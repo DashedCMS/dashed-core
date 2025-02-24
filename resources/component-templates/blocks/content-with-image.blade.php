@@ -1,5 +1,5 @@
 <div class="relative isolate overflow-hidden bg-white px-6 @if($data['top_margin'] ?? true) pt-16 sm:pt-24 @endif @if($data['bottom_margin'] ?? true) pb-16 sm:pb-24 @endif lg:overflow-visible lg:px-0">
-    <x-container :show="$data['in_container'] ?? false">
+    <x-container :show="$data['in_container'] ?? true">
         <div class="grid md:grid-cols-2 gap-8">
             @if(($data['image-left'] ?? false))
                 <div class="flex"
