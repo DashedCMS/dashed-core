@@ -4,6 +4,7 @@ return [
     'direction' => 'ltr',
     'max_content_width' => '5xl',
     'disable_stylesheet' => false,
+    'disable_link_as_button' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -19,7 +20,7 @@ return [
         'default' => [
             'heading', 'bullet-list', 'ordered-list', 'checked-list', 'blockquote', 'hr', '|',
             'bold', 'italic', 'strike', 'underline', 'superscript', 'subscript', 'lead', 'small', 'color', 'highlight', 'align-left', 'align-center', 'align-right', '|',
-            'link', 'media', 'oembed', 'table', 'grid-builder', 'details', '|', 'code', 'code-block', 'source',
+            'link', 'media', 'oembed', 'table', 'grid-builder', 'details', '|', 'code', 'code-block', 'source', 'blocks',
         ],
         'simple' => ['heading', 'hr', 'bullet-list', 'ordered-list', 'checked-list', '|', 'bold', 'italic', 'lead', 'small', '|', 'link', 'media'],
         'minimal' => ['bold', 'italic', 'link', 'bullet-list', 'ordered-list'],
@@ -32,9 +33,11 @@ return [
     |--------------------------------------------------------------------------
     |
     */
-    'media_action' => FilamentTiptapEditor\Actions\MediaAction::class,
-    //    'media_action' => Awcodes\Curator\Actions\MediaAction::class,
+    'media_action' => RalphJSmit\Filament\MediaLibrary\FilamentTipTap\Actions\MediaLibraryAction::class,
+    'edit_media_action' => RalphJSmit\Filament\MediaLibrary\FilamentTipTap\Actions\MediaLibraryEditAction::class,
     'link_action' => FilamentTiptapEditor\Actions\LinkAction::class,
+    'grid_builder_action' => FilamentTiptapEditor\Actions\GridBuilderAction::class,
+    'oembed_action' => FilamentTiptapEditor\Actions\OEmbedAction::class,
 
     /*
     |--------------------------------------------------------------------------
@@ -60,16 +63,17 @@ return [
     |
     */
     'accepted_file_types' => ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml', 'application/pdf'],
-    'disk' => 'dashed',
+    'disk' => 'public',
     'directory' => 'images',
     'visibility' => 'public',
     'preserve_file_names' => false,
     'max_file_size' => 2042,
+    'min_file_size' => 0,
     'image_resize_mode' => null,
     'image_crop_aspect_ratio' => null,
     'image_resize_target_width' => null,
     'image_resize_target_height' => null,
-    'use_relative_paths' => false,
+    'use_relative_paths' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -79,5 +83,33 @@ return [
     */
     'disable_floating_menus' => false,
     'disable_bubble_menus' => false,
-    'floating_menu_tools' => ['media', 'grid-builder', 'details', 'table', 'oembed', 'code-block'],
+    'disable_toolbar_menus' => false,
+
+    'bubble_menu_tools' => ['bold', 'italic', 'strike', 'underline', 'superscript', 'subscript', 'lead', 'small', 'link'],
+    'floating_menu_tools' => ['media', 'grid-builder', 'details', 'table', 'oembed', 'code-block', 'blocks'],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Extensions
+    |--------------------------------------------------------------------------
+    |
+    */
+    'extensions_script' => null,
+    'extensions_styles' => null,
+    'extensions' => [],
+
+    /*
+    |--------------------------------------------------------------------------
+    | PresetColors
+    |--------------------------------------------------------------------------
+    |
+    | Possibility to define presets colors in ColorPicker.
+    | Only hexadecimal value
+    'preset_colors' => [
+        'primary' => '#f59e0b',
+        //..
+    ]
+    |
+    */
+    'preset_colors' => [],
 ];
