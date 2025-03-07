@@ -105,7 +105,7 @@ trait HasVisitableTab
                 ->label('Actief op sites')
                 ->options(collect(Sites::getSites())->pluck('name', 'id'))
                 ->multiple()
-                ->hidden(fn () => ! (Sites::getAmountOfSites() > 1))
+                ->hidden(fn() => !(Sites::getAmountOfSites() > 1))
                 ->required(),
         ];
 
@@ -113,7 +113,8 @@ trait HasVisitableTab
             $schema[] =
                 Select::make('parent_id')
                     ->relationship('parent', 'name')
-                    ->options(fn ($record) => self::$model::where('id', '!=', $record->id ?? 0)->pluck('name', 'id'))
+                    ->options(fn($record) => self::$model::where('id', '!=', $record->id ?? 0)->pluck('name', 'id'))
+                    ->searchable()
                     ->label('Bovenliggende item');
         }
 
@@ -137,7 +138,7 @@ trait HasVisitableTab
                 ->label('Actief op sites')
                 ->sortable()
                 ->badge()
-                ->hidden(! (Sites::getAmountOfSites() > 1))
+                ->hidden(!(Sites::getAmountOfSites() > 1))
                 ->searchable();
         $schema[] = IconColumn::make('status')
             ->label('Status')
@@ -151,7 +152,7 @@ trait HasVisitableTab
         if (Customsetting::get('seo_check_models', null, false)) {
             $schema[] = TextColumn::make('seo_score')
                 ->label('SEO score')
-                ->getStateUsing(fn ($record) => $record->getActualScore());
+                ->getStateUsing(fn($record) => $record->getActualScore());
         }
 
         return $schema;
