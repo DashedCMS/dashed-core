@@ -20,10 +20,10 @@
                     @if($data['subtitle'] ?? false)
                         <p class="text-base font-semibold leading-7 text-primary-600">{{ $data['subtitle'] }}</p>
                     @endif
-                    <h1 class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">{{ $data['title'] }}</h1>
+                    <h2 class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">{{ $data['title'] }}</h2>
                 </div>
-                <div class="max-w-xl text-base leading-7 text-gray-700 lg:max-w-lg mt-4">
-                    {!! nl2br($data['content'] ?? '') !!}
+                <div class="max-w-xl text-base leading-7 text-gray-700 lg:max-w-lg mt-4 prose-base">
+                    {!! tiptap_converter()->asHTML($data['content'] ?? '') !!}
                 </div>
 
                 @if(count($data['buttons'] ?? []))

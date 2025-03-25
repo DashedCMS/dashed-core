@@ -1,3 +1,7 @@
+@if(is_numeric(seo()->metaData('metaImage')))
+    @php(seo()->metaData('metaImage', mediaHelper()->getSingleMedia(seo()->metaData('metaImage'), 'original')->url ?? ''))
+@endif
+
 @if(env('APP_ENV') != 'local')
     @if(Customsetting::get('google_tagmanager_id'))
         <script>

@@ -277,6 +277,28 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                             mediaHelper()->field('image-2', 'Afbeelding 2', required: true, isImage: true),
                         ]),
                 ]),
+            Block::make('faq')
+                ->label('FAQ')
+                ->schema([
+                    AppServiceProvider::getDefaultBlockFields(),
+                    TextInput::make('title')
+                        ->label('Titel'),
+                    TextInput::make('subtitle')
+                        ->label('Subtitel'),
+                    TextInput::make('columns')
+                        ->numeric()
+                        ->label('Aantal kolommen'),
+                    Repeater::make('faqs')
+                        ->label('FAQs')
+                        ->schema([
+                            TextInput::make('title')
+                                ->label('Titel')
+                                ->required(),
+                            TiptapEditor::make('content')
+                                ->label('Content')
+                                ->required(),
+                        ]),
+                ]),
             Block::make('maps-embed')
                 ->label('Maps embed')
                 ->schema([
