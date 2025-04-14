@@ -1,4 +1,4 @@
-@props(['href' => '#', 'onclick', 'type' => '', 'button' => [], 'icon' => ''])
+@props(['href' => '#', 'onclick', 'type' => '', 'button' => [], 'icon' => '', 'class' => ''])
 
 @php($tag = isset($href) ? 'a' : 'button')
 
@@ -14,6 +14,7 @@
 @endif
 @class([
         $type,
+        $class
 ])
 {{ $attributes }}
 >

@@ -1,4 +1,3 @@
 <x-master>
-    <x-breadcrumbs :breadcrumbs="$model->breadcrumbs()" />
     <x-blocks :content="$model->content"></x-blocks>
 </x-master>
