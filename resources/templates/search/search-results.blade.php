@@ -19,8 +19,8 @@
             </div>
             <div class="md:col-span-4">
                 <h1 class="text-2xl">{{Translation::get('welcome', 'account', 'Welkom :name:', 'text', [
-    'name' => $user->name,
-])}}</h1>
+                    'name' => $user->name,
+                ])}}</h1>
                 <form class="mt-4 space-y-4" wire:submit.prevent="submit">
                     <div class="grid md:grid-cols-2 gap-4">
                         <div class="md:col-span-2">

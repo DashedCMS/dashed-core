@@ -57,7 +57,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         Livewire::component('auth.reset-password', ResetPassword::class);
         Livewire::component('account.account', Account::class);
         Livewire::component('infolists.seo', SEOScoreInfoList::class);
-        Livewire::component('search-results', SearchResults::class);
+        Livewire::component('search.search-results', SearchResults::class);
 
         //Widgets
         Livewire::component('not-found-page-stats', NotFoundPageStats::class);
@@ -316,7 +316,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                         ->required()
                         ->rows(5),
                 ]),
-            Block::make('search-results')
+            Block::make('search-results-block')
                 ->label('Zoekresultaten')
                 ->schema([
                     AppServiceProvider::getDefaultBlockFields(),
@@ -431,7 +431,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                         'top_margin' => true,
                         'bottom_margin' => true,
                     ],
-                    'type' => 'search-results',
+                    'type' => 'search-results-block',
                 ],
             ]);
             $page->save();
