@@ -2,8 +2,6 @@
 
 namespace Dashed\DashedCore;
 
-use Dashed\DashedCore\Filament\Pages\Settings\SearchSettingsPage;
-use Dashed\DashedCore\Livewire\Frontend\Search\SearchResults;
 use Livewire\Livewire;
 use Illuminate\Support\Facades\Mail;
 use App\Providers\AppServiceProvider;
@@ -35,11 +33,13 @@ use Dashed\DashedCore\Livewire\Frontend\Auth\ResetPassword;
 use Dashed\DashedCore\Livewire\Frontend\Auth\ForgotPassword;
 use Dashed\DashedCore\Livewire\Frontend\Notification\Toastr;
 use Dashed\DashedCore\Commands\InvalidatePasswordResetTokens;
+use Dashed\DashedCore\Livewire\Frontend\Search\SearchResults;
 use Dashed\DashedCore\Filament\Pages\Settings\SEOSettingsPage;
 use Dashed\DashedCore\Livewire\Infolists\SEO\SEOScoreInfoList;
 use Dashed\DashedCore\Filament\Widgets\NotFoundPageGlobalStats;
 use Dashed\DashedCore\Filament\Pages\Settings\CacheSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
+use Dashed\DashedCore\Filament\Pages\Settings\SearchSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\AccountSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
 
