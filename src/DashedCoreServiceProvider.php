@@ -435,6 +435,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                 ],
             ]);
             $page->save();
+            \Dashed\DashedCore\Models\Customsetting::set('search_page_id', $page->id);
         }
 
         if (! \Dashed\DashedCore\Models\Customsetting::get('login_page_id')) {
