@@ -2,8 +2,8 @@
 
 namespace Dashed\DashedCore\Classes;
 
-use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedPages\Models\Page;
+use Dashed\DashedCore\Models\Customsetting;
 
 class SearchHelper
 {
