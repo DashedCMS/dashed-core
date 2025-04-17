@@ -430,6 +430,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                         'in_container' => true,
                         'top_margin' => true,
                         'bottom_margin' => true,
+                        'title' => 'Zoekresultaten'
                     ],
                     'type' => 'search-results-block',
                 ],

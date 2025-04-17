@@ -1,81 +1,52 @@
-<div>
-    <x-container>
-        <div class="grid md:grid-cols-6 gap-8 py-16 sm:py-24">
-            <div class="md:col-span-2">
-                <nav class="grid space-y-2" aria-label="Tabs">
-                    <a href="{{AccountHelper::getAccountUrl()}}"
-                       class="button button--primary-light">
-                        {{Translation::get('my-account', 'account', 'Mijn account')}}
-                    </a>
-                    {{--                <a href="{{EcommerceAccountHelper::getAccountOrdersUrl()}}"--}}
-                    {{--                   class="button button--primary-dark">--}}
-                    {{--                    {{Translation::get('my-orders', 'account', 'Mijn bestellingen')}}--}}
-                    {{--                </a>--}}
-                    <a href="{{AccountHelper::getLogoutUrl()}}"
-                       class="button button--primary-dark">
-                        {{Translation::get('logout', 'login', 'Uitloggen')}}
-                    </a>
-                </nav>
-            </div>
-            <div class="md:col-span-4">
-                <h1 class="text-2xl">{{Translation::get('welcome', 'account', 'Welkom :name:', 'text', [
-                    'name' => $user->name,
-                ])}}</h1>
-                <form class="mt-4 space-y-4" wire:submit.prevent="submit">
-                    <div class="grid md:grid-cols-2 gap-4">
-                        <div class="md:col-span-2">
-                            <x-fields.input
-                                disabled
-                                placeholder="{{Translation::get('email', 'account', 'E-mail')}}"
-                                type="email"
-                                model="email"
-                                id="email"
-                            />
-                        </div>
-                        <div class="">
-                            <x-fields.input
-                                type="text"
-                                model="firstName"
-                                id="firstName"
-                                placeholder="{{Translation::get('first-name', 'account', 'Voornaam')}}"
-                            />
-                        </div>
-                        <div class="">
-                            <x-fields.input
-                                type="text"
-                                model="lastName"
-                                id="lastName"
-                                placeholder="{{Translation::get('last-name', 'account', 'Achternaam')}}"
-                            />
-                        </div>
-                        <div class="">
-                            <x-fields.input
-                                placeholder="{{Translation::get('password', 'account', 'Wachtwoord')}}"
-                                type="password"
-                                model="password"
-                                id="password"
-                                :helperText="Translation::get('password-not-changed-if-empty', 'account', 'Als je geen wachtwoord invoert, veranderd dit niet!')"
-                            />
-                        </div>
-                        <div class="">
-                            <x-fields.input
-                                placeholder="{{Translation::get('repeat-password', 'account', 'Wachtwoord herhalen')}}"
-                                type="password"
-                                model="passwordConfirmation"
-                                id="passwordConfirmation"
-                            />
-                        </div>
+<section
+    class="@if($blockData['top_margin'] ?? false) pt-16 sm:pt-24 @endif @if($blockData['bottom_margin'] ?? false) pb-16 sm:pb-24 @endif">
+    <x-container :show="$blockData['in_container'] ?? true">
+        <div class="grid gap-4">
+            <h1 class="text-2xl font-bold md:text-4xl font-display">{{ $blockData['title'] }}</h1>
+
+            <input wire:model.live="search" wire:change="searchForResults" wire:keyup="searchForResults" class="form-input max-w-[300px]"
+                   placeholder="{{ Translation::get('search', 'search', 'Zoeken...') }}" type="text"/>
+
+            @if($search)
+                @if($searchResults['hasResults'])
+                    <h2 class="text-lg md:text-2xl">{{ Translation::get('amount-of-results-found', 'search', ':count: resultaten gevonden', 'text', [
+                    'count' => $searchResults['count']
+                ]) }}</h2>
+                    <div class="mt-8 space-y-4">
+                        @foreach($searchResults['results'] as $searchResult)
+                            @if($searchResult['hasResults'])
+                                <div>
+                                    <p>{{ Translation::get('results-for', 'search', 'Resultaten voor :name:', 'text', [
+                                'name' => strtolower($searchResult['pluralName']),
+                            ]) }}</p>
+                                    <div class="space-y-2">
+                                        @foreach($searchResult['results'] as $result)
+                                            <a
+                                                class="text-black flex gap-1 items-center group"
+                                                href="{{ $result->getUrl() }}"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                     stroke-width="1.5" stroke="currentColor" class="size-6">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                          d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
+                                                </svg>
+
+                                                <span class="group-hover:ml-2 trans">{{ $result->name }} {{ strtolower($searchResult['name']) }}</span>
+                                            </a>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+                        @endforeach
                     </div>
-                    <div class="flex">
-                        <button
-                            class="button button--primary-dark">
-                            {{Translation::get('update-account', 'account', 'Account bijwerken')}}
-                        </button>
-                    </div>
-                </form>
-            </div>
+                @else
+                    <h2 class="text-lg md:text-2xl">{{ Translation::get('enter-search', 'search', 'Geen zoekresultaten voor :search:', 'text', [
+                    'search' => $search
+                ]) }}</h2>
+                @endif
+            @else
+                <h2 class="text-lg md:text-2xl">{{ Translation::get('enter-search', 'search', 'Voer een zoekterm in') }}</h2>
+            @endif
         </div>
     </x-container>
-
-    <x-dashed-core::global-blocks name="account-page"/>
-</div>
+</section>

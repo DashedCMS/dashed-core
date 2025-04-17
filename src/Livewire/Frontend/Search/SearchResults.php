@@ -11,71 +11,20 @@ use Dashed\DashedTranslations\Models\Translation;
 
 class SearchResults extends Component
 {
-    public User $user;
+    public ?string $search = '';
+    public ?array $searchResults = [];
+    public array $blockData = [];
 
-    public ?string $email = '';
-
-    public ?string $firstName = '';
-
-    public ?string $lastName = '';
-
-    public ?string $password = '';
-
-    public ?string $passwordConfirmation = '';
-
-    public function mount()
+    public function mount(array $blockData = [])
     {
-        if (auth()->guest()) {
-            return redirect(AccountHelper::getLoginUrl());
-        }
-
-        $this->user = auth()->user();
-        $this->email = $this->user->email;
-        $this->firstName = $this->user->first_name;
-        $this->lastName = $this->user->last_name;
+        $this->blockData = $blockData;
+        $this->search = request()->get('search', '');
+        $this->searchForResults();
     }
 
-    public function rules()
+    public function searchForResults(): void
     {
-        return [
-            'firstName' => [
-                'max:255',
-            ],
-            'lastName' => [
-                'max:255',
-            ],
-            'password' => [
-                'nullable',
-                'min:6',
-                'max:255',
-            ],
-            'passwordConfirmation' => [
-                'min:6',
-                'max:255',
-                'required_with:password',
-                'same:password',
-            ],
-        ];
-    }
-
-    public function submit()
-    {
-        $this->validate();
-
-        $this->user->first_name = $this->firstName;
-        $this->user->last_name = $this->lastName;
-
-        if ($this->password) {
-            $this->user->password = Hash::make($this->password);
-        }
-
-        $this->user->save();
-        $this->reset(['password', 'passwordConfirmation']);
-        Notification::make()
-            ->title(Translation::get('account-updated-message', 'account', 'Your account has been updated'))
-            ->success()
-            ->send();
-        $this->dispatch('showAlert', 'success', Translation::get('account-updated', 'account', 'Your account has been updated'));
+        $this->searchResults = cms()->getSearchResults($this->search);
     }
 
     public function render()
