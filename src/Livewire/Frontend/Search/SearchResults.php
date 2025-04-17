@@ -2,12 +2,7 @@
 
 namespace Dashed\DashedCore\Livewire\Frontend\Search;
 
-use App\Models\User;
 use Livewire\Component;
-use Illuminate\Support\Facades\Hash;
-use Filament\Notifications\Notification;
-use Dashed\DashedCore\Classes\AccountHelper;
-use Dashed\DashedTranslations\Models\Translation;
 
 class SearchResults extends Component
 {
