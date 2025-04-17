@@ -2,6 +2,8 @@
 
 namespace Dashed\DashedCore;
 
+use Dashed\DashedCore\Filament\Pages\Settings\SearchSettingsPage;
+use Dashed\DashedCore\Livewire\Frontend\Search\SearchResults;
 use Livewire\Livewire;
 use Illuminate\Support\Facades\Mail;
 use App\Providers\AppServiceProvider;
@@ -55,6 +57,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         Livewire::component('auth.reset-password', ResetPassword::class);
         Livewire::component('account.account', Account::class);
         Livewire::component('infolists.seo', SEOScoreInfoList::class);
+        Livewire::component('search-results', SearchResults::class);
 
         //Widgets
         Livewire::component('not-found-page-stats', NotFoundPageStats::class);
@@ -313,6 +316,11 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                         ->required()
                         ->rows(5),
                 ]),
+            Block::make('search-results')
+                ->label('Zoekresultaten')
+                ->schema([
+                    AppServiceProvider::getDefaultBlockFields(),
+                ]),
         ];
 
         cms()
@@ -361,6 +369,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         cms()->registerSettingsPage(SEOSettingsPage::class, 'SEO', 'identification', 'SEO van de website');
         cms()->registerSettingsPage(ImageSettingsPage::class, 'Afbeelding', 'photo', 'Afbeelding van de website');
         cms()->registerSettingsPage(CacheSettingsPage::class, 'Cache', 'photo', 'Cache van de website');
+        cms()->registerSettingsPage(SearchSettingsPage::class, 'Search', 'search', 'Zoek instellingen van de website');
 
         $package
             ->name(static::$name)
@@ -408,6 +417,23 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             $page = new \Dashed\DashedPages\Models\Page();
             $page->setTranslation('name', 'nl', 'Contact');
             $page->setTranslation('slug', 'nl', 'contact');
+            $page->save();
+        }
+
+        if (! \Dashed\DashedCore\Models\Customsetting::get('search_page_id')) {
+            $page = new \Dashed\DashedPages\Models\Page();
+            $page->setTranslation('name', 'nl', 'Zoek resultaten');
+            $page->setTranslation('slug', 'nl', 'zoeken');
+            $page->setTranslation('content', 'nl', [
+                [
+                    'data' => [
+                        'in_container' => true,
+                        'top_margin' => true,
+                        'bottom_margin' => true,
+                    ],
+                    'type' => 'search-results',
+                ],
+            ]);
             $page->save();
         }
 
