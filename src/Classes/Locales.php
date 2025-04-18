@@ -19,6 +19,27 @@ class Locales
         return $locales;
     }
 
+    public static function getLocalesForSite(?string $site = null): array
+    {
+        if (!$site) {
+            $site = Sites::getActive();
+        }
+
+        $activeLocales = collect(cms()->builder('sites'))->where('id', $site)->first();
+
+        $allLocales = \Dashed\LaravelLocalization\Facades\LaravelLocalization::getLocalesOrder();
+        $locales = [];
+
+        foreach ($allLocales as $key => $locale) {
+            if (in_array($key, $activeLocales['locales'])) {
+                $locale['id'] = $key;
+                $locales[] = $locale;
+            }
+        }
+
+        return $locales;
+    }
+
     public static function getLocalesArray(): array
     {
         $locales = [];
@@ -33,7 +54,7 @@ class Locales
     {
         $locales = self::getLocalesArray();
 
-        if (! $currentLocale) {
+        if (!$currentLocale) {
             $currentLocale = LaravelLocalization::getCurrentLocale();
         }
 
@@ -53,7 +74,7 @@ class Locales
 
     public static function getLocale($locale = null)
     {
-        if (! $locale) {
+        if (!$locale) {
             return self::getFirstLocale();
         } else {
             foreach (self::getLocales() as $allLocale) {
