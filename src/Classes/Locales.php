@@ -13,7 +13,7 @@ class Locales
 
         foreach (cms()->builder('sites') as $site) {
             foreach ($site['locales'] as $locale) {
-                if (!in_array($locale, $locales)) {
+                if (! in_array($locale, $locales)) {
                     $locales[] = $locale;
                 }
             }
@@ -38,7 +38,7 @@ class Locales
 
     public static function getLocalesForSite(?string $site = null): array
     {
-        if (!$site) {
+        if (! $site) {
             $site = Sites::getActive();
         }
 
@@ -71,7 +71,7 @@ class Locales
     {
         $locales = self::getLocalesArray();
 
-        if (!$currentLocale) {
+        if (! $currentLocale) {
             $currentLocale = LaravelLocalization::getCurrentLocale();
         }
 
@@ -91,7 +91,7 @@ class Locales
 
     public static function getLocale($locale = null)
     {
-        if (!$locale) {
+        if (! $locale) {
             return self::getFirstLocale();
         } else {
             foreach (self::getLocales() as $allLocale) {
