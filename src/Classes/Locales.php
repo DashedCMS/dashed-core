@@ -21,7 +21,7 @@ class Locales
 
     public static function getLocalesForSite(?string $site = null): array
     {
-        if (!$site) {
+        if (! $site) {
             $site = Sites::getActive();
         }
 
@@ -54,7 +54,7 @@ class Locales
     {
         $locales = self::getLocalesArray();
 
-        if (!$currentLocale) {
+        if (! $currentLocale) {
             $currentLocale = LaravelLocalization::getCurrentLocale();
         }
 
@@ -74,7 +74,7 @@ class Locales
 
     public static function getLocale($locale = null)
     {
-        if (!$locale) {
+        if (! $locale) {
             return self::getFirstLocale();
         } else {
             foreach (self::getLocales() as $allLocale) {
