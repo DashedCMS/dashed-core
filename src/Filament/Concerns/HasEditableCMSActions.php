@@ -2,6 +2,8 @@
 
 namespace Dashed\DashedCore\Filament\Concerns;
 
+use Dashed\DashedTranslations\Jobs\StartTranslationOfModel;
+use Filament\Forms\Components\Placeholder;
 use Illuminate\Support\Str;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -90,18 +92,13 @@ trait HasEditableCMSActions
             }
         }
 
-        $actions[] = Action::make('Dupliceer')
-            ->action('duplicate')
-            ->icon('heroicon-o-document-duplicate')
-            ->color('warning');
-
         if (method_exists($this->record, 'getUrl')) {
             $actions[] = Action::make('insertTemplateBlock')
                 ->label('Template blok invoegen')
                 ->visible(GlobalBlock::count() > 0)
                 ->form([
                     Select::make('templateBlock')
-                        ->options(GlobalBlock::all()->mapWithKeys(fn ($block) => [$block->id => $block->name]))
+                        ->options(GlobalBlock::all()->mapWithKeys(fn($block) => [$block->id => $block->name]))
                         ->required()
                         ->preload()
                         ->searchable()
@@ -124,12 +121,18 @@ trait HasEditableCMSActions
                 ->color('primary');
         }
 
+        $actions[] = Action::make('Dupliceer')
+            ->action('duplicate')
+            ->icon('heroicon-o-document-duplicate')
+            ->color('warning');
+
         if (method_exists($this->record, 'getUrl')) {
             $actions[] = ShowSEOScoreAction::make();
         }
 
         return array_merge($actions, [
             self::translateAction(),
+            self::copyAction(),
             LocaleSwitcher::make()
                 ->icon('heroicon-o-language'),
             DeleteAction::make()
@@ -164,7 +167,7 @@ trait HasEditableCMSActions
         }
     }
 
-    public function translateAction()
+    public function translateAction(): Action
     {
         return Action::make('translate')
             ->icon('heroicon-m-language')
@@ -186,6 +189,74 @@ trait HasEditableCMSActions
                 Notification::make()
                     ->title('Item wordt vertaald, dit kan even duren. Sla de pagina niet op tot de vertalingen klaar zijn.')
                     ->warning()
+                    ->send();
+
+                return redirect()->to(request()->header('Referer'));
+            });
+    }
+
+    public function copyAction(): Action
+    {
+        return Action::make('copy')
+            ->icon('heroicon-o-document-duplicate')
+            ->label('Kopiëren')
+            ->form([
+                Placeholder::make('description')
+                    ->label('Hiermee kopieer je alle inhoudt naar andere talen. Dit kan even duren.'),
+                Select::make('to_locales')
+                    ->options(Locales::getLocalesArray())
+                    ->preload()
+                    ->searchable()
+                    ->default(collect(Locales::getLocalesArrayWithoutCurrent())->keys()->toArray())
+                    ->required()
+                    ->label('Naar talen')
+                    ->multiple(),
+            ])
+            ->action(function (array $data) {
+
+                foreach ($this->record->translatable as $column) {
+                    $textToTranslate = $this->record->getTranslation($column, $this->activeLocale);
+                    foreach ($data['to_locales'] as $locale) {
+                        $this->record->setTranslation($column, $locale, $textToTranslate);
+                    }
+                }
+
+                $this->record->save();
+
+                if ($this->record->metadata) {
+                    $translatableMetaColumns = [
+                        'title',
+                        'description',
+                    ];
+
+                    foreach ($translatableMetaColumns as $column) {
+                        $textToTranslate = $this->record->metadata->getTranslation($column, $this->activeLocale);
+                        foreach ($data['to_locales'] as $locale) {
+                            $this->record->metadata->setTranslation($column, $locale, $textToTranslate);
+                        }
+                    }
+
+                    $this->record->metadata->save();
+                }
+
+                if ($this->record->customBlocks) {
+                    $translatableCustomBlockColumns = [
+                        'blocks',
+                    ];
+
+                    foreach ($translatableCustomBlockColumns as $column) {
+                        $textToTranslate = $this->record->customBlocks->getTranslation($column, $this->activeLocale);
+                        foreach ($data['to_locales'] as $locale) {
+                            $this->record->customBlocks->setTranslation($column, $locale, $textToTranslate);
+                        }
+                    }
+
+                    $this->record->customBlocks->save();
+                }
+
+                Notification::make()
+                    ->title('Item is gekopieerd naar andere talen')
+                    ->success()
                     ->send();
 
                 return redirect()->to(request()->header('Referer'));
@@ -234,7 +305,7 @@ trait HasEditableCMSActions
                     $new_array[$key] = self::removeUUIDKeys($value);
                 }
             } else {
-                if (! preg_match('/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/', $key)) {
+                if (!preg_match('/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/', $key)) {
                     $new_array[$key] = $value;
                 } else {
                     $new_array[] = $value;
