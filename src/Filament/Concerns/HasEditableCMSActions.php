@@ -199,6 +199,7 @@ trait HasEditableCMSActions
         return Action::make('copy')
             ->icon('heroicon-o-document-duplicate')
             ->label('Kopiëren')
+            ->visible(count(Locales::getLocalesArray()) > 1)
             ->form([
                 Placeholder::make('description')
                     ->label('Hiermee kopieer je alle inhoudt naar andere talen. Dit kan even duren.'),
