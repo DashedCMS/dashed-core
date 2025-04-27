@@ -2,10 +2,9 @@
 
 namespace Dashed\DashedCore\Livewire\Frontend\Protection;
 
-use Dashed\DashedTranslations\Models\Translation;
-use Filament\Notifications\Notification;
 use Livewire\Component;
 use Illuminate\Support\Facades\Crypt;
+use Dashed\DashedTranslations\Models\Translation;
 
 class PasswordProtection extends Component
 {
@@ -16,19 +15,19 @@ class PasswordProtection extends Component
     {
         $data = Crypt::decrypt(request()->get('data'));
 
-        if (!isset($data['model']) || !isset($data['modelId'])) {
+        if (! isset($data['model']) || ! isset($data['modelId'])) {
             abort(404);
         }
 
         $model = $data['model']::find($data['modelId']);
 
-        if (!$model) {
+        if (! $model) {
             abort(404);
         }
 
         $this->model = $model;
 
-        if (!$this->model->metadata->password) {
+        if (! $this->model->metadata->password) {
             abort(404);
         }
 
@@ -39,13 +38,15 @@ class PasswordProtection extends Component
 
     public function checkPassword()
     {
-        if (!$this->password) {
+        if (! $this->password) {
             $this->addError('password', Translation::get('enter-password', 'password-protection', 'Vul een wachtwoord in'));
+
             return;
         }
 
         if ($this->password != $this->model->metadata->password) {
             $this->addError('password', Translation::get('wrong-password', 'password-protection', 'Wachtwoord is onjuist'));
+
             return;
         }
 

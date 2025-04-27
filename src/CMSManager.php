@@ -257,7 +257,7 @@ class CMSManager
             return null;
         }
 
-        if (!self::hasAccessToModel($model)) {
+        if (! self::hasAccessToModel($model)) {
             $data = Crypt::encrypt([
                 'model' => $model::class,
                 'modelId' => $model->id,
