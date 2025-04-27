@@ -34,6 +34,7 @@ class AccountSettingsPage extends Page implements HasForms
             $formData["login_page_id_{$site['id']}"] = Customsetting::get('login_page_id', $site['id']);
             $formData["forgot_password_page_id_{$site['id']}"] = Customsetting::get('forgot_password_page_id', $site['id']);
             $formData["reset_password_page_id_{$site['id']}"] = Customsetting::get('reset_password_page_id', $site['id']);
+            $formData["password_protection_page_id_{$site['id']}"] = Customsetting::get('password_protection_page_id', $site['id']);
         }
 
         $this->form->fill($formData);
@@ -67,6 +68,11 @@ class AccountSettingsPage extends Page implements HasForms
                     ->searchable()
                     ->preload()
                     ->options(PageModel::thisSite($site['id'])->pluck('name', 'id')),
+                Select::make("password_protection_page_id_{$site['id']}")
+                    ->label('Wachtwoord bescherming pagina')
+                    ->searchable()
+                    ->preload()
+                    ->options(PageModel::thisSite($site['id'])->pluck('name', 'id')),
             ];
 
             $tabs[] = Tab::make($site['id'])
@@ -97,6 +103,7 @@ class AccountSettingsPage extends Page implements HasForms
             Customsetting::set('login_page_id', $this->form->getState()["login_page_id_{$site['id']}"], $site['id']);
             Customsetting::set('forgot_password_page_id', $this->form->getState()["forgot_password_page_id_{$site['id']}"], $site['id']);
             Customsetting::set('reset_password_page_id', $this->form->getState()["reset_password_page_id_{$site['id']}"], $site['id']);
+            Customsetting::set('password_protection_page_id', $this->form->getState()["password_protection_page_id_{$site['id']}"], $site['id']);
         }
 
         Notification::make()

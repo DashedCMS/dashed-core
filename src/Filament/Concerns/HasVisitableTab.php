@@ -64,7 +64,17 @@ trait HasVisitableTab
                     //                            ->label('Meta canonical URL'),
                     Toggle::make('noindex')
                         ->label('Pagina niet indexeren')
-                        ->columnSpanFull(),
+                        ->columnSpan([
+                            'default' => 1,
+                            'lg' => 3,
+                        ]),
+                    TextInput::make('password')
+                        ->label('Wachtwoord van deze pagina')
+                        ->nullable()
+                        ->columnSpan([
+                            'default' => 1,
+                            'lg' => 3,
+                        ]),
                     Textarea::make('head_scripts')
                         ->label('Scripts in head')
                         ->nullable()

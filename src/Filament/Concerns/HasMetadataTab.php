@@ -42,6 +42,9 @@ trait HasMetadataTab
                     //                            ->label('Meta canonical URL'),
                     Toggle::make('noindex')
                         ->label('Pagina niet indexeren'),
+                    TextInput::make('password')
+                        ->label('Wachtwoord van deze pagina')
+                        ->nullable(),
                     Textarea::make('head_scripts')
                         ->label('Scripts in head')
                         ->nullable()

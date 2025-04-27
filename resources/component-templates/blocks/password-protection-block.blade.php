@@ -1,0 +1,1 @@
+<livewire:protection.password-protection />

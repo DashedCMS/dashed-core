@@ -68,16 +68,14 @@ class FrontendController extends Controller
                 $schemas['localBusiness']->name(seo()->metaData('metaTitle'));
 
                 if (seo()->metaData('metaImage')) {
-                    //                    $schemas['localBusiness']->image(app(UrlBuilder::class)->url('dashed', seo()->metaData('metaImage'), [
-                    //                        'widen' => 1200,
-                    //                    ]));
-                    //                    seo()->metaData('metaImage', app(UrlBuilder::class)->url('dashed', seo()->metaData('metaImage'), [
-                    //                        'widen' => 1200,
-                    //                    ]));
                     $schemas['localBusiness']->image(mediaHelper()->getSingleMedia(seo()->metaData('metaImage'), 'huge')->url ?? '');
                     seo()->metaData('metaImage', mediaHelper()->getSingleMedia(seo()->metaData('metaImage'), 'huge')->url ?? '');
                 }
                 seo()->metaData('schemas', $schemas);
+
+                if ($redirect = cms()->checkModelPassword()) {
+                    return $redirect;
+                }
 
                 return $response->render();
             } elseif ($response == 'pageNotFound') {
@@ -90,6 +88,11 @@ class FrontendController extends Controller
 
                 return $this->$response();
             } elseif (is_array($response) && isset($response['livewireComponent'])) {
+
+                if ($redirect = cms()->checkModelPassword()) {
+                    return $redirect;
+                }
+
                 return view('dashed-core::layouts.livewire-master', [
                     'livewireComponent' => $response['livewireComponent'],
                     'parameters' => $response['parameters'] ?? [],

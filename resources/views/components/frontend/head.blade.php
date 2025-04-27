@@ -1,3 +1,5 @@
+@php(cms()->checkModelPassword($model ?? null))
+
 @if(is_numeric(seo()->metaData('metaImage')))
     @php(seo()->metaData('metaImage', mediaHelper()->getSingleMedia(seo()->metaData('metaImage'), 'original')->url ?? ''))
 @endif
@@ -78,7 +80,8 @@
     {{--    @foreach(seo()->metaData('alternateUrls') as $locale => $url)--}}
     {{--        <link rel="alternate" hreflang="{{ $locale }}" href="{{ $url }}"/>--}}
     {{--    @endforeach--}}
-    <link rel="alternate" hreflang="x-default" href="{{ $model->getUrl(\Dashed\DashedCore\Classes\Locales::getFirstLocale()['id'], false) }}"/>
+    <link rel="alternate" hreflang="x-default"
+          href="{{ $model->getUrl(\Dashed\DashedCore\Classes\Locales::getFirstLocale()['id'], false) }}"/>
     @foreach(\Dashed\DashedCore\Classes\Locales::getLocales() as $locale)
         <link rel="alternate" hreflang="{{ $locale['id'] }}" href="{{ $model->getUrl($locale['id'], false) }}"/>
     @endforeach
@@ -116,7 +119,8 @@
 @if(seo()->metaData('metaImage'))
     <meta itemprop="image" content="{!! seo()->metaData('metaImage') !!}">
 @endif
-<meta name="robots" content="{{ (env('APP_ENV') == 'local' || (isset($model) && $model->metaData && $model->metaData->noindex)) ? 'noindex, nofollow' : 'index, follow' }}">
+<meta name="robots"
+      content="{{ (env('APP_ENV') == 'local' || (isset($model) && $model->metaData && $model->metaData->noindex)) ? 'noindex, nofollow' : 'index, follow' }}">
 
 @foreach(seo()->metaData('webmasterTags') as $platform => $webmasterTag)
     @if($webmasterTag)

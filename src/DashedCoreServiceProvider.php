@@ -2,6 +2,8 @@
 
 namespace Dashed\DashedCore;
 
+use Dashed\DashedCore\Livewire\Frontend\Protection\PasswordProtection;
+use Illuminate\Support\Facades\Password;
 use Livewire\Livewire;
 use Illuminate\Support\Facades\Mail;
 use App\Providers\AppServiceProvider;
@@ -58,6 +60,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         Livewire::component('account.account', Account::class);
         Livewire::component('infolists.seo', SEOScoreInfoList::class);
         Livewire::component('search.search-results', SearchResults::class);
+        Livewire::component('protection.password-protection', PasswordProtection::class);
 
         //Widgets
         Livewire::component('not-found-page-stats', NotFoundPageStats::class);
@@ -102,6 +105,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             'forgot-password-block',
             'login-block',
             'account-block',
+            'password-protection',
         ]);
 
         cms()->builder('plugins', [
@@ -349,6 +353,9 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                 ->schema([]),
             Block::make('reset-password-block')
                 ->label('Reset wachtwoord')
+                ->schema([]),
+            Block::make('password-protection-block')
+                ->label('Wachtwoord beveiliging voor pagina\'s')
                 ->schema([]),
         ];
 

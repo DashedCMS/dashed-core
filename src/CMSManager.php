@@ -2,9 +2,12 @@
 
 namespace Dashed\DashedCore;
 
+use Dashed\DashedCore\Classes\AccountHelper;
+use Dashed\DashedTranslations\Models\Translation;
 use Filament\Panel;
 use Filament\Forms\Get;
 use Filament\Pages\Dashboard;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\View;
 use Filament\Forms\Components\Select;
 use Dashed\DashedCore\Classes\Locales;
@@ -67,7 +70,7 @@ class CMSManager
 
     public function builder(string $name, null|string|array $blocks = null): self|array
     {
-        if (! $blocks) {
+        if (!$blocks) {
             return static::$builders[$name] ?? [];
         }
 
@@ -112,7 +115,7 @@ class CMSManager
         }
 
         foreach ($blocks as $key => $block) {
-            if (! View::exists('components.blocks.' . $block->getName())) {
+            if (!View::exists('components.blocks.' . $block->getName())) {
                 unset($blocks[$key]);
             }
         }
@@ -125,14 +128,14 @@ class CMSManager
                     ->schema([
                         Select::make('globalBlock')
                             ->label('Globaal blok')
-                            ->options(GlobalBlock::all()->mapWithKeys(fn ($block) => [$block->id => $block->name]))
+                            ->options(GlobalBlock::all()->mapWithKeys(fn($block) => [$block->id => $block->name]))
                             ->placeholder('Kies een globaal blok')
                             ->hintAction(
                                 Action::make('editGlobalBlock')
                                     ->label('Bewerk globaal blok')
-                                    ->url(fn (Get $get) => route('filament.dashed.resources.global-blocks.edit', ['record' => $get('globalBlock')]))
+                                    ->url(fn(Get $get) => route('filament.dashed.resources.global-blocks.edit', ['record' => $get('globalBlock')]))
                                     ->openUrlInNewTab()
-                                    ->visible(fn (Get $get) => $get('globalBlock'))
+                                    ->visible(fn(Get $get) => $get('globalBlock'))
                             )
                             ->reactive()
                             ->required()
@@ -171,7 +174,7 @@ class CMSManager
         return [
             'results' => $results,
             'count' => collect($results)->sum('count'),
-            'hasResults' => collect($results)->filter(fn ($result) => $result['hasResults'])->count() > 0,
+            'hasResults' => collect($results)->filter(fn($result) => $result['hasResults'])->count() > 0,
         ];
     }
 
@@ -235,28 +238,6 @@ class CMSManager
         }
 
         return $plugins;
-
-        return [
-            new DashedCorePlugin(),
-            new DashedArticlesPlugin(),
-            new DashedEcommerceChannablePlugin(),
-            new DashedEcommerceCorePlugin(),
-            new DashedEcommerceEboekhoudenPlugin(),
-            new DashedEcommerceExactonlinePlugin(),
-            new DashedEcommerceSendyPlugin(),
-            new DashedEcommerceMolliePlugin(),
-            new DashedEcommerceMontaportalPlugin(),
-            new DashedEcommerceMultisafepayPlugin(),
-            new DashedEcommercePaynlPlugin(),
-            new DashedEcommerceWebwinkelkeurPlugin(),
-            new DashedEcommerceMyParcelPlugin(),
-            new DashedFilesPlugin(),
-            new DashedFormsPlugin(),
-            new DashedMenusPlugin(),
-            new DashedPagesPlugin(),
-            new DashedTranslationsPlugin(),
-            new DashedTernairPlugin(),
-        ];
     }
 
     public function registerRouteModel($class, $name, $nameField = 'name'): void
@@ -285,5 +266,27 @@ class CMSManager
                 'page' => $settingsPage,
             ],
         ]);
+    }
+
+    public function checkModelPassword()
+    {
+        $model = app('view')->getShared()['model'] ?? null;
+
+        if (!$model?->metadata?->password) {
+            return null;
+        }
+
+        $key = sprintf('%s_%d_password', $model::class, $model->id);
+
+        if (session($key) !== $model->metadata->password) {
+            $data = Crypt::encrypt([
+                'model' => $model::class,
+                'modelId' => $model->id,
+            ]);
+
+            return redirect(AccountHelper::getPasswordProtectionUrl() . "?data={$data}");
+        }
+
+        return null;
     }
 }

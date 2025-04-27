@@ -22,7 +22,6 @@ if (config('dashed-core.default_auth_pages_enabled', true)) {
         ],
         function () {
             //Auth routes
-
             Route::get('/' . Translation::get('logout-slug', 'slug', 'logout'), [AuthController::class, 'logout'])->name('dashed.frontend.auth.logout');
             Route::group([
                 'middleware' => [GuestMiddleware::class],

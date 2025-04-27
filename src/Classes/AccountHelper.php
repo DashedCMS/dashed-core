@@ -13,7 +13,7 @@ class AccountHelper
         $pageId = auth()->check() ? Customsetting::get('account_page_id') : Customsetting::get('login_page_id');
         $page = Page::publicShowable()->where('id', $pageId)->first();
 
-        return $page->getUrl() ?? '#';
+        return $page?->getUrl() ?? '#';
     }
 
     //    public static function getUpdateAccountUrl()
@@ -30,7 +30,7 @@ class AccountHelper
         $pageId = Customsetting::get('login_page_id');
         $page = Page::publicShowable()->where('id', $pageId)->first();
 
-        return $page->getUrl() ?? '#';
+        return $page?->getUrl() ?? '#';
     }
 
     //    public static function getLoginPostUrl()
@@ -53,7 +53,7 @@ class AccountHelper
         $pageId = Customsetting::get('forgot_password_page_id');
         $page = Page::publicShowable()->where('id', $pageId)->first();
 
-        return $page->getUrl() ?? '#';
+        return $page?->getUrl() ?? '#';
     }
 
     public static function getResetPasswordUrl($resetToken)
@@ -61,7 +61,15 @@ class AccountHelper
         $pageId = Customsetting::get('reset_password_page_id');
         $page = Page::publicShowable()->where('id', $pageId)->first();
 
-        return ($page->getUrl() ?? '#') . '?passwordResetToken=' . $resetToken;
+        return ($page?->getUrl() ?? '#') . '?passwordResetToken=' . $resetToken;
+    }
+
+    public static function getPasswordProtectionUrl()
+    {
+        $pageId = Customsetting::get('password_protection_page_id');
+        $page = Page::publicShowable()->where('id', $pageId)->first();
+
+        return ($page?->getUrl() ?? '#');
     }
 
     //    public static function getForgotPasswordPostUrl()
