@@ -104,7 +104,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             'forgot-password-block',
             'login-block',
             'account-block',
-            'password-protection',
+            'password-protection-block',
         ]);
 
         cms()->builder('plugins', [

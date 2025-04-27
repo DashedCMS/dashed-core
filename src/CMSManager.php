@@ -257,9 +257,7 @@ class CMSManager
             return null;
         }
 
-        $key = sprintf('%s_%d_password', $model::class, $model->id);
-
-        if (session($key) !== $model->metadata->password) {
+        if (!self::hasAccessToModel($model)) {
             $data = Crypt::encrypt([
                 'model' => $model::class,
                 'modelId' => $model->id,
@@ -269,5 +267,16 @@ class CMSManager
         }
 
         return null;
+    }
+
+    public function hasAccessToModel($model): bool
+    {
+        $key = sprintf('%s_%d_password', $model::class, $model->id);
+
+        if (session($key) !== $model->metadata->password) {
+            return false;
+        }
+
+        return true;
     }
 }
