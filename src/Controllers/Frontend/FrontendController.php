@@ -3,7 +3,6 @@
 namespace Dashed\DashedCore\Controllers\Frontend;
 
 use Illuminate\Support\Str;
-use Dashed\Drift\UrlBuilder;
 use App\Http\Controllers\Controller;
 use Dashed\DashedCore\Classes\Sites;
 use Illuminate\Support\Facades\View;

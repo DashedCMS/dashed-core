@@ -2,8 +2,6 @@
 
 namespace Dashed\DashedCore;
 
-use Dashed\DashedCore\Livewire\Frontend\Protection\PasswordProtection;
-use Illuminate\Support\Facades\Password;
 use Livewire\Livewire;
 use Illuminate\Support\Facades\Mail;
 use App\Providers\AppServiceProvider;
@@ -44,6 +42,7 @@ use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\SearchSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\AccountSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
+use Dashed\DashedCore\Livewire\Frontend\Protection\PasswordProtection;
 
 class DashedCoreServiceProvider extends PackageServiceProvider
 {

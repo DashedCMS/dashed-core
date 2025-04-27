@@ -2,48 +2,29 @@
 
 namespace Dashed\DashedCore;
 
-use Dashed\DashedCore\Classes\AccountHelper;
-use Dashed\DashedTranslations\Models\Translation;
 use Filament\Panel;
 use Filament\Forms\Get;
 use Filament\Pages\Dashboard;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\View;
 use Filament\Forms\Components\Select;
+use Illuminate\Support\Facades\Crypt;
 use Dashed\DashedCore\Classes\Locales;
 use Filament\Forms\Components\Builder;
 use Dashed\DashedCore\Models\GlobalBlock;
-use Dashed\DashedFiles\DashedFilesPlugin;
-use Dashed\DashedForms\DashedFormsPlugin;
-use Dashed\DashedMenus\DashedMenusPlugin;
-use Dashed\DashedPages\DashedPagesPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Dashed\DashedCore\Models\Customsetting;
-use Dashed\DashedTernair\DashedTernairPlugin;
+use Dashed\DashedCore\Classes\AccountHelper;
 use Filament\Forms\Components\Actions\Action;
 use Filament\SpatieLaravelTranslatablePlugin;
-use Dashed\DashedArticles\DashedArticlesPlugin;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Dashed\DashedTranslations\DashedTranslationsPlugin;
 use Filament\Http\Middleware\DisableBladeIconComponents;
-use Dashed\DashedEcommerceCore\DashedEcommerceCorePlugin;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
-use Dashed\DashedEcommercePaynl\DashedEcommercePaynlPlugin;
-use Dashed\DashedEcommerceSendy\DashedEcommerceSendyPlugin;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
-use Dashed\DashedEcommerceMollie\DashedEcommerceMolliePlugin;
-use Dashed\DashedEcommerceMyParcel\DashedEcommerceMyParcelPlugin;
-use Dashed\DashedEcommerceChannable\DashedEcommerceChannablePlugin;
-use Dashed\DashedEcommerceEboekhouden\DashedEcommerceEboekhoudenPlugin;
-use Dashed\DashedEcommerceExactonline\DashedEcommerceExactonlinePlugin;
-use Dashed\DashedEcommerceMontaportal\DashedEcommerceMontaportalPlugin;
-use Dashed\DashedEcommerceMultiSafePay\DashedEcommerceMultisafepayPlugin;
-use Dashed\DashedEcommerceWebwinkelkeur\DashedEcommerceWebwinkelkeurPlugin;
 
 class CMSManager
 {
@@ -70,7 +51,7 @@ class CMSManager
 
     public function builder(string $name, null|string|array $blocks = null): self|array
     {
-        if (!$blocks) {
+        if (! $blocks) {
             return static::$builders[$name] ?? [];
         }
 
@@ -115,7 +96,7 @@ class CMSManager
         }
 
         foreach ($blocks as $key => $block) {
-            if (!View::exists('components.blocks.' . $block->getName())) {
+            if (! View::exists('components.blocks.' . $block->getName())) {
                 unset($blocks[$key]);
             }
         }
@@ -128,14 +109,14 @@ class CMSManager
                     ->schema([
                         Select::make('globalBlock')
                             ->label('Globaal blok')
-                            ->options(GlobalBlock::all()->mapWithKeys(fn($block) => [$block->id => $block->name]))
+                            ->options(GlobalBlock::all()->mapWithKeys(fn ($block) => [$block->id => $block->name]))
                             ->placeholder('Kies een globaal blok')
                             ->hintAction(
                                 Action::make('editGlobalBlock')
                                     ->label('Bewerk globaal blok')
-                                    ->url(fn(Get $get) => route('filament.dashed.resources.global-blocks.edit', ['record' => $get('globalBlock')]))
+                                    ->url(fn (Get $get) => route('filament.dashed.resources.global-blocks.edit', ['record' => $get('globalBlock')]))
                                     ->openUrlInNewTab()
-                                    ->visible(fn(Get $get) => $get('globalBlock'))
+                                    ->visible(fn (Get $get) => $get('globalBlock'))
                             )
                             ->reactive()
                             ->required()
@@ -174,7 +155,7 @@ class CMSManager
         return [
             'results' => $results,
             'count' => collect($results)->sum('count'),
-            'hasResults' => collect($results)->filter(fn($result) => $result['hasResults'])->count() > 0,
+            'hasResults' => collect($results)->filter(fn ($result) => $result['hasResults'])->count() > 0,
         ];
     }
 
@@ -272,7 +253,7 @@ class CMSManager
     {
         $model = app('view')->getShared()['model'] ?? null;
 
-        if (!$model?->metadata?->password) {
+        if (! $model?->metadata?->password) {
             return null;
         }
 
