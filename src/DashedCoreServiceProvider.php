@@ -2,13 +2,13 @@
 
 namespace Dashed\DashedCore;
 
-use Dashed\DashedCore\Classes\Locales;
 use Livewire\Livewire;
 use Illuminate\Support\Facades\Mail;
 use App\Providers\AppServiceProvider;
 use Dashed\DashedForms\Classes\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
+use Dashed\DashedCore\Classes\Locales;
 use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
