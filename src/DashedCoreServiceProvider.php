@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore;
 
+use Dashed\DashedCore\Classes\Locales;
 use Livewire\Livewire;
 use Illuminate\Support\Facades\Mail;
 use App\Providers\AppServiceProvider;
@@ -423,50 +424,58 @@ class DashedCoreServiceProvider extends PackageServiceProvider
     {
         if (! \Dashed\DashedPages\Models\Page::where('is_home', 1)->count()) {
             $page = new \Dashed\DashedPages\Models\Page();
-            $page->setTranslation('name', 'nl', 'Home');
-            $page->setTranslation('slug', 'nl', 'home');
+            foreach (Locales::getActivatedLocalesFromSites() as $locale) {
+                $page->setTranslation('name', $locale, 'Home');
+                $page->setTranslation('slug', $locale, 'home');
+            }
             $page->is_home = 1;
             $page->save();
 
             $page = new \Dashed\DashedPages\Models\Page();
-            $page->setTranslation('name', 'nl', 'Contact');
-            $page->setTranslation('slug', 'nl', 'contact');
+            foreach (Locales::getActivatedLocalesFromSites() as $locale) {
+                $page->setTranslation('name', $locale, 'Contact');
+                $page->setTranslation('slug', $locale, 'contact');
+            }
             $page->save();
         }
 
         if (! \Dashed\DashedCore\Models\Customsetting::get('search_page_id')) {
             $page = new \Dashed\DashedPages\Models\Page();
-            $page->setTranslation('name', 'nl', 'Zoek resultaten');
-            $page->setTranslation('slug', 'nl', 'zoeken');
-            $page->setTranslation('content', 'nl', [
-                [
-                    'data' => [
-                        'in_container' => true,
-                        'top_margin' => true,
-                        'bottom_margin' => true,
-                        'title' => 'Zoekresultaten',
+            foreach (Locales::getActivatedLocalesFromSites() as $locale) {
+                $page->setTranslation('name', $locale, 'Zoek resultaten');
+                $page->setTranslation('slug', $locale, 'zoeken');
+                $page->setTranslation('content', $locale, [
+                    [
+                        'data' => [
+                            'in_container' => true,
+                            'top_margin' => true,
+                            'bottom_margin' => true,
+                            'title' => 'Zoekresultaten',
+                        ],
+                        'type' => 'search-results-block',
                     ],
-                    'type' => 'search-results-block',
-                ],
-            ]);
+                ]);
+            }
             $page->save();
             \Dashed\DashedCore\Models\Customsetting::set('search_page_id', $page->id);
         }
 
         if (! \Dashed\DashedCore\Models\Customsetting::get('login_page_id')) {
             $page = new \Dashed\DashedPages\Models\Page();
-            $page->setTranslation('name', 'nl', 'Login');
-            $page->setTranslation('slug', 'nl', 'login');
-            $page->setTranslation('content', 'nl', [
-                [
-                    'data' => [
-                        'in_container' => true,
-                        'top_margin' => true,
-                        'bottom_margin' => true,
+            foreach (Locales::getActivatedLocalesFromSites() as $locale) {
+                $page->setTranslation('name', $locale, 'Login');
+                $page->setTranslation('slug', $locale, 'login');
+                $page->setTranslation('content', $locale, [
+                    [
+                        'data' => [
+                            'in_container' => true,
+                            'top_margin' => true,
+                            'bottom_margin' => true,
+                        ],
+                        'type' => 'login-block',
                     ],
-                    'type' => 'login-block',
-                ],
-            ]);
+                ]);
+            }
             $page->save();
 
             \Dashed\DashedCore\Models\Customsetting::set('login_page_id', $page->id);
@@ -474,18 +483,20 @@ class DashedCoreServiceProvider extends PackageServiceProvider
 
         if (! \Dashed\DashedCore\Models\Customsetting::get('account_page_id')) {
             $page = new \Dashed\DashedPages\Models\Page();
-            $page->setTranslation('name', 'nl', 'Account');
-            $page->setTranslation('slug', 'nl', 'account');
-            $page->setTranslation('content', 'nl', [
-                [
-                    'data' => [
-                        'in_container' => true,
-                        'top_margin' => true,
-                        'bottom_margin' => true,
+            foreach (Locales::getActivatedLocalesFromSites() as $locale) {
+                $page->setTranslation('name', $locale, 'Account');
+                $page->setTranslation('slug', $locale, 'account');
+                $page->setTranslation('content', $locale, [
+                    [
+                        'data' => [
+                            'in_container' => true,
+                            'top_margin' => true,
+                            'bottom_margin' => true,
+                        ],
+                        'type' => 'account-block',
                     ],
-                    'type' => 'account-block',
-                ],
-            ]);
+                ]);
+            }
             $page->save();
 
 
@@ -494,18 +505,20 @@ class DashedCoreServiceProvider extends PackageServiceProvider
 
         if (! \Dashed\DashedCore\Models\Customsetting::get('forgot_password_page_id')) {
             $page = new \Dashed\DashedPages\Models\Page();
-            $page->setTranslation('name', 'nl', 'Wachtwoord vergeten');
-            $page->setTranslation('slug', 'nl', 'wachtwoord-vergeten');
-            $page->setTranslation('content', 'nl', [
-                [
-                    'data' => [
-                        'in_container' => true,
-                        'top_margin' => true,
-                        'bottom_margin' => true,
+            foreach (Locales::getActivatedLocalesFromSites() as $locale) {
+                $page->setTranslation('name', $locale, 'Wachtwoord vergeten');
+                $page->setTranslation('slug', $locale, 'wachtwoord-vergeten');
+                $page->setTranslation('content', $locale, [
+                    [
+                        'data' => [
+                            'in_container' => true,
+                            'top_margin' => true,
+                            'bottom_margin' => true,
+                        ],
+                        'type' => 'forgot-password-block',
                     ],
-                    'type' => 'forgot-password-block',
-                ],
-            ]);
+                ]);
+            }
             $page->save();
 
             \Dashed\DashedCore\Models\Customsetting::set('forgot_password_page_id', $page->id);
@@ -513,18 +526,20 @@ class DashedCoreServiceProvider extends PackageServiceProvider
 
         if (! \Dashed\DashedCore\Models\Customsetting::get('reset_password_page_id')) {
             $page = new \Dashed\DashedPages\Models\Page();
-            $page->setTranslation('name', 'nl', 'Reset wachtwoord');
-            $page->setTranslation('slug', 'nl', 'reset-wachtwoord');
-            $page->setTranslation('content', 'nl', [
-                [
-                    'data' => [
-                        'in_container' => true,
-                        'top_margin' => true,
-                        'bottom_margin' => true,
+            foreach (Locales::getActivatedLocalesFromSites() as $locale) {
+                $page->setTranslation('name', $locale, 'Reset wachtwoord');
+                $page->setTranslation('slug', $locale, 'reset-wachtwoord');
+                $page->setTranslation('content', $locale, [
+                    [
+                        'data' => [
+                            'in_container' => true,
+                            'top_margin' => true,
+                            'bottom_margin' => true,
+                        ],
+                        'type' => 'reset-password-block',
                     ],
-                    'type' => 'reset-password-block',
-                ],
-            ]);
+                ]);
+            }
             $page->save();
 
             \Dashed\DashedCore\Models\Customsetting::set('reset_password_page_id', $page->id);
