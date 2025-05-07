@@ -24,6 +24,8 @@ class Migrations
                 ->nullable();
             $table->dateTime('end_date')
                 ->nullable();
+            $table->integer('public')
+                ->default(1);
             $table->integer('order')
                 ->default(1);
             $table->timestamps();

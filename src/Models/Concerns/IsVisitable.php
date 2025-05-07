@@ -87,6 +87,11 @@ trait IsVisitable
         $query->whereJsonContains('site_ids', $siteId);
     }
 
+    public function scopeIsPublic($query)
+    {
+        $query->where('public', 1);
+    }
+
     public function scopeSlug($query, string $slug = '')
     {
         if (! $slug) {
@@ -101,6 +106,7 @@ trait IsVisitable
     {
         if (auth()->guest() || (auth()->check() && auth()->user()->role !== 'admin')) {
             $query->thisSite()
+                ->isPublic()
                 ->where(function ($query) {
                     $query->where('start_date', null)
                         ->orWhere('start_date', '<=', now()->format('Y-m-d H:i:s'));
