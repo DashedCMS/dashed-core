@@ -101,7 +101,7 @@ trait HasEditableCMSActions
                 ->visible(GlobalBlock::count() > 0)
                 ->form([
                     Select::make('templateBlock')
-                        ->options(GlobalBlock::all()->mapWithKeys(fn($block) => [$block->id => $block->name]))
+                        ->options(GlobalBlock::all()->mapWithKeys(fn ($block) => [$block->id => $block->name]))
                         ->required()
                         ->preload()
                         ->searchable()
@@ -309,7 +309,7 @@ trait HasEditableCMSActions
                     $new_array[$key] = self::removeUUIDKeys($value);
                 }
             } else {
-                if (!preg_match('/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/', $key)) {
+                if (! preg_match('/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/', $key)) {
                     $new_array[$key] = $value;
                 } else {
                     $new_array[] = $value;
