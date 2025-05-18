@@ -49,6 +49,7 @@ class GeneralSettingsPage extends Page
             $formData["company_city_{$site['id']}"] = Customsetting::get('company_city', $site['id']);
             $formData["company_postal_code_{$site['id']}"] = Customsetting::get('company_postal_code', $site['id']);
             $formData["company_country_{$site['id']}"] = Customsetting::get('company_country', $site['id']);
+            $formData["company_bank_number_{$site['id']}"] = Customsetting::get('company_bank_number', $site['id']);
             $formData["google_analytics_id_{$site['id']}"] = Customsetting::get('google_analytics_id', $site['id']);
             $formData["google_tagmanager_id_{$site['id']}"] = Customsetting::get('google_tagmanager_id', $site['id']);
             $formData["google_maps_places_key_{$site['id']}"] = Customsetting::get('google_maps_places_key', $site['id']);
@@ -108,6 +109,9 @@ class GeneralSettingsPage extends Page
                     ->maxLength(255),
                 TextInput::make("company_phone_number_{$site['id']}")
                     ->label('Telefoon')
+                    ->maxLength(255),
+                TextInput::make("company_bank_number_{$site['id']}")
+                    ->label('Bank nummer')
                     ->maxLength(255),
                 TextInput::make("company_street_{$site['id']}")
                     ->label('Straat')
@@ -280,6 +284,7 @@ class GeneralSettingsPage extends Page
             Customsetting::set('company_city', $this->form->getState()["company_city_{$site['id']}"], $site['id']);
             Customsetting::set('company_postal_code', $this->form->getState()["company_postal_code_{$site['id']}"], $site['id']);
             Customsetting::set('company_country', $this->form->getState()["company_country_{$site['id']}"], $site['id']);
+            Customsetting::set('company_bank_number', $this->form->getState()["company_bank_number_{$site['id']}"], $site['id']);
             Customsetting::set('google_analytics_id', $this->form->getState()["google_analytics_id_{$site['id']}"], $site['id']);
             Customsetting::set('google_tagmanager_id', $this->form->getState()["google_tagmanager_id_{$site['id']}"], $site['id']);
             Customsetting::set('google_maps_places_key', $this->form->getState()["google_maps_places_key_{$site['id']}"], $site['id']);
