@@ -128,7 +128,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                     TiptapEditor::make('subtitle')
                         ->label('Sub titel'),
                     AppServiceProvider::getButtonRepeater('buttons', 'Buttons'),
-                    mediaHelper()->field('image', 'Afbeelding', required: true, isImage: true),
+                    mediaHelper()->field('image', 'Afbeelding'),
                 ]),
             Block::make('header')
                 ->label('Header')
@@ -140,7 +140,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                     TiptapEditor::make('subtitle')
                         ->label('Sub titel'),
                     AppServiceProvider::getButtonRepeater('buttons', 'Buttons'),
-                    mediaHelper()->field('image', 'Afbeelding', isImage: true, required: true),
+                    mediaHelper()->field('image', 'Afbeelding'),
                 ]),
             Block::make('spacer')
                 ->label('Spacer')

@@ -1,5 +1,7 @@
-<div class="@if($data['top_margin'] ?? true) pt-32 @endif @if($data['bottom_margin'] ?? true) pb-64 @endif relative overflow-hidden">
-    <x-dashed-files::image
+<div
+    class="@if($data['top_margin'] ?? true) pt-32 @endif @if($data['bottom_margin'] ?? true) pb-64 @endif relative overflow-hidden">
+    @if($data['image'] ?? false)
+        <x-dashed-files::image
             class="absolute inset-0 -z-10 h-full w-full object-cover"
             config="dashed"
             :mediaId="$data['image']"
@@ -8,7 +10,8 @@
             :manipulations="[
                             'widen' => 1000,
                         ]"
-    />
+        />
+    @endif
     <div class="absolute inset-0 -z-10 h-full w-full bg-black/20"></div>
 
     <x-container :show="$data['in_container'] ?? true">
@@ -28,9 +31,9 @@
             <div class="grid items-center gap-4 md:flex mt-6 justify-center">
                 @foreach ($data['buttons'] ?? [] as $button)
                     <x-button
-                            type="button button--{{ $button['type'] }}"
-                            href="{{ linkHelper()->getUrl($button) }}"
-                            :button="$button"
+                        type="button button--{{ $button['type'] }}"
+                        href="{{ linkHelper()->getUrl($button) }}"
+                        :button="$button"
                     >{{ $button['title'] }}</x-button>
                 @endforeach
             </div>
