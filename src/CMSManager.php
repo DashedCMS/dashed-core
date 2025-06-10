@@ -293,7 +293,7 @@ class CMSManager
         $this->builder('editorAttributes', $attributes);
     }
 
-    public function editorField(string $name = 'content', ?string $label)
+    public function editorField(string $name = 'content', ?string $label = null)
     {
         $builder = $this->builder('editor')::make($name);
 
