@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore;
 
+use App\Console\Commands\ReplaceEditorStringsInFiles;
 use Livewire\Livewire;
 use Illuminate\Support\Facades\Mail;
 use App\Providers\AppServiceProvider;
