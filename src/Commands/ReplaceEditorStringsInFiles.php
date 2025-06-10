@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Console\Command;
 
 class ReplaceEditorStringsInFiles extends Command
@@ -24,7 +23,6 @@ class ReplaceEditorStringsInFiles extends Command
     /**
      * Execute the console command.
      */
-
     public function handle()
     {
         $search = 'TiptapEditor::make(';
