@@ -408,6 +408,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                 RunUrlHistoryCheckCommand::class,
                 SyncGoogleReviews::class,
                 CreateDefaultPages::class,
+                ReplaceEditorStringsInFiles::class,
             ]);
     }
 
