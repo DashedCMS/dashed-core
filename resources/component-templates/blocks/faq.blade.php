@@ -23,7 +23,7 @@
                         </summary>
 
                         <div class="p-4 space-y-2 border-t border-black/5 bg-white content">
-                            {!! nl2br(tiptap_converter()->asHTML($faq['content'])) !!}
+                            {!! nl2br(cms()->convertToHtml($faq['content'])) !!}
                         </div>
                     </details>
                 @endforeach

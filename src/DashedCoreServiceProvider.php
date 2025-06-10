@@ -125,8 +125,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                     TextInput::make('title')
                         ->label('Titel')
                         ->required(),
-                    TiptapEditor::make('subtitle')
-                        ->label('Sub titel'),
+                    cms()->editorField('subtitle', 'Sub titel'),
                     AppServiceProvider::getButtonRepeater('buttons', 'Buttons'),
                     mediaHelper()->field('image', 'Afbeelding'),
                 ]),
@@ -137,8 +136,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                     TextInput::make('title')
                         ->label('Titel')
                         ->required(),
-                    TiptapEditor::make('subtitle')
-                        ->label('Sub titel'),
+                    cms()->editorField('subtitle', 'Sub titel'),
                     AppServiceProvider::getButtonRepeater('buttons', 'Buttons'),
                     mediaHelper()->field('image', 'Afbeelding'),
                 ]),
@@ -159,8 +157,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                         ->label('Subtitel'),
                     Toggle::make('image-left')
                         ->label('Afbeelding links'),
-                    TiptapEditor::make('content')
-                        ->label('Content'),
+                    cms()->editorField('content', 'Content'),
                     mediaHelper()->field('image', 'Afbeelding', isImage: true, required: true),
                     AppServiceProvider::getButtonRepeater('buttons', 'Buttons'),
                 ]),
@@ -170,8 +167,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                     AppServiceProvider::getDefaultBlockFields(),
                     Toggle::make('full-width')
                         ->label('Volledige breedte'),
-                    TiptapEditor::make('content')
-                        ->label('Content')
+                    cms()->editorField('content', 'Content')
                         ->required(),
                 ]),
             Block::make('contact-form')
@@ -181,8 +177,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                     TextInput::make('title')
                         ->label('Titel')
                         ->required(),
-                    TiptapEditor::make('content')
-                        ->label('Content'),
+                    cms()->editorField('content', 'Content'),
                     Toggle::make('show_side_info')
                         ->default(true),
                     Forms::formSelecter(),
@@ -198,8 +193,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                             TextInput::make('title')
                                 ->label('Titel')
                                 ->required(),
-                            TiptapEditor::make('subtitle')
-                                ->label('Subtitel')
+                            cms()->editorField('subtitle', 'Subtitel')
                                 ->required(),
                             IconPicker::make('icon')
                                 ->label('Icoon')
@@ -246,8 +240,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                     TextInput::make('title')
                         ->label('Titel')
                         ->required(),
-                    TiptapEditor::make('subtitle')
-                        ->label('Subtitel'),
+                    cms()->editorField('subtitle', 'Subtitel'),
 
                     Repeater::make('team')
                         ->label('Team')
@@ -282,8 +275,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                             TextInput::make('title')
                                 ->label('Titel')
                                 ->required(),
-                            TiptapEditor::make('content')
-                                ->label('Content')
+                            cms()->editorField('content', 'Content')
                                 ->required(),
                         ]),
                 ]),

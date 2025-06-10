@@ -13,7 +13,7 @@
                     <div class="mt-6 md:ml-4 md:mt-0 lg:ml-0 lg:mt-6 text-white text-left">
                         <h2 class="text-base font-medium">{{ $usp['title'] }}</h2>
                         <div class="mt-2 text-sm">
-                            {!!  tiptap_converter()->asHTML($usp['subtitle']) !!}
+                            {!!  cms()->convertToHtml($usp['subtitle']) !!}
                         </div>
                     </div>
                 </div>

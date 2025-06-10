@@ -429,14 +429,14 @@ trait IsVisitable
         foreach ($this->content as $item) {
             if (isset($item['data']['content'])) {
                 try {
-                    $finalString .= strip_tags(tiptap_converter()->asHTML($item['data']['content'])) . ' ';
+                    $finalString .= strip_tags(cms()->convertToHtml($item['data']['content'])) . ' ';
                 } catch (\Exception $e) {
                     if (is_array($item['data']['content']) && ($item['data']['content'][0]['type'] ?? false)) {
                         foreach ($item['data']['content'] as $contentItem) {
                             //                            dump($contentItem['data']['content']);
                             try {
                                 if ($contentItem['data']['content'] ?? false) {
-                                    $finalString .= strip_tags(tiptap_converter()->asHTML($contentItem['data']['content'])) . ' ';
+                                    $finalString .= strip_tags(cms()->convertToHtml($contentItem['data']['content'])) . ' ';
                                 }
                             } catch (\Exception $e) {
                             }
@@ -447,7 +447,7 @@ trait IsVisitable
 
             foreach ($item['data'] as $key => $value) {
                 if (stripos($key, 'title') !== false && $value) { // Check if "title" exists in the key name
-                    $finalString .= strip_tags(tiptap_converter()->asHTML($value)) . ' ';
+                    $finalString .= strip_tags(cms()->convertToHtml($value)) . ' ';
                 }
                 //DO NOT USE
                 //                // If the value is an array, pass it through the tiptap_editor function

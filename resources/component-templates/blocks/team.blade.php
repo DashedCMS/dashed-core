@@ -9,7 +9,7 @@
 
                 @if($data['subtitle'] ?? false)
                     <div class="text-balance text-primary-500">
-                        {!! tiptap_converter()->asHTML($data['subtitle']) !!}
+                        {!! cms()->convertToHtml($data['subtitle']) !!}
                     </div>
                 @endif
             </div>

@@ -4,7 +4,7 @@
         <article
             class="@if($data['full-width'] ?? false) max-w-full @endif prose md:prose-lg mx-auto prose-headings:font-normal prose-li:marker:text-primary prose-blockquote:border-primary prose-blockquote:not-italic prose-blockquote:font-normal prose-blockquote:text-gray-600 overflow-hidden"
         >
-            {!! preg_replace('/\s*style=("|\')(.*?)("|\')/i', '', tiptap_converter()->asHTML($data['content'])) !!}
+            {!! preg_replace('/\s*style=("|\')(.*?)("|\')/i', '', cms()->convertToHtml($data['content'])) !!}
         </article>
     </x-container>
 </section>

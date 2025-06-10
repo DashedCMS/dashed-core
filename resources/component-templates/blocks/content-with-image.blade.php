@@ -23,7 +23,7 @@
                     <h2 class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">{{ $data['title'] }}</h2>
                 </div>
                 <div class="max-w-xl text-base leading-7 text-gray-700 lg:max-w-lg mt-4 prose-base">
-                    {!! tiptap_converter()->asHTML($data['content'] ?? '') !!}
+                    {!! cms()->convertToHtml($data['content'] ?? '') !!}
                 </div>
 
                 @if(count($data['buttons'] ?? []))

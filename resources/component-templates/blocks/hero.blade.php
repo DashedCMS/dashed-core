@@ -22,7 +22,7 @@
 
             @if($data['subtitle'] ?? false)
                 <div class="mt-4 text-xl text-white font-bold">
-                    {!! tiptap_converter()->asHTML($data['subtitle']) !!}
+                    {!! cms()->convertToHtml($data['subtitle']) !!}
                 </div>
             @endif
         </div>
