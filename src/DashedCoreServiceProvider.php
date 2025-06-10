@@ -2,7 +2,6 @@
 
 namespace Dashed\DashedCore;
 
-use Dashed\DashedCore\Commands\ReplaceEditorStringsInFiles;
 use Livewire\Livewire;
 use Illuminate\Support\Facades\Mail;
 use App\Providers\AppServiceProvider;
@@ -30,6 +29,7 @@ use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Dashed\DashedCore\Livewire\Frontend\Account\Account;
 use Dashed\DashedCore\Commands\RunUrlHistoryCheckCommand;
 use Dashed\DashedCore\Filament\Widgets\NotFoundPageStats;
+use Dashed\DashedCore\Commands\ReplaceEditorStringsInFiles;
 use Dashed\DashedCore\Livewire\Frontend\Auth\ResetPassword;
 use Dashed\DashedCore\Livewire\Frontend\Auth\ForgotPassword;
 use Dashed\DashedCore\Livewire\Frontend\Notification\Toastr;
