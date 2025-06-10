@@ -9,7 +9,6 @@ use Dashed\DashedForms\Classes\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Dashed\DashedCore\Classes\Locales;
-use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Illuminate\Database\Eloquent\Model;
