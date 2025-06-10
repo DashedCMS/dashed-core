@@ -116,8 +116,8 @@ class DashedCoreServiceProvider extends PackageServiceProvider
     public static function builderBlocks()
     {
         $defaultBlocks = [
-            Block::make('hero')
-                ->label('Hero')
+            Block::make('header')
+                ->label('Header')
                 ->schema([
                     AppServiceProvider::getDefaultBlockFields(),
                     TextInput::make('toptitle')
@@ -129,8 +129,8 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                     AppServiceProvider::getButtonRepeater('buttons', 'Buttons'),
                     mediaHelper()->field('image', 'Afbeelding'),
                 ]),
-            Block::make('header')
-                ->label('Header')
+            Block::make('header-2')
+                ->label('Header 2')
                 ->schema([
                     AppServiceProvider::getDefaultBlockFields(),
                     TextInput::make('title')
@@ -139,6 +139,32 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                     cms()->editorField('subtitle', 'Sub titel'),
                     AppServiceProvider::getButtonRepeater('buttons', 'Buttons'),
                     mediaHelper()->field('image', 'Afbeelding'),
+                ]),
+            Block::make('header-3')
+                ->label('Header 3')
+                ->schema([
+                    AppServiceProvider::getDefaultBlockFields(),
+                    TextInput::make('title')
+                        ->label('Titel')
+                        ->required(),
+                    cms()->editorField('subtitle')
+                        ->label('Sub titel'),
+                    AppServiceProvider::getButtonRepeater('buttons', 'Buttons'),
+                    mediaHelper()->field('image', 'Afbeelding'),
+                    Repeater::make('usps')
+                        ->label('USPs')
+                        ->schema([
+                            TextInput::make('title')
+                                ->label('Titel')
+                                ->required(),
+                            cms()->editorField('subtitle')
+                                ->label('Subtitel')
+                                ->required(),
+                            TextInput::make('icon')
+                                ->label('Icoon')
+                                ->helperText('Lucide icons: https://lucide.dev/icons/, just paste the svg code here')
+                                ->required(),
+                        ]),
                 ]),
             Block::make('spacer')
                 ->label('Spacer')
