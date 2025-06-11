@@ -166,6 +166,34 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                                 ->required(),
                         ]),
                 ]),
+            Block::make('header-4')
+                ->label('Header 4')
+                ->schema([
+                    TextInput::make('title')
+                        ->label('Titel')
+                        ->required(),
+                    cms()->editorField('subtitle')
+                        ->label('Subtitel'),
+                    self::getButtonRepeater('buttons', 'Buttons'),
+                    mediaHelper()->field('image', 'Achtergrond afbeelding', isImage: true),
+                    mediaHelper()->field('image-2', 'Afbeelding 2', isImage: true),
+                    mediaHelper()->field('image-3', 'Afbeelding 3', isImage: true),
+                    mediaHelper()->field('image-4', 'Afbeelding 4', isImage: true),
+                    self::getDefaultBlockFields(),
+                    Repeater::make('usps')
+                        ->label('USPs')
+                        ->schema([
+                            TextInput::make('title')
+                                ->label('Titel')
+                                ->required(),
+                            linkHelper()->field('url', true)
+                                ->label('URL'),
+                            TextInput::make('icon')
+                                ->label('Icoon')
+                                ->helperText('Lucide icons: https://lucide.dev/icons/, just paste the svg code here')
+                                ->required(),
+                        ]),
+                ]),
             Block::make('spacer')
                 ->label('Spacer')
                 ->schema([]),
