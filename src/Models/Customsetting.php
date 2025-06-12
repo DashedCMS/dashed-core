@@ -94,7 +94,7 @@ class Customsetting extends Model
             $siteId = Sites::getSites()[0]['id'];
         }
 
-        if ($value && is_array($value)) {
+        if (is_array($value)) {
             $valueField = 'json';
         } else {
             $valueField = 'value';
