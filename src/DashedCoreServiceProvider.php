@@ -44,7 +44,6 @@ use Dashed\DashedCore\Filament\Pages\Settings\SearchSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\AccountSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
 use Dashed\DashedCore\Livewire\Frontend\Protection\PasswordProtection;
-use function Termwind\parse;
 
 class DashedCoreServiceProvider extends PackageServiceProvider
 {
