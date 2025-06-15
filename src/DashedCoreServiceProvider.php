@@ -44,6 +44,7 @@ use Dashed\DashedCore\Filament\Pages\Settings\SearchSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\AccountSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
 use Dashed\DashedCore\Livewire\Frontend\Protection\PasswordProtection;
+use function Termwind\parse;
 
 class DashedCoreServiceProvider extends PackageServiceProvider
 {
@@ -169,6 +170,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             Block::make('header-4')
                 ->label('Header 4')
                 ->schema([
+                    self::getDefaultBlockFields(),
                     TextInput::make('title')
                         ->label('Titel')
                         ->required(),
@@ -179,7 +181,6 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                     mediaHelper()->field('image-2', 'Afbeelding 2', isImage: true),
                     mediaHelper()->field('image-3', 'Afbeelding 3', isImage: true),
                     mediaHelper()->field('image-4', 'Afbeelding 4', isImage: true),
-                    self::getDefaultBlockFields(),
                     Repeater::make('usps')
                         ->label('USPs')
                         ->schema([
@@ -546,8 +547,11 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             }
             $page->save();
 
-
             \Dashed\DashedCore\Models\Customsetting::set('account_page_id', $page->id);
+
+            $page->metadata()->create([
+                'noindex' => true,
+            ]);
         }
 
         if (! \Dashed\DashedCore\Models\Customsetting::get('forgot_password_page_id')) {
@@ -590,6 +594,10 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             $page->save();
 
             \Dashed\DashedCore\Models\Customsetting::set('reset_password_page_id', $page->id);
+
+            $page->metadata()->create([
+                'noindex' => true,
+            ]);
         }
     }
 }

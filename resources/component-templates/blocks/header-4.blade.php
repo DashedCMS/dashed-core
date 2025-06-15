@@ -18,7 +18,7 @@
                 <div class="flex items-center">
                     <div class="block max-lg:pt-6">
                         {{--                        <span class="text-sm font-normal text-primary-700 "># Revitalizingyourintrinsicbeauty</span>--}}
-                        <h1 class="font-bold text-5xl leading-tight text-primary-900 my-8 pr-5 max-sm:break-all">
+                        <h1 class="font-bold text-5xl leading-tight text-primary-900 my-8 pr-5">
                             {!! nl2br($data['title']) !!}
                         </h1>
                         @if($data['subtitle'] ?? false)
@@ -49,7 +49,7 @@
                                     :mediaId="$data['image-2']"
                                     loading="eager"
                                     :manipulations="[
-                                        'widen' => 4000,
+                                        'widen' => 400,
                                     ]"
                                 />
                             @endif
@@ -59,7 +59,7 @@
                                     :mediaId="$data['image-3']"
                                     loading="eager"
                                     :manipulations="[
-                                        'widen' => 4000,
+                                        'widen' => 400,
                                     ]"
                                 />
                             @endif
@@ -85,7 +85,7 @@
                                     :mediaId="$data['image-4']"
                                     loading="eager"
                                     :manipulations="[
-                                        'widen' => 4000,
+                                        'widen' => 400,
                                     ]"
                                 />
                             </div>
