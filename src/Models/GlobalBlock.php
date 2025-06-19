@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore\Models;
 
+use Illuminate\Support\Facades\Artisan;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Translatable\HasTranslations;
@@ -25,6 +26,13 @@ class GlobalBlock extends Model
     public $casts = [
         'content' => 'array',
     ];
+
+    public static function booted()
+    {
+        static::saved(function ($model) {
+            Artisan::call('cache:clear');
+        });
+    }
 
     public function getActivitylogOptions(): LogOptions
     {

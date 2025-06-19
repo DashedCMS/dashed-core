@@ -35,7 +35,7 @@ class PasswordResetMail extends Mailable
 
         return $this->view($view)
             ->from(Customsetting::get('site_from_email'), Customsetting::get('company_name'))->subject(Translation::get('password-reset-email-subject', 'login', 'A password reset has been requested for your account at :siteName:', 'text', [
-                'siteName' => Customsetting::get('site_name'),
+                'siteName' => Customsetting::get('company_name'),
             ]))
             ->with([
                 'user' => $this->user,

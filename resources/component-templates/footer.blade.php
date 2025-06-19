@@ -47,7 +47,7 @@
                                 class="w-full"
                                 config="dashed"
                                 :mediaId="Translation::get('light-logo', 'branding', null, 'image')"
-                                :alt="Customsetting::get('site_name')"
+                                :alt="Customsetting::get('company_name')"
                                 :manipulations="[
                             'widen' => 300,
                         ]"
@@ -111,7 +111,7 @@
 
             <div class="flex items-center flex-wrap gap-x-2 gap-y-4 text-center mt-6 pt-6 border-t border-primary-light">
                 <p class="text-sm text-gray-400 grow w-full md:w-auto">
-                    ©{{ now()->format('Y') }} {{ Customsetting::get('site_name') }} - {{ Translation::get('realisation-by', 'footer', 'Design en realisatie door') }} <a
+                    ©{{ now()->format('Y') }} {{ Customsetting::get('company_name') }} - {{ Translation::get('realisation-by', 'footer', 'Design en realisatie door') }} <a
                         class="uppercase italic font-bold text-primary-light hover:underline"
                         href="https://dashed.nl?ref={{ url('/') }}" rel="nofollow">DASHED</a></p>
             </div>

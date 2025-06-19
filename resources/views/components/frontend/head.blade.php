@@ -89,7 +89,7 @@
 <meta name="description" content="{{ seo()->metaData('metaDescription') }}">
 <link rel="canonical" href="{{ request()->url() }}">
 <meta property="og:url" content="{{ request()->url() }}">
-<meta property="og:site_name" content="{{ Customsetting::get('site_name') }}">
+<meta property="og:site_name" content="{{ Customsetting::get('company_name') }}">
 <meta property="og:title" content="{{ seo()->metaData('metaTitle') }}">
 <meta property="og:description" content="{{ seo()->metaData('metaDescription') }}">
 <meta property="og:type" content="{{ seo()->metaData('ogType') }}">

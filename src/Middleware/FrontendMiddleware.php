@@ -54,7 +54,7 @@ class FrontendMiddleware
 
         $schema = Schema::organization()
             ->identifier(request()->url() . '#Organization')
-            ->legalName(Customsetting::get('site_name'))
+            ->legalName(Customsetting::get('company_name'))
             ->email(Customsetting::get('site_to_email'))
             ->telephone(Customsetting::get('company_phone_number'))
             ->logo($logo->url ?? '')
