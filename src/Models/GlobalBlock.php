@@ -2,9 +2,9 @@
 
 namespace Dashed\DashedCore\Models;
 
-use Illuminate\Support\Facades\Artisan;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Artisan;
 use Spatie\Translatable\HasTranslations;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
