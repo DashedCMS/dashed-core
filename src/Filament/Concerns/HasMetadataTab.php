@@ -32,7 +32,7 @@ trait HasMetadataTab
                         ->minLength(5)
                         ->maxLength(170)
                         ->rows(2),
-                    MediaPicker::make('image')
+                    mediaHelper()->field('image', 'Meta afbeelding')
                         ->label('Meta afbeelding')
                         ->directory('dashed/metadata')
                         ->image()
