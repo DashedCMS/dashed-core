@@ -9,7 +9,6 @@ use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
-use RalphJSmit\Filament\MediaLibrary\Forms\Components\MediaPicker;
 
 trait HasMetadataTab
 {
