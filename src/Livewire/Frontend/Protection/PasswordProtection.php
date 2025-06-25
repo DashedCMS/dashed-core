@@ -21,19 +21,19 @@ class PasswordProtection extends Component
         }
 
 
-        if (!isset($data['model']) || !isset($data['modelId'])) {
+        if (! isset($data['model']) || ! isset($data['modelId'])) {
             abort(404);
         }
 
         $model = $data['model']::find($data['modelId']);
 
-        if (!$model) {
+        if (! $model) {
             abort(404);
         }
 
         $this->model = $model;
 
-        if (!$this->model->metadata->password) {
+        if (! $this->model->metadata->password) {
             abort(404);
         }
 
@@ -44,7 +44,7 @@ class PasswordProtection extends Component
 
     public function checkPassword()
     {
-        if (!$this->password) {
+        if (! $this->password) {
             $this->addError('password', Translation::get('enter-password', 'password-protection', 'Vul een wachtwoord in'));
 
             return;
