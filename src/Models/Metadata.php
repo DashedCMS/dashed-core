@@ -2,12 +2,8 @@
 
 namespace Dashed\DashedCore\Models;
 
-use Dashed\DashedCore\Classes\Locales;
-use Dashed\DashedEcommerceCore\Events\Products\ProductCreatedEvent;
-use Dashed\DashedEcommerceCore\Events\Products\ProductSavedEvent;
-use Dashed\DashedEcommerceCore\Events\Products\ProductUpdatedEvent;
-use Dashed\DashedEcommerceCore\Jobs\UpdateProductInformationJob;
 use Spatie\Activitylog\LogOptions;
+use Dashed\DashedCore\Classes\Locales;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Translatable\HasTranslations;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -31,7 +27,7 @@ class Metadata extends Model
     protected static function booted()
     {
         static::saved(function ($metadata) {
-            foreach(Locales::getActivatedLocalesFromSites() as $locale) {
+            foreach (Locales::getActivatedLocalesFromSites() as $locale) {
                 $metadata->setTranslation('title', $locale, str($metadata->getTranslation('title', $locale))->limit(70, '')->toString());
                 $metadata->setTranslation('description', $locale, str($metadata->getTranslation('description', $locale))->limit(170, '')->toString());
             }
