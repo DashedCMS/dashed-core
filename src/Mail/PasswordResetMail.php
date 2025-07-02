@@ -34,8 +34,8 @@ class PasswordResetMail extends Mailable
         $view = view()->exists(env('SITE_THEME', 'dashed') . '.emails.password-reset') ? env('SITE_THEME', 'dashed') . '.emails.password-reset' : 'dashed-core::emails.password-reset';
 
         return $this->view($view)
-            ->from(Customsetting::get('site_from_email'), Customsetting::get('company_name'))->subject(Translation::get('password-reset-email-subject', 'login', 'A password reset has been requested for your account at :siteName:', 'text', [
-                'siteName' => Customsetting::get('company_name'),
+            ->from(Customsetting::get('site_from_email'), Customsetting::get('site_name'))->subject(Translation::get('password-reset-email-subject', 'login', 'A password reset has been requested for your account at :siteName:', 'text', [
+                'siteName' => Customsetting::get('site_name'),
             ]))
             ->with([
                 'user' => $this->user,

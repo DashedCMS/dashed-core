@@ -122,7 +122,7 @@
                     class="h-12"
                     config="dashed"
                     :mediaId="Translation::get('light-logo', 'branding', null, 'image')"
-                    :alt="Customsetting::get('company_name')"
+                    :alt="Customsetting::get('site_name')"
                     :manipulations="[
                             'widen' => 300,
                         ]"
