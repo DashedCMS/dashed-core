@@ -44,7 +44,7 @@ trait HasVisitableTab
                         ->nullable()
                         ->minLength(5)
                         ->maxLength(170)
-                        ->rows(2)
+                        ->rows(3)
                         ->columnSpan([
                             'default' => 1,
                             'lg' => 2,
