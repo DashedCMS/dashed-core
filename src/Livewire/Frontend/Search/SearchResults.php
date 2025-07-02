@@ -20,6 +20,8 @@ class SearchResults extends Component
     public function searchForResults(): void
     {
         $this->searchResults = cms()->getSearchResults($this->search);
+
+        $this->dispatch('searchInitiated');
     }
 
     public function render()
