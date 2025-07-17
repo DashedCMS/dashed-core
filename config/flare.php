@@ -170,8 +170,7 @@ return [
     |
     */
 
-//    'trace' => env('FLARE_TRACE', false),
-    'trace' => true,
+    'trace' => env('FLARE_TRACE', false),
 
     /*
     |--------------------------------------------------------------------------
