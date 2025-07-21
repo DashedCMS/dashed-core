@@ -58,7 +58,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         Livewire::component('auth.forgot-password', ForgotPassword::class);
         Livewire::component('auth.reset-password', ResetPassword::class);
         Livewire::component('account.account', Account::class);
-        Livewire::component('infolists.seo', SEOScoreInfoList::class);
+//        Livewire::component('infolists.seo', SEOScoreInfoList::class);
         Livewire::component('search.search-results', SearchResults::class);
         Livewire::component('protection.password-protection', PasswordProtection::class);
 
@@ -445,7 +445,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                 'laravellocalization',
                 'flare',
                 'dashed-core',
-                'seo',
+//                'seo',
                 'activitylog',
             ])
             ->hasRoutes([
