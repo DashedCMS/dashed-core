@@ -28,7 +28,7 @@ trait IsVisitable
     use HasTranslations;
     use HasSearchScope;
     use LogsActivity;
-    use HasSeoScore;
+//    use HasSeoScore;
     use SoftDeletes;
     use HasCustomBlocks;
 
