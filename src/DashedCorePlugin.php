@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore;
 
+use Dashed\DashedCore\Filament\Pages\Settings\AISettingsPage;
 use Filament\Panel;
 use Filament\Contracts\Plugin;
 use Dashed\DashedCore\Filament\Resources\UserResource;
@@ -42,6 +43,7 @@ class DashedCorePlugin implements Plugin
                 HorizonPage::class,
                 AccountSettingsPage::class,
                 SearchSettingsPage::class,
+                AISettingsPage::class,
             ])
             ->widgets([
                 //                NotFoundPageStats::class,

@@ -9,7 +9,6 @@ use Dashed\DashedCore\Controllers\Frontend\AuthController;
 use Dashed\LaravelLocalization\Facades\LaravelLocalization;
 use Dashed\DashedCore\Controllers\Frontend\AccountController;
 use Dashed\DashedCore\Controllers\Frontend\FrontendController;
-use Dashed\LaravelLocalization\Middleware\LocaleSessionRedirect;
 use Dashed\LaravelLocalization\Middleware\LaravelLocalizationViewPath;
 use Dashed\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter;
 
@@ -26,15 +25,15 @@ if (config('dashed-core.default_auth_pages_enabled', true)) {
             Route::group([
                 'middleware' => [GuestMiddleware::class],
             ], function () {
-//                Route::get('/'.Translation::get('login-slug', 'slug', 'login'), [AuthController::class, 'login'])->name('dashed.frontend.auth.login');
-//                Route::post('/'.Translation::get('login-slug', 'slug', 'login'), [AuthController::class, 'loginPost'])->name('dashed.frontend.auth.login.post');
-//                Route::post('/'.Translation::get('register-slug', 'slug', 'register'), [AuthController::class, 'login'])->name('dashed.frontend.auth.register');
-//                Route::post('/'.Translation::get('register-slug', 'slug', 'register'), [AuthController::class, 'registerPost'])->name('dashed.frontend.auth.register.post');
+                //                Route::get('/'.Translation::get('login-slug', 'slug', 'login'), [AuthController::class, 'login'])->name('dashed.frontend.auth.login');
+                //                Route::post('/'.Translation::get('login-slug', 'slug', 'login'), [AuthController::class, 'loginPost'])->name('dashed.frontend.auth.login.post');
+                //                Route::post('/'.Translation::get('register-slug', 'slug', 'register'), [AuthController::class, 'login'])->name('dashed.frontend.auth.register');
+                //                Route::post('/'.Translation::get('register-slug', 'slug', 'register'), [AuthController::class, 'registerPost'])->name('dashed.frontend.auth.register.post');
 
-//                Route::get('/'.Translation::get('forgot-password-slug', 'slug', 'forgot-password'), [AuthController::class, 'forgotPassword'])->name('dashed.frontend.auth.forgot-password');
-//                Route::post('/'.Translation::get('forgot-password-slug', 'slug', 'forgot-password'), [AuthController::class, 'forgotPasswordPost'])->name('dashed.frontend.auth.forgot-password.post');
-//                Route::get('/'.Translation::get('reset-password-slug', 'slug', 'reset-password').'/{passwordResetToken}', [AuthController::class, 'resetPassword'])->name('dashed.frontend.auth.reset-password');
-//                Route::post('/'.Translation::get('reset-password-slug', 'slug', 'reset-password').'/{passwordResetToken}', [AuthController::class, 'resetPasswordPost'])->name('dashed.frontend.auth.reset-password.post');
+                //                Route::get('/'.Translation::get('forgot-password-slug', 'slug', 'forgot-password'), [AuthController::class, 'forgotPassword'])->name('dashed.frontend.auth.forgot-password');
+                //                Route::post('/'.Translation::get('forgot-password-slug', 'slug', 'forgot-password'), [AuthController::class, 'forgotPasswordPost'])->name('dashed.frontend.auth.forgot-password.post');
+                //                Route::get('/'.Translation::get('reset-password-slug', 'slug', 'reset-password').'/{passwordResetToken}', [AuthController::class, 'resetPassword'])->name('dashed.frontend.auth.reset-password');
+                //                Route::post('/'.Translation::get('reset-password-slug', 'slug', 'reset-password').'/{passwordResetToken}', [AuthController::class, 'resetPasswordPost'])->name('dashed.frontend.auth.reset-password.post');
             });
 
             Route::group([
@@ -42,8 +41,8 @@ if (config('dashed-core.default_auth_pages_enabled', true)) {
             ], function () {
                 //Account routes
                 Route::prefix('/' . Translation::get('account-slug', 'slug', 'account'))->group(function () {
-//                    Route::get('/', [AccountController::class, 'account'])->name('dashed.frontend.account');
-//                    Route::post('/', [AccountController::class, 'accountPost'])->name('dashed.frontend.account.post');
+                    //                    Route::get('/', [AccountController::class, 'account'])->name('dashed.frontend.account');
+                    //                    Route::post('/', [AccountController::class, 'accountPost'])->name('dashed.frontend.account.post');
                 });
             });
         }

@@ -21,15 +21,15 @@ return new class () extends Migration {
             $table->json('json')
                 ->nullable();
         });
-//        foreach (\Dashed\DashedCore\Models\Customsetting::whereNotNull('json')->get() as $customsetting) {
-//            $customsetting->value = $customsetting->json;
-//            $customsetting->json = null;
-//            $customsetting->save();
-//        }
+        //        foreach (\Dashed\DashedCore\Models\Customsetting::whereNotNull('json')->get() as $customsetting) {
+        //            $customsetting->value = $customsetting->json;
+        //            $customsetting->json = null;
+        //            $customsetting->save();
+        //        }
 
         foreach (\Dashed\DashedCore\Models\Customsetting::whereNotNull('value')->get() as $customsetting) {
             try {
-                if (!is_int($customsetting->value)) {
+                if (! is_int($customsetting->value)) {
                     $isJson = self::parseJson($customsetting->value);
                     if ($isJson) {
                         $customsetting->json = json_decode($customsetting->value, true);

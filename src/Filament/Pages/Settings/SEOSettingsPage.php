@@ -78,16 +78,16 @@ class SEOSettingsPage extends Page
         $tabGroups[] = Tabs::make('Sites')
             ->tabs($tabs);
 
-//        $tabGroups[] =
-//            Section::make('SEO instellingen voor alle sites')
-//                ->schema([
-//                    Toggle::make('seo_check_models')
-//                        ->label('Check SEO modellen op score')
-//                        ->helperText('Dit kan het opslaan process vertragen, vraag dit na bij je beheerder.'),
-//                    //                    Toggle::make("force_trailing_slash")
-//                    //                        ->label('Forceer trailing slash')
-//                    //                        ->helperText('Forceer een trailing slash op alle URL\'s, dit kan invloed hebben op de SEO score van je website'),
-//                ]);
+        //        $tabGroups[] =
+        //            Section::make('SEO instellingen voor alle sites')
+        //                ->schema([
+        //                    Toggle::make('seo_check_models')
+        //                        ->label('Check SEO modellen op score')
+        //                        ->helperText('Dit kan het opslaan process vertragen, vraag dit na bij je beheerder.'),
+        //                    //                    Toggle::make("force_trailing_slash")
+        //                    //                        ->label('Forceer trailing slash')
+        //                    //                        ->helperText('Forceer een trailing slash op alle URL\'s, dit kan invloed hebben op de SEO score van je website'),
+        //                ]);
 
         return $tabGroups;
     }

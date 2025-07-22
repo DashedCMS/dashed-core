@@ -129,9 +129,9 @@ trait HasEditableCMSActions
             ->icon('heroicon-o-document-duplicate')
             ->color('warning');
 
-//        if (method_exists($this->record, 'getUrl')) {
-//            $actions[] = ShowSEOScoreAction::make();
-//        }
+        //        if (method_exists($this->record, 'getUrl')) {
+        //            $actions[] = ShowSEOScoreAction::make();
+        //        }
 
         return array_merge($actions, [
             self::translateAction(),

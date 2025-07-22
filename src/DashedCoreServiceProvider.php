@@ -2,6 +2,8 @@
 
 namespace Dashed\DashedCore;
 
+use Dashed\DashedCore\Commands\AutomaticlyCreateAltTextsForAllMediaItems;
+use Dashed\DashedCore\Filament\Pages\Settings\AISettingsPage;
 use Livewire\Livewire;
 use Illuminate\Support\Facades\Mail;
 use App\Providers\AppServiceProvider;
@@ -58,7 +60,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         Livewire::component('auth.forgot-password', ForgotPassword::class);
         Livewire::component('auth.reset-password', ResetPassword::class);
         Livewire::component('account.account', Account::class);
-//        Livewire::component('infolists.seo', SEOScoreInfoList::class);
+        //        Livewire::component('infolists.seo', SEOScoreInfoList::class);
         Livewire::component('search.search-results', SearchResults::class);
         Livewire::component('protection.password-protection', PasswordProtection::class);
 
@@ -72,6 +74,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             $schedule->command(InvalidatePasswordResetTokens::class)->everyFifteenMinutes();
             $schedule->command(RunUrlHistoryCheckCommand::class)->everyFifteenMinutes();
             $schedule->command(SyncGoogleReviews::class)->twiceDaily();
+            $schedule->command(AutomaticlyCreateAltTextsForAllMediaItems::class)->hourly();
             //            $schedule->command(SeoScan::class)->daily();
         });
 
@@ -431,6 +434,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         cms()->registerSettingsPage(ImageSettingsPage::class, 'Afbeelding', 'photo', 'Afbeelding van de website');
         cms()->registerSettingsPage(CacheSettingsPage::class, 'Cache', 'photo', 'Cache van de website');
         cms()->registerSettingsPage(SearchSettingsPage::class, 'Search', 'magnifying-glass', 'Zoek instellingen van de website');
+        cms()->registerSettingsPage(AISettingsPage::class, 'AI', 'magnifying-glass', 'AI instellingen van de website');
 
         $package
             ->name(static::$name)
@@ -464,6 +468,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                 SyncGoogleReviews::class,
                 CreateDefaultPages::class,
                 ReplaceEditorStringsInFiles::class,
+                AutomaticlyCreateAltTextsForAllMediaItems::class,
             ]);
     }
 
