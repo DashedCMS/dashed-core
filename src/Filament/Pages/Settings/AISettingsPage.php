@@ -109,9 +109,6 @@ class AISettingsPage extends Page implements HasForms
                             ->send();
                         return;
                     }
-                    foreach(MediaLibraryItem::whereNull('alt_text')->get() as $mediaItem) {
-                        OpenAIHelper::getAltTextForImage($apiKey, $mediaItem);
-                    }
 
                     CreateAltTextsForAllMediaItems::dispatch($data['overwriteExisting'] ?? false);
 
