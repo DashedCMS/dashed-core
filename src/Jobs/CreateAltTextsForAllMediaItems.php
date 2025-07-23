@@ -59,8 +59,12 @@ class CreateAltTextsForAllMediaItems implements ShouldBeUnique, ShouldQueue
             MediaLibraryItem::query()->update(['alt_text' => null]);
         }
 
+        $delayInSeconds = 0;
+
         foreach(MediaLibraryItem::whereNull('alt_text')->get() as $mediaItem) {
-            CreateAltTextForMediaItem::dispatch($mediaItem);
+            CreateAltTextForMediaItem::dispatch($mediaItem)
+            ->delay(now()->addSeconds($delayInSeconds));
+            $delayInSeconds += 3;
         }
     }
 }
