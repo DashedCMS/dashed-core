@@ -17,7 +17,7 @@ class OpenAIHelper
 {
     public static function isConnected(?string $apiKey = null): bool
     {
-        if(!$apiKey){
+        if (!$apiKey) {
             return false;
         }
 
@@ -40,56 +40,58 @@ class OpenAIHelper
         }
 
         $media = $mediaLibraryItem->media->first();
-        if(!$media){
+        if (!$media) {
             return null;
         }
 
         $imagePath = $media->getPath();
 
-        if(!in_array($media->mime_type, ['image/jpeg', 'image/png', 'image/webp'])) {
+        if (!in_array($media->mime_type, ['image/jpeg', 'image/png', 'image/webp'])) {
             return null;
         }
 
-        $image = Storage::disk('dashed')->get($imagePath);
-        $image = base64_encode($image);
-        $image = 'data:' . $media->mime_type . ';base64,' . $image;
+        if (Storage::disk('dashed')->exists($imagePath)) {
+            $image = Storage::disk('dashed')->get($imagePath);
+            $image = base64_encode($image);
+            $image = 'data:' . $media->mime_type . ';base64,' . $image;
 
-        try{
-            $response = Http::withToken($apiKey)
-                ->withHeaders([
-                    'Content-Type' => 'application/json',
-                    'Accept' => 'application/json',
-                ])
-                ->post('https://api.openai.com/v1/chat/completions', [
-                    'model' => 'gpt-4o',
-                    'messages' => [
-                        [
-                            'role' => 'user',
-                            'content' => [
-                                [
-                                    'type' => 'text',
-                                    'text' => 'Geef een korte, duidelijke alt-tekst voor deze afbeelding. Maximaal 200 karakters. Gebruik geen HTML-tags of speciale tekens. De alt-tekst moet beschrijvend zijn en de inhoud van de afbeelding samenvatten.',
-                                ],
-                                [
-                                    'type' => 'image_url',
-                                    'image_url' => [
-                                        'url' => $image
-                                    ]
+            try {
+                $response = Http::withToken($apiKey)
+                    ->withHeaders([
+                        'Content-Type' => 'application/json',
+                        'Accept' => 'application/json',
+                    ])
+                    ->post('https://api.openai.com/v1/chat/completions', [
+                        'model' => 'gpt-4o',
+                        'messages' => [
+                            [
+                                'role' => 'user',
+                                'content' => [
+                                    [
+                                        'type' => 'text',
+                                        'text' => 'Geef een korte, duidelijke alt-tekst voor deze afbeelding. Maximaal 200 karakters. Gebruik geen HTML-tags of speciale tekens. De alt-tekst moet beschrijvend zijn en de inhoud van de afbeelding samenvatten.',
+                                    ],
+                                    [
+                                        'type' => 'image_url',
+                                        'image_url' => [
+                                            'url' => $image
+                                        ]
+                                    ],
                                 ],
                             ],
                         ],
-                    ],
-                    'max_tokens' => 100,
-                ]);
-        }catch (Exception $exception){
-            return null;
-        }
+                        'max_tokens' => 100,
+                    ]);
+            } catch (Exception $exception) {
+                return null;
+            }
 
-        if ($response->successful()) {
-            $response = $response->json();
-            $altText = $response['choices'][0]['message']['content'] ?? '';
-            $mediaLibraryItem->alt_text = str($altText)->trim()->limit(200, '')->toString();
-            $mediaLibraryItem->save();
+            if ($response->successful()) {
+                $response = $response->json();
+                $altText = $response['choices'][0]['message']['content'] ?? '';
+                $mediaLibraryItem->alt_text = str($altText)->trim()->limit(200, '')->toString();
+                $mediaLibraryItem->save();
+            }
         }
 
         return null;
