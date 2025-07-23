@@ -15,8 +15,12 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class OpenAIHelper
 {
-    public static function isConnected(string $apiKey): bool
+    public static function isConnected(?string $apiKey = null): bool
     {
+        if(!$apiKey){
+            return false;
+        }
+
         $response = Http::withToken($apiKey)
             ->post('https://api.openai.com/v1/chat/completions', [
                 'model' => 'gpt-3.5-turbo',
