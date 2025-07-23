@@ -57,7 +57,7 @@ class OpenAIHelper
                         'content' => [
                             [
                                 'type' => 'text',
-                                'text' => 'Geef een korte, duidelijke alt-tekst voor deze afbeelding.'
+                                'text' => 'Geef een korte, duidelijke alt-tekst voor deze afbeelding. Maximaal 200 karakters. Gebruik geen HTML-tags of speciale tekens. De alt-tekst moet beschrijvend zijn en de inhoud van de afbeelding samenvatten.',
                             ],
                             [
                                 'type' => 'image_url',
