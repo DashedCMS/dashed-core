@@ -46,6 +46,10 @@ class OpenAIHelper
 
         $imagePath = $media->getPath();
 
+        if(!in_array($media->mime_type, ['image/jpeg', 'image/png', 'image/webp'])) {
+            return null;
+        }
+
         $image = Storage::disk('dashed')->get($imagePath);
         $image = base64_encode($image);
         $image = 'data:' . $media->mime_type . ';base64,' . $image;

@@ -92,7 +92,24 @@ class AISettingsPage extends Page implements HasForms
                 ->color('primary')
                 ->form([
                     Placeholder::make('generateAltTextForAllImages')
-                        ->label('Genereer alt teksten voor afbeeldingen. Er zijn in totaal ' . MediaLibraryItem::count() . ' afbeeldingen in de media bibliotheek waarvan ' . MediaLibraryItem::whereNull('alt_text')->count() . ' nog geen alt tekst hebben.')
+                        ->label('Genereer alt teksten voor afbeeldingen. Er zijn in totaal ' . MediaLibraryItem::whereHas('media', function ($query) {
+                                    $query->whereIn('mime_type', [
+                                        'image/jpeg',
+                                        'image/png',
+                                        'image/gif',
+                                        'image/webp',
+                                        'image/svg+xml',
+                                    ]);
+                                })->count() . ' afbeeldingen in de media bibliotheek waarvan ' . MediaLibraryItem::whereNull('alt_text')
+                                ->whereHas('media', function ($query) {
+                                    $query->whereIn('mime_type', [
+                                        'image/jpeg',
+                                        'image/png',
+                                        'image/gif',
+                                        'image/webp',
+                                        'image/svg+xml',
+                                    ]);
+                                })->count() . ' nog geen alt tekst hebben.')
                         ->helperText('Deze actie genereert automatisch alt teksten voor alle afbeeldingen in de media bibliotheek. Dit kan enige tijd duren, afhankelijk van het aantal afbeeldingen.'),
                     Toggle::make('overwriteExisting')
                         ->label('Overschrijf bestaande ALT teksten')
