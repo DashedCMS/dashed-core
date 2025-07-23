@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore\Classes;
 
+use Dashed\DashedCore\Jobs\CreateAltTextForMediaItem;
 use Dashed\DashedPages\Models\Page;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -25,7 +26,7 @@ class OpenAIHelper
                 'max_tokens' => 1,
             ]);
 
-        return $response->successful();
+        return $response->successful() || $response->status() === 429;
     }
 
     public static function getAltTextForImage(string $apiKey, MediaLibraryItem $mediaLibraryItem): ?string
@@ -76,7 +77,9 @@ class OpenAIHelper
             return null;
         }
 
-        if ($response->successful()) {
+        if($response->status() === 429) {
+            CreateAltTextForMediaItem::dispatch($mediaLibraryItem)->delay(now()->addSeconds(30));
+        }else if ($response->successful()) {
             $response = $response->json();
             $altText = $response['choices'][0]['message']['content'] ?? '';
             $mediaLibraryItem->alt_text = str($altText)->trim()->limit(200, '')->toString();
