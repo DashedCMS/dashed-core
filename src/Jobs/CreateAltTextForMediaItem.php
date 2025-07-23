@@ -49,9 +49,9 @@ class CreateAltTextForMediaItem implements ShouldBeUnique, ShouldQueue
     public function handle(): void
     {
         $apiKey = Customsetting::get('open_ai_api_key');
-        if (!OpenAIHelper::isConnected($apiKey)) {
-            return;
-        }
+//        if (!OpenAIHelper::isConnected($apiKey)) {
+//            return;
+//        }
 
         OpenAIHelper::getAltTextForImage($apiKey, $this->mediaItem);
 
