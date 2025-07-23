@@ -79,7 +79,7 @@ class OpenAIHelper
         if ($response->successful()) {
             $response = $response->json();
             $altText = $response['choices'][0]['message']['content'] ?? '';
-            $mediaLibraryItem->alt_text = $altText;
+            $mediaLibraryItem->alt_text = str($altText)->trim()->limit(200, '')->toString();
             $mediaLibraryItem->save();
         }
 
