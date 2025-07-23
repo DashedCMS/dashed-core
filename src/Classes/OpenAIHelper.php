@@ -3,6 +3,7 @@
 namespace Dashed\DashedCore\Classes;
 
 use Dashed\DashedPages\Models\Page;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Dashed\DashedCore\Models\Customsetting;
 use Illuminate\Support\Facades\Http;
@@ -44,32 +45,36 @@ class OpenAIHelper
         $image = base64_encode($image);
         $image = 'data:' . $media->mime_type . ';base64,' . $image;
 
-        $response = Http::withToken($apiKey)
-            ->withHeaders([
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json',
-            ])
-            ->post('https://api.openai.com/v1/chat/completions', [
-                'model' => 'gpt-4o',
-                'messages' => [
-                    [
-                        'role' => 'user',
-                        'content' => [
-                            [
-                                'type' => 'text',
-                                'text' => 'Geef een korte, duidelijke alt-tekst voor deze afbeelding. Maximaal 200 karakters. Gebruik geen HTML-tags of speciale tekens. De alt-tekst moet beschrijvend zijn en de inhoud van de afbeelding samenvatten.',
-                            ],
-                            [
-                                'type' => 'image_url',
-                                'image_url' => [
-                                    'url' => $image
-                                ]
+        try{
+            $response = Http::withToken($apiKey)
+                ->withHeaders([
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json',
+                ])
+                ->post('https://api.openai.com/v1/chat/completions', [
+                    'model' => 'gpt-4o',
+                    'messages' => [
+                        [
+                            'role' => 'user',
+                            'content' => [
+                                [
+                                    'type' => 'text',
+                                    'text' => 'Geef een korte, duidelijke alt-tekst voor deze afbeelding. Maximaal 200 karakters. Gebruik geen HTML-tags of speciale tekens. De alt-tekst moet beschrijvend zijn en de inhoud van de afbeelding samenvatten.',
+                                ],
+                                [
+                                    'type' => 'image_url',
+                                    'image_url' => [
+                                        'url' => $image
+                                    ]
+                                ],
                             ],
                         ],
                     ],
-                ],
-                'max_tokens' => 100,
-            ]);
+                    'max_tokens' => 100,
+                ]);
+        }catch (Exception $exception){
+            return null;
+        }
 
         if ($response->successful()) {
             $response = $response->json();
