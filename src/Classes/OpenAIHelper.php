@@ -77,9 +77,7 @@ class OpenAIHelper
             return null;
         }
 
-        if($response->status() === 429) {
-            CreateAltTextForMediaItem::dispatch($mediaLibraryItem)->delay(now()->addSeconds(30));
-        }else if ($response->successful()) {
+        if ($response->successful()) {
             $response = $response->json();
             $altText = $response['choices'][0]['message']['content'] ?? '';
             $mediaLibraryItem->alt_text = str($altText)->trim()->limit(200, '')->toString();

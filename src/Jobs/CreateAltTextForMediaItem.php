@@ -54,5 +54,10 @@ class CreateAltTextForMediaItem implements ShouldBeUnique, ShouldQueue
         }
 
         OpenAIHelper::getAltTextForImage($apiKey, $this->mediaItem);
+
+        $this->mediaItem->refresh();
+        if (!$this->mediaItem->alt_text) {
+            CreateAltTextForMediaItem::dispatch($this->mediaItem)->delay(now()->addMinutes(5));
+        }
     }
 }
