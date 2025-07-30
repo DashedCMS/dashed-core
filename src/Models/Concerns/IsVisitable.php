@@ -143,7 +143,9 @@ trait IsVisitable
 
     public function getStatusAttribute(): bool
     {
-        if (! $this->start_date && ! $this->end_date) {
+        if (!$this->public) {
+            return 0;
+        } elseif (! $this->start_date && ! $this->end_date) {
             return 1;
         } else {
             if ($this->start_date && $this->end_date) {
