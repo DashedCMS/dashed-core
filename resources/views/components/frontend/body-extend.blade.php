@@ -19,6 +19,12 @@
             @if(Customsetting::get('facebook_pixel_conversion_id') || Customsetting::get('facebook_pixel_site_id'))
             fbq('track', 'Contact');
             @endif
+
+            dataLayer.push({
+                'event': 'formSubmit',
+                'formId': event[0].formId,
+                'formName': event[0].formName,
+            });
         });
 
         Livewire.on('searchInitiated', (event) => {
