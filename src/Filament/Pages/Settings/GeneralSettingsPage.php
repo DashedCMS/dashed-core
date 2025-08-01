@@ -56,7 +56,7 @@ class GeneralSettingsPage extends Page
             $formData["google_maps_places_key_{$site['id']}"] = Customsetting::get('google_maps_places_key', $site['id']);
             $formData["google_maps_places_id_{$site['id']}"] = Customsetting::get('google_maps_places_id', $site['id']);
             $formData["facebook_pixel_conversion_id_{$site['id']}"] = Customsetting::get('facebook_pixel_conversion_id', $site['id']);
-            $formData["facebook_pixel_site_id_{$site['id']}"] = Customsetting::get('facebook_pixel_site_id', $site['id'], 0);
+            $formData["facebook_pixel_site_id_{$site['id']}"] = Customsetting::get('facebook_pixel_site_id', $site['id']);
             $formData["trigger_facebook_events_{$site['id']}"] = Customsetting::get('trigger_facebook_events', $site['id']);
             $formData["webmaster_tag_google_{$site['id']}"] = Customsetting::get('webmaster_tag_google', $site['id']);
             $formData["webmaster_tag_bing_{$site['id']}"] = Customsetting::get('webmaster_tag_bing', $site['id']);
