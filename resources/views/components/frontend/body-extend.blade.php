@@ -16,8 +16,10 @@
 <script>
     document.addEventListener('livewire:init', () => {
         Livewire.on('formSubmitted', (event) => {
-            @if(Customsetting::get('facebook_pixel_conversion_id') || Customsetting::get('facebook_pixel_site_id'))
-            fbq('track', 'Contact');
+            @if(Customsetting::get('facebook_pixel_conversion_id') || Customsetting::get('facebook_pixel_site_id') || Customsetting::get('trigger_facebook_events'))
+            setTimeout(function () {
+                fbq('track', 'Contact');
+            }, 1000);
             @endif
 
             dataLayer.push({
@@ -28,8 +30,10 @@
         });
 
         Livewire.on('searchInitiated', (event) => {
-            @if(Customsetting::get('facebook_pixel_conversion_id') || Customsetting::get('facebook_pixel_site_id'))
-            fbq('track', 'Search');
+            @if(Customsetting::get('facebook_pixel_conversion_id') || Customsetting::get('facebook_pixel_site_id') || Customsetting::get('trigger_facebook_events'))
+            setTimeout(function () {
+                fbq('track', 'Search');
+            }, 1000);
             @endif
         });
     });

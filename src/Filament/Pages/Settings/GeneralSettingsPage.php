@@ -58,6 +58,7 @@ class GeneralSettingsPage extends Page
             $formData["facebook_pixel_conversion_id_{$site['id']}"] = Customsetting::get('facebook_pixel_conversion_id', $site['id']);
             $formData["facebook_pixel_site_id_{$site['id']}"] = Customsetting::get('facebook_pixel_site_id', $site['id']);
             $formData["trigger_facebook_events_{$site['id']}"] = Customsetting::get('trigger_facebook_events', $site['id']);
+            $formData["trigger_tiktok_events_{$site['id']}"] = Customsetting::get('trigger_tiktok_events', $site['id']);
             $formData["webmaster_tag_google_{$site['id']}"] = Customsetting::get('webmaster_tag_google', $site['id']);
             $formData["webmaster_tag_bing_{$site['id']}"] = Customsetting::get('webmaster_tag_bing', $site['id']);
             $formData["webmaster_tag_alexa_{$site['id']}"] = Customsetting::get('webmaster_tag_alexa', $site['id']);
@@ -211,6 +212,8 @@ class GeneralSettingsPage extends Page
                     ->maxLength(255),
                 Toggle::make("trigger_facebook_events_{$site['id']}")
                     ->label('Trigger Facebook events'),
+                Toggle::make("trigger_tiktok_events_{$site['id']}")
+                    ->label('Trigger TikTok events'),
                 TextInput::make("webmaster_tag_google_{$site['id']}")
                     ->label('Webmaster tag Google')
                     ->maxLength(255),
@@ -296,6 +299,7 @@ class GeneralSettingsPage extends Page
             Customsetting::set('facebook_pixel_conversion_id', $this->form->getState()["facebook_pixel_conversion_id_{$site['id']}"], $site['id']);
             Customsetting::set('facebook_pixel_site_id', $this->form->getState()["facebook_pixel_site_id_{$site['id']}"], $site['id']);
             Customsetting::set('trigger_facebook_events', $this->form->getState()["trigger_facebook_events_{$site['id']}"], $site['id']);
+            Customsetting::set('trigger_tiktok_events', $this->form->getState()["trigger_tiktok_events_{$site['id']}"], $site['id']);
             Customsetting::set('webmaster_tag_google', $this->form->getState()["webmaster_tag_google_{$site['id']}"], $site['id']);
             Customsetting::set('webmaster_tag_bing', $this->form->getState()["webmaster_tag_bing_{$site['id']}"], $site['id']);
             Customsetting::set('webmaster_tag_alexa', $this->form->getState()["webmaster_tag_alexa_{$site['id']}"], $site['id']);
