@@ -2,23 +2,18 @@
 
 namespace Dashed\DashedCore\Filament\Pages\Settings;
 
-use Dashed\DashedCore\Classes\OpenAIHelper;
-use Dashed\DashedCore\Jobs\CreateAltTextForMediaItem;
-use Dashed\DashedCore\Jobs\CreateAltTextsForAllMediaItems;
-use Filament\Actions\Action;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Pages\Page;
-use Filament\Forms\Components\Tabs;
+use Filament\Actions\Action;
 use Dashed\DashedCore\Classes\Sites;
-use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Filament\Forms\Components\Placeholder;
+use Dashed\DashedCore\Classes\OpenAIHelper;
 use Dashed\DashedCore\Models\Customsetting;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Dashed\DashedPages\Models\Page as PageModel;
+use Dashed\DashedCore\Jobs\CreateAltTextsForAllMediaItems;
 use RalphJSmit\Filament\MediaLibrary\Media\Models\MediaLibraryItem;
 
 class AISettingsPage extends Page implements HasForms
@@ -53,7 +48,7 @@ class AISettingsPage extends Page implements HasForms
             Toggle::make("create_alt_text_for_new_uploaded_images")
                 ->label('Maak automatisch alt tekst voor nieuwe geüploade afbeeldingen')
                 ->helperText('Wanneer deze optie is ingeschakeld, zal het systeem automatisch alternatieve tekst genereren voor nieuwe afbeeldingen die worden geüpload. Dit werkt alleen voor Nederlands. Alt teksten zijn niet vertaalbaar.')
-                ->visible(fn($get) => $get('open_ai_api_key')),
+                ->visible(fn ($get) => $get('open_ai_api_key')),
         ];
 
         return $schema;
@@ -93,14 +88,14 @@ class AISettingsPage extends Page implements HasForms
                 ->form([
                     Placeholder::make('generateAltTextForAllImages')
                         ->label('Genereer alt teksten voor afbeeldingen. Er zijn in totaal ' . MediaLibraryItem::whereHas('media', function ($query) {
-                                    $query->whereIn('mime_type', [
-                                        'image/jpeg',
-                                        'image/png',
-                                        'image/gif',
-                                        'image/webp',
-                                        'image/svg+xml',
-                                    ]);
-                                })->count() . ' afbeeldingen in de media bibliotheek waarvan ' . MediaLibraryItem::whereNull('alt_text')
+                            $query->whereIn('mime_type', [
+                                'image/jpeg',
+                                'image/png',
+                                'image/gif',
+                                'image/webp',
+                                'image/svg+xml',
+                            ]);
+                        })->count() . ' afbeeldingen in de media bibliotheek waarvan ' . MediaLibraryItem::whereNull('alt_text')
                                 ->whereHas('media', function ($query) {
                                     $query->whereIn('mime_type', [
                                         'image/jpeg',
@@ -118,17 +113,18 @@ class AISettingsPage extends Page implements HasForms
                 ])
                 ->action(function ($data) {
                     $apiKey = Customsetting::get('open_ai_api_key');
-                    if (!OpenAIHelper::isConnected($apiKey)) {
+                    if (! OpenAIHelper::isConnected($apiKey)) {
                         Notification::make()
                             ->title('Open AI is niet verbonden')
                             ->body('Controleer je API sleutel.')
                             ->danger()
                             ->send();
+
                         return;
                     }
-//                    foreach(MediaLibraryItem::whereNull('alt_text')->get() as $mediaItem) {
-//                        OpenAIHelper::getAltTextForImage($apiKey, $mediaItem);
-//                    }
+                    //                    foreach(MediaLibraryItem::whereNull('alt_text')->get() as $mediaItem) {
+                    //                        OpenAIHelper::getAltTextForImage($apiKey, $mediaItem);
+                    //                    }
 
                     CreateAltTextsForAllMediaItems::dispatch($data['overwriteExisting'] ?? false);
 
