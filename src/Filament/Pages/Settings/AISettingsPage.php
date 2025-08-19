@@ -72,7 +72,7 @@ class AISettingsPage extends Page implements HasForms
         foreach ($sites as $site) {
             Customsetting::set('open_ai_api_key', $this->form->getState()["open_ai_api_key"], $site['id']);
             Customsetting::set('open_ai_connected', $connected, $site['id']);
-            Customsetting::set('create_alt_text_for_new_uploaded_images', $this->form->getState()["create_alt_text_for_new_uploaded_images"], $site['id']);
+            Customsetting::set('create_alt_text_for_new_uploaded_images', $this->form->getState()["create_alt_text_for_new_uploaded_images"] ?? false, $site['id']);
         }
 
         Notification::make()
