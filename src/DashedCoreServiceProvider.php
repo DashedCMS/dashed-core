@@ -2,8 +2,6 @@
 
 namespace Dashed\DashedCore;
 
-use Dashed\DashedCore\Commands\AutomaticlyCreateAltTextsForAllMediaItems;
-use Dashed\DashedCore\Filament\Pages\Settings\AISettingsPage;
 use Livewire\Livewire;
 use Illuminate\Support\Facades\Mail;
 use App\Providers\AppServiceProvider;
@@ -36,6 +34,7 @@ use Dashed\DashedCore\Livewire\Frontend\Auth\ResetPassword;
 use Dashed\DashedCore\Livewire\Frontend\Auth\ForgotPassword;
 use Dashed\DashedCore\Livewire\Frontend\Notification\Toastr;
 use Dashed\DashedCore\Commands\InvalidatePasswordResetTokens;
+use Dashed\DashedCore\Filament\Pages\Settings\AISettingsPage;
 use Dashed\DashedCore\Livewire\Frontend\Search\SearchResults;
 use Dashed\DashedCore\Filament\Pages\Settings\SEOSettingsPage;
 use Dashed\DashedCore\Livewire\Infolists\SEO\SEOScoreInfoList;
@@ -46,6 +45,7 @@ use Dashed\DashedCore\Filament\Pages\Settings\SearchSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\AccountSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
 use Dashed\DashedCore\Livewire\Frontend\Protection\PasswordProtection;
+use Dashed\DashedCore\Commands\AutomaticlyCreateAltTextsForAllMediaItems;
 
 class DashedCoreServiceProvider extends PackageServiceProvider
 {

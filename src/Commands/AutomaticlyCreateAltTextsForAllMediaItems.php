@@ -2,11 +2,9 @@
 
 namespace Dashed\DashedCore\Commands;
 
-use Dashed\DashedCore\Jobs\CreateAltTextsForAllMediaItems;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Http;
-use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedCore\Helpers\Http\UrlBuilderTrait;
+use Dashed\DashedCore\Jobs\CreateAltTextsForAllMediaItems;
 
 class AutomaticlyCreateAltTextsForAllMediaItems extends Command
 {

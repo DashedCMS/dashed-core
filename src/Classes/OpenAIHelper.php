@@ -2,22 +2,16 @@
 
 namespace Dashed\DashedCore\Classes;
 
-use Dashed\DashedCore\Jobs\CreateAltTextForMediaItem;
-use Dashed\DashedPages\Models\Page;
 use Exception;
-use Illuminate\Support\Facades\Auth;
-use Dashed\DashedCore\Models\Customsetting;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
-use OpenAI\Laravel\Facades\OpenAI;
 use RalphJSmit\Filament\MediaLibrary\Media\Models\MediaLibraryItem;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class OpenAIHelper
 {
     public static function isConnected(?string $apiKey = null): bool
     {
-        if (!$apiKey) {
+        if (! $apiKey) {
             return false;
         }
 
@@ -35,18 +29,18 @@ class OpenAIHelper
 
     public static function getAltTextForImage(string $apiKey, MediaLibraryItem $mediaLibraryItem): ?string
     {
-        if (!self::isConnected($apiKey)) {
+        if (! self::isConnected($apiKey)) {
             return null;
         }
 
         $media = $mediaLibraryItem->media->first();
-        if (!$media) {
+        if (! $media) {
             return null;
         }
 
         $imagePath = $media->getPath();
 
-        if (!in_array($media->mime_type, ['image/jpeg', 'image/png', 'image/webp'])) {
+        if (! in_array($media->mime_type, ['image/jpeg', 'image/png', 'image/webp'])) {
             return null;
         }
 
@@ -74,8 +68,8 @@ class OpenAIHelper
                                     [
                                         'type' => 'image_url',
                                         'image_url' => [
-                                            'url' => $image
-                                        ]
+                                            'url' => $image,
+                                        ],
                                     ],
                                 ],
                             ],
