@@ -64,7 +64,7 @@ class RedirectResource extends Resource
                                     ->label('Verwijder redirect na een datum')
                                     ->default(now()->addMonths(3)),
                             ])
-                        ), ]
+                        ),]
             );
     }
 
@@ -76,12 +76,12 @@ class RedirectResource extends Resource
                     ->label('ID')
                     ->sortable(),
                 TextColumn::make('from')
-                    ->url(fn ($record) => url($record->from))
+                    ->url(fn($record) => url($record->from))
                     ->openUrlInNewTab()
                     ->label('Oude URL')
                     ->searchable(),
                 TextColumn::make('to')
-                    ->url(fn ($record) => $record->to)
+                    ->url(fn($record) => $record->to)
                     ->openUrlInNewTab()
                     ->label('Nieuwe URL')
                     ->searchable(),
@@ -90,7 +90,7 @@ class RedirectResource extends Resource
                 TextColumn::make('delete_redirect_after')
                     ->label('Delete redirect na')
                     ->sortable()
-                    ->getStateUsing(fn ($record) => $record->delete_redirect_after ? $record->delete_redirect_after->format('d-m-Y') : 'Niet verwijderen'),
+                    ->getStateUsing(fn($record) => $record->delete_redirect_after ? $record->delete_redirect_after->format('d-m-Y') : 'Niet verwijderen'),
             ])
             ->actions([
                 EditAction::make()
