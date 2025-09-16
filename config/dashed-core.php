@@ -18,4 +18,7 @@ return [
             ],
         ],
     ],
+
+    'site_theme' => env('SITE_THEME', 'dashed'),
+    'site_id' => env('DASHED_SITE_ID', cms()->builder('sites')[0]['id']),
 ];

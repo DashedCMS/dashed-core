@@ -26,6 +26,6 @@ class SearchResults extends Component
 
     public function render()
     {
-        return view(env('SITE_THEME', 'dashed') . '.search.search-results');
+        return view(config('dashed-core.site_theme') . '.search.search-results');
     }
 }

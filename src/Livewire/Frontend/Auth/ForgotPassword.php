@@ -58,6 +58,6 @@ class ForgotPassword extends Component
 
     public function render()
     {
-        return view(env('SITE_THEME', 'dashed') . '.auth.forgot-password');
+        return view(config('dashed-core.site_theme') . '.auth.forgot-password');
     }
 }

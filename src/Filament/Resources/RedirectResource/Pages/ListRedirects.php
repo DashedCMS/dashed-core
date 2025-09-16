@@ -2,17 +2,17 @@
 
 namespace Dashed\DashedCore\Filament\Resources\RedirectResource\Pages;
 
-use Dashed\DashedCore\Imports\ArrayImport;
-use Dashed\DashedCore\Models\Redirect;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
+use Maatwebsite\Excel\Facades\Excel;
+use Dashed\DashedCore\Models\Redirect;
+use Illuminate\Support\Facades\Storage;
+use Filament\Notifications\Notification;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
-use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
+use Dashed\DashedCore\Imports\ArrayImport;
 use Dashed\DashedCore\Filament\Resources\RedirectResource;
-use Illuminate\Support\Facades\Storage;
-use Maatwebsite\Excel\Facades\Excel;
 
 class ListRedirects extends ListRecords
 {
@@ -37,7 +37,7 @@ class ListRedirects extends ListRecords
                         ->required()
                         ->minDate(now())
                         ->helperText('Tot wanneer moeten de redirects actief zijn?')
-                        ->default(now()->addMonths(3))
+                        ->default(now()->addMonths(3)),
                 ])
                 ->action(function (array $data) {
                     $redirects = Excel::toArray(new ArrayImport(), $data['file'], 'dashed')[0] ?? [];
@@ -46,7 +46,7 @@ class ListRedirects extends ListRecords
 
                     foreach ($redirects as $redirect) {
                         $sort = $redirect[2] ?? '301';
-                        if(!in_array($sort, ['301', '302'])) {
+                        if (! in_array($sort, ['301', '302'])) {
                             $sort = 301;
                         }
                         $newRedirect = new Redirect();
@@ -64,7 +64,7 @@ class ListRedirects extends ListRecords
                         ->body("De redirects (' . $totalEntries . ') zijn geimporteerd.")
                         ->success()
                         ->send();
-                })
+                }),
         ];
     }
 }

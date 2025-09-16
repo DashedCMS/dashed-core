@@ -204,7 +204,7 @@ class CMSManager
                 Authenticate::class,
             ])
 //            ->brandLogo(fn () => mediaHelper()->getSingleMedia(Customsetting::get('site_logo'))->url)
-            ->brandName(Customsetting::get('site_name', null, env('APP_NAME')));
+            ->brandName(Customsetting::get('site_name', null, 'DashedCMS'));
 
         return $panel;
     }

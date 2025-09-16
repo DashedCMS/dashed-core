@@ -4,7 +4,7 @@
     @php(seo()->metaData('metaImage', mediaHelper()->getSingleMedia(seo()->metaData('metaImage'), 'original')->url ?? ''))
 @endif
 
-@if(env('APP_ENV') != 'local')
+@if(app()->isProduction())
     @if(Customsetting::get('google_tagmanager_id'))
         <script>
             (function (w, d, s, l, i) {
@@ -120,7 +120,7 @@
     <meta itemprop="image" content="{!! seo()->metaData('metaImage') !!}">
 @endif
 <meta name="robots"
-      content="{{ (env('APP_ENV') == 'local' || (isset($model) && $model->metaData && $model->metaData->noindex)) ? 'noindex, nofollow' : 'index, follow' }}">
+      content="{{ (app()->isLocal() || (isset($model) && $model->metaData && $model->metaData->noindex)) ? 'noindex, nofollow' : 'index, follow' }}">
 
 @foreach(seo()->metaData('webmasterTags') as $platform => $webmasterTag)
     @if($webmasterTag)

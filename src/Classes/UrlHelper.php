@@ -11,7 +11,7 @@ class UrlHelper
             $url = url($url);
         }
 
-        if (env('APP_ENV') === 'local') {
+        if (app()->isLocal()) {
             stream_context_set_default([
                 'ssl' => [
                     'verify_peer' => false,

@@ -1,4 +1,4 @@
-@if(env('APP_ENV') != 'local')
+@if(app()->isProduction())
     @if(Customsetting::get('google_tagmanager_id'))
         <noscript>
             <iframe src="https://www.googletagmanager.com/ns.html?id={{Customsetting::get('google_tagmanager_id')}}"

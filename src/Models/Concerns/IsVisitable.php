@@ -379,7 +379,7 @@ trait IsVisitable
             return $returnForRoute;
         }
 
-        $view = env('SITE_THEME', 'dashed') . '.' . str($class)->snake('-')->replace('_', '-') . '.show';
+        $view = config('dashed-core.site_theme') . '.' . str($class)->snake('-')->replace('_', '-') . '.show';
 
         return View::exists($view) ? view($view) : null;
     }

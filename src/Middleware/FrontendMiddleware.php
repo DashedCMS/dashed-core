@@ -43,7 +43,7 @@ class FrontendMiddleware
             'yandex' => Customsetting::get('webmaster_tag_yandex'),
             'norton' => Customsetting::get('webmaster_tag_norton'),
         ]);
-        seo()->metaData('robots', env('APP_ENV') == 'local' ? 'noindex, nofollow' : 'index, follow');
+        seo()->metaData('robots', app()->isLocal() ? 'noindex, nofollow' : 'index, follow');
         seo()->metaData('metaTitle', Customsetting::get('site_name', Sites::getActive(), 'Website'));
         if (! seo()->metaData('metaImage') && Customsetting::get('default_meta_data_image', Sites::getActive(), '')) {
             seo()->metaData('metaImage', mediaHelper()->getSingleMedia(Customsetting::get('default_meta_data_image', Sites::getActive(), ''))->url ?? '');
