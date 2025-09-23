@@ -46,6 +46,7 @@ class CMSManager
         ],
         'editor' => TiptapEditor::class,
         'editorAttributes' => [],
+        'ignorableKeysForTranslations' => [],
     ];
 
     protected static $builderBlocksActivated = [
