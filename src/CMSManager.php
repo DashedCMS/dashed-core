@@ -47,6 +47,7 @@ class CMSManager
         'editor' => TiptapEditor::class,
         'editorAttributes' => [],
         'ignorableKeysForTranslations' => [],
+        'classes' => [],
     ];
 
     protected static $builderBlocksActivated = [
@@ -60,6 +61,17 @@ class CMSManager
         }
 
         static::$builders[$name] = array_merge(static::$builders[$name] ?? [], $blocks);
+
+        return $this;
+    }
+
+    public function class(string $name, string|array $value = null): self|array|string
+    {
+        if (! $value) {
+            return static::$builders[$name] ?? [];
+        }
+
+        static::$builders[$name] = $value;
 
         return $this;
     }
