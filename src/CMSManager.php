@@ -5,9 +5,11 @@ namespace Dashed\DashedCore;
 use Filament\Panel;
 use Filament\Forms\Get;
 use Filament\Pages\Dashboard;
+use Filament\Facades\Filament;
 use Illuminate\Support\Facades\View;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Route;
 use Dashed\DashedCore\Classes\Locales;
 use Filament\Forms\Components\Builder;
 use FilamentTiptapEditor\TiptapEditor;
@@ -175,13 +177,19 @@ class CMSManager
         ];
     }
 
-    public function isCMSRoute(): bool
+    public function isCMSRoute(string $panelId = null): bool
     {
-        if (str(request()->url())->contains('form/post')) {
+        $name = Route::currentRouteName();
+
+        if (! $name) {
             return false;
         }
 
-        return str(request()->url())->contains(config('filament.path')) || str(request()->url())->contains('livewire');
+        return $panelId
+            ? str_starts_with($name, $panelId . '.')
+            : collect(Filament::getPanels())
+                ->keys()
+                ->contains(fn ($id) => str_starts_with($name, $id . '.'));
     }
 
     public function getFilamentPanelItems(Panel $panel): Panel
