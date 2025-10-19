@@ -49,6 +49,7 @@ class CMSManager
         'editor' => TiptapEditor::class,
         'editorAttributes' => [],
         'ignorableKeysForTranslations' => [],
+        'ignorableColumnsForTranslations' => [],
         'classes' => [],
     ];
 
