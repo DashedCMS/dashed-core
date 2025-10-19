@@ -3,10 +3,17 @@
 namespace Dashed\DashedCore;
 
 use Filament\Panel;
+<<<<<<< HEAD
 use Filament\Actions\Action;
+=======
+use Filament\Forms\Get;
+use Filament\Pages\Dashboard;
+use Filament\Facades\Filament;
+>>>>>>> f20a7fb98426d505476ad2a10f1b6aadedfdc129
 use Illuminate\Support\Facades\View;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Route;
 use Dashed\DashedCore\Classes\Locales;
 use Filament\Forms\Components\Builder;
 use Dashed\DashedCore\Models\GlobalBlock;
@@ -45,6 +52,9 @@ class CMSManager
         ],
         'editor' => RichEditor::class,
         'editorAttributes' => [],
+        'ignorableKeysForTranslations' => [],
+        'ignorableColumnsForTranslations' => [],
+        'classes' => [],
     ];
 
     protected static $builderBlocksActivated = [
@@ -58,6 +68,17 @@ class CMSManager
         }
 
         static::$builders[$name] = array_merge(static::$builders[$name] ?? [], $blocks);
+
+        return $this;
+    }
+
+    public function class(string $name, string|array $value = null): self|array|string
+    {
+        if (! $value) {
+            return static::$builders[$name] ?? [];
+        }
+
+        static::$builders[$name] = $value;
 
         return $this;
     }
@@ -161,13 +182,19 @@ class CMSManager
         ];
     }
 
-    public function isCMSRoute(): bool
+    public function isCMSRoute(string $panelId = null): bool
     {
-        if (str(request()->url())->contains('form/post')) {
+        $name = Route::currentRouteName();
+
+        if (! $name) {
             return false;
         }
 
-        return str(request()->url())->contains(config('filament.path')) || str(request()->url())->contains('livewire');
+        return $panelId
+            ? str_starts_with($name, $panelId . '.')
+            : collect(Filament::getPanels())
+                ->keys()
+                ->contains(fn ($id) => str_starts_with($name, $id . '.'));
     }
 
     public function getFilamentPanelItems(Panel $panel): Panel
