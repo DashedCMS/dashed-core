@@ -7,7 +7,7 @@ class Sites
     public static function getActive()
     {
         if (count(cms()->builder('sites'))) {
-            return config('dashed-core.dashed_site_id',cms()->builder('sites')[0]['id']);
+            return config('dashed-core.dashed_site_id', cms()->builder('sites')[0]['id']);
         } else {
             return '';
         }

@@ -4,8 +4,8 @@ namespace Dashed\DashedCore\Filament\Concerns;
 
 use Filament\Pages\Page;
 use Dashed\DashedCore\Classes\Locales;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Placeholder;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Infolists\Components\TextEntry;
 
 trait HasCustomBlocksTab
 {
@@ -23,15 +23,15 @@ trait HasCustomBlocksTab
             Fieldset::make('blocks')
                 ->label('Maatwerk blokken')
                 ->schema(array_merge($schema, [
-                    Placeholder::make('savefirst')
-                        ->label('Andere talen invullen werkt alleen op de bewerk pagina, sla deze eerst op')
+                    TextEntry::make('savefirst')
+                        ->state('Andere talen invullen werkt alleen op de bewerk pagina, sla deze eerst op')
                         ->hidden(fn ($record) => $record)
                         ->columnSpanFull(),
                 ]))
                 ->columns(2)
                 ->columnSpanFull()
                 ->relationship('customBlocks')
-                ->afterStateHydrated(fn ($set, $record, $livewire) => $set('customBlocks', $record && $record->customBlocks ? $record->customBlocks->getTranslation('blocks', $livewire->getActiveFormsLocale()) : []))
+                ->afterStateHydrated(fn ($set, $record, $livewire) => $set('customBlocks', $record && $record->customBlocks ? $record->customBlocks->getTranslation('blocks', $livewire->getActiveSchemaLocale()) : []))
                 ->loadStateFromRelationshipsUsing(function ($set, $record, Page $livewire) {
                     if (! $record->customBlocks) {
                         $record->customBlocks()->create([]);
@@ -54,7 +54,7 @@ trait HasCustomBlocksTab
                     return [];
                 })
                 ->saveRelationshipsUsing(function (array $state, Page $livewire, $record) {
-                    $record->customBlocks->setTranslation('blocks', $livewire->getActiveFormsLocale(), $state)->save();
+                    $record->customBlocks->setTranslation('blocks', $livewire->getActiveSchemaLocale(), $state)->save();
                 }),
         ];
     }

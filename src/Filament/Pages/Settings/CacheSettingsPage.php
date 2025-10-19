@@ -2,24 +2,27 @@
 
 namespace Dashed\DashedCore\Filament\Pages\Settings;
 
+use UnitEnum;
+use BackedEnum;
 use Filament\Pages\Page;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Cache;
 use Filament\Notifications\Notification;
-use Filament\Forms\Components\Placeholder;
+use Filament\Infolists\Components\TextEntry;
 
 class CacheSettingsPage extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-cog';
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-cog';
 
     protected static bool $shouldRegisterNavigation = false;
 
     protected static ?string $navigationLabel = 'Cache instellingen';
 
-    protected static ?string $navigationGroup = 'Overige';
+    protected static string | UnitEnum | null $navigationGroup = 'Overige';
 
     protected static ?string $title = 'Cache instellingen';
 
-    protected static string $view = 'dashed-core::settings.pages.default-settings';
+    protected string $view = 'dashed-core::settings.pages.default-settings';
 
     public array $data = [];
 
@@ -27,17 +30,11 @@ class CacheSettingsPage extends Page
     {
     }
 
-    protected function getFormSchema(): array
+    public function form(Schema $schema): Schema
     {
-        return [
-            Placeholder::make('cache')
-                ->label('Klik op de knop hieronder om de cache te legen'),
-        ];
-    }
-
-    public function getFormStatePath(): ?string
-    {
-        return 'data';
+        return $schema->schema([
+            TextEntry::make('Klik op de knop hieronder om de cache te legen'),
+        ]);
     }
 
     public function submit()

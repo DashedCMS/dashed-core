@@ -6,15 +6,15 @@ use Illuminate\Support\Str;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\LocaleSwitcher;
 use Filament\Forms\Components\Select;
 use Dashed\DashedCore\Classes\Locales;
 use Filament\Notifications\Notification;
 use Dashed\DashedCore\Models\GlobalBlock;
-use Filament\Forms\Components\Placeholder;
+use Filament\Infolists\Components\TextEntry;
+use LaraZeus\SpatieTranslatable\Actions\LocaleSwitcher;
 use Dashed\DashedCore\Filament\Actions\ShowSEOScoreAction;
 use Dashed\DashedTranslations\Classes\AutomatedTranslation;
-use Filament\Resources\Pages\EditRecord\Concerns\Translatable;
+use LaraZeus\SpatieTranslatable\Resources\Pages\EditRecord\Concerns\Translatable;
 
 trait HasEditableCMSActions
 {
@@ -80,7 +80,7 @@ trait HasEditableCMSActions
                 }
 
                 if (count($viewActions)) {
-                    $actions[] = ActionGroup::make($viewActions)
+                    $actions[] = ActionGroup::make($viewActions)->columnSpanFull()
                         ->label('Bekijk')
                         ->icon('heroicon-o-eye')
                         ->button();
@@ -99,7 +99,7 @@ trait HasEditableCMSActions
             $actions[] = Action::make('insertTemplateBlock')
                 ->label('Template blok invoegen')
                 ->visible(GlobalBlock::count() > 0)
-                ->form([
+                ->schema([
                     Select::make('templateBlock')
                         ->options(GlobalBlock::all()->mapWithKeys(fn ($block) => [$block->id => $block->name]))
                         ->required()
@@ -156,7 +156,7 @@ trait HasEditableCMSActions
                     ->openUrlInNewTab();
             }
 
-            return ActionGroup::make($viewActions)
+            return ActionGroup::make($viewActions)->columnSpanFull()
                 ->label('Bekijk')
                 ->icon('heroicon-o-eye')
                 ->button();
@@ -176,7 +176,7 @@ trait HasEditableCMSActions
             ->icon('heroicon-m-language')
             ->label('Vertaal')
             ->visible(AutomatedTranslation::automatedTranslationsEnabled())
-            ->form([
+            ->schema([
                 Select::make('to_locales')
                     ->options(Locales::getLocalesArray())
                     ->preload()
@@ -204,9 +204,9 @@ trait HasEditableCMSActions
             ->icon('heroicon-o-document-duplicate')
             ->label('Kopiëren')
             ->visible(count(Locales::getLocalesArray()) > 1)
-            ->form([
-                Placeholder::make('description')
-                    ->label('Hiermee kopieer je alle inhoudt naar andere talen. Dit kan even duren.'),
+            ->schema([
+                TextEntry::make('description')
+                    ->state('Hiermee kopieer je alle inhoudt naar andere talen. Dit kan even duren.'),
                 Select::make('to_locales')
                     ->options(Locales::getLocalesArray())
                     ->preload()

@@ -3,9 +3,9 @@
 namespace Dashed\DashedCore\Filament\Concerns;
 
 use Dashed\DashedCore\Classes\Sites;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Group;
 use Illuminate\Support\Facades\Schema;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\IconColumn;
@@ -20,13 +20,14 @@ trait HasVisitableTab
     {
         return [
             Group::make()
+                ->columnSpanFull()
                 ->columns([
                     'default' => 1,
                     'lg' => 6,
                 ])
                 ->relationship('metadata')
                 ->saveRelationshipsUsing(function (array $state, $livewire, $record) {
-                    $record->metadata->setlocale($livewire->getActiveFormsLocale());
+                    $record->metadata->setlocale($livewire->getActiveSchemaLocale());
                     $record->metadata->update($state);
                 })
                 ->schema([
@@ -49,8 +50,7 @@ trait HasVisitableTab
                             'default' => 1,
                             'lg' => 2,
                         ]),
-                    mediaHelper()->field('image', 'Meta afbeelding')
-                        ->acceptedFileTypes(['image/*'])
+                    mediaHelper()->field('image', 'Meta afbeelding', isImage: true, )
                         ->helperText('De beste afmeting is 1200x630 pixels')
                         ->columnSpan([
                             'default' => 1,
@@ -131,6 +131,7 @@ trait HasVisitableTab
 
         return [
             Group::make()
+                ->columnSpanFull()
                 ->columns(1)
                 ->schema($schema),
         ];

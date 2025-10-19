@@ -1,6 +1,6 @@
 <div @class([
     'absolute inset-x-0 bg-white/90 py-2 ring-1 ring-gray-950/5 z-40 w-[400px]',
-    'group-data-[active]:visible group-data-[active]:opacity-100',
+    'group-data-active:visible group-data-active:opacity-100',
     'group-focus-within:visible group-focus-within:opacity-100',
 ])
      x-show="open"

@@ -17,7 +17,7 @@
             class="w-full @if($data['bottom_margin'] ?? true) lg:pb-14 pb-10 @endif @if($data['top_margin'] ?? true) lg:pt-14 pt-10 @endif flex-col justify-start items-center lg:gap-16 gap-10 inline-flex">
             <div class="w-fit flex-col justify-start items-center gap-9 flex">
                 <div class="flex-col justify-start items-center gap-3.5 flex">
-                    <h1 class="text-center bg-clip-text text-transparent bg-gradient-to-r from-primary-400 via-primary-900 to-primary-600 md:text-6xl text-5xl font-bold font-manrope md:leading-snug leading-snug">
+                    <h1 class="text-center bg-clip-text text-transparent bg-linear-to-r from-primary-400 via-primary-900 to-primary-600 md:text-6xl text-5xl font-bold font-manrope md:leading-snug leading-snug">
                         {!! nl2br($data['title']) !!}
                     </h1>
                     @if($data['subtitle'] ?? false)

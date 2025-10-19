@@ -3,26 +3,25 @@
 namespace Dashed\DashedCore;
 
 use Filament\Panel;
-use Filament\Forms\Get;
-use Filament\Pages\Dashboard;
+use Filament\Actions\Action;
 use Illuminate\Support\Facades\View;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Crypt;
 use Dashed\DashedCore\Classes\Locales;
 use Filament\Forms\Components\Builder;
-use FilamentTiptapEditor\TiptapEditor;
 use Dashed\DashedCore\Models\GlobalBlock;
+use Filament\Forms\Components\RichEditor;
 use Filament\Http\Middleware\Authenticate;
 use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedCore\Classes\AccountHelper;
-use Filament\Forms\Components\Actions\Action;
-use Filament\SpatieLaravelTranslatablePlugin;
+use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
+use LaraZeus\SpatieTranslatable\SpatieTranslatablePlugin;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -44,7 +43,7 @@ class CMSManager
         'themes' => [
             'dashed' => 'Dashed',
         ],
-        'editor' => TiptapEditor::class,
+        'editor' => RichEditor::class,
         'editorAttributes' => [],
     ];
 
@@ -178,13 +177,18 @@ class CMSManager
             ->id('dashed')
             ->path(config('dashed-core.dashed_cms.path', 'dashed'))
             ->login()
+//            ->registration()
+            ->passwordReset()
+            ->emailVerification()
+            ->emailChangeVerification()
+            ->profile()
             ->colors([
                 'primary' => config('dashed-core.dashed_cms.primary_color', '#00D2CD'),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
-                Dashboard::class,
+                \Dashed\DashedEcommerceCore\Filament\Pages\Dashboard\Dashboard::class,
             ])
             ->databaseNotifications()
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
@@ -212,9 +216,9 @@ class CMSManager
     public function getFilamentPluginItems(): array
     {
         $plugins = [
-            SpatieLaravelTranslatablePlugin::make()
+            SpatieTranslatablePlugin::make()
                 ->defaultLocales(array_keys(Locales::getLocalesArray())),
-            mediaHelper()->plugin(),
+//            mediaHelper()->plugin(),
         ];
 
         foreach (cms()->builder('plugins') as $plugin) {
@@ -306,6 +310,7 @@ class CMSManager
 
     public function convertToHtml($content): string
     {
-        return tiptap_converter()->asHTML($content);
+        return RichEditor\RichContentRenderer::make($content)->toHtml();
+        //        return tiptap_converter()->asHTML($content);
     }
 }

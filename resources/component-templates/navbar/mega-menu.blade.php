@@ -1,6 +1,6 @@
 <div @class([
     'absolute inset-x-0 bg-white/90 top-24 py-8 ring-1 ring-gray-950/5 z-40',
-    'group-data-[active]:visible group-data-[active]:opacity-100',
+    'group-data-active:visible group-data-active:opacity-100',
     'group-focus-within:visible group-focus-within:opacity-100',
 ])
      x-show="open"
@@ -14,7 +14,7 @@
                     <a href="{{ $item['url'] }}"
                        class="text-gray-600 font-bold hover:text-primary-500 trans">{{ $item['name'] }}</a>
 
-                    <div class="h-1 bg-gradient-to-r from-primary-500 to-primary-200 mt-2 rounded-lg"></div>
+                    <div class="h-1 bg-linear-to-r from-primary-500 to-primary-200 mt-2 rounded-lg"></div>
 
                     <ul class="space-y-2 mt-4">
                         @foreach ($item['childs'] as $child)

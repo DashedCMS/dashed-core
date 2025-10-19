@@ -1,4 +1,4 @@
-{{--<div class="bg-gradient-to-r from-primary-600 to-primary-300 px-4 md:px-8 py-4" wire:ignore>--}}
+{{--<div class="bg-linear-to-r from-primary-600 to-primary-300 px-4 md:px-8 py-4" wire:ignore>--}}
 {{--    <div class="py-2 swiper swiper-usps">--}}
 {{--        <ul--}}
 {{--            class="gap-4 text-sm md:text-base text-white swiper-wrapper">--}}

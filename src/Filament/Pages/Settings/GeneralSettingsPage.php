@@ -2,33 +2,36 @@
 
 namespace Dashed\DashedCore\Filament\Pages\Settings;
 
+use UnitEnum;
+use BackedEnum;
 use Filament\Pages\Page;
-use Filament\Forms\Components\Tabs;
+use Filament\Actions\Action;
+use Filament\Schemas\Schema;
 use Dashed\DashedCore\Classes\Sites;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Tabs\Tab;
+use Filament\Schemas\Components\Tabs;
 use Filament\Forms\Components\Textarea;
 use Illuminate\Support\Facades\Artisan;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use Filament\Forms\Components\Placeholder;
+use Filament\Schemas\Components\Tabs\Tab;
 use Dashed\DashedCore\Models\Customsetting;
-use Filament\Forms\Components\Actions\Action;
+use Filament\Infolists\Components\TextEntry;
 
 class GeneralSettingsPage extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-cog';
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-cog';
 
     protected static bool $shouldRegisterNavigation = false;
 
     protected static ?string $navigationLabel = 'Algemene instellingen';
 
-    protected static ?string $navigationGroup = 'Overige';
+    protected static string | UnitEnum | null $navigationGroup = 'Overige';
 
     protected static ?string $title = 'Algemene instellingen';
 
-    protected static string $view = 'dashed-core::settings.pages.default-settings';
+    protected string $view = 'dashed-core::settings.pages.default-settings';
 
     public array $data = [];
 
@@ -73,17 +76,16 @@ class GeneralSettingsPage extends Page
         $this->form->fill($formData);
     }
 
-    protected function getFormSchema(): array
+    public function form(Schema $schema): Schema
     {
         $sites = Sites::getSites();
         $tabGroups = [];
 
         $tabs = [];
         foreach ($sites as $site) {
-            $schema = [
-                Placeholder::make('label')
-                    ->label("Winkelgegevens voor {$site['name']}")
-                    ->content('Deze informatie zal de klant gebruiken om contact op te nemen.'),
+            $newSchema = [
+                TextEntry::make("Winkelgegevens voor {$site['name']}")
+                    ->state('Deze informatie zal de klant gebruiken om contact op te nemen.'),
                 TextInput::make("site_name_{$site['id']}")
                     ->label('Site naam')
                     ->required()
@@ -135,7 +137,7 @@ class GeneralSettingsPage extends Page
 
             $tabs[] = Tab::make($site['id'])
                 ->label(ucfirst($site['name']))
-                ->schema($schema)
+                ->schema($newSchema)
                 ->columns([
                     'default' => 1,
                     'lg' => 2,
@@ -146,10 +148,9 @@ class GeneralSettingsPage extends Page
 
         $tabs = [];
         foreach ($sites as $site) {
-            $schema = [
-                Placeholder::make('label')
-                    ->label("Branding voor {$site['name']}")
-                    ->content('Upload hier de branding van je website.')
+            $newSchema = [
+                TextEntry::make("Branding voor {$site['name']}")
+                    ->state('Upload hier de branding van je website.')
                     ->columnSpan([
                         'default' => 1,
                         'lg' => 2,
@@ -160,7 +161,7 @@ class GeneralSettingsPage extends Page
 
             $tabs[] = Tab::make($site['id'])
                 ->label(ucfirst($site['name']))
-                ->schema($schema)
+                ->schema($newSchema)
                 ->columns([
                     'default' => 1,
                     'lg' => 2,
@@ -171,10 +172,9 @@ class GeneralSettingsPage extends Page
 
         $tabs = [];
         foreach ($sites as $site) {
-            $schema = [
-                Placeholder::make('label')
-                    ->label("Externe koppeling voor {$site['name']}")
-                    ->content('Stel de UA in om Google Analytics te koppelen, en koppel hier webmaster tools.')
+            $newSchema = [
+                TextEntry::make("Externe koppeling voor {$site['name']}")
+                    ->state('Stel de UA in om Google Analytics te koppelen, en koppel hier webmaster tools.')
                     ->columnSpan([
                         'default' => 1,
                         'lg' => 2,
@@ -256,7 +256,7 @@ class GeneralSettingsPage extends Page
 
             $tabs[] = Tab::make($site['id'])
                 ->label(ucfirst($site['name']))
-                ->schema($schema)
+                ->schema($newSchema)
                 ->columns([
                     'default' => 1,
                     'lg' => 2,
@@ -265,12 +265,8 @@ class GeneralSettingsPage extends Page
         $tabGroups[] = Tabs::make('Sites')
             ->tabs($tabs);
 
-        return $tabGroups;
-    }
-
-    public function getFormStatePath(): ?string
-    {
-        return 'data';
+        return $schema->schema($tabGroups)
+            ->statePath('data');
     }
 
     public function submit()

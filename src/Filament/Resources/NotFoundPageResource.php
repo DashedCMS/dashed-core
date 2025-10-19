@@ -2,26 +2,29 @@
 
 namespace Dashed\DashedCore\Filament\Resources;
 
+use UnitEnum;
+use BackedEnum;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Actions\Action;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\BulkActionGroup;
 use Dashed\DashedCore\Models\Redirect;
-use Filament\Forms\Components\Section;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Dashed\DashedCore\Classes\UrlHelper;
 use Filament\Notifications\Notification;
-use Filament\Tables\Actions\DeleteAction;
+use Filament\Schemas\Components\Section;
 use Illuminate\Database\Eloquent\Builder;
 use Dashed\DashedCore\Models\NotFoundPage;
-use Filament\Tables\Actions\RestoreAction;
 use Filament\Tables\Filters\TrashedFilter;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\ForceDeleteAction;
-use Filament\Tables\Actions\RestoreBulkAction;
-use Filament\Tables\Actions\ForceDeleteBulkAction;
+use Filament\Actions\ForceDeleteBulkAction;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Dashed\DashedCore\Filament\Resources\NotFoundPageResource\Pages\ListNotFoundPage;
 use Dashed\DashedCore\Filament\Resources\NotFoundPageResource\Pages\ViewNotFoundPage;
@@ -30,9 +33,9 @@ class NotFoundPageResource extends Resource
 {
     protected static ?string $model = NotFoundPage::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-no-symbol';
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-no-symbol';
 
-    protected static ?string $navigationGroup = 'Routes';
+    protected static string | UnitEnum | null $navigationGroup = 'Routes';
 
     protected static ?string $navigationLabel = 'Niet gevonden pagina hits';
 
@@ -41,11 +44,11 @@ class NotFoundPageResource extends Resource
     protected static ?string $pluralLabel = 'Niet gevonden pagina hits';
     protected static ?int $navigationSort = 5;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
-                Section::make('Informatie')
+                Section::make('Informatie')->columnSpanFull()
                     ->schema([
                         Forms\Components\TextInput::make('link')
                             ->label('Link'),
@@ -98,13 +101,13 @@ class NotFoundPageResource extends Resource
                 TrashedFilter::make(),
                 // ...
             ])
-            ->actions([
-                \Filament\Tables\Actions\ViewAction::make()
+            ->recordActions([
+                \Filament\Actions\ViewAction::make()
                     ->button(),
-                \Filament\Tables\Actions\Action::make('createRedirect')
+                \Filament\Actions\Action::make('createRedirect')
                     ->label('Maak redirect aan')
                     ->button()
-                    ->form([
+                    ->schema([
                         linkHelper()->field(required: true),
                         //                        Forms\Components\TextInput::make('to')
                         //                            ->required()
@@ -124,7 +127,7 @@ class NotFoundPageResource extends Resource
                             ->default(now()->addMonths(3))
                             ->reactive()
                             ->hintAction(
-                                Forms\Components\Actions\Action::make('emptyDate')
+                                Action::make('emptyDate')
                                     ->label('Leeg datum')
                                     ->icon('heroicon-o-clock')
                                     ->action(function (Forms\Set $set) {
@@ -149,7 +152,7 @@ class NotFoundPageResource extends Resource
                 ForceDeleteAction::make(),
                 RestoreAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                     ForceDeleteBulkAction::make(),

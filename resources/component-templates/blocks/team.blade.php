@@ -19,10 +19,10 @@
             @foreach($data['team'] as $team)
                 <div class="card w-full"
                      data-aos="fade-left" data-aos-delay="{{ 100 * $loop->iteration }}">
-                    <div class="card__content text-center relative p-20 aspect-[2/3] transition-transform duration-1000 text-white font-bold">
+                    <div class="card__content text-center relative p-20 aspect-2/3 transition-transform duration-1000 text-white font-bold">
                         <div class="card__front absolute inset-0 flex items-center justify-center">
                             <x-dashed-files::image
-                                class="aspect-[2/3] rounded-lg w-full object-cover"
+                                class="aspect-2/3 rounded-lg w-full object-cover"
                                 :mediaId="$team['image']"
                                 :alt="$team['name']"
                                 :manipulations="[
@@ -32,7 +32,7 @@
                         </div>
                         <div class="card__back absolute top-0 bottom-0 right-0 left-0 flex items-center justify-center">
                             <x-dashed-files::image
-                                class="aspect-[2/3] rounded-lg w-full object-cover"
+                                class="aspect-2/3 rounded-lg w-full object-cover"
                                 :mediaId="$team['image-2']"
                                 :alt="$team['name']"
                                 :manipulations="[

@@ -1,7 +1,7 @@
 <x-master>
     @livewireStyles
     @livewireScripts
-    <main class="relative isolate h-[100vh] bg-gradient-to-br from-primary-500 to-primary-200 flex items-center justify-center">
+    <main class="relative isolate h-screen bg-linear-to-br from-primary-500 to-primary-200 flex items-center justify-center">
         <x-dashed-files::image
             class="absolute inset-0 -z-10 h-full w-full object-cover object-top mix-blend-multiply"
             config="dashed"

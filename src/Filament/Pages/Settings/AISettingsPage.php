@@ -4,27 +4,27 @@ namespace Dashed\DashedCore\Filament\Pages\Settings;
 
 use Filament\Pages\Page;
 use Filament\Actions\Action;
+use Filament\Schemas\Schema;
 use Dashed\DashedCore\Classes\Sites;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use Filament\Forms\Components\Placeholder;
+use Filament\Schemas\Contracts\HasSchemas;
 use Dashed\DashedCore\Classes\OpenAIHelper;
 use Dashed\DashedCore\Models\Customsetting;
-use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Dashed\DashedCore\Jobs\CreateAltTextsForAllMediaItems;
 use RalphJSmit\Filament\MediaLibrary\Media\Models\MediaLibraryItem;
 
-class AISettingsPage extends Page implements HasForms
+class AISettingsPage extends Page implements HasSchemas
 {
-    use InteractsWithForms;
-
+    use InteractsWithSchemas;
     protected static bool $shouldRegisterNavigation = false;
 
     protected static ?string $title = 'AI Settings';
 
-    protected static string $view = 'dashed-core::settings.pages.default-settings';
+    protected string $view = 'dashed-core::settings.pages.default-settings';
 
     public array $data = [];
 
@@ -37,13 +37,11 @@ class AISettingsPage extends Page implements HasForms
         $this->form->fill($formData);
     }
 
-    protected function getFormSchema(): array
+    public function form(Schema $schema): Schema
     {
-        $schema = [
-            Placeholder::make('connected')
-                ->label('Open AI is ' . (Customsetting::get('open_ai_connected') ? 'verbonden' : 'niet verbonden')),
-            TextInput::make("open_ai_api_key")
-                ->label('Open AI API key')
+        $newSchema = [
+            TextEntry::make('Open AI is ' . (Customsetting::get('open_ai_connected') ? 'verbonden' : 'niet verbonden')),
+            TextInput::make('Open AI API key')
                 ->reactive(),
             Toggle::make("create_alt_text_for_new_uploaded_images")
                 ->label('Maak automatisch alt tekst voor nieuwe geüploade afbeeldingen')
@@ -51,12 +49,8 @@ class AISettingsPage extends Page implements HasForms
                 ->visible(fn ($get) => $get('open_ai_api_key')),
         ];
 
-        return $schema;
-    }
-
-    public function getFormStatePath(): ?string
-    {
-        return 'data';
+        return $schema->schema($newSchema)
+            ->statePath('data');
     }
 
     public function submit()
@@ -85,17 +79,16 @@ class AISettingsPage extends Page implements HasForms
                 ->label('Genereer alt teksten voor alle afbeeldingen')
                 ->icon('heroicon-o-photo')
                 ->color('primary')
-                ->form([
-                    Placeholder::make('generateAltTextForAllImages')
-                        ->label('Genereer alt teksten voor afbeeldingen. Er zijn in totaal ' . MediaLibraryItem::whereHas('media', function ($query) {
-                            $query->whereIn('mime_type', [
-                                'image/jpeg',
-                                'image/png',
-                                'image/gif',
-                                'image/webp',
-                                'image/svg+xml',
-                            ]);
-                        })->count() . ' afbeeldingen in de media bibliotheek waarvan ' . MediaLibraryItem::whereNull('alt_text')
+                ->schema([
+                    TextEntry::make('Genereer alt teksten voor afbeeldingen. Er zijn in totaal ' . MediaLibraryItem::whereHas('media', function ($query) {
+                        $query->whereIn('mime_type', [
+                            'image/jpeg',
+                            'image/png',
+                            'image/gif',
+                            'image/webp',
+                            'image/svg+xml',
+                        ]);
+                    })->count() . ' afbeeldingen in de media bibliotheek waarvan ' . MediaLibraryItem::whereNull('alt_text')
                                 ->whereHas('media', function ($query) {
                                     $query->whereIn('mime_type', [
                                         'image/jpeg',

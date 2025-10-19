@@ -14,11 +14,11 @@ class NotFoundPageStats extends ChartWidget
 
     public ?Model $record = null;
 
-    protected static ?string $heading = 'Aantal keer bezocht';
+    protected ?string $heading = 'Aantal keer bezocht';
 
     protected int|string|array $columnSpan = 'full';
 
-    protected static ?string $maxHeight = '300px';
+    protected ?string $maxHeight = '300px';
 
     public ?string $filter = 'day';
 

@@ -5,7 +5,7 @@
                 <div class="flex"
                      data-aos="fade-left">
                     <x-dashed-files::image
-                        class="w-full object-cover rounded-xl bg-gray-900 shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem]"
+                        class="w-full object-cover rounded-xl bg-gray-900 shadow-xl ring-1 ring-gray-400/10 sm:w-228"
                         config="dashed"
                         :mediaId="$data['image']"
                         :alt="$data['title']"
@@ -42,7 +42,7 @@
                 <div class="flex"
                      data-aos="fade-left">
                     <x-dashed-files::image
-                        class="w-full object-cover rounded-xl bg-gray-900 shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem]"
+                        class="w-full object-cover rounded-xl bg-gray-900 shadow-xl ring-1 ring-gray-400/10 sm:w-228"
                         config="dashed"
                         :mediaId="$data['image']"
                         :alt="$data['title']"

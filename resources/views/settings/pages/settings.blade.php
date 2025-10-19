@@ -6,7 +6,7 @@
             @foreach(cms()->builder('settingPages') as $settingPage)
                 <li class="col-span-1 flex shadow-sm rounded-md">
                     <div
-                        class="flex-shrink-0 flex items-center justify-center w-16 bg-primary-600 text-white text-sm font-medium rounded-l-md">
+                        class="shrink-0 flex items-center justify-center w-16 bg-primary-600 text-white text-sm font-medium rounded-l-md">
                         <a
                            href="{{ $settingPage['page']::getUrl() }}">
                             <x-dynamic-component :component="'heroicon-o-' . $settingPage['icon']"
@@ -24,7 +24,7 @@
                                 </h3>
                                 <p class="text-gray-500">{{ $settingPage['description'] }}</p>
                             </div>
-                            <div class="flex-shrink-0 pr-4">
+                            <div class="shrink-0 pr-4">
                                 <a href="{{ $settingPage['page']::getUrl() }}"
                                    class="w-8 h-8 bg-white inline-flex items-center justify-center text-gray-400 rounded-full bg-transparent hover:text-gray-500 focus:outline-none ring-2 ring-offset-2 ring-primary-500 focus:ring-secondary-500"><span
                                         class="sr-only">Open optie</span>

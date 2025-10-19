@@ -19,7 +19,7 @@ class {{ CLASS }}SettingsPage extends Page
     protected static bool $shouldRegisterNavigation = false;
     protected static ?string $title = '{{ PLURAL }}';
 
-    protected static string $view = 'dashed-core::settings.pages.default-settings';
+    protected string $view = 'dashed-core::settings.pages.default-settings';
     public array $data = [];
 
     public function mount(): void

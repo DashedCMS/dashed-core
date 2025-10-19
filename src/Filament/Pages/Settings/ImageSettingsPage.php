@@ -2,29 +2,31 @@
 
 namespace Dashed\DashedCore\Filament\Pages\Settings;
 
+use UnitEnum;
+use BackedEnum;
 use Filament\Pages\Page;
-use Filament\Forms\Components\Tabs;
+use Filament\Schemas\Schema;
 use Dashed\DashedCore\Classes\Sites;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Tabs\Tab;
+use Filament\Schemas\Components\Tabs;
 use Filament\Notifications\Notification;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Placeholder;
+use Filament\Schemas\Components\Tabs\Tab;
 use Dashed\DashedCore\Models\Customsetting;
 
 class ImageSettingsPage extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-cog';
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-cog';
 
     protected static bool $shouldRegisterNavigation = false;
 
     protected static ?string $navigationLabel = 'Afbeelding instellingen';
 
-    protected static ?string $navigationGroup = 'Overige';
+    protected static string | UnitEnum | null $navigationGroup = 'Overige';
 
     protected static ?string $title = 'Afbeelding instellingen';
 
-    protected static string $view = 'dashed-core::settings.pages.default-settings';
+    protected string $view = 'dashed-core::settings.pages.default-settings';
 
     public array $data = [];
 
@@ -40,7 +42,7 @@ class ImageSettingsPage extends Page
         $this->form->fill($formData);
     }
 
-    protected function getFormSchema(): array
+    public function form(Schema $schema): Schema
     {
         //        $sites = Sites::getSites();
         //        $tabGroups = [];
@@ -66,7 +68,7 @@ class ImageSettingsPage extends Page
         //        $tabGroups[] = Tabs::make('Sites')
         //            ->tabs($tabs);
 
-        return [
+        return $schema->schema([
             Toggle::make('image_force_lazy_load')
                 ->label('Force lazy load')
                 ->helperText('Forceer lazy load voor alle afbeeldingen op de website.')
@@ -75,13 +77,9 @@ class ImageSettingsPage extends Page
                 ->label('Toon afbeelding formaten in de image tags')
                 ->helperText('Dit kan de website vertragen')
                 ->default(false),
-        ];
+        ])
+            ->statePath('data');
         //        return $tabGroups;
-    }
-
-    public function getFormStatePath(): ?string
-    {
-        return 'data';
     }
 
     public function submit()

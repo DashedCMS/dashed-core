@@ -1,6 +1,6 @@
 <div>
     <x-container>
-        <div class="w-full max-w-screen-xl px-4 mx-auto sm:px-8">
+        <div class="w-full max-w-(--breakpoint-xl) px-4 mx-auto sm:px-8">
             <div class="py-0 sm:py-8 mx-auto grid grid-cols-1 max-w-xl">
                 <form wire:submit.prevent="submit" class="space-y-6 flex flex-col mt-auto">
                     <h2 class="font-display font-bold text-xl">{{Translation::get('forgot-password', 'login', 'Wachtwoord vergeten?')}}</h2>

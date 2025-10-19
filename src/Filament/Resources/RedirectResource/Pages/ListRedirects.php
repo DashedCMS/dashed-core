@@ -24,7 +24,7 @@ class ListRedirects extends ListRecords
             CreateAction::make(),
             Action::make('bulkUpload')
                 ->label('Bulk upload')
-                ->form([
+                ->schema([
                     FileUpload::make('file')
                         ->label('Upload CSV file')
                         ->required()

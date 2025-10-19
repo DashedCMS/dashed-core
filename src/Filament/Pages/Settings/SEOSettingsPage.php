@@ -2,30 +2,33 @@
 
 namespace Dashed\DashedCore\Filament\Pages\Settings;
 
+use UnitEnum;
+use BackedEnum;
 use Filament\Pages\Page;
-use Filament\Forms\Components\Tabs;
+use Filament\Schemas\Schema;
 use Dashed\DashedCore\Classes\Sites;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Tabs\Tab;
+use Filament\Schemas\Components\Tabs;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use Filament\Forms\Components\Placeholder;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs\Tab;
 use Dashed\DashedCore\Models\Customsetting;
+use Filament\Infolists\Components\TextEntry;
 
 class SEOSettingsPage extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-cog';
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-cog';
 
     protected static bool $shouldRegisterNavigation = false;
 
     protected static ?string $navigationLabel = 'Meta data instellingen';
 
-    protected static ?string $navigationGroup = 'Overige';
+    protected static string | UnitEnum | null $navigationGroup = 'Overige';
 
     protected static ?string $title = 'Meta data instellingen';
 
-    protected static string $view = 'dashed-core::settings.pages.default-settings';
+    protected string $view = 'dashed-core::settings.pages.default-settings';
 
     public array $data = [];
 
@@ -44,17 +47,16 @@ class SEOSettingsPage extends Page
         $this->form->fill($formData);
     }
 
-    protected function getFormSchema(): array
+    public function form(Schema $schema): Schema
     {
         $sites = Sites::getSites();
         $tabGroups = [];
 
         $tabs = [];
         foreach ($sites as $site) {
-            $schema = [
-                Placeholder::make('label')
-                    ->label("Meta data voor {$site['name']}")
-                    ->content('Dit is de standaard voor meta data.'),
+            $newSchema = [
+                TextEntry::make("Meta data voor {$site['name']}")
+                    ->state('Dit is de standaard voor meta data.'),
                 TextInput::make("default_meta_data_twitter_site_{$site['id']}")
                     ->label('Twitter site')
                     ->maxLength(255)
@@ -69,7 +71,7 @@ class SEOSettingsPage extends Page
 
             $tabs[] = Tab::make($site['id'])
                 ->label(ucfirst($site['name']))
-                ->schema($schema)
+                ->schema($newSchema)
                 ->columns([
                     'default' => 1,
                     'lg' => 2,
@@ -79,7 +81,7 @@ class SEOSettingsPage extends Page
             ->tabs($tabs);
 
         //        $tabGroups[] =
-        //            Section::make('SEO instellingen voor alle sites')
+        //            Section::make('SEO instellingen voor alle sites')->columnSpanFull()
         //                ->schema([
         //                    Toggle::make('seo_check_models')
         //                        ->label('Check SEO modellen op score')
@@ -89,12 +91,8 @@ class SEOSettingsPage extends Page
         //                    //                        ->helperText('Forceer een trailing slash op alle URL\'s, dit kan invloed hebben op de SEO score van je website'),
         //                ]);
 
-        return $tabGroups;
-    }
-
-    public function getFormStatePath(): ?string
-    {
-        return 'data';
+        return $schema->schema($tabGroups)
+            ->statePath('data');
     }
 
     public function submit()

@@ -2,8 +2,8 @@
 
 namespace Dashed\DashedCore\Classes;
 
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
+use Filament\Schemas\Components\Group;
 use Filament\Forms\Components\TextInput;
 
 class LinkHelper
@@ -40,7 +40,7 @@ class LinkHelper
                 ->required($required)
                 ->placeholder('Example: https://example.com of /contact')
                 ->visible(fn ($get) => in_array($get("{$prefix}_type"), ['normal'])),
-        ], $routeModelInputs))
+        ], $routeModelInputs))->columnSpanFull()
             ->columns(2);
     }
 

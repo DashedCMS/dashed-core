@@ -2,17 +2,19 @@
 
 namespace Dashed\DashedCore\Filament\Resources;
 
+use UnitEnum;
+use BackedEnum;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
 use Dashed\DashedCore\Models\Redirect;
-use Filament\Forms\Components\Section;
-use Filament\Tables\Actions\EditAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Schemas\Components\Section;
 use Dashed\DashedCore\Filament\Resources\RedirectResource\Pages\EditRedirect;
 use Dashed\DashedCore\Filament\Resources\RedirectResource\Pages\ListRedirects;
 use Dashed\DashedCore\Filament\Resources\RedirectResource\Pages\CreateRedirect;
@@ -23,9 +25,9 @@ class RedirectResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'from';
 
-    protected static ?string $navigationIcon = 'heroicon-o-link';
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-link';
 
-    protected static ?string $navigationGroup = 'Routes';
+    protected static string | UnitEnum | null $navigationGroup = 'Routes';
 
     protected static ?string $navigationLabel = 'Redirects';
 
@@ -36,12 +38,12 @@ class RedirectResource extends Resource
 
     protected static bool $isGloballySearchable = false;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema(
                 [
-                    Section::make('content')
+                    Section::make('content')->columnSpanFull()
                         ->schema(
                             array_merge([
                                 Forms\Components\TextInput::make('from')
@@ -92,12 +94,12 @@ class RedirectResource extends Resource
                     ->sortable()
                     ->getStateUsing(fn ($record) => $record->delete_redirect_after ? $record->delete_redirect_after->format('d-m-Y') : 'Niet verwijderen'),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make()
                     ->button(),
                 DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

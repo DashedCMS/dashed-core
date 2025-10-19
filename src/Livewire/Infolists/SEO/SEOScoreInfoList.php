@@ -4,17 +4,17 @@ namespace Dashed\DashedCore\Livewire\Infolists\SEO;
 
 use Livewire\Component;
 use Filament\Infolists\Infolist;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Infolists\Components\Section;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Contracts\HasInfolists;
-use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Infolists\Components\KeyValueEntry;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 
-class SEOScoreInfoList extends Component implements HasForms, HasInfolists
+class SEOScoreInfoList extends Component implements HasSchemas, HasInfolists
 {
-    use InteractsWithForms;
+    use InteractsWithSchemas;
     use InteractsWithInfolists;
 
     public $record;
@@ -63,19 +63,19 @@ class SEOScoreInfoList extends Component implements HasForms, HasInfolists
             ->record($this->record)
             ->schema([
                 TextEntry::make('seoScore')
-                    ->label('Huidige SEO score')
+                    ->state('Huidige SEO score')
                     ->visible((bool) $seoScore)
                     ->state($seoScore->score.' van de 100')
                     ->helperText('Let op: niet alles is altijd op te lossen en een 100% score is niet vereist.'),
                 TextEntry::make('seoScore')
-                    ->label('Huidige SEO score')
+                    ->state('Huidige SEO score')
                     ->hidden((bool) $seoScore)
                     ->state('Er is nog geen SEO score bekend, sla op om te laten berekenen'),
-                Section::make('Gelukte checks')
+                Section::make('Gelukte checks')->columnSpanFull()
                     ->visible((bool) $seoScore)
                     ->schema($succeededChecks)
                     ->visible(count($succeededChecks)),
-                Section::make('Mislukte checks')
+                Section::make('Mislukte checks')->columnSpanFull()
                     ->visible((bool) $seoScore)
                     ->schema($failedChecks)
                     ->visible(count($failedChecks)),

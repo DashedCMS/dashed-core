@@ -2,19 +2,21 @@
 
 namespace Dashed\DashedCore\Filament\Resources;
 
+use UnitEnum;
+use BackedEnum;
 use App\Models\User;
-use Filament\Forms\Get;
-use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Section;
-use Filament\Tables\Actions\EditAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Dashed\DashedCore\Filament\Resources\UserResource\Users\EditUser;
 use Dashed\DashedCore\Filament\Resources\UserResource\Users\ListUsers;
 use Dashed\DashedCore\Filament\Resources\UserResource\Users\CreateUser;
@@ -25,9 +27,9 @@ class UserResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-users';
 
-    protected static ?string $navigationGroup = 'Gebruikers';
+    protected static string | UnitEnum | null $navigationGroup = 'Gebruikers';
 
     protected static ?string $navigationLabel = 'Gebruikers';
 
@@ -49,11 +51,11 @@ class UserResource extends Resource
         ];
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
-                Section::make('Gebruiker')
+                Section::make('Gebruiker')->columnSpanFull()
                     ->schema([
                         TextInput::make('first_name')
                             ->label('Voornaam')
@@ -116,12 +118,12 @@ class UserResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make()
                     ->button(),
                 DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

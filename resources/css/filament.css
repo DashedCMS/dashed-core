@@ -1,18 +1,36 @@
-/*@import '../../../vendor/filament/forms/dist/module.esm.css';*/
-@import '../../vendor/filament/filament/resources/css/app.css';
+/*!*@import '../../../vendor/filament/forms/dist/module.esm.css';*!*/
+/*@import '../../vendor/filament/filament/resources/css/app.css' layer(base);*/
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/*@import 'tailwindcss';*/
 
-input.form-input{
-    @apply block w-full h-10 duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600 border-gray-300;
-}
+/*@config '../../tailwind.config.js';*/
 
-textarea.textarea-input{
-    @apply block w-full duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-600 border-gray-300;
-}
+/*!**/
+/*  The default border color has changed to `currentcolor` in Tailwind CSS v4,*/
+/*  so we've added these compatibility styles to make sure everything still*/
+/*  looks the same as it did with Tailwind CSS v3.*/
 
-.text-egg-blue{
-    color: #00D2CD;
-}
+/*  If we ever want to remove these styles, we need to add an explicit border*/
+/*  color utility to any element that depends on these defaults.*/
+/**!*/
+/*@layer base {*/
+/*  *,*/
+/*  ::after,*/
+/*  ::before,*/
+/*  ::backdrop,*/
+/*  ::file-selector-button {*/
+/*    border-color: var(--color-gray-200, currentcolor);*/
+/*  }*/
+/*}*/
+
+/*input.form-input{*/
+/*    @apply block w-full h-10 duration-75 rounded-lg shadow-xs focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600 border-gray-300;*/
+/*}*/
+
+/*textarea.textarea-input{*/
+/*    @apply block w-full duration-75 rounded-lg shadow-xs focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-600 border-gray-300;*/
+/*}*/
+
+/*.text-egg-blue{*/
+/*    color: #00D2CD;*/
+/*}*/
