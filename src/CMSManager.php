@@ -3,13 +3,9 @@
 namespace Dashed\DashedCore;
 
 use Filament\Panel;
-<<<<<<< HEAD
 use Filament\Actions\Action;
-=======
-use Filament\Forms\Get;
 use Filament\Pages\Dashboard;
 use Filament\Facades\Filament;
->>>>>>> f20a7fb98426d505476ad2a10f1b6aadedfdc129
 use Illuminate\Support\Facades\View;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Crypt;
