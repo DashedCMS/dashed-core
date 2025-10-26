@@ -58,6 +58,21 @@ class MigrateToV4 extends Command
             $this->warn('No composer.json changes. Skipping composer update.');
         }
 
+        $path = base_path('vendor/dashed/dashed-core/src/migrate.php');
+
+        $process = new Process(['php', $path]);
+        $process->setTimeout(null);
+        $process->run(function ($type, $buffer) {
+            echo $buffer;
+        });
+
+        if (! $process->isSuccessful()) {
+            $this->error('❌ Vendor script failed');
+            return self::FAILURE;
+        }
+
+        $this->info('✅ Vendor script executed successfully');
+
         $this->newLine();
         $this->info('🎉 Migration to Dashed v4 completed successfully!');
 
