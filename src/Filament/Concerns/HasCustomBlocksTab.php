@@ -20,7 +20,7 @@ trait HasCustomBlocksTab
         }
 
         return [
-            Fieldset::make('blocks')
+            Fieldset::make('customBlocks')
                 ->label('Maatwerk blokken')
                 ->schema(array_merge($schema, [
                     TextEntry::make('savefirst')
@@ -53,8 +53,10 @@ trait HasCustomBlocksTab
                 ->mutateRelationshipDataBeforeCreateUsing(function (array $state, $record, Page $livewire) {
                     return [];
                 })
-                ->saveRelationshipsUsing(function (array $state, Page $livewire, $record) {
-                    $record->customBlocks->setTranslation('blocks', $livewire->getActiveSchemaLocale(), $state)->save();
+                ->mutateRelationshipDataBeforeSaveUsing(function(array $data, Page $livewire, $record) {
+                    $record->customBlocks->setTranslation('blocks', $livewire->getActiveSchemaLocale(), $data)->save();
+
+                    return [];
                 }),
         ];
     }

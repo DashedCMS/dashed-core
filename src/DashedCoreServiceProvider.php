@@ -2,6 +2,8 @@
 
 namespace Dashed\DashedCore;
 
+use Dashed\DashedCore\Commands\MigrateCodeToV4;
+use Dashed\DashedCore\Commands\MigrateToV4;
 use Livewire\Livewire;
 use Illuminate\Support\Facades\Mail;
 use App\Providers\AppServiceProvider;
@@ -469,6 +471,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                 CreateDefaultPages::class,
                 ReplaceEditorStringsInFiles::class,
                 AutomaticlyCreateAltTextsForAllMediaItems::class,
+                MigrateToV4::class,
             ]);
     }
 

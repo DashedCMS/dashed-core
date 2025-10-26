@@ -40,8 +40,10 @@ class AISettingsPage extends Page implements HasSchemas
     public function form(Schema $schema): Schema
     {
         $newSchema = [
-            TextEntry::make('Open AI is ' . (Customsetting::get('open_ai_connected') ? 'verbonden' : 'niet verbonden')),
-            TextInput::make('Open AI API key')
+            TextEntry::make('Connectie status')
+                ->state('Open AI is ' . (Customsetting::get('open_ai_connected') ? 'verbonden' : 'niet verbonden')),
+            TextInput::make('open_ai_api_key')
+                ->label('Open AI API sleutel')
                 ->reactive(),
             Toggle::make("create_alt_text_for_new_uploaded_images")
                 ->label('Maak automatisch alt tekst voor nieuwe geüploade afbeeldingen')
@@ -81,23 +83,23 @@ class AISettingsPage extends Page implements HasSchemas
                 ->color('primary')
                 ->schema([
                     TextEntry::make('Genereer alt teksten voor afbeeldingen. Er zijn in totaal ' . MediaLibraryItem::whereHas('media', function ($query) {
-                        $query->whereIn('mime_type', [
-                            'image/jpeg',
-                            'image/png',
-                            'image/gif',
-                            'image/webp',
-                            'image/svg+xml',
-                        ]);
-                    })->count() . ' afbeeldingen in de media bibliotheek waarvan ' . MediaLibraryItem::whereNull('alt_text')
-                                ->whereHas('media', function ($query) {
-                                    $query->whereIn('mime_type', [
-                                        'image/jpeg',
-                                        'image/png',
-                                        'image/gif',
-                                        'image/webp',
-                                        'image/svg+xml',
-                                    ]);
-                                })->count() . ' nog geen alt tekst hebben.')
+                            $query->whereIn('mime_type', [
+                                'image/jpeg',
+                                'image/png',
+                                'image/gif',
+                                'image/webp',
+                                'image/svg+xml',
+                            ]);
+                        })->count() . ' afbeeldingen in de media bibliotheek waarvan ' . MediaLibraryItem::whereNull('alt_text')
+                            ->whereHas('media', function ($query) {
+                                $query->whereIn('mime_type', [
+                                    'image/jpeg',
+                                    'image/png',
+                                    'image/gif',
+                                    'image/webp',
+                                    'image/svg+xml',
+                                ]);
+                            })->count() . ' nog geen alt tekst hebben.')
                         ->helperText('Deze actie genereert automatisch alt teksten voor alle afbeeldingen in de media bibliotheek. Dit kan enige tijd duren, afhankelijk van het aantal afbeeldingen.'),
                     Toggle::make('overwriteExisting')
                         ->label('Overschrijf bestaande ALT teksten')
