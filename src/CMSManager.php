@@ -4,7 +4,6 @@ namespace Dashed\DashedCore;
 
 use Filament\Panel;
 use Filament\Actions\Action;
-use Filament\Pages\Dashboard;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\View;
 use Filament\Forms\Components\Select;

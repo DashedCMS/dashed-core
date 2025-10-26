@@ -26,10 +26,10 @@ trait HasVisitableTab
                     'lg' => 6,
                 ])
                 ->relationship('metadata')
-                ->saveRelationshipsUsing(function (array $state, $livewire, $record) {
-                    $record->metadata->setlocale($livewire->getActiveSchemaLocale());
-                    $record->metadata->update($state);
-                })
+//                ->saveRelationshipsUsing(function (array $state, $livewire, $record) {
+//                    $record->metadata->setlocale($livewire->getActiveSchemaLocale());
+//                    $record->metadata->update($state);
+//                })
                 ->schema([
                     TextInput::make('title')
                         ->label('Meta titel')
@@ -50,7 +50,7 @@ trait HasVisitableTab
                             'default' => 1,
                             'lg' => 2,
                         ]),
-                    mediaHelper()->field('image', 'Meta afbeelding', isImage: true, )
+                    mediaHelper()->field('image', 'Meta afbeelding', isImage: true)
                         ->helperText('De beste afmeting is 1200x630 pixels')
                         ->columnSpan([
                             'default' => 1,

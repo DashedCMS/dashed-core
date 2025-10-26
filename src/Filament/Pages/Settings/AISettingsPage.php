@@ -15,7 +15,7 @@ use Dashed\DashedCore\Models\Customsetting;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Dashed\DashedCore\Jobs\CreateAltTextsForAllMediaItems;
-use RalphJSmit\Filament\MediaLibrary\Media\Models\MediaLibraryItem;
+use RalphJSmit\Filament\MediaLibrary\Models\MediaLibraryItem;
 
 class AISettingsPage extends Page implements HasSchemas
 {
