@@ -80,7 +80,7 @@ trait HasEditableCMSActions
                 }
 
                 if (count($viewActions)) {
-                    $actions[] = ActionGroup::make($viewActions)
+                    $actions[] = ActionGroup::make($viewActions)->columnSpanFull()
                         ->label('Bekijk')
                         ->icon('heroicon-o-eye')
                         ->button();
