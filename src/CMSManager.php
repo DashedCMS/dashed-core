@@ -196,9 +196,7 @@ class CMSManager
     {
         $pages = [];
 
-        if(class_exists(\Dashed\DashedEcommerceCore\Filament\Pages\Dashboard\Dashboard::class)){
-            $pages[] = \Dashed\DashedEcommerceCore\Filament\Pages\Dashboard\Dashboard::class;
-        }
+            $pages[] = \Dashed\DashedCore\Filament\Pages\Dashboard\Dashboard::class;
 
         $panel
             ->default()
