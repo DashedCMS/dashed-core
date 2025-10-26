@@ -2,8 +2,6 @@
 
 namespace Dashed\DashedCore;
 
-use Dashed\DashedCore\Commands\MigrateCodeToV4;
-use Dashed\DashedCore\Commands\MigrateToV4;
 use Livewire\Livewire;
 use Illuminate\Support\Facades\Mail;
 use App\Providers\AppServiceProvider;
@@ -16,6 +14,7 @@ use Filament\Forms\Components\Textarea;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\LaravelPackageTools\Package;
 use Filament\Forms\Components\TextInput;
+use Dashed\DashedCore\Commands\MigrateToV4;
 use Illuminate\Console\Scheduling\Schedule;
 use Filament\Forms\Components\Builder\Block;
 use Dashed\DashedCore\Commands\CreateSitemap;
@@ -191,8 +190,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                             TextInput::make('title')
                                 ->label('Titel')
                                 ->required(),
-                            linkHelper()->field('url', true)
-                                ->label('URL'),
+                            linkHelper()->field('url', true, 'URL'),
                             TextInput::make('icon')
                                 ->label('Icoon')
                                 ->helperText('Lucide icons: https://lucide.dev/icons/, just paste the svg code here')

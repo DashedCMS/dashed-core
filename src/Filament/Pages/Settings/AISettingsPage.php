@@ -83,14 +83,14 @@ class AISettingsPage extends Page implements HasSchemas
                 ->color('primary')
                 ->schema([
                     TextEntry::make('Genereer alt teksten voor afbeeldingen. Er zijn in totaal ' . MediaLibraryItem::whereHas('media', function ($query) {
-                            $query->whereIn('mime_type', [
-                                'image/jpeg',
-                                'image/png',
-                                'image/gif',
-                                'image/webp',
-                                'image/svg+xml',
-                            ]);
-                        })->count() . ' afbeeldingen in de media bibliotheek waarvan ' . MediaLibraryItem::whereNull('alt_text')
+                        $query->whereIn('mime_type', [
+                            'image/jpeg',
+                            'image/png',
+                            'image/gif',
+                            'image/webp',
+                            'image/svg+xml',
+                        ]);
+                    })->count() . ' afbeeldingen in de media bibliotheek waarvan ' . MediaLibraryItem::whereNull('alt_text')
                             ->whereHas('media', function ($query) {
                                 $query->whereIn('mime_type', [
                                     'image/jpeg',

@@ -22,7 +22,7 @@ class MigrateToV4 extends Command
         ]);
 
         // 2) Update frontend packages via npm
-        if (!$this->runNpmInstall()) {
+        if (! $this->runNpmInstall()) {
             $this->error('❌ npm install failed.');
 
             return self::FAILURE;
@@ -49,7 +49,7 @@ class MigrateToV4 extends Command
         if ($composerChanged) {
             $this->newLine();
             $this->info('🎯 Running: composer update dashed/* laravel/framework');
-            if (!$this->runProcess(['composer', 'update', 'dashed/*', 'laravel/framework'])) {
+            if (! $this->runProcess(['composer', 'update', 'dashed/*', 'laravel/framework'])) {
                 $this->error('❌ Composer update failed.');
 
                 return self::FAILURE;
@@ -66,8 +66,9 @@ class MigrateToV4 extends Command
             echo $buffer;
         });
 
-        if (!$process->isSuccessful()) {
+        if (! $process->isSuccessful()) {
             $this->error('❌ Vendor script failed');
+
             return self::FAILURE;
         }
 
@@ -120,7 +121,7 @@ class MigrateToV4 extends Command
     {
         $file = base_path('composer.json');
 
-        if (!file_exists($file)) {
+        if (! file_exists($file)) {
             $this->error('composer.json not found!');
 
             return null;
@@ -129,7 +130,7 @@ class MigrateToV4 extends Command
         $raw = file_get_contents($file);
         $composer = json_decode($raw, true);
 
-        if (!is_array($composer)) {
+        if (! is_array($composer)) {
             $this->error('Invalid composer.json');
 
             return null;
@@ -147,7 +148,7 @@ class MigrateToV4 extends Command
         // Bump all dashed/* to ^4.0.0 in both require & require-dev
         $updatedDashed = [];
         foreach (['require', 'require-dev'] as $section) {
-            if (!isset($composer[$section])) {
+            if (! isset($composer[$section])) {
                 continue;
             }
 
@@ -195,7 +196,7 @@ class MigrateToV4 extends Command
     {
         $file = app_path('Providers/Filament/AppPanelProvider.php');
 
-        if (!file_exists($file)) {
+        if (! file_exists($file)) {
             $this->warn('AppPanelProvider.php not found, skipping Dashboard comment.');
 
             return false;
@@ -213,7 +214,7 @@ class MigrateToV4 extends Command
         // Match a line containing Pages\Dashboard::class optionally with trailing comma, not starting with //
         $pattern = '/^(\s*)(?!\/\/)(.*Pages\\\\Dashboard::class\s*,?\s*)$/m';
 
-        if (!preg_match($pattern, $contents)) {
+        if (! preg_match($pattern, $contents)) {
             $this->warn('No Pages\\Dashboard::class line found in AppPanelProvider. Skipping.');
 
             return false;
@@ -251,7 +252,7 @@ class MigrateToV4 extends Command
         }
 
         // ensure directory exists
-        if (!is_dir($dir)) {
+        if (! is_dir($dir)) {
             @mkdir($dir, 0775, true);
         }
 
@@ -349,7 +350,7 @@ CSS;
         $clean = preg_replace('#/\*.*?\*/#s', '', $clean);
 
         // find content: [ ... ]
-        if (!preg_match('/content\s*:\s*\[([\s\S]*?)\]/', $clean, $m)) {
+        if (! preg_match('/content\s*:\s*\[([\s\S]*?)\]/', $clean, $m)) {
             return [];
         }
         $inside = $m[1];
@@ -380,7 +381,7 @@ CSS;
         $path = base_path('resources/css/app.css');
         $changed = false;
 
-        if (!is_dir(dirname($path))) {
+        if (! is_dir(dirname($path))) {
             @mkdir(dirname($path), 0775, true);
         }
 
@@ -395,7 +396,7 @@ CSS;
         $updated = preg_replace($patterns, '', $existing);
 
         // Ensure single @import "tailwindcss";
-        if (!preg_match('/@import\s+["\']tailwindcss["\'];/', $updated)) {
+        if (! preg_match('/@import\s+["\']tailwindcss["\'];/', $updated)) {
             $updated = "@import \"tailwindcss\";\n\n" . ltrim($updated);
             $changed = true;
         } elseif ($updated !== $existing) {
@@ -469,10 +470,11 @@ CSS;
         foreach ($candidates as $c) {
             if (file_exists($c)) {
                 $target = $c;
+
                 break;
             }
         }
-        if (!$target) {
+        if (! $target) {
             $target = base_path('vite.config.js');
         }
 
@@ -498,12 +500,13 @@ export default defineConfig({
 JS;
 
         // Normaliseer line endings voor correcte vergelijking
-        $normalize = fn(string $s) => trim(str_replace(["\r\n", "\r"], "\n", $s));
+        $normalize = fn (string $s) => trim(str_replace(["\r\n", "\r"], "\n", $s));
         $current = file_exists($target) ? $normalize(file_get_contents($target)) : '';
         $shouldWrite = $current !== $normalize($desired);
 
-        if (!$shouldWrite) {
+        if (! $shouldWrite) {
             $this->warn(basename($target) . ' is al up-to-date. Skipping.');
+
             return false;
         }
 
@@ -513,11 +516,12 @@ JS;
         }
         if (file_put_contents($target, $desired . "\n") === false) {
             $this->error('❌ Kon ' . basename($target) . ' niet schrijven.');
+
             return false;
         }
 
         $this->info('📝 Rewrote: ' . str_replace(base_path() . DIRECTORY_SEPARATOR, '', $target));
+
         return true;
     }
-
 }

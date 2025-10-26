@@ -53,7 +53,7 @@ trait HasCustomBlocksTab
                 ->mutateRelationshipDataBeforeCreateUsing(function (array $state, $record, Page $livewire) {
                     return [];
                 })
-                ->mutateRelationshipDataBeforeSaveUsing(function(array $data, Page $livewire, $record) {
+                ->mutateRelationshipDataBeforeSaveUsing(function (array $data, Page $livewire, $record) {
                     $record->customBlocks->setTranslation('blocks', $livewire->getActiveSchemaLocale(), $data)->save();
 
                     return [];

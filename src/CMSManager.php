@@ -194,6 +194,12 @@ class CMSManager
 
     public function getFilamentPanelItems(Panel $panel): Panel
     {
+        $pages = [];
+
+        if(class_exists(\Dashed\DashedEcommerceCore\Filament\Pages\Dashboard\Dashboard::class)){
+            $pages[] = \Dashed\DashedEcommerceCore\Filament\Pages\Dashboard\Dashboard::class;
+        }
+
         $panel
             ->default()
             ->id('dashed')
@@ -209,9 +215,7 @@ class CMSManager
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
-            ->pages([
-                \Dashed\DashedEcommerceCore\Filament\Pages\Dashboard\Dashboard::class,
-            ])
+            ->pages($pages)
             ->databaseNotifications()
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([])
