@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace Dashed\DashedCore\Commands;
 
 use Illuminate\Console\Command;
 use Symfony\Component\Process\Process;
