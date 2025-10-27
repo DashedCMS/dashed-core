@@ -355,7 +355,10 @@ class CMSManager
 
     public function convertToHtml($content): string
     {
+        if(!$content){
+            return '';
+        }
+
         return RichEditor\RichContentRenderer::make($content)->toHtml();
-        //        return tiptap_converter()->asHTML($content);
     }
 }
