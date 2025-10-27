@@ -39,7 +39,7 @@ class Customsetting extends Model
         });
     }
 
-    public static function get(string $name, ?string $siteId = null, null|string|array $default = null, ?string $locale = null, string $type = 'default')
+    public static function get(string $name, ?string $siteId = null, null|string|array $default = null, ?string $locale = null, string $type = 'default', bool $disableCache = false)
     {
         $tableExists = Cache::remember('dashed__custom_settings_table_exists', 60, function () {
             return Schema::hasTable('dashed__custom_settings');
@@ -55,6 +55,10 @@ class Customsetting extends Model
 
         if ($locale && is_array($locale)) {
             $locale = $locale['id'];
+        }
+
+        if ($disableCache) {
+            Cache::forget("$name-$siteId-$locale");
         }
 
         $value = Cache::rememberForever("$name-$siteId-$locale", function () use ($name, $siteId, $default, $locale) {
