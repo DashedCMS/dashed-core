@@ -214,8 +214,12 @@ class CMSManager
         }
 
         $forceMFA = Customsetting::get('force_mfa', false) ?: false;
-        if($forceMFA && !count($mfaMethods)){
+        if ($forceMFA && !count($mfaMethods)) {
             $mfaMethods[] = EmailAuthentication::make();
+        }
+
+        if (app()->isLocal()) {
+            $forceMFA = false;
         }
 
         $panel
@@ -355,7 +359,7 @@ class CMSManager
 
     public function convertToHtml($content): string
     {
-        if(!$content){
+        if (!$content) {
             return '';
         }
 
