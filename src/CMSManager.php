@@ -60,7 +60,7 @@ class CMSManager
 
     public function builder(string $name, null|string|array $blocks = null): self|array|string
     {
-        if (! $blocks) {
+        if (!$blocks) {
             return static::$builders[$name] ?? [];
         }
 
@@ -71,7 +71,7 @@ class CMSManager
 
     public function class(string $name, string|array $value = null): self|array|string
     {
-        if (! $value) {
+        if (!$value) {
             return static::$builders[$name] ?? [];
         }
 
@@ -116,7 +116,7 @@ class CMSManager
         }
 
         foreach ($blocks as $key => $block) {
-            if (! View::exists('components.blocks.' . $block->getName())) {
+            if (!View::exists('components.blocks.' . $block->getName())) {
                 unset($blocks[$key]);
             }
         }
@@ -129,14 +129,14 @@ class CMSManager
                     ->schema([
                         Select::make('globalBlock')
                             ->label('Globaal blok')
-                            ->options(GlobalBlock::all()->mapWithKeys(fn ($block) => [$block->id => $block->name]))
+                            ->options(GlobalBlock::all()->mapWithKeys(fn($block) => [$block->id => $block->name]))
                             ->placeholder('Kies een globaal blok')
                             ->hintAction(
                                 Action::make('editGlobalBlock')
                                     ->label('Bewerk globaal blok')
-                                    ->url(fn (Get $get) => route('filament.dashed.resources.global-blocks.edit', ['record' => $get('globalBlock')]))
+                                    ->url(fn(Get $get) => route('filament.dashed.resources.global-blocks.edit', ['record' => $get('globalBlock')]))
                                     ->openUrlInNewTab()
-                                    ->visible(fn (Get $get) => $get('globalBlock'))
+                                    ->visible(fn(Get $get) => $get('globalBlock'))
                             )
                             ->reactive()
                             ->required()
@@ -175,7 +175,7 @@ class CMSManager
         return [
             'results' => $results,
             'count' => collect($results)->sum('count'),
-            'hasResults' => collect($results)->filter(fn ($result) => $result['hasResults'])->count() > 0,
+            'hasResults' => collect($results)->filter(fn($result) => $result['hasResults'])->count() > 0,
         ];
     }
 
@@ -183,7 +183,7 @@ class CMSManager
     {
         $name = Route::currentRouteName();
 
-        if (! $name) {
+        if (!$name) {
             return false;
         }
 
@@ -191,14 +191,32 @@ class CMSManager
             ? str_starts_with($name, $panelId . '.')
             : collect(Filament::getPanels())
                 ->keys()
-                ->contains(fn ($id) => str_starts_with($name, $id . '.'));
+                ->contains(fn($id) => str_starts_with($name, $id . '.'));
     }
 
     public function getFilamentPanelItems(Panel $panel): Panel
     {
         $pages = [];
+        $mfaMethods = [];
 
         $pages[] = \Dashed\DashedCore\Filament\Pages\Dashboard\Dashboard::class;
+
+
+        if (Customsetting::get('mfa_app_enabled', false)) {
+            $mfaMethods[] = AppAuthentication::make()
+                ->recoverable()
+                ->recoveryCodeCount(10)
+                ->brandName(Customsetting::get('site_name', null, 'DashedCMS'));
+        }
+
+        if (Customsetting::get('mfa_email_enabled', false)) {
+            $mfaMethods[] = EmailAuthentication::make();
+        }
+
+        $forceMFA = Customsetting::get('force_mfa', false) ?: false;
+        if($forceMFA && !count($mfaMethods)){
+            $mfaMethods[] = EmailAuthentication::make();
+        }
 
         $panel
             ->default()
@@ -233,13 +251,7 @@ class CMSManager
             ->authMiddleware([
                 Authenticate::class,
             ])
-            ->multiFactorAuthentication([
-                AppAuthentication::make()
-                    ->recoverable()
-                    ->recoveryCodeCount(10)
-                    ->brandName(Customsetting::get('site_name', null, 'DashedCMS')),
-                EmailAuthentication::make(),
-            ])
+            ->multiFactorAuthentication($mfaMethods, isRequired: $forceMFA)
 //            ->brandLogo(fn () => mediaHelper()->getSingleMedia(Customsetting::get('site_logo'))->url)
             ->brandName(Customsetting::get('site_name', null, 'DashedCMS'));
 
@@ -293,11 +305,11 @@ class CMSManager
     {
         $model = app('view')->getShared()['model'] ?? null;
 
-        if (! $model?->metadata?->password) {
+        if (!$model?->metadata?->password) {
             return null;
         }
 
-        if (! self::hasAccessToModel($model)) {
+        if (!self::hasAccessToModel($model)) {
             $data = Crypt::encrypt([
                 'model' => $model::class,
                 'modelId' => $model->id,

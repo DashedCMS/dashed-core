@@ -59,8 +59,6 @@ class GeneralSettingsPage extends Page
             $formData["google_tagmanager_id_{$site['id']}"] = Customsetting::get('google_tagmanager_id', $site['id']);
             $formData["google_maps_places_key_{$site['id']}"] = Customsetting::get('google_maps_places_key', $site['id']);
             $formData["google_maps_places_id_{$site['id']}"] = Customsetting::get('google_maps_places_id', $site['id']);
-            $formData["google_recaptcha_site_key_{$site['id']}"] = Customsetting::get('google_recaptcha_site_key', $site['id']);
-            $formData["google_recaptcha_secret_key_{$site['id']}"] = Customsetting::get('google_recaptcha_secret_key', $site['id']);
             $formData["facebook_pixel_conversion_id_{$site['id']}"] = Customsetting::get('facebook_pixel_conversion_id', $site['id']);
             $formData["facebook_pixel_site_id_{$site['id']}"] = Customsetting::get('facebook_pixel_site_id', $site['id']);
             $formData["trigger_facebook_events_{$site['id']}"] = Customsetting::get('trigger_facebook_events', $site['id']);
@@ -207,14 +205,6 @@ class GeneralSettingsPage extends Page
                             ->openUrlInNewTab(),
                     ])
                     ->maxLength(255),
-                TextInput::make("google_recaptcha_site_key_{$site['id']}")
-                    ->label('Google Recaptcha site key')
-                    ->reactive()
-                    ->maxLength(255),
-                TextInput::make("google_recaptcha_secret_key_{$site['id']}")
-                    ->label('Google Recaptcha secret key')
-                    ->required(fn (Get $get) => $get("google_recaptcha_site_key_{$site['id']}"))
-                    ->maxLength(255),
                 TextInput::make("facebook_pixel_conversion_id_{$site['id']}")
                     ->label('Facebook Pixel Conversion ID')
                     ->maxLength(255),
@@ -303,8 +293,6 @@ class GeneralSettingsPage extends Page
             Customsetting::set('google_tagmanager_id', $this->form->getState()["google_tagmanager_id_{$site['id']}"], $site['id']);
             Customsetting::set('google_maps_places_key', $this->form->getState()["google_maps_places_key_{$site['id']}"], $site['id']);
             Customsetting::set('google_maps_places_id', $this->form->getState()["google_maps_places_id_{$site['id']}"], $site['id']);
-            Customsetting::set('google_recaptcha_site_key', $this->form->getState()["google_recaptcha_site_key_{$site['id']}"], $site['id']);
-            Customsetting::set('google_recaptcha_secret_key', $this->form->getState()["google_recaptcha_secret_key_{$site['id']}"], $site['id']);
             Customsetting::set('facebook_pixel_conversion_id', $this->form->getState()["facebook_pixel_conversion_id_{$site['id']}"], $site['id']);
             Customsetting::set('facebook_pixel_site_id', $this->form->getState()["facebook_pixel_site_id_{$site['id']}"], $site['id']);
             Customsetting::set('trigger_facebook_events', $this->form->getState()["trigger_facebook_events_{$site['id']}"], $site['id']);
