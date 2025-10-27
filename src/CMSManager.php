@@ -348,7 +348,10 @@ class CMSManager
 
     public function editorField(string $name = 'content', ?string $label = null)
     {
-        $builder = $this->builder('editor')::make($name);
+        $builder = $this->builder('editor')::make($name)
+            ->fileAttachmentsDisk('dashed')
+            ->fileAttachmentsDirectory('editor')
+            ->customTextColors();
 
         if ($label) {
             $builder->label($label);
