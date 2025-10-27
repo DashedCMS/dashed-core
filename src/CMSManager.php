@@ -19,9 +19,11 @@ use Dashed\DashedCore\Classes\AccountHelper;
 use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
+use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use LaraZeus\SpatieTranslatable\SpatieTranslatablePlugin;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -196,7 +198,7 @@ class CMSManager
     {
         $pages = [];
 
-            $pages[] = \Dashed\DashedCore\Filament\Pages\Dashboard\Dashboard::class;
+        $pages[] = \Dashed\DashedCore\Filament\Pages\Dashboard\Dashboard::class;
 
         $panel
             ->default()
@@ -230,6 +232,13 @@ class CMSManager
             ])
             ->authMiddleware([
                 Authenticate::class,
+            ])
+            ->multiFactorAuthentication([
+                AppAuthentication::make()
+                    ->recoverable()
+                    ->recoveryCodeCount(10)
+                    ->brandName(Customsetting::get('site_name', null, 'DashedCMS')),
+                EmailAuthentication::make(),
             ])
 //            ->brandLogo(fn () => mediaHelper()->getSingleMedia(Customsetting::get('site_logo'))->url)
             ->brandName(Customsetting::get('site_name', null, 'DashedCMS'));
