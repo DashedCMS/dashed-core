@@ -85,6 +85,7 @@ $schemasMap = [
 $utilitiesMap = [
     'Filament\\Forms\\Set' => 'Filament\\Schemas\\Components\\Utilities\\Set',
     'Filament\\Forms\\Get' => 'Filament\\Schemas\\Components\\Utilities\\Get',
+    'protected static string $view' => 'protected string $view',
 ];
 
 foreach ($rii as $file) {
@@ -290,6 +291,19 @@ foreach ($rii as $file) {
         $code = addUses($code, $toAdd);
     }
 
+    $needsBackedEnumUse = (bool) preg_match('/(?<![A-Za-z_\\\\])BackedEnum(?![A-Za-z_])/m', $code);
+    $needsUnitEnumUse   = (bool) preg_match('/(?<![A-Za-z_\\\\])UnitEnum(?![A-Za-z_])/m', $code);
+    $enumUses = [];
+    if ($needsBackedEnumUse) {
+        $enumUses[] = 'BackedEnum';
+    }
+    if ($needsUnitEnumUse) {
+        $enumUses[] = 'UnitEnum';
+    }
+    if ($enumUses) {
+        $code = addUses($code, $enumUses);
+    }
+
     /* ---------- Ongebruikte imports opruimen ---------- */
     $code = removeUnusedImports($code, [
         'FilamentTiptapEditor\\TiptapEditor',
@@ -323,6 +337,53 @@ foreach ($rii as $file) {
         'Filament\\Forms\\Set',
         'Filament\\Forms\\Get',
     ]);
+
+    /* ---------- Verwijder alleen toplevel 'use Translatable;' (niet binnen classes) ---------- */
+    // Verzamel alle class/interface/trait body-ranges
+    $classRanges = [];
+    $offset = 0;
+    while (preg_match('/\b(?:abstract\s+|final\s+)?(?:class|interface|trait)\s+[A-Za-z_]\w*(?:\s+extends[^{]+)?(?:\s+implements[^{]+)?\s*\{/m', $code, $m, PREG_OFFSET_CAPTURE, $offset)) {
+        $bracePos = $m[0][1] + strlen($m[0][0]) - 1; // positie van '{'
+        $closePos = findMatchingBrace($code, $bracePos);
+        if ($closePos === null) {
+            $offset = $bracePos + 1;
+            continue;
+        }
+        $classRanges[] = [$bracePos, $closePos];
+        $offset = $closePos + 1;
+    }
+
+    // Helper: check of index binnen een class-body valt
+    $isInAnyClass = function (int $idx) use ($classRanges): bool {
+        foreach ($classRanges as [$start, $end]) {
+            if ($idx > $start && $idx < $end) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    // Zoek alle "use Translatable;" regels (exact, niet \Foo\Translatable)
+    if (preg_match_all('/^([ \t]*)use\s+Translatable\s*;\s*$/m', $code, $mm, PREG_OFFSET_CAPTURE)) {
+        // We verwijderen alleen die buiten class-bodies
+        $removals = [];
+        foreach ($mm[0] as $hit) {
+            [$line, $pos] = $hit;
+            if (! $isInAnyClass($pos)) {
+                $removals[] = [$pos, strlen($line)];
+            }
+        }
+        if ($removals) {
+            // van achter naar voren verwijderen
+            usort($removals, fn($a, $b) => $b[0] <=> $a[0]);
+            foreach ($removals as [$pos, $len]) {
+                $code = substr($code, 0, $pos) . substr($code, $pos + $len);
+            }
+            // extra lege regels opruimen
+            $code = preg_replace("/\n{3,}/", "\n\n", $code) ?? $code;
+        }
+    }
+
 
     /* ---------- Verwijder ->columnSpanFull() specifiek op BulkActionGroup ---------- */
     $code = removeColumnSpanFullOnBulkActionGroup($code);
