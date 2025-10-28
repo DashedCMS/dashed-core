@@ -22,6 +22,7 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
+use Illuminate\Support\Str;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -348,9 +349,72 @@ class CMSManager
 
     public function editorField(string $name = 'content', ?string $label = null)
     {
+        $css = file_get_contents(resource_path('css/app.css')) ?? '';
+
+        preg_match_all(
+            '/--color-([a-z0-9\-]+):\s*(#[0-9a-fA-F]{3,8})\s*;/i',
+            $css,
+            $m
+        );
+
+        $colors = collect($m[1])
+            ->combine($m[2]) // name => hex
+            ->mapWithKeys(fn ($hex, $name) => [
+                $name => RichEditor\TextColor::make(Str::headline($name), $hex, darkColor: $hex),
+            ])
+            ->all();
+
         $builder = $this->builder('editor')::make($name)
             ->fileAttachmentsDisk('dashed')
             ->fileAttachmentsDirectory('editor')
+            ->fileAttachmentsVisibility('public')
+            ->floatingToolbars([
+                'paragraph' => [
+                    'bold', 'italic', 'underline', 'strike', 'subscript', 'superscript',
+                ],
+                'heading' => [
+                    'h1', 'h2', 'h3',
+                ],
+                'table' => [
+                    'tableAddColumnBefore', 'tableAddColumnAfter', 'tableDeleteColumn',
+                    'tableAddRowBefore', 'tableAddRowAfter', 'tableDeleteRow',
+                    'tableMergeCells', 'tableSplitCell',
+                    'tableToggleHeaderRow',
+                    'tableDelete',
+                ],
+            ])
+            ->toolbarButtons([
+                'attachFiles',
+                'blockquote',
+                'bold',
+                'bulletList',
+                'codeBlock',
+                'h1',
+                'h2',
+                'h3',
+                'italic',
+                'link',
+                'orderedList',
+                'undo',
+                'redo',
+                'strike',
+                'underline',
+                'textColor',
+                'superscript',
+                'subscript',
+                'code',
+                'horizontalRule',
+                'table',
+                'clearFormatting',
+                'alignStart',
+                'alignCenter',
+                'alignEnd',
+                'alignJustify',
+                'grid',
+                'gridDelete',
+                'details',
+            ])
+            ->textColors($colors)
             ->customTextColors();
 
         if ($label) {
