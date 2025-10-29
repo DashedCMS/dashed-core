@@ -156,7 +156,7 @@ trait HasEditableCMSActions
                     ->openUrlInNewTab();
             }
 
-            return ActionGroup::make($viewActions)->columnSpanFull()
+            return ActionGroup::make($viewActions)
                 ->label('Bekijk')
                 ->icon('heroicon-o-eye')
                 ->button();
