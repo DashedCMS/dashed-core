@@ -513,4 +513,42 @@ trait IsVisitable
     {
         return true;
     }
+
+    public function scopeSearch($query, ?string $search = null)
+    {
+        if (! filled($search)) {
+            return $query;
+        }
+
+        $needle = trim(mb_strtolower($search));
+
+        $columns = collect(self::getTranslatableAttributes())
+            ->reject(fn ($attr) => method_exists($this, $attr)) // sla relaties over
+            ->values()
+            ->all();
+
+        $query->where(function ($q) use ($columns, $needle, $search) {
+            foreach ($columns as $i => $col) {
+                $method = $i === 0 ? 'whereRaw' : 'orWhereRaw';
+                $q->{$method}("LOWER(`{$col}`) LIKE ?", ["%{$needle}%"]);
+            }
+        });
+
+        $cases = [];
+        $bindings = [];
+
+        $topWeight = count($columns) + 10;
+
+        foreach ($columns as $idx => $col) {
+            $weight = count($columns) - $idx; // eerste kolom = hoogste weight
+            $cases[] = "CASE WHEN LOWER(`{$col}`) LIKE ? THEN {$weight} ELSE 0 END";
+            $bindings[] = "%{$needle}%";
+        }
+
+        $query->select($query->getQuery()->columns ?? ['*'])
+            ->selectRaw('(' . implode(' + ', $cases) . ') as relevance', $bindings)
+            ->orderByDesc('relevance');
+
+        return $query;
+    }
 }

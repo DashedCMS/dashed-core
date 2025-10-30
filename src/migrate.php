@@ -292,7 +292,7 @@ foreach ($rii as $file) {
     }
 
     $needsBackedEnumUse = (bool) preg_match('/(?<![A-Za-z_\\\\])BackedEnum(?![A-Za-z_])/m', $code);
-    $needsUnitEnumUse   = (bool) preg_match('/(?<![A-Za-z_\\\\])UnitEnum(?![A-Za-z_])/m', $code);
+    $needsUnitEnumUse = (bool) preg_match('/(?<![A-Za-z_\\\\])UnitEnum(?![A-Za-z_])/m', $code);
     $enumUses = [];
     if ($needsBackedEnumUse) {
         $enumUses[] = 'BackedEnum';
@@ -347,6 +347,7 @@ foreach ($rii as $file) {
         $closePos = findMatchingBrace($code, $bracePos);
         if ($closePos === null) {
             $offset = $bracePos + 1;
+
             continue;
         }
         $classRanges[] = [$bracePos, $closePos];
@@ -360,6 +361,7 @@ foreach ($rii as $file) {
                 return true;
             }
         }
+
         return false;
     };
 
@@ -375,7 +377,7 @@ foreach ($rii as $file) {
         }
         if ($removals) {
             // van achter naar voren verwijderen
-            usort($removals, fn($a, $b) => $b[0] <=> $a[0]);
+            usort($removals, fn ($a, $b) => $b[0] <=> $a[0]);
             foreach ($removals as [$pos, $len]) {
                 $code = substr($code, 0, $pos) . substr($code, $pos + $len);
             }

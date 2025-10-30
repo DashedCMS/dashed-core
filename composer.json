@@ -73,7 +73,8 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Dashed\\DashedCore\\DashedCoreServiceProvider"
+                "Dashed\\DashedCore\\DashedCoreServiceProvider",
+                "Dashed\\DashedCore\\FilamentRichContentServiceProvider"
             ],
             "aliases": {
                 "AccountHelper": "Dashed\\DashedCore\\Classes\\AccountHelper",
@@ -83,6 +84,11 @@
                 "Sites": "Dashed\\DashedCore\\Classes\\Sites",
                 "Customsetting": "Dashed\\DashedCore\\Models\\Customsetting"
             }
+        },
+        "filament": {
+            "assets": [
+                "resources/js/rich-content-plugins/external-video.js"
+            ]
         }
     },
     "minimum-stability": "dev",

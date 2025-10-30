@@ -38,7 +38,7 @@ class Dashboard extends BaseDashboard
     public static function getPeriodOptions(): array
     {
         return [
-//                                'today' => 'Vandaag',
+            'today' => 'Vandaag',
             'this_week' => 'Deze week',
             'week' => 'Afgelopen 7 dagen',
             'this_month' => 'Deze maand',
@@ -81,11 +81,12 @@ class Dashboard extends BaseDashboard
                             ->options(self::getPeriodOptions())
                             ->afterStateUpdated(function (callable $get, callable $set, $state) {
                                 switch ($state) {
-                                    //                                    case 'today':
-                                    //                                        $set('startDate', now()->startOfDay());
-                                    //                                        $set('endDate', now()->endOfDay());
-                                    //                                        $set('steps', 'per_hour');
-                                    //                                        break;
+                                    case 'today':
+                                        $set('startDate', now()->startOfDay());
+                                        $set('endDate', now()->addDay()->endOfDay());
+                                        $set('steps', 'per_hour');
+
+                                        break;
                                     case 'this_week':
                                         $set('startDate', now()->startOfWeek());
                                         $set('endDate', now()->endOfWeek());

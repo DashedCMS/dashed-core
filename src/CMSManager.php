@@ -3,6 +3,7 @@
 namespace Dashed\DashedCore;
 
 use Filament\Panel;
+use Illuminate\Support\Str;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\View;
@@ -22,7 +23,6 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
-use Illuminate\Support\Str;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -30,6 +30,7 @@ use LaraZeus\SpatieTranslatable\SpatieTranslatablePlugin;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Dashed\DashedCore\Classes\RichEditorPlugins\VideoEmbedPlugin;
 
 class CMSManager
 {
@@ -61,7 +62,7 @@ class CMSManager
 
     public function builder(string $name, null|string|array $blocks = null): self|array|string
     {
-        if (!$blocks) {
+        if (! $blocks) {
             return static::$builders[$name] ?? [];
         }
 
@@ -72,7 +73,7 @@ class CMSManager
 
     public function class(string $name, string|array $value = null): self|array|string
     {
-        if (!$value) {
+        if (! $value) {
             return static::$builders[$name] ?? [];
         }
 
@@ -117,7 +118,7 @@ class CMSManager
         }
 
         foreach ($blocks as $key => $block) {
-            if (!View::exists('components.blocks.' . $block->getName())) {
+            if (! View::exists('components.blocks.' . $block->getName())) {
                 unset($blocks[$key]);
             }
         }
@@ -130,14 +131,14 @@ class CMSManager
                     ->schema([
                         Select::make('globalBlock')
                             ->label('Globaal blok')
-                            ->options(GlobalBlock::all()->mapWithKeys(fn($block) => [$block->id => $block->name]))
+                            ->options(GlobalBlock::all()->mapWithKeys(fn ($block) => [$block->id => $block->name]))
                             ->placeholder('Kies een globaal blok')
                             ->hintAction(
                                 Action::make('editGlobalBlock')
                                     ->label('Bewerk globaal blok')
-                                    ->url(fn(Get $get) => route('filament.dashed.resources.global-blocks.edit', ['record' => $get('globalBlock')]))
+                                    ->url(fn (Get $get) => route('filament.dashed.resources.global-blocks.edit', ['record' => $get('globalBlock')]))
                                     ->openUrlInNewTab()
-                                    ->visible(fn(Get $get) => $get('globalBlock'))
+                                    ->visible(fn (Get $get) => $get('globalBlock'))
                             )
                             ->reactive()
                             ->required()
@@ -176,7 +177,7 @@ class CMSManager
         return [
             'results' => $results,
             'count' => collect($results)->sum('count'),
-            'hasResults' => collect($results)->filter(fn($result) => $result['hasResults'])->count() > 0,
+            'hasResults' => collect($results)->filter(fn ($result) => $result['hasResults'])->count() > 0,
         ];
     }
 
@@ -184,7 +185,7 @@ class CMSManager
     {
         $name = Route::currentRouteName();
 
-        if (!$name) {
+        if (! $name) {
             return false;
         }
 
@@ -192,7 +193,7 @@ class CMSManager
             ? str_starts_with($name, $panelId . '.')
             : collect(Filament::getPanels())
                 ->keys()
-                ->contains(fn($id) => str_starts_with($name, $id . '.'));
+                ->contains(fn ($id) => str_starts_with($name, $id . '.'));
     }
 
     public function getFilamentPanelItems(Panel $panel): Panel
@@ -215,7 +216,7 @@ class CMSManager
         }
 
         $forceMFA = Customsetting::get('force_mfa', false) ?: false;
-        if ($forceMFA && !count($mfaMethods)) {
+        if ($forceMFA && ! count($mfaMethods)) {
             $mfaMethods[] = EmailAuthentication::make();
         }
 
@@ -310,11 +311,11 @@ class CMSManager
     {
         $model = app('view')->getShared()['model'] ?? null;
 
-        if (!$model?->metadata?->password) {
+        if (! $model?->metadata?->password) {
             return null;
         }
 
-        if (!self::hasAccessToModel($model)) {
+        if (! self::hasAccessToModel($model)) {
             $data = Crypt::encrypt([
                 'model' => $model::class,
                 'modelId' => $model->id,
@@ -364,7 +365,8 @@ class CMSManager
             ])
             ->all();
 
-        $builder = $this->builder('editor')::make($name)
+        $builder = RichEditor::make($name)
+//        $builder = $this->builder('editor')::make($name)
             ->fileAttachmentsDisk('dashed')
             ->fileAttachmentsDirectory('editor')
             ->fileAttachmentsVisibility('public')
@@ -413,6 +415,10 @@ class CMSManager
                 'grid',
                 'gridDelete',
                 'details',
+                'insertExternalVideo',
+            ])
+            ->plugins([
+                VideoEmbedPlugin::make(),
             ])
             ->textColors($colors)
             ->customTextColors();
@@ -426,7 +432,7 @@ class CMSManager
 
     public function convertToHtml($content): string
     {
-        if (!$content) {
+        if (! $content) {
             return '';
         }
 
