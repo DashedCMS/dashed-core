@@ -421,6 +421,7 @@ class CMSManager
                 'details',
                 'insertExternalVideo',
             ])
+            ->json()
             ->plugins($plugins)
             ->textColors($colors)
             ->customTextColors();
