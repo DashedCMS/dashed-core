@@ -365,6 +365,13 @@ class CMSManager
             ])
             ->all();
 
+        $plugins = [
+            VideoEmbedPlugin::make(),
+        ];
+        if(!app()->isLocal()){
+            $plugins = [];
+        }
+
         $builder = RichEditor::make($name)
 //        $builder = $this->builder('editor')::make($name)
             ->fileAttachmentsDisk('dashed')
@@ -417,9 +424,7 @@ class CMSManager
                 'details',
                 'insertExternalVideo',
             ])
-            ->plugins([
-                VideoEmbedPlugin::make(),
-            ])
+            ->plugins($plugins)
             ->textColors($colors)
             ->customTextColors();
 
