@@ -45,7 +45,7 @@ class VideoEmbedPlugin implements RichContentPlugin
     {
         return [
             Action::make('insertExternalVideo')
-                ->modalHeading('Video insluiten')
+                ->modalHeading('Video insluiten (werkt nog niet)')
                 ->modalWidth(Width::Large)
                 ->schema([
                     TextInput::make('url')

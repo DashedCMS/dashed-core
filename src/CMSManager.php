@@ -368,9 +368,6 @@ class CMSManager
         $plugins = [
             VideoEmbedPlugin::make(),
         ];
-        if(!app()->isLocal()){
-            $plugins = [];
-        }
 
         $builder = RichEditor::make($name)
 //        $builder = $this->builder('editor')::make($name)

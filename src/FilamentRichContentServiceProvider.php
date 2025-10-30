@@ -10,13 +10,11 @@ class FilamentRichContentServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        if (app()->isLocal()) {
-            FilamentAsset::register([
-                Js::make(
-                    'rich-content-plugins/external-video',
-                    __DIR__ . '/../resources/js/dist/filament/rich-content-plugins/external-video.js'
-                )->loadedOnRequest(), // 👈 only loads when RichEditor is used
-            ], 'dashed-core');
-        }
+        FilamentAsset::register([
+            Js::make(
+                'rich-content-plugins/external-video',
+                __DIR__ . '/../resources/js/dist/filament/rich-content-plugins/external-video.js'
+            )->loadedOnRequest(), // 👈 only loads when RichEditor is used
+        ], 'dashed-core');
     }
 }
