@@ -8,6 +8,7 @@ use Tiptap\Utils\HTML;
 class ExternalVideoExtension extends Node
 {
     public static $name = 'externalVideo';
+    public static $priority = 100;
 
     public function addOptions(): array
     {
@@ -51,11 +52,12 @@ class ExternalVideoExtension extends Node
 
     public function renderHTML($node, $HTMLAttributes = []): array
     {
-        $attrs = HTML::mergeAttributes(
-            $this->options['HTMLAttributes'],
-            $HTMLAttributes
-        );
-
-        return ['iframe', $attrs];
+        return [
+            'iframe',
+            HTML::mergeAttributes(
+                $this->options['HTMLAttributes'],
+                $HTMLAttributes,
+            ),
+        ];
     }
 }

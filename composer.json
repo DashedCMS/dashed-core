@@ -18,6 +18,7 @@
     "require": {
         "php": "^8.4",
         "binafy/laravel-stub": "^1.0",
+        "dashed/filament-numpad-field": "^1.0",
         "dashed/laravel-drift": "^1.0",
         "dashed/laravel-localization": "^1.0",
         "doctrine/dbal": "^4.1",

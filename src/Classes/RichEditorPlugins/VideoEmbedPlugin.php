@@ -21,7 +21,9 @@ class VideoEmbedPlugin implements RichContentPlugin
 
     public function getTipTapPhpExtensions(): array
     {
-        return [app(ExternalVideoExtension::class)];
+        return [
+            app(ExternalVideoExtension::class)
+        ];
     }
 
     public function getTipTapJsExtensions(): array

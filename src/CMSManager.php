@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore;
 
+use Dashed\DashedCore\Classes\RichEditorPlugins\ExternalVideoExtension;
 use Filament\Panel;
 use Illuminate\Support\Str;
 use Filament\Actions\Action;
@@ -31,6 +32,8 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Dashed\DashedCore\Classes\RichEditorPlugins\VideoEmbedPlugin;
+use Tiptap\Editor;
+use Tiptap\Extensions\StarterKit;
 
 class CMSManager
 {
@@ -54,6 +57,7 @@ class CMSManager
         'ignorableKeysForTranslations' => [],
         'ignorableColumnsForTranslations' => [],
         'classes' => [],
+        'richEditorPlugins' => [],
     ];
 
     protected static $builderBlocksActivated = [
@@ -365,12 +369,7 @@ class CMSManager
             ])
             ->all();
 
-        $plugins = [
-            VideoEmbedPlugin::make(),
-        ];
-
-        $builder = RichEditor::make($name)
-//        $builder = $this->builder('editor')::make($name)
+        $builder = $this->builder('editor')::make($name)
             ->fileAttachmentsDisk('dashed')
             ->fileAttachmentsDirectory('editor')
             ->fileAttachmentsVisibility('public')
@@ -422,7 +421,7 @@ class CMSManager
                 'insertExternalVideo',
             ])
             ->json()
-            ->plugins($plugins)
+            ->plugins(cms()->builder('richEditorPlugins'))
             ->textColors($colors)
             ->customTextColors();
 
@@ -439,6 +438,8 @@ class CMSManager
             return '';
         }
 
-        return RichEditor\RichContentRenderer::make($content)->toHtml();
+        return RichEditor\RichContentRenderer::make($content)
+            ->plugins(cms()->builder('richEditorPlugins'))
+            ->toUnsafeHtml();
     }
 }
