@@ -4,7 +4,7 @@
 >
     <div
         x-data="numpadEuro({
-            entangled: $wire.$entangle('{{ $getStatePath() }}'), {{-- ← geen .defer --}}
+            entangled: $wire.$entangle('{{ $getStatePath() }}'),
             storesCents: @js($storesCents),
             allowNegative: @js($allowNegative),
             minCents: @js($minCents),
@@ -12,40 +12,37 @@
         })"
         class="flex flex-col gap-4"
     >
-        {{-- 🔐 Kritiek: bind LIVE + forceer input-event richting Livewire --}}
         <input
             type="hidden"
             x-ref="livewireInput"
             wire:model.live="{{ $getStatePath() }}"
         />
 
-        {{-- Display --}}
         <div class="flex items-end justify-between">
             <div class="text-4xl font-semibold tabular-nums select-none ml-auto">
                 {{ $currencySymbol }} <span x-text="formatted"></span>
             </div>
         </div>
 
-        {{-- Numpad --}}
         <div class="grid grid-cols-3 gap-3 select-none">
             <template x-for="n in [1,2,3,4,5,6,7,8,9]" :key="n">
                 <button type="button"
-                        class="p-5 rounded-2xl shadow border text-2xl font-semibold hover:shadow-md active:scale-95 transition"
+                        class="p-5 rounded-2xl shadow border text-2xl font-semibold hover:shadow-md active:scale-95 active:bg-primary-500 transition"
                         x-on:click="press(n)" x-text="n"></button>
             </template>
 
             <button type="button"
-                    class="p-5 rounded-2xl shadow border text-lg font-medium hover:shadow-md active:scale-95 transition"
+                    class="p-5 rounded-2xl shadow border text-lg font-medium hover:shadow-md active:scale-95 active:bg-primary-500 transition"
                     x-on:click="clearAll()" title="Wissen">C
             </button>
 
             <button type="button"
-                    class="p-5 rounded-2xl shadow border text-2xl font-semibold hover:shadow-md active:scale-95 transition"
+                    class="p-5 rounded-2xl shadow border text-2xl font-semibold hover:shadow-md active:scale-95 active:bg-primary-500 transition"
                     x-on:click="press(0)">0
             </button>
 
             <button type="button"
-                    class="p-5 rounded-2xl shadow border text-lg font-medium hover:shadow-md active:scale-95 transition"
+                    class="p-5 rounded-2xl shadow border text-lg font-medium hover:shadow-md active:scale-95 active:bg-primary-500 transition"
                     x-on:click="backspace()" title="Delete">&larr;
             </button>
         </div>
@@ -69,7 +66,6 @@
                 validationMessage: '',
 
                 init() {
-                    // Init vanuit Livewire → zet digits (altijd in centen)
                     const raw = this.entangled ?? 0;
                     let cents = this.storesCents ? parseInt(raw || 0, 10) : Math.round(parseFloat(raw || 0) * 100);
                     if (cents < 0) {
@@ -84,12 +80,10 @@
                         }
                     })
 
-                    // Also run once immediately, in case value is already present
                     if (this.entangled !== null && this.entangled !== '') {
                         this._loadInitialValue(this.entangled)
                     }
 
-                    // Duw direct naar Livewire input zodat ‘required’ nooit ‘null’ ziet
                     this._pushToWire();
 
                     this.$wire.on('resetNumpad', (notification) => {
@@ -130,7 +124,6 @@
                 _pushToWire() {
                     const cents = this.signedCents;
 
-                    // Client hint
                     if (this.minCents !== null && cents < this.minCents) {
                         this.validationMessage = `Minimum is ${this._formatNl(this.minCents)}.`;
                     } else if (this.maxCents !== null && cents > this.maxCents) {
@@ -139,12 +132,10 @@
                         this.validationMessage = '';
                     }
 
-                    // Schrijf naar de hidden input + trigger een input-event
                     const val = this.storesCents ? cents : (cents / 100).toFixed(2);
                     this.$refs.livewireInput.value = val;
                     this.$refs.livewireInput.dispatchEvent(new Event('input', {bubbles: true}));
 
-                    // Houd lokale entangled ook synced (voor init-kijkers)
                     this.entangled = val;
                 },
 
@@ -186,7 +177,7 @@
 
                     this.digits = String(cents)
                     this._initialized = true
-                    this._pushToWire() // make sure Livewire + display are in sync
+                    this._pushToWire()
                 },
             }))
         })
