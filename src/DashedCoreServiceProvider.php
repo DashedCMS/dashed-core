@@ -2,7 +2,6 @@
 
 namespace Dashed\DashedCore;
 
-use Dashed\DashedCore\Classes\RichEditorPlugins\VideoEmbedPlugin;
 use Livewire\Livewire;
 use Illuminate\Support\Facades\Mail;
 use App\Providers\AppServiceProvider;
@@ -43,6 +42,7 @@ use Dashed\DashedCore\Livewire\Infolists\SEO\SEOScoreInfoList;
 use Dashed\DashedCore\Filament\Widgets\NotFoundPageGlobalStats;
 use Dashed\DashedCore\Filament\Pages\Settings\CacheSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
+use Dashed\DashedCore\Classes\RichEditorPlugins\VideoEmbedPlugin;
 use Dashed\DashedCore\Filament\Pages\Settings\SearchSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\AccountSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
@@ -80,7 +80,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             //            $schedule->command(SeoScan::class)->daily();
         });
 
-        if (!$this->app->environment('production')) {
+        if (! $this->app->environment('production')) {
             Mail::alwaysFrom('info@dashed.nl');
             Mail::alwaysTo('info@dashed.nl');
         }
@@ -480,7 +480,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
 
     public static function createDefaultPages(): void
     {
-        if (!\Dashed\DashedPages\Models\Page::where('is_home', 1)->count()) {
+        if (! \Dashed\DashedPages\Models\Page::where('is_home', 1)->count()) {
             $page = new \Dashed\DashedPages\Models\Page();
             foreach (Locales::getActivatedLocalesFromSites() as $locale) {
                 $page->setTranslation('name', $locale, 'Home');
@@ -497,7 +497,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             $page->save();
         }
 
-        if (!\Dashed\DashedCore\Models\Customsetting::get('search_page_id')) {
+        if (! \Dashed\DashedCore\Models\Customsetting::get('search_page_id')) {
             $page = new \Dashed\DashedPages\Models\Page();
             foreach (Locales::getActivatedLocalesFromSites() as $locale) {
                 $page->setTranslation('name', $locale, 'Zoek resultaten');
@@ -518,7 +518,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             \Dashed\DashedCore\Models\Customsetting::set('search_page_id', $page->id);
         }
 
-        if (!\Dashed\DashedCore\Models\Customsetting::get('login_page_id')) {
+        if (! \Dashed\DashedCore\Models\Customsetting::get('login_page_id')) {
             $page = new \Dashed\DashedPages\Models\Page();
             foreach (Locales::getActivatedLocalesFromSites() as $locale) {
                 $page->setTranslation('name', $locale, 'Login');
@@ -539,7 +539,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             \Dashed\DashedCore\Models\Customsetting::set('login_page_id', $page->id);
         }
 
-        if (!\Dashed\DashedCore\Models\Customsetting::get('account_page_id')) {
+        if (! \Dashed\DashedCore\Models\Customsetting::get('account_page_id')) {
             $page = new \Dashed\DashedPages\Models\Page();
             foreach (Locales::getActivatedLocalesFromSites() as $locale) {
                 $page->setTranslation('name', $locale, 'Account');
@@ -564,7 +564,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             ]);
         }
 
-        if (!\Dashed\DashedCore\Models\Customsetting::get('forgot_password_page_id')) {
+        if (! \Dashed\DashedCore\Models\Customsetting::get('forgot_password_page_id')) {
             $page = new \Dashed\DashedPages\Models\Page();
             foreach (Locales::getActivatedLocalesFromSites() as $locale) {
                 $page->setTranslation('name', $locale, 'Wachtwoord vergeten');
@@ -585,7 +585,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             \Dashed\DashedCore\Models\Customsetting::set('forgot_password_page_id', $page->id);
         }
 
-        if (!\Dashed\DashedCore\Models\Customsetting::get('reset_password_page_id')) {
+        if (! \Dashed\DashedCore\Models\Customsetting::get('reset_password_page_id')) {
             $page = new \Dashed\DashedPages\Models\Page();
             foreach (Locales::getActivatedLocalesFromSites() as $locale) {
                 $page->setTranslation('name', $locale, 'Reset wachtwoord');

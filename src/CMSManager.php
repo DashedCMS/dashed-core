@@ -2,7 +2,6 @@
 
 namespace Dashed\DashedCore;
 
-use Dashed\DashedCore\Classes\RichEditorPlugins\ExternalVideoExtension;
 use Filament\Panel;
 use Illuminate\Support\Str;
 use Filament\Actions\Action;
@@ -31,9 +30,6 @@ use LaraZeus\SpatieTranslatable\SpatieTranslatablePlugin;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
-use Dashed\DashedCore\Classes\RichEditorPlugins\VideoEmbedPlugin;
-use Tiptap\Editor;
-use Tiptap\Extensions\StarterKit;
 
 class CMSManager
 {

@@ -2,9 +2,6 @@
 
 namespace Dashed\DashedCore\Classes\QueryHelpers;
 
-use Dashed\DashedEcommerceCore\Models\ProductGroup;
-use Illuminate\Database\Eloquent\Model;
-
 class RelationshipSearchQuery
 {
     public static function make($model, ?string $search, string $labelAttribute = 'name', string $keyAttribute = 'id', null|string|array $applyScopes = null): array
@@ -20,7 +17,7 @@ class RelationshipSearchQuery
         }
 
         if ($applyScopes) {
-            if (!is_array($applyScopes)) {
+            if (! is_array($applyScopes)) {
                 $applyScopes = [$applyScopes];
             }
 
