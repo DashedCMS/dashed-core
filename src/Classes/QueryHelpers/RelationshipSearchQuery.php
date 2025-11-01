@@ -17,7 +17,7 @@ class RelationshipSearchQuery
         }
 
         if ($applyScopes) {
-            if (! is_array($applyScopes)) {
+            if (!is_array($applyScopes)) {
                 $applyScopes = [$applyScopes];
             }
 
@@ -28,8 +28,18 @@ class RelationshipSearchQuery
             }
         }
 
-        return $query->limit(50)
-            ->pluck($labelAttribute, $keyAttribute)
-            ->toArray();
+        $results = $query->limit(50)->get();
+
+        $options = [];
+
+        foreach ($results as $result) {
+            if ($labelAttribute === 'name' && method_exists($result, 'getNameWithParentsAttribute')) {
+                $options[$result->$keyAttribute] = $result->nameWithParents;
+            } else {
+                $options[$result->$keyAttribute] = $result->$labelAttribute;
+            }
+        }
+
+        return $options;
     }
 }
