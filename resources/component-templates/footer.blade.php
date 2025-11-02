@@ -1,4 +1,4 @@
-<footer class="text-white relative bg-cover bg-opacity-25 bg-primary-dark border-t-2 border-primary-light" style="background-image: url('{{ mediaHelper()->getSingleMedia(Translation::get('background-image', 'footer', null, 'image'), [
+<footer class="text-white relative bg-cover bg-primary-dark/25 border-t-2 border-primary-light" style="background-image: url('{{ mediaHelper()->getSingleMedia(Translation::get('background-image', 'footer', null, 'image'), [
     'widen' => 1000,
 ])->url ?? '' }}')">
     <div class="py-12 bg-primary-dark/80">
@@ -11,6 +11,33 @@
                         {{ Translation::get('sign-up-for-our-newsletter-content', 'footer', 'Krijg updates over onze voorraad, kortingen en meer') }}
                     </p>
 {{--                    <livewire:dashed-forms.form :formId="2"/>--}}
+                    @php($paymentMethods = ShoppingCart::getPaymentMethods(skipTotalCheck: true))
+                    @if(count($paymentMethods))
+                        <div class="flex items-center gap-2 mt-4">
+                            <div class="flex items-center justify-center text-sm gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                     class="size-6 text-green-800">
+                                    <path fill-rule="evenodd"
+                                          d="M12 1.5a5.25 5.25 0 0 0-5.25 5.25v3a3 3 0 0 0-3 3v6.75a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3v-6.75a3 3 0 0 0-3-3v-3c0-2.9-2.35-5.25-5.25-5.25Zm3.75 8.25v-3a3.75 3.75 0 1 0-7.5 0v3h7.5Z"
+                                          clip-rule="evenodd"/>
+                                </svg>
+
+                                <h3 class="font-normal">{{ Translation::get('pay-safe-with', 'products', 'Betaal veilig met') }}</h3>
+                            </div>
+                            <div class="flex gap-2 flex-wrap items-center justify-center">
+                                @foreach($paymentMethods as $paymentMethod)
+                                    @if($paymentMethod->image)
+                                        <x-dashed-files::image
+                                            :mediaId="$paymentMethod->image"
+                                            :alt="$paymentMethod->name"
+                                            :manipulations="[ 'widen' => 100 ]"
+                                            class="w-8"
+                                        />
+                                    @endif
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
                 </div>
 
                 @foreach (range(1, 2) as $i)
