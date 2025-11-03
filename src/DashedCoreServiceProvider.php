@@ -24,6 +24,7 @@ use Guava\FilamentIconPicker\Forms\IconPicker;
 use Dashed\DashedCore\Commands\CreateAdminUser;
 use Dashed\DashedCore\Commands\SyncGoogleReviews;
 use Dashed\DashedCore\Commands\CreateDefaultPages;
+use Dashed\DashedCore\Commands\MigrateDatabaseToV4;
 use Dashed\DashedCore\Livewire\Frontend\Auth\Login;
 use Dashed\DashedCore\Commands\CreateVisitableModel;
 use Spatie\LaravelPackageTools\PackageServiceProvider;

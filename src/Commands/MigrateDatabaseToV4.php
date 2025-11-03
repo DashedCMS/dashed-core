@@ -20,6 +20,7 @@ class MigrateDatabaseToV4 extends Command
             $columns = $this->getProcessableColumns($table);
             if (empty($columns)) {
                 $this->line("  (skip) no processable columns");
+
                 continue;
             }
 
@@ -47,6 +48,7 @@ class MigrateDatabaseToV4 extends Command
         foreach ($rows as $row) {
             $tables[] = array_values((array) $row)[0];
         }
+
         return $tables;
     }
 
@@ -87,6 +89,7 @@ class MigrateDatabaseToV4 extends Command
                 $processable[] = $col->COLUMN_NAME;
             }
         }
+
         return $processable;
     }
 
@@ -105,7 +108,7 @@ class MigrateDatabaseToV4 extends Command
             ->chunkById(500, function ($rows) use ($table, $pk, $columns) {
                 foreach ($rows as $row) {
                     $updates = $this->processRowColumns($row, $columns);
-                    if (!empty($updates)) {
+                    if (! empty($updates)) {
                         \DB::table($table)->where($pk, $row->$pk)->update($updates);
                     }
                 }
@@ -136,7 +139,7 @@ class MigrateDatabaseToV4 extends Command
                 $where = $this->buildUniqueWhereFromRow($row);
 
                 $updates = $this->processRowColumns($row, $columns);
-                if (!empty($updates)) {
+                if (! empty($updates)) {
                     \DB::table($table)->where($where)->update($updates);
                 }
             }
@@ -165,9 +168,12 @@ class MigrateDatabaseToV4 extends Command
 
         $where = [];
         foreach ($arr as $k => $v) {
-            if (is_resource($v)) continue;
+            if (is_resource($v)) {
+                continue;
+            }
             $where[$k] = $v;
         }
+
         return $where;
     }
 
@@ -181,11 +187,15 @@ class MigrateDatabaseToV4 extends Command
         foreach ($columns as $col) {
             $original = $row->$col ?? null;
 
-            if ($original === null) continue;
+            if ($original === null) {
+                continue;
+            }
 
             if (is_array($original) || is_object($original)) {
                 $decoded = json_decode(json_encode($original), true);
-                if (!is_array($decoded)) continue;
+                if (! is_array($decoded)) {
+                    continue;
+                }
 
                 $converted = $this->walkArrayWithHtml($decoded, function ($html) {
                     return $this->htmlFragmentToRichContentDoc($html);
@@ -194,6 +204,7 @@ class MigrateDatabaseToV4 extends Command
                 if ($decoded !== $converted) {
                     $updates[$col] = json_encode($converted, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
                 }
+
                 continue;
             }
 
@@ -272,6 +283,7 @@ class MigrateDatabaseToV4 extends Command
     {
         if ($node instanceof \DOMText) {
             $text = trim($node->nodeValue ?? '');
+
             return $text !== ''
                 ? [[
                     'type' => 'paragraph',
@@ -281,7 +293,7 @@ class MigrateDatabaseToV4 extends Command
                 : [];
         }
 
-        if (!($node instanceof \DOMElement)) {
+        if (! ($node instanceof \DOMElement)) {
             return [];
         }
 
@@ -314,6 +326,7 @@ class MigrateDatabaseToV4 extends Command
         // P
         if ($tag === 'p') {
             $inline = $this->convertInlineChildren($node);
+
             return [[
                 'type' => 'paragraph',
                 'attrs' => ['textAlign' => 'start'],
@@ -326,6 +339,7 @@ class MigrateDatabaseToV4 extends Command
         foreach (iterator_to_array($node->childNodes) as $child) {
             $out = array_merge($out, $this->convertDomNodeToTipTap($child));
         }
+
         return $out;
     }
 
@@ -339,16 +353,18 @@ class MigrateDatabaseToV4 extends Command
                 if ($txt !== '') {
                     $parts[] = ['type' => 'text', 'text' => $txt];
                 }
+
                 continue;
             }
 
-            if (!($child instanceof \DOMElement)) {
+            if (! ($child instanceof \DOMElement)) {
                 continue;
             }
 
             $tag = strtolower($child->tagName);
             if ($tag === 'br') {
                 $parts[] = ['type' => 'hardBreak'];
+
                 continue;
             }
 
@@ -374,29 +390,29 @@ class MigrateDatabaseToV4 extends Command
             ? ($node->parentNode instanceof \DOMElement ? $node->parentNode : null)
             : $node;
 
-        $iframeAttrsAll  = $iframe ? $this->extractAttributes($iframe) : [];
+        $iframeAttrsAll = $iframe ? $this->extractAttributes($iframe) : [];
         $wrapperAttrsAll = $wrapper ? $this->extractAttributes($wrapper) : [];
 
         $embed = (string) ($iframeAttrsAll['src'] ?? '');
         [$type, $original] = $this->detectProviderAndOriginalUrl($embed);
 
         $ratio = $iframe ? ($this->extractRatioFromElement($iframe) ?? '16:9') : '16:9';
-        if (!$ratio && $wrapper) {
+        if (! $ratio && $wrapper) {
             $ratio = $this->extractRatioFromElement($wrapper) ?? '16:9';
         }
 
         [$maxWidth, $unit] = $wrapper ? ($this->extractMaxWidthFromElement($wrapper) ?? ['100', '%']) : ['100', '%'];
 
         return [
-            'type'  => 'externalVideo',
+            'type' => 'externalVideo',
             'attrs' => [
-                'src'       => $original ?: $embed,
-                'type'      => $wrapperAttrsAll['data-type'] ?? $type,
-                'ratio'     => $wrapperAttrsAll['data-ratio'] ?? $ratio,
-                'maxWidth'  => $wrapperAttrsAll['data-max-width'] ?? $maxWidth,
+                'src' => $original ?: $embed,
+                'type' => $wrapperAttrsAll['data-type'] ?? $type,
+                'ratio' => $wrapperAttrsAll['data-ratio'] ?? $ratio,
+                'maxWidth' => $wrapperAttrsAll['data-max-width'] ?? $maxWidth,
                 'widthUnit' => $wrapperAttrsAll['data-width-unit'] ?? $unit,
                 'wrapperAttributes' => $wrapperAttrsAll,
-                'iframeAttributes'  => $iframeAttrsAll,
+                'iframeAttributes' => $iframeAttrsAll,
             ],
         ];
     }
@@ -406,15 +422,15 @@ class MigrateDatabaseToV4 extends Command
         $attrsAll = $this->extractAttributes($img);
 
         return [
-            'type'  => 'image',
+            'type' => 'image',
             'attrs' => [
-                'src'   => (string) ($attrsAll['src'] ?? ''),
-                'alt'   => (string) ($attrsAll['alt'] ?? ''),
+                'src' => (string) ($attrsAll['src'] ?? ''),
+                'alt' => (string) ($attrsAll['alt'] ?? ''),
                 'title' => (string) ($attrsAll['title'] ?? ''),
-                'width'  => $attrsAll['width'] ?? null,
+                'width' => $attrsAll['width'] ?? null,
                 'height' => $attrsAll['height'] ?? null,
-                'class'  => $attrsAll['class'] ?? null,
-                'style'  => $attrsAll['style'] ?? null,
+                'class' => $attrsAll['class'] ?? null,
+                'style' => $attrsAll['style'] ?? null,
                 'htmlAttributes' => $attrsAll,
             ],
         ];
@@ -428,20 +444,24 @@ class MigrateDatabaseToV4 extends Command
 
         // THEAD
         foreach (iterator_to_array($table->getElementsByTagName('thead')) as $thead) {
-            if ($thead->parentNode !== $table) continue;
+            if ($thead->parentNode !== $table) {
+                continue;
+            }
             $content = array_merge($content, $this->convertTableSection($thead, true));
         }
 
         // TBODY(ies)
         $hasTbody = false;
         foreach (iterator_to_array($table->getElementsByTagName('tbody')) as $tbody) {
-            if ($tbody->parentNode !== $table) continue;
+            if ($tbody->parentNode !== $table) {
+                continue;
+            }
             $hasTbody = true;
             $content = array_merge($content, $this->convertTableSection($tbody, false));
         }
 
         // Directe TR's als er geen secties zijn
-        if (!$hasTbody && !$table->getElementsByTagName('thead')->length) {
+        if (! $hasTbody && ! $table->getElementsByTagName('thead')->length) {
             foreach (iterator_to_array($table->childNodes) as $child) {
                 if ($child instanceof \DOMElement && strtolower($child->tagName) === 'tr') {
                     $content[] = $this->convertTableRow($child, false);
@@ -451,7 +471,9 @@ class MigrateDatabaseToV4 extends Command
 
         // TFOOT onderaan
         foreach (iterator_to_array($table->getElementsByTagName('tfoot')) as $tfoot) {
-            if ($tfoot->parentNode !== $table) continue;
+            if ($tfoot->parentNode !== $table) {
+                continue;
+            }
             $content = array_merge($content, $this->convertTableSection($tfoot, false));
         }
 
@@ -461,8 +483,8 @@ class MigrateDatabaseToV4 extends Command
                 'content' => [
                     [
                         'type' => 'tableCell',
-                        'attrs' => ['colspan'=>1,'rowspan'=>1,'colwidth'=>null],
-                        'content' => [[ 'type'=>'paragraph', 'attrs'=>['textAlign'=>'start'] ]],
+                        'attrs' => ['colspan' => 1,'rowspan' => 1,'colwidth' => null],
+                        'content' => [[ 'type' => 'paragraph', 'attrs' => ['textAlign' => 'start'] ]],
                     ],
                 ],
             ];
@@ -483,6 +505,7 @@ class MigrateDatabaseToV4 extends Command
                 $rows[] = $this->convertTableRow($child, $asHeader);
             }
         }
+
         return $rows;
     }
 
@@ -490,7 +513,9 @@ class MigrateDatabaseToV4 extends Command
     {
         $cells = [];
         foreach (iterator_to_array($tr->childNodes) as $cell) {
-            if (!($cell instanceof \DOMElement)) continue;
+            if (! ($cell instanceof \DOMElement)) {
+                continue;
+            }
             $tag = strtolower($cell->tagName);
             if ($tag === 'th' || $tag === 'td') {
                 $cells[] = $this->convertTableCell($cell, $asHeader || $tag === 'th');
@@ -500,7 +525,7 @@ class MigrateDatabaseToV4 extends Command
         if (empty($cells)) {
             $cells[] = [
                 'type' => 'tableCell',
-                'attrs' => ['colspan'=>1,'rowspan'=>1,'colwidth'=>null],
+                'attrs' => ['colspan' => 1,'rowspan' => 1,'colwidth' => null],
                 'content' => [[ 'type' => 'paragraph', 'attrs' => ['textAlign' => 'start'] ]],
             ];
         }
@@ -526,8 +551,8 @@ class MigrateDatabaseToV4 extends Command
         return [
             'type' => $isHeader ? 'tableHeader' : 'tableCell',
             'attrs' => [
-                'colspan'  => max(1, $colspan),
-                'rowspan'  => max(1, $rowspan),
+                'colspan' => max(1, $colspan),
+                'rowspan' => max(1, $rowspan),
                 'colwidth' => null, // ✅ strikt volgens schema
             ],
             'content' => $content,
@@ -548,10 +573,13 @@ class MigrateDatabaseToV4 extends Command
                         'content' => [[ 'type' => 'text', 'text' => $txt ]],
                     ];
                 }
+
                 continue;
             }
 
-            if (!($child instanceof \DOMElement)) continue;
+            if (! ($child instanceof \DOMElement)) {
+                continue;
+            }
 
             $tag = strtolower($child->tagName);
 
@@ -562,22 +590,25 @@ class MigrateDatabaseToV4 extends Command
                     'attrs' => ['textAlign' => 'start'],
                     'content' => $inline ?: [[ 'type' => 'text', 'text' => '' ]],
                 ];
+
                 continue;
             }
 
             if ($tag === 'img') {
                 $blocks[] = $this->convertImageNode($child);
+
                 continue;
             }
 
             if (in_array($tag, ['h1','h2','h3','h4','h5','h6'])) {
                 $level = (int) substr($tag, 1);
-                $text  = trim($child->textContent ?? '');
+                $text = trim($child->textContent ?? '');
                 $blocks[] = [
                     'type' => 'heading',
                     'attrs' => ['level' => max(1, min(6, $level))],
                     'content' => $text !== '' ? [[ 'type' => 'text', 'text' => $text ]] : [],
                 ];
+
                 continue;
             }
 
@@ -600,6 +631,7 @@ class MigrateDatabaseToV4 extends Command
                     'type' => $tag === 'ul' ? 'bulletList' : 'orderedList',
                     'content' => $listItems,
                 ];
+
                 continue;
             }
 
@@ -609,6 +641,7 @@ class MigrateDatabaseToV4 extends Command
                     'attrs' => ['textAlign' => 'start'],
                     'content' => [[ 'type' => 'hardBreak' ]],
                 ];
+
                 continue;
             }
 
@@ -636,6 +669,7 @@ class MigrateDatabaseToV4 extends Command
         foreach ($el->attributes as $attr) {
             $out[$attr->name] = $attr->value;
         }
+
         return $out;
     }
 
@@ -645,14 +679,17 @@ class MigrateDatabaseToV4 extends Command
 
         if (preg_match('~youtube(?:-nocookie)?\.com/embed/([^?&/]+)~i', $u, $m)) {
             $id = $m[1];
+
             return ['youtube', "https://www.youtube.com/watch?v={$id}"];
         }
         if (preg_match('~youtu\.be/([^?&/]+)~i', $u, $m)) {
             $id = $m[1];
+
             return ['youtube', "https://www.youtube.com/watch?v={$id}"];
         }
         if (preg_match('~player\.vimeo\.com/video/(\d+)~i', $u, $m)) {
             $id = $m[1];
+
             return ['vimeo', "https://vimeo.com/{$id}"];
         }
         if (preg_match('~\.(mp4|webm|ogg)(\?.*)?$~i', $u)) {
@@ -664,11 +701,14 @@ class MigrateDatabaseToV4 extends Command
 
     public function extractRatioFromElement(?\DOMElement $el): ?string
     {
-        if (!$el instanceof \DOMElement) return null;
+        if (! $el instanceof \DOMElement) {
+            return null;
+        }
 
         $style = (string) ($el->getAttribute('style') ?? '');
         if ($style !== '' && preg_match('~aspect-ratio\s*:\s*([0-9.]+)\s*/\s*([0-9.]+)~i', $style, $m)) {
             [$iw, $ih] = $this->normalizeRatio((float) $m[1], (float) $m[2]);
+
             return "{$iw}:{$ih}";
         }
 
@@ -676,6 +716,7 @@ class MigrateDatabaseToV4 extends Command
         $h = (float) ($el->getAttribute('height') ?: 0);
         if ($w > 0 && $h > 0) {
             [$iw, $ih] = $this->normalizeRatio($w, $h);
+
             return "{$iw}:{$ih}";
         }
 
@@ -684,30 +725,42 @@ class MigrateDatabaseToV4 extends Command
 
     public function extractMaxWidthFromElement(?\DOMElement $el): ?array
     {
-        if (!$el instanceof \DOMElement) return null;
+        if (! $el instanceof \DOMElement) {
+            return null;
+        }
 
         $style = (string) ($el->getAttribute('style') ?? '');
         if ($style !== '' && preg_match('~max-width\s*:\s*([0-9.]+)\s*(px|%)~i', $style, $m)) {
             return [$m[1], $m[2]];
         }
+
         return null;
     }
 
     public function normalizeRatio(float $w, float $h): array
     {
-        if ($w <= 0 || $h <= 0) return [16, 9];
+        if ($w <= 0 || $h <= 0) {
+            return [16, 9];
+        }
         $scale = 10000;
         $iw = (int) round($w * $scale);
         $ih = (int) round($h * $scale);
-        $g  = $this->gcd($iw, $ih);
+        $g = $this->gcd($iw, $ih);
+
         return [$iw / $g, $ih / $g];
     }
 
     public function gcd(int $a, int $b): int
     {
-        $a = abs($a); $b = abs($b);
-        if ($b === 0) return $a ?: 1;
-        while ($b !== 0) [$a, $b] = [$b, $a % $b];
+        $a = abs($a);
+        $b = abs($b);
+        if ($b === 0) {
+            return $a ?: 1;
+        }
+        while ($b !== 0) {
+            [$a, $b] = [$b, $a % $b];
+        }
+
         return max(1, $a);
     }
 }
