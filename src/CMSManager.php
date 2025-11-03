@@ -439,4 +439,15 @@ class CMSManager
             ->plugins(cms()->builder('richEditorPlugins'))
             ->toUnsafeHtml();
     }
+
+    public function convertToArray($content): string|array
+    {
+        if (! $content) {
+            return '';
+        }
+
+        return RichEditor\RichContentRenderer::make($content)
+            ->plugins(cms()->builder('richEditorPlugins'))
+            ->toArray();
+    }
 }
