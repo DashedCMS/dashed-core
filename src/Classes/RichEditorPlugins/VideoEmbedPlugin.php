@@ -3,17 +3,16 @@
 namespace Dashed\DashedCore\Classes\RichEditorPlugins;
 
 use Filament\Actions\Action;
-use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\RichEditor\EditorCommand;
-use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
-use Filament\Forms\Components\RichEditor\RichEditorTool;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
+use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Group;
-use Filament\Schemas\Components\View;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\RichEditor;
 use Filament\Support\Facades\FilamentAsset;
+use Filament\Forms\Components\RichEditor\EditorCommand;
+use Filament\Forms\Components\RichEditor\RichEditorTool;
+use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
 
 class VideoEmbedPlugin implements RichContentPlugin
 {
@@ -45,7 +44,6 @@ class VideoEmbedPlugin implements RichContentPlugin
     public function getEditorActions(): array
     {
         return [
-            // ✅ Insert modal
             Action::make('insertExternalVideo')
                 ->modalHeading('Video insluiten')
                 ->modalWidth(Width::Large)
@@ -62,7 +60,6 @@ class VideoEmbedPlugin implements RichContentPlugin
                     ], editorSelection: $arguments['editorSelection'] ?? null);
                 }),
 
-            // ✅ Edit modal
             Action::make('editExternalVideo')
                 ->modalHeading('Video bewerken')
                 ->modalWidth(Width::Large)
@@ -127,11 +124,6 @@ class VideoEmbedPlugin implements RichContentPlugin
                         ->default('%'),
                 ])
                 ->columns(2),
-
-            View::make('dashed-core::richeditor.video-preview')
-                ->reactive()
-                ->visible(fn($get) => filled($get('src')))
-                ->extraAttributes(['class' => 'mt-4']),
         ];
     }
 }

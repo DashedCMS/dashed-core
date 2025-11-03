@@ -3,7 +3,6 @@
 namespace Dashed\DashedCore\Classes\RichEditorPlugins;
 
 use Tiptap\Core\Node;
-use Tiptap\Utils\HTML;
 
 class ExternalVideoExtension extends Node
 {
@@ -29,24 +28,24 @@ class ExternalVideoExtension extends Node
     {
         return [
             'src' => [
-                'parseHTML' => fn(\DOMElement $dom) => $dom->getAttribute('src'),
-                'renderHTML' => fn($attrs) => ['src' => $attrs->src ?? null],
+                'parseHTML' => fn (\DOMElement $dom) => $dom->getAttribute('src'),
+                'renderHTML' => fn ($attrs) => ['src' => $attrs->src ?? null],
             ],
             'type' => [
-                'parseHTML' => fn(\DOMElement $dom) => $dom->getAttribute('data-type') ?? 'auto',
-                'renderHTML' => fn($attrs) => ['data-type' => $attrs->type ?? 'auto'],
+                'parseHTML' => fn (\DOMElement $dom) => $dom->getAttribute('data-type') ?? 'auto',
+                'renderHTML' => fn ($attrs) => ['data-type' => $attrs->type ?? 'auto'],
             ],
             'ratio' => [
-                'parseHTML' => fn(\DOMElement $dom) => $dom->getAttribute('data-ratio') ?? '16:9',
-                'renderHTML' => fn($attrs) => ['data-ratio' => $attrs->ratio ?? '16:9'],
+                'parseHTML' => fn (\DOMElement $dom) => $dom->getAttribute('data-ratio') ?? '16:9',
+                'renderHTML' => fn ($attrs) => ['data-ratio' => $attrs->ratio ?? '16:9'],
             ],
             'maxWidth' => [
-                'parseHTML' => fn(\DOMElement $dom) => $dom->getAttribute('data-max-width') ?? '100',
-                'renderHTML' => fn($attrs) => ['data-max-width' => $attrs->maxWidth ?? '100'],
+                'parseHTML' => fn (\DOMElement $dom) => $dom->getAttribute('data-max-width') ?? '100',
+                'renderHTML' => fn ($attrs) => ['data-max-width' => $attrs->maxWidth ?? '100'],
             ],
             'widthUnit' => [
-                'parseHTML' => fn(\DOMElement $dom) => $dom->getAttribute('data-width-unit') ?? '%',
-                'renderHTML' => fn($attrs) => ['data-width-unit' => $attrs->widthUnit ?? '%'],
+                'parseHTML' => fn (\DOMElement $dom) => $dom->getAttribute('data-width-unit') ?? '%',
+                'renderHTML' => fn ($attrs) => ['data-width-unit' => $attrs->widthUnit ?? '%'],
             ],
         ];
     }
@@ -146,6 +145,4 @@ class ExternalVideoExtension extends Node
             ['iframe', $iframeAttrs],
         ];
     }
-
-
 }

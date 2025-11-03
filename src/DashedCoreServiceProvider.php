@@ -42,6 +42,7 @@ use Dashed\DashedCore\Livewire\Infolists\SEO\SEOScoreInfoList;
 use Dashed\DashedCore\Filament\Widgets\NotFoundPageGlobalStats;
 use Dashed\DashedCore\Filament\Pages\Settings\CacheSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
+use Dashed\DashedCore\Classes\RichEditorPlugins\MediaEmbedPlugin;
 use Dashed\DashedCore\Classes\RichEditorPlugins\VideoEmbedPlugin;
 use Dashed\DashedCore\Filament\Pages\Settings\SearchSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\AccountSettingsPage;
@@ -119,6 +120,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
 
         cms()->builder('richEditorPlugins', [
             VideoEmbedPlugin::make(),
+            MediaEmbedPlugin::make(),
         ]);
     }
 
@@ -475,6 +477,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                 ReplaceEditorStringsInFiles::class,
                 AutomaticlyCreateAltTextsForAllMediaItems::class,
                 MigrateToV4::class,
+                MigrateDatabaseToV4::class,
             ]);
     }
 

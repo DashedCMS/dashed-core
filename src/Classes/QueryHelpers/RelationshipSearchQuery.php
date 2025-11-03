@@ -17,7 +17,7 @@ class RelationshipSearchQuery
         }
 
         if ($applyScopes) {
-            if (!is_array($applyScopes)) {
+            if (! is_array($applyScopes)) {
                 $applyScopes = [$applyScopes];
             }
 

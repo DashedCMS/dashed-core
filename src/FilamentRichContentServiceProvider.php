@@ -14,7 +14,11 @@ class FilamentRichContentServiceProvider extends ServiceProvider
             Js::make(
                 'rich-content-plugins/external-video',
                 __DIR__ . '/../resources/js/dist/filament/rich-content-plugins/external-video.js'
-            )->loadedOnRequest(), // 👈 only loads when RichEditor is used
+            )->loadedOnRequest(),
+            Js::make(
+                'rich-content-plugins/media-embed',
+                __DIR__ . '/../resources/js/dist/filament/rich-content-plugins/media-embed.js'
+            )->loadedOnRequest(),
         ], 'dashed-core');
     }
 }
