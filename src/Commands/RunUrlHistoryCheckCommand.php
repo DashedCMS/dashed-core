@@ -4,7 +4,7 @@ namespace Dashed\DashedCore\Commands;
 
 use Illuminate\Console\Command;
 use Dashed\DashedCore\Models\Customsetting;
-use Dashed\DashedCore\Jobs\RunUrlHistoryCheck;
+use Dashed\DashedCore\Jobs\CreateJSONFeedsJob;
 
 class RunUrlHistoryCheckCommand extends Command
 {
@@ -40,7 +40,7 @@ class RunUrlHistoryCheckCommand extends Command
     public function handle()
     {
         if (Customsetting::get('run_history_check') == true && Customsetting::get('last_history_check', null, now()->subWeek()) < now()->subHour()) {
-            RunUrlHistoryCheck::dispatch();
+            CreateJSONFeedsJob::dispatch();
         }
     }
 }

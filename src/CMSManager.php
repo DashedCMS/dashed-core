@@ -2,7 +2,9 @@
 
 namespace Dashed\DashedCore;
 
+use Filament\Forms\Components\Textarea;
 use Filament\Panel;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
@@ -366,6 +368,7 @@ class CMSManager
             ->all();
 
         $builder = $this->builder('editor')::make($name)
+            ->label($label ?: $name)
             ->fileAttachmentsDisk('dashed')
             ->fileAttachmentsDirectory('editor')
             ->fileAttachmentsVisibility('public')
@@ -385,7 +388,7 @@ class CMSManager
                 ],
             ])
             ->toolbarButtons([
-//                'attachFiles',
+                'attachFiles',
                 'mediaEmbed',
                 'insertExternalVideo',
                 'blockquote',
@@ -417,17 +420,144 @@ class CMSManager
                 'gridDelete',
                 'details',
             ])
+            ->formatStateUsing(function($state){
+                $nodes = $this->normalizeRichState($state);
+                $state = [
+                    'type' => 'doc',
+                    'content' => $this->cleanForFilamentRich($nodes)
+                ];
+                return $state;
+            })
             ->json()
             ->plugins(cms()->builder('richEditorPlugins'))
             ->textColors($colors)
             ->customTextColors();
 
-        if ($label) {
-            $builder->label($label);
-        }
-
         return $builder;
     }
+
+    public function normalizeRichState($state): array
+    {
+        if (blank($state)) return [];
+
+        // 1) JSON-string → array
+        if (is_string($state)) {
+            $decoded = json_decode($state, true);
+            $state = is_array($decoded) ? $decoded : [];
+        }
+
+        // 2) Al een array van nodes? (numerieke keys)
+        if (is_array($state) && Arr::isList($state) && isset($state[0]['type'])) {
+            return $state; // klaar
+        }
+
+        // 3) Tiptap doc-vorm: ['type' => 'doc', 'content' => [...]]
+        if (isset($state['type']) && $state['type'] === 'doc' && isset($state['content']) && is_array($state['content'])) {
+            return $state['content'];
+        }
+
+        // 4) AWCodes/andere varianten met 'content' root
+        if (isset($state['content']) && is_array($state['content'])) {
+            return $state['content'];
+        }
+
+        // 5) Anders: empty (voorkomt "Undefined array key 'content'")
+        return [];
+    }
+
+    public function cleanForFilamentRich(array $nodes): array
+    {
+        $keepNodeAttrs = function (array $node): array {
+            $type = $node['type'] ?? null;
+            $attrs = $node['attrs'] ?? [];
+
+            $pick = fn(array $src, array $keys) => array_reduce($keys, function($carry, $k) use ($src) {
+                if (array_key_exists($k, $src)) $carry[$k] = $src[$k];
+                return $carry;
+            }, []);
+
+            switch ($type) {
+                case 'heading':
+                    // Filament v4 ondersteunt text alignment op headings
+                    $node['attrs'] = $pick($attrs, ['level', 'textAlign']);
+                    break;
+
+                case 'paragraph':
+                    // Alleen uitlijning bewaren
+                    $node['attrs'] = $pick($attrs, ['textAlign']);
+                    if (empty($node['attrs'])) unset($node['attrs']);
+                    break;
+
+                case 'image':
+                    // Belangrijk: src NIET strippen, anders zie je het plaatje niet (ook niet in tables)
+                    $node['attrs'] = $pick($attrs, ['src', 'alt', 'title', 'width', 'height']);
+                    break;
+
+                case 'table':
+                    // Meestal geen attrs nodig, maar laat staan als er ooit iets komt
+                    $node['attrs'] = $pick($attrs, []); // noop
+                    if (empty($node['attrs'])) unset($node['attrs']);
+                    break;
+
+                case 'tableRow':
+                case 'tableHeader':
+                case 'tableCell':
+                    // Bewaar cel-attrs die Tiptap gebruikt
+                    $node['attrs'] = $pick($attrs, ['colspan', 'rowspan', 'colwidth']);
+                    if (empty($node['attrs'])) unset($node['attrs']);
+                    break;
+
+                case 'externalVideo':
+                case 'mediaEmbed':
+                    // Jouw plugins gebruiken doorgaans deze attrs
+                    $node['attrs'] = $pick($attrs, ['src', 'ratio', 'provider']);
+                    break;
+
+                case 'horizontalRule':
+                case 'codeBlock':
+                case 'blockquote':
+                case 'bulletList':
+                case 'orderedList':
+                case 'listItem':
+                case 'hardBreak':
+                case 'text':
+                    // Niks bijzonders nodig
+                    if (isset($node['attrs'])) unset($node['attrs']);
+                    break;
+
+                default:
+                    // Onbekende node-types: laat attrs met rust? Liever safe → strippen.
+                    // Als je custom nodes hebt met attrs, voeg ze bovenin toe aan de switch.
+                    if (isset($node['attrs'])) unset($node['attrs']);
+                    break;
+            }
+
+            return $node;
+        };
+
+        return array_map(function ($node) use ($keepNodeAttrs) {
+            // 1) Node-attrs whitelisten
+            $node = $keepNodeAttrs($node);
+
+            // 2) Marks filteren (inline styles weg)
+            if (isset($node['marks']) && is_array($node['marks'])) {
+                $node['marks'] = array_values(array_filter(
+                    $node['marks'],
+                    fn ($mark) => ($mark['type'] ?? '') !== 'textStyle'
+                ));
+                if (empty($node['marks'])) unset($node['marks']);
+            }
+
+            // 3) Recurse door children
+            if (isset($node['content']) && is_array($node['content'])) {
+                $node['content'] = $this->cleanForFilamentRich($node['content']);
+                if (empty($node['content'])) unset($node['content']);
+            }
+
+            return $node;
+        }, $nodes);
+    }
+
 
     public function convertToHtml($content): string
     {
