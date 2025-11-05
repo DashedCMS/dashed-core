@@ -9,12 +9,32 @@ class MigrateDatabaseToV4 extends Command
     protected $signature = 'dashed:migrate-database-to-v4';
     protected $description = 'Convert legacy HTML content to Filament RichContent arrays';
 
+    /**
+     * ✅ Pas deze arrays naar smaak aan
+     */
+    protected array $columnNameWhitelist = [
+        'content', 'body', 'description', 'excerpt', 'text', 'html',
+        'rich_content', 'richContent', 'data',
+    ];
+
+    protected array $skipTables = [
+        'dashed__custom_settings',
+        'dashed__translations',
+    ];
+
     public function handle()
     {
         $db = \DB::getDatabaseName();
         $this->info("Scanning database: {$db}");
 
         foreach ($this->getAllTables() as $table) {
+            if ($this->shouldSkipTable($table)) {
+                $this->line("→ Table: {$table}");
+                $this->line("  (skip) table is in skip list");
+
+                continue;
+            }
+
             $this->line("→ Table: {$table}");
 
             $columns = $this->getProcessableColumns($table);
@@ -40,6 +60,9 @@ class MigrateDatabaseToV4 extends Command
      | Table / schema helpers
      * ---------------------------------------------------------------------------*/
 
+    /**
+     * Haalt alle tabellen op en filtert direct de skip-lijst eruit.
+     */
     public function getAllTables(): array
     {
         // Works for MySQL/MariaDB
@@ -49,7 +72,15 @@ class MigrateDatabaseToV4 extends Command
             $tables[] = array_values((array) $row)[0];
         }
 
+        // Filter skip-lijst
+        $tables = array_values(array_filter($tables, fn ($t) => ! $this->shouldSkipTable($t)));
+
         return $tables;
+    }
+
+    protected function shouldSkipTable(string $table): bool
+    {
+        return in_array($table, $this->skipTables, true);
     }
 
     public function getPrimaryKeyColumn(string $table): ?string
@@ -68,24 +99,28 @@ class MigrateDatabaseToV4 extends Command
     }
 
     /**
-     * Return columns that are worth checking for JSON:
-     * json + text-like types (varchar/text/mediumtext/longtext)
-     * Skips blobs/binaries/numbers/dates.
+     * ✅ Alleen kolommen die:
+     * - in de whitelist staan, én
+     * - text-achtig type hebben
      */
     public function getProcessableColumns(string $table): array
     {
         $db = \DB::getDatabaseName();
 
+        // Haal alleen kolommen op die in de whitelist zitten
         $rows = \DB::table('information_schema.COLUMNS')
             ->select('COLUMN_NAME', 'DATA_TYPE')
             ->where('TABLE_SCHEMA', $db)
             ->where('TABLE_NAME', $table)
+            ->whereIn('COLUMN_NAME', $this->columnNameWhitelist)
             ->get();
+
+        $processableTypes = ['json', 'text', 'mediumtext', 'longtext', 'varchar', 'char'];
 
         $processable = [];
         foreach ($rows as $col) {
             $type = strtolower($col->DATA_TYPE);
-            if (in_array($type, ['json', 'text', 'mediumtext', 'longtext', 'varchar', 'char'])) {
+            if (in_array($type, $processableTypes, true)) {
                 $processable[] = $col->COLUMN_NAME;
             }
         }
@@ -125,7 +160,7 @@ class MigrateDatabaseToV4 extends Command
 
         while (true) {
             $rows = \DB::table($table)
-                ->select(array_merge(['*'], [])) // select all (no pk known)
+                ->select(['*']) // select all (no pk known)
                 ->offset($offset)
                 ->limit($limit)
                 ->get();
@@ -177,9 +212,9 @@ class MigrateDatabaseToV4 extends Command
         return $where;
     }
 
-    /* -----------------------------------------------------------------------------
-     | Per-row / per-column transform
-     * ---------------------------------------------------------------------------*/
+    /* -------------------------------------------------------------------------- */
+    /* Per-row / per-column transform (ongewijzigd)                                */
+    /* -------------------------------------------------------------------------- */
 
     public function processRowColumns(object $row, array $columns): array
     {
@@ -254,7 +289,7 @@ class MigrateDatabaseToV4 extends Command
     }
 
     /* -------------------------------------------------------------------------- */
-    /* HTML → RichContent conversion                                              */
+    /* HTML → RichContent conversion (ongewijzigd)                                 */
     /* -------------------------------------------------------------------------- */
 
     public function htmlFragmentToRichContentDoc(string $html): array
@@ -353,7 +388,6 @@ class MigrateDatabaseToV4 extends Command
                 if ($txt !== '') {
                     $parts[] = ['type' => 'text', 'text' => $txt];
                 }
-
                 continue;
             }
 
@@ -364,7 +398,6 @@ class MigrateDatabaseToV4 extends Command
             $tag = strtolower($child->tagName);
             if ($tag === 'br') {
                 $parts[] = ['type' => 'hardBreak'];
-
                 continue;
             }
 
@@ -573,7 +606,6 @@ class MigrateDatabaseToV4 extends Command
                         'content' => [[ 'type' => 'text', 'text' => $txt ]],
                     ];
                 }
-
                 continue;
             }
 
@@ -590,13 +622,11 @@ class MigrateDatabaseToV4 extends Command
                     'attrs' => ['textAlign' => 'start'],
                     'content' => $inline ?: [[ 'type' => 'text', 'text' => '' ]],
                 ];
-
                 continue;
             }
 
             if ($tag === 'img') {
                 $blocks[] = $this->convertImageNode($child);
-
                 continue;
             }
 
@@ -608,7 +638,6 @@ class MigrateDatabaseToV4 extends Command
                     'attrs' => ['level' => max(1, min(6, $level))],
                     'content' => $text !== '' ? [[ 'type' => 'text', 'text' => $text ]] : [],
                 ];
-
                 continue;
             }
 
@@ -631,7 +660,6 @@ class MigrateDatabaseToV4 extends Command
                     'type' => $tag === 'ul' ? 'bulletList' : 'orderedList',
                     'content' => $listItems,
                 ];
-
                 continue;
             }
 
@@ -641,7 +669,6 @@ class MigrateDatabaseToV4 extends Command
                     'attrs' => ['textAlign' => 'start'],
                     'content' => [[ 'type' => 'hardBreak' ]],
                 ];
-
                 continue;
             }
 
