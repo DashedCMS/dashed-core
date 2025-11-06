@@ -27,11 +27,16 @@ class Dashboard extends BaseDashboard
 
     public static function getStartData(): array
     {
+        $dashboardFiltersData = Customsetting::get('dashboard_filter_data_from_user_' . auth()->id(), null, null);
+        if ($dashboardFiltersData) {
+            return $dashboardFiltersData;
+        }
+
         return [
-            'startDate' => now()->subMonth()->format('d-m-Y'),
-            'endDate' => now()->format('d-m-Y'),
-            'period' => 'month',
-            'steps' => 'per_day',
+            'startDate' => now()->startOfDay()->format('d-m-Y'),
+            'endDate' => now()->addDay()->startOfDay()->format('d-m-Y'),
+            'period' => 'today',
+            'steps' => 'per_hour',
         ];
     }
 
@@ -53,6 +58,12 @@ class Dashboard extends BaseDashboard
         $this->data = self::getStartData();
     }
 
+    public function updateData(): void
+    {
+        Customsetting::set('dashboard_filter_data_from_user_' . auth()->id(), $this->data);
+        $this->dispatch('setPageFiltersData', $this->data);
+    }
+
     public function filtersForm(Schema $schema): Schema
     {
         return $schema
@@ -61,19 +72,19 @@ class Dashboard extends BaseDashboard
                     ->schema([
                         DatePicker::make('startDate')
                             ->label('Start datum')
-                            ->default(now()->subMonth())
+                            ->default(self::getStartData()['startDate'])
                             ->reactive()
                             ->maxDate(fn (callable $get) => $get('endDate') ?: now())
                             ->afterStateUpdated(function () {
-                                $this->dispatch('setPageFiltersData', $this->data);
+                                $this->updateData();
                             }),
                         DatePicker::make('endDate')
                             ->label('Eind datum')
                             ->minDate(fn (callable $get) => $get('startDate'))
-                            ->default(now())
+                            ->default(self::getStartData()['endDate'])
                             ->reactive()
                             ->afterStateUpdated(function () {
-                                $this->dispatch('setPageFiltersData', $this->data);
+                                $this->updateData();
                             }),
                         Select::make('period')
                             ->label('Periode')
@@ -124,9 +135,9 @@ class Dashboard extends BaseDashboard
 
                                         break;
                                 }
-                                $this->dispatch('setPageFiltersData', $this->data);
+                                $this->updateData();
                             })
-                            ->default('month'),
+                            ->default(self::getStartData()['period']),
                         Select::make('steps')
                             ->label('Stappen')
                             ->reactive()
@@ -136,9 +147,9 @@ class Dashboard extends BaseDashboard
                                 'per_week' => 'Per week',
                                 'per_month' => 'Per maand',
                             ])
-                            ->default('per_day')
+                            ->default(self::getStartData()['steps'])
                             ->afterStateUpdated(function () {
-                                $this->dispatch('setPageFiltersData', $this->data);
+                                $this->updateData();
                             }),
                     ])
                     ->columnSpanFull()
