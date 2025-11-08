@@ -29,7 +29,13 @@ class Dashboard extends BaseDashboard
     {
         $dashboardFiltersData = Customsetting::get('dashboard_filter_data_from_user_' . auth()->id(), null, null);
         if ($dashboardFiltersData) {
-            return $dashboardFiltersData;
+            $defaultData = self::getDefaultDataByPeriod($dashboardFiltersData['period']);
+            return [
+                'startDate' => $defaultData['startDate'],
+                'endDate' => $defaultData['endDate'],
+                'period' => $defaultData['period'],
+                'steps' => $defaultData['steps'],
+            ];
         }
 
         return [
@@ -37,6 +43,81 @@ class Dashboard extends BaseDashboard
             'endDate' => now()->addDay()->startOfDay()->format('d-m-Y'),
             'period' => 'today',
             'steps' => 'per_hour',
+        ];
+    }
+
+    public static function getFormatsByStep(string $steps): array
+    {
+        if ($steps == 'per_hour') {
+            $startFormat = 'startOfHour';
+            $endFormat = 'endOfHour';
+            $addFormat = 'addHour';
+        } elseif ($steps == 'per_day') {
+            $startFormat = 'startOfDay';
+            $endFormat = 'endOfDay';
+            $addFormat = 'addDay';
+        } elseif ($steps == 'per_week') {
+            $startFormat = 'startOfWeek';
+            $endFormat = 'endOfWeek';
+            $addFormat = 'addWeek';
+        } elseif ($steps == 'per_month') {
+            $startFormat = 'startOfMonth';
+            $endFormat = 'endOfMonth';
+            $addFormat = 'addMonth';
+        }
+
+        return [
+            'startFormat' => $startFormat,
+            'endFormat' => $endFormat,
+            'addFormat' => $addFormat,
+        ];
+    }
+
+    public static function getDefaultDataByPeriod(string $period): array
+    {
+        if ($period == 'today') {
+            $startDate = now()->startOfDay();
+            $endDate = now()->addDay()->endOfDay();
+            $steps = 'per_hour';
+        } elseif ($period == 'this_week') {
+            $startDate = now()->startOfWeek();
+            $endDate = now()->endOfWeek();
+            $steps = 'per_day';
+        } elseif ($period == 'week') {
+            $startDate = now()->subDays(7)->startOfDay();
+            $endDate = now()->endOfDay();
+            $steps = 'per_day';
+        } elseif ($period == 'this_month') {
+            $startDate = now()->startOfMonth();
+            $endDate = now()->endOfMonth();
+            $steps = 'per_day';
+        } elseif ($period == 'month') {
+            $startDate = now()->subDays(30)->startOfDay();
+            $endDate = now()->endOfDay();
+            $steps = 'per_day';
+        } elseif ($period == 'this_year') {
+            $startDate = now()->startOfYear();
+            $endDate = now()->endOfYear();
+            $steps = 'per_month';
+        } elseif ($period == 'year') {
+            $startDate = now()->subDays(365)->startOfDay();
+            $endDate = now()->endOfDay();
+            $steps = 'per_month';
+        }
+
+        $formats = self::getFormatsByStep($steps);
+        $startFormat = $formats['startFormat'];
+        $endFormat = $formats['endFormat'];
+        $addFormat = $formats['addFormat'];
+
+        return [
+            'startDate' => $startDate->format('d-m-Y'),
+            'endDate' => $endDate->format('d-m-Y'),
+            'period' => $period,
+            'steps' => $steps,
+            'startFormat' => $startFormat,
+            'endFormat' => $endFormat,
+            'addFormat' => $addFormat,
         ];
     }
 
@@ -74,13 +155,13 @@ class Dashboard extends BaseDashboard
                             ->label('Start datum')
                             ->default(self::getStartData()['startDate'])
                             ->reactive()
-                            ->maxDate(fn (callable $get) => $get('endDate') ?: now())
+                            ->maxDate(fn(callable $get) => $get('endDate') ?: now())
                             ->afterStateUpdated(function () {
                                 $this->updateData();
                             }),
                         DatePicker::make('endDate')
                             ->label('Eind datum')
-                            ->minDate(fn (callable $get) => $get('startDate'))
+                            ->minDate(fn(callable $get) => $get('startDate'))
                             ->default(self::getStartData()['endDate'])
                             ->reactive()
                             ->afterStateUpdated(function () {
@@ -91,50 +172,10 @@ class Dashboard extends BaseDashboard
                             ->reactive()
                             ->options(self::getPeriodOptions())
                             ->afterStateUpdated(function (callable $get, callable $set, $state) {
-                                switch ($state) {
-                                    case 'today':
-                                        $set('startDate', now()->startOfDay());
-                                        $set('endDate', now()->addDay()->endOfDay());
-                                        $set('steps', 'per_hour');
-
-                                        break;
-                                    case 'this_week':
-                                        $set('startDate', now()->startOfWeek());
-                                        $set('endDate', now()->endOfWeek());
-                                        $set('steps', 'per_day');
-
-                                        break;
-                                    case 'week':
-                                        $set('startDate', now()->subDays(7)->startOfDay());
-                                        $set('endDate', now()->endOfDay());
-                                        $set('steps', 'per_day');
-
-                                        break;
-                                    case 'this_month':
-                                        $set('startDate', now()->startOfMonth());
-                                        $set('endDate', now()->endOfMonth());
-                                        $set('steps', 'per_day');
-
-                                        break;
-                                    case 'month':
-                                        $set('startDate', now()->subDays(30)->startOfDay());
-                                        $set('endDate', now()->endOfDay());
-                                        $set('steps', 'per_day');
-
-                                        break;
-                                    case 'this_year':
-                                        $set('startDate', now()->startOfYear());
-                                        $set('endDate', now()->endOfYear());
-                                        $set('steps', 'per_month');
-
-                                        break;
-                                    case 'year':
-                                        $set('startDate', now()->subDays(365)->startOfDay());
-                                        $set('endDate', now()->endOfDay());
-                                        $set('steps', 'per_month');
-
-                                        break;
-                                }
+                                $defaultData = self::getDefaultDataByPeriod($state);
+                                $set('startDate', $defaultData['startDate']);
+                                $set('endDate', $defaultData['endDate']);
+                                $set('steps', $defaultData['steps']);
                                 $this->updateData();
                             })
                             ->default(self::getStartData()['period']),
