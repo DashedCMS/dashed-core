@@ -2,7 +2,6 @@
 
 namespace Dashed\DashedCore;
 
-use Filament\Forms\Components\Textarea;
 use Filament\Panel;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -420,12 +419,13 @@ class CMSManager
                 'gridDelete',
                 'details',
             ])
-            ->formatStateUsing(function($state){
+            ->formatStateUsing(function ($state) {
                 $nodes = $this->normalizeRichState($state);
                 $state = [
                     'type' => 'doc',
-                    'content' => $this->cleanForFilamentRich($nodes)
+                    'content' => $this->cleanForFilamentRich($nodes),
                 ];
+
                 return $state;
             })
             ->json()
@@ -438,7 +438,9 @@ class CMSManager
 
     public function normalizeRichState($state): array
     {
-        if (blank($state)) return [];
+        if (blank($state)) {
+            return [];
+        }
 
         // 1) JSON-string → array
         if (is_string($state)) {
@@ -471,8 +473,11 @@ class CMSManager
             $type = $node['type'] ?? null;
             $attrs = $node['attrs'] ?? [];
 
-            $pick = fn(array $src, array $keys) => array_reduce($keys, function($carry, $k) use ($src) {
-                if (array_key_exists($k, $src)) $carry[$k] = $src[$k];
+            $pick = fn (array $src, array $keys) => array_reduce($keys, function ($carry, $k) use ($src) {
+                if (array_key_exists($k, $src)) {
+                    $carry[$k] = $src[$k];
+                }
+
                 return $carry;
             }, []);
 
@@ -480,23 +485,31 @@ class CMSManager
                 case 'heading':
                     // Filament v4 ondersteunt text alignment op headings
                     $node['attrs'] = $pick($attrs, ['level', 'textAlign']);
+
                     break;
 
                 case 'paragraph':
                     // Alleen uitlijning bewaren
                     $node['attrs'] = $pick($attrs, ['textAlign']);
-                    if (empty($node['attrs'])) unset($node['attrs']);
+                    if (empty($node['attrs'])) {
+                        unset($node['attrs']);
+                    }
+
                     break;
 
                 case 'image':
                     // Belangrijk: src NIET strippen, anders zie je het plaatje niet (ook niet in tables)
                     $node['attrs'] = $pick($attrs, ['src', 'alt', 'title', 'width', 'height']);
+
                     break;
 
                 case 'table':
                     // Meestal geen attrs nodig, maar laat staan als er ooit iets komt
                     $node['attrs'] = $pick($attrs, []); // noop
-                    if (empty($node['attrs'])) unset($node['attrs']);
+                    if (empty($node['attrs'])) {
+                        unset($node['attrs']);
+                    }
+
                     break;
 
                 case 'tableRow':
@@ -504,13 +517,17 @@ class CMSManager
                 case 'tableCell':
                     // Bewaar cel-attrs die Tiptap gebruikt
                     $node['attrs'] = $pick($attrs, ['colspan', 'rowspan', 'colwidth']);
-                    if (empty($node['attrs'])) unset($node['attrs']);
+                    if (empty($node['attrs'])) {
+                        unset($node['attrs']);
+                    }
+
                     break;
 
                 case 'externalVideo':
                 case 'mediaEmbed':
                     // Jouw plugins gebruiken doorgaans deze attrs
                     $node['attrs'] = $pick($attrs, ['src', 'ratio', 'provider']);
+
                     break;
 
                 case 'horizontalRule':
@@ -522,13 +539,19 @@ class CMSManager
                 case 'hardBreak':
                 case 'text':
                     // Niks bijzonders nodig
-                    if (isset($node['attrs'])) unset($node['attrs']);
+                    if (isset($node['attrs'])) {
+                        unset($node['attrs']);
+                    }
+
                     break;
 
                 default:
                     // Onbekende node-types: laat attrs met rust? Liever safe → strippen.
                     // Als je custom nodes hebt met attrs, voeg ze bovenin toe aan de switch.
-                    if (isset($node['attrs'])) unset($node['attrs']);
+                    if (isset($node['attrs'])) {
+                        unset($node['attrs']);
+                    }
+
                     break;
             }
 
@@ -545,19 +568,22 @@ class CMSManager
                     $node['marks'],
                     fn ($mark) => ($mark['type'] ?? '') !== 'textStyle'
                 ));
-                if (empty($node['marks'])) unset($node['marks']);
+                if (empty($node['marks'])) {
+                    unset($node['marks']);
+                }
             }
 
             // 3) Recurse door children
             if (isset($node['content']) && is_array($node['content'])) {
                 $node['content'] = $this->cleanForFilamentRich($node['content']);
-                if (empty($node['content'])) unset($node['content']);
+                if (empty($node['content'])) {
+                    unset($node['content']);
+                }
             }
 
             return $node;
         }, $nodes);
     }
-
 
     public function convertToHtml($content): string
     {

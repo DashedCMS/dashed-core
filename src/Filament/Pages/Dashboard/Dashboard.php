@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore\Filament\Pages\Dashboard;
 
+use Dashed\DashedCore\Filament\Widgets\WelcomeWidget;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Section;
@@ -30,6 +31,7 @@ class Dashboard extends BaseDashboard
         $dashboardFiltersData = Customsetting::get('dashboard_filter_data_from_user_' . auth()->id(), null, null);
         if ($dashboardFiltersData) {
             $defaultData = self::getDefaultDataByPeriod($dashboardFiltersData['period']);
+
             return [
                 'startDate' => $defaultData['startDate'],
                 'endDate' => $defaultData['endDate'],
@@ -155,13 +157,13 @@ class Dashboard extends BaseDashboard
                             ->label('Start datum')
                             ->default(self::getStartData()['startDate'])
                             ->reactive()
-                            ->maxDate(fn(callable $get) => $get('endDate') ?: now())
+                            ->maxDate(fn (callable $get) => $get('endDate') ?: now())
                             ->afterStateUpdated(function () {
                                 $this->updateData();
                             }),
                         DatePicker::make('endDate')
                             ->label('Eind datum')
-                            ->minDate(fn(callable $get) => $get('startDate'))
+                            ->minDate(fn (callable $get) => $get('startDate'))
                             ->default(self::getStartData()['endDate'])
                             ->reactive()
                             ->afterStateUpdated(function () {

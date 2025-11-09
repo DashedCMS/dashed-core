@@ -31,6 +31,7 @@ class MigrateDatabaseToV4 extends Command
             if ($this->shouldSkipTable($table)) {
                 $this->line("→ Table: {$table}");
                 $this->line("  (skip) table is in skip list");
+
                 continue;
             }
 
@@ -39,6 +40,7 @@ class MigrateDatabaseToV4 extends Command
             $columns = $this->getProcessableColumns($table);
             if (empty($columns)) {
                 $this->line("  (skip) no processable columns");
+
                 continue;
             }
 
@@ -61,7 +63,7 @@ class MigrateDatabaseToV4 extends Command
     public function getAllTables(): array
     {
         $rows = \DB::select('SHOW TABLES');
-        $tables = array_map(fn($r) => array_values((array) $r)[0], $rows);
+        $tables = array_map(fn ($r) => array_values((array) $r)[0], $rows);
 
         // Filter skip-lijst
         return array_values(array_filter($tables, fn ($t) => ! $this->shouldSkipTable($t)));
@@ -143,7 +145,9 @@ class MigrateDatabaseToV4 extends Command
 
         while (true) {
             $rows = \DB::table($table)->offset($offset)->limit($limit)->get();
-            if ($rows->isEmpty()) break;
+            if ($rows->isEmpty()) {
+                break;
+            }
 
             foreach ($rows as $row) {
                 $where = $this->buildUniqueWhereFromRow($row);
@@ -174,7 +178,9 @@ class MigrateDatabaseToV4 extends Command
         // Fallback (laatste redmiddel)
         $where = [];
         foreach ($arr as $k => $v) {
-            if (is_resource($v)) continue;
+            if (is_resource($v)) {
+                continue;
+            }
             $where[$k] = $v;
         }
 
@@ -191,7 +197,9 @@ class MigrateDatabaseToV4 extends Command
 
         foreach ($columns as $col) {
             $value = $row->$col ?? null;
-            if ($value === null) continue;
+            if ($value === null) {
+                continue;
+            }
 
             // A) String value (kan HTML of JSON-string zijn)
             if (is_string($value)) {
@@ -248,6 +256,7 @@ class MigrateDatabaseToV4 extends Command
                     if ($doc) {
                         $out[$k] = $doc; // <-- schrijf doc weg
                         $changed = true;
+
                         continue;
                     }
                 }
@@ -258,11 +267,13 @@ class MigrateDatabaseToV4 extends Command
                     $out[$k] = $v;
                 }
             }
+
             return $out;
         }
 
         if (is_object($data)) {
             $arr = json_decode(json_encode($data), true);
+
             return $this->transformRecursive($arr, $changed);
         }
 
@@ -280,19 +291,21 @@ class MigrateDatabaseToV4 extends Command
     public function youtubeHtmlToTiptapDoc(string $html): ?array
     {
         $src = $this->extractFirstIframeSrc($html);
-        if (! $src) return null;
+        if (! $src) {
+            return null;
+        }
 
-        $ratio    = $this->extractRatioFromHtml($html) ?? '16:9';
+        $ratio = $this->extractRatioFromHtml($html) ?? '16:9';
         $provider = $this->guessProviderFromUrl($src) ?? 'youtube';
 
         return [
             'type' => 'doc',
             'content' => [[
-                'type'  => 'externalVideo',
+                'type' => 'externalVideo',
                 'attrs' => [
-                    'src'      => $src,
+                    'src' => $src,
                     'provider' => $provider,
-                    'ratio'    => $ratio,
+                    'ratio' => $ratio,
                 ],
             ]],
         ];
@@ -322,29 +335,40 @@ class MigrateDatabaseToV4 extends Command
 
     protected function normalizeRatioString(float $w, float $h): string
     {
-        if ($w <= 0 || $h <= 0) return '16:9';
+        if ($w <= 0 || $h <= 0) {
+            return '16:9';
+        }
         $scale = 10000;
         $iw = (int) round($w * $scale);
         $ih = (int) round($h * $scale);
-        $g  = $this->gcd($iw, $ih) ?: 1;
+        $g = $this->gcd($iw, $ih) ?: 1;
 
         return sprintf('%d:%d', (int)($iw / $g), (int)($ih / $g));
     }
 
     protected function gcd(int $a, int $b): int
     {
-        $a = abs($a); $b = abs($b);
-        if ($b === 0) return $a ?: 1;
+        $a = abs($a);
+        $b = abs($b);
+        if ($b === 0) {
+            return $a ?: 1;
+        }
         while ($b !== 0) {
             [$a, $b] = [$b, $a % $b];
         }
+
         return max(1, $a);
     }
 
     protected function guessProviderFromUrl(string $url): ?string
     {
-        if (preg_match('~youtube(?:-nocookie)?\.com|youtu\.be~i', $url)) return 'youtube';
-        if (preg_match('~vimeo\.com~i', $url)) return 'vimeo';
+        if (preg_match('~youtube(?:-nocookie)?\.com|youtu\.be~i', $url)) {
+            return 'youtube';
+        }
+        if (preg_match('~vimeo\.com~i', $url)) {
+            return 'vimeo';
+        }
+
         return null;
     }
 }

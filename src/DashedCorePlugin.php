@@ -4,6 +4,7 @@ namespace Dashed\DashedCore;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;
+use Dashed\DashedCore\Filament\Widgets\WelcomeWidget;
 use Dashed\DashedCore\Filament\Resources\UserResource;
 use Dashed\DashedCore\Filament\Pages\Settings\HorizonPage;
 use Dashed\DashedCore\Filament\Resources\RedirectResource;
@@ -46,6 +47,7 @@ class DashedCorePlugin implements Plugin
                 AISettingsPage::class,
             ])
             ->widgets([
+                WelcomeWidget::class,
                 //                NotFoundPageStats::class,
                 //                NotFoundPageGlobalStats::class,
             ]);
