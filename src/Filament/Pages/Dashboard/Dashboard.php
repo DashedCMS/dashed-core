@@ -81,6 +81,10 @@ class Dashboard extends BaseDashboard
             $startDate = now()->startOfDay();
             $endDate = now()->addDay()->endOfDay();
             $steps = 'per_hour';
+        } elseif ($period == 'yesterday') {
+            $startDate = now()->subDay()->startOfDay();
+            $endDate = now()->endOfDay();
+            $steps = 'per_hour';
         } elseif ($period == 'this_week') {
             $startDate = now()->startOfWeek();
             $endDate = now()->endOfWeek();
@@ -127,6 +131,7 @@ class Dashboard extends BaseDashboard
     {
         return [
             'today' => 'Vandaag',
+            'yesterday' => 'Gisteren',
             'this_week' => 'Deze week',
             'week' => 'Afgelopen 7 dagen',
             'this_month' => 'Deze maand',
