@@ -49,8 +49,8 @@ class FrontendMiddleware
             seo()->metaData('metaImage', mediaHelper()->getSingleMedia(Customsetting::get('default_meta_data_image', Sites::getActive(), ''))->url ?? '');
         }
 
-        $logo = mediaHelper()->getSingleMedia(Customsetting::get('site_logo', Sites::getActive(), ''), 'thumb');
-        $favicon = mediaHelper()->getSingleMedia(Customsetting::get('site_favicon', Sites::getActive(), ''), 'thumb');
+        $logo = Customsetting::get('site_logo', Sites::getActive(), '');
+        $favicon = Customsetting::get('site_favicon', Sites::getActive(), '');
 
         $schema = Schema::organization()
             ->identifier(request()->url() . '#Organization')
