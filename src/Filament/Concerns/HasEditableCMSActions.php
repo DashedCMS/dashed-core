@@ -38,7 +38,6 @@ trait HasEditableCMSActions
                             $childRelation = $relation->$childRelationName()->find($childRelationArray['id'] ?? 0);
                             if ($childRelation) {
                                 foreach ($childRelation->translatable as $childAttribute) {
-                                    //                                    dd($this->data, $resourceRelation, $key, $childRelationName, $childKey, $childAttribute, $childRelation->getTranslation($childAttribute, $newVal));
                                     $this->data[$resourceRelation][$key][$childRelationName][$childKey][$childAttribute] = $childRelation->getTranslation($childAttribute, $newVal);
                                 }
                             }

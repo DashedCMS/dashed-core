@@ -2,7 +2,6 @@
 
 namespace Dashed\DashedCore\Filament\Pages\Dashboard;
 
-use Dashed\DashedCore\Filament\Widgets\WelcomeWidget;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Section;
