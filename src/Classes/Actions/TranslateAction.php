@@ -17,6 +17,7 @@ class TranslateAction
             ->icon('heroicon-o-language')
             ->label('Vertaal')
             ->accessSelectedRecords()
+            ->deselectRecordsAfterCompletion()
             ->schema([
                 Select::make('to_locales')
                     ->options(Locales::getLocalesArray())
