@@ -63,8 +63,6 @@ class Customsetting extends Model
             Cache::forget($cacheString);
         }
 
-        return $default;
-
         $value = Cache::rememberForever($cacheString, function () use ($name, $siteId, $default, $locale) {
             //Cannot use this because this fails emails etc
             //        if (app()->runningInConsole()) {
