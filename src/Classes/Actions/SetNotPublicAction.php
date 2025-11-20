@@ -3,8 +3,8 @@
 namespace Dashed\DashedCore\Classes\Actions;
 
 use Filament\Actions\Action;
-use Filament\Notifications\Notification;
 use Illuminate\Support\Collection;
+use Filament\Notifications\Notification;
 
 class SetNotPublicAction
 {

@@ -57,11 +57,15 @@ class Customsetting extends Model
             $locale = $locale['id'];
         }
 
+        $cacheString = "$name-$siteId-" . ($locale ?? 'null');
+
         if ($disableCache) {
-            Cache::forget("$name-$siteId-$locale");
+            Cache::forget($cacheString);
         }
 
-        $value = Cache::rememberForever("$name-$siteId-$locale", function () use ($name, $siteId, $default, $locale) {
+        return $default;
+
+        $value = Cache::rememberForever($cacheString, function () use ($name, $siteId, $default, $locale) {
             //Cannot use this because this fails emails etc
             //        if (app()->runningInConsole()) {
             //            return $default;

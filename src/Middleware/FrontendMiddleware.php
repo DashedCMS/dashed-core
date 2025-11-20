@@ -21,6 +21,7 @@ class FrontendMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
+
         if (preg_match('/.+\/$/', $request->getRequestUri())) {
             $url = rtrim($request->getRequestUri(), '/');
 
@@ -88,8 +89,36 @@ class FrontendMiddleware
             'localBusiness' => $schema,
         ], seo()->metaData('schemas')));
 
+        $googleTagmanagerId = Customsetting::get('google_tagmanager_id', null);
+        $triggerTikTokEvents = Customsetting::get('trigger_tiktok_events', null, false);
+        $facebookPixelConversionId = Customsetting::get('facebook_pixel_conversion_id', null);
+        $facebookPixelSiteId = Customsetting::get('facebook_pixel_site_id', null);
+        $triggerFacebookEvents = Customsetting::get('trigger_facebook_events', null, false);
+        $googleMerchantCenterId = Customsetting::get('google_merchant_center_id', null);
+        $enableGoogleMerchantReviewSurvey = Customsetting::get('enable_google_merchant_center_review_survey', null, false);
+        $extraBodyScripts = Customsetting::get('extra_body_scripts', null, '');
+        $enableGoogleMerchantReviewBadge = Customsetting::get('enable_google_merchant_center_review_badge', null, false);
+        $siteName = Customsetting::get('site_name', null, 'Website');
+        $googleAnalyticsId = Customsetting::get('google_analytics_id', null);
+        $extraScripts = Customsetting::get('extra_scripts', null, '');
+
+        View::share('trackingSettings', [
+            'google_tagmanager_id' => $googleTagmanagerId,
+            'trigger_tiktok_events' => (bool) $triggerTikTokEvents,
+            'facebook_pixel_conversion_id' => $facebookPixelConversionId,
+            'facebook_pixel_site_id' => $facebookPixelSiteId,
+            'trigger_facebook_events' => (bool) $triggerFacebookEvents,
+            'google_merchant_center_id' => $googleMerchantCenterId,
+            'enable_google_merchant_center_review_survey' => (bool) $enableGoogleMerchantReviewSurvey,
+            'enable_google_merchant_center_review_badge' => (bool) $enableGoogleMerchantReviewBadge,
+            'google_analytics_id' => $googleAnalyticsId,
+        ]);
+        View::share('extraBodyScripts', $extraBodyScripts);
+
         View::share('logo', $logo);
         View::share('favicon', $favicon);
+        View::share('extraHeadScripts', $extraScripts);
+        View::share('siteName', $siteName);
 
         return $next($request);
     }
