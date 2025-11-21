@@ -270,7 +270,6 @@ class CMSManager
         $plugins = [
             SpatieTranslatablePlugin::make()
                 ->defaultLocales(array_keys(Locales::getLocalesArray())),
-//            mediaHelper()->plugin(),
         ];
 
         foreach (cms()->builder('plugins') as $plugin) {

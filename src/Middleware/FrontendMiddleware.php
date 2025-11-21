@@ -4,10 +4,10 @@ namespace Dashed\DashedCore\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\View;
 use Spatie\SchemaOrg\Schema;
 use Dashed\DashedCore\Classes\Sites;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Cache;
 use Dashed\DashedCore\Models\Customsetting;
 
 class FrontendMiddleware
@@ -19,8 +19,6 @@ class FrontendMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        $this->logMemory('before redirect check');
-
         // Trailing slash redirect zo vroeg mogelijk, vóór we iets zwaars doen
         if (preg_match('/.+\/$/', $request->getRequestUri())) {
             $url = rtrim($request->getRequestUri(), '/');
@@ -30,17 +28,15 @@ class FrontendMiddleware
 
         $siteId = Sites::getActive();
 
-        $this->logMemory('after redirect / before cache');
-
         // Alles wat “vast” is per site => in 1 cache-blok
         $settings = Cache::remember("frontend_settings_{$siteId}", 3600, function () use ($siteId) {
             $webmasterTags = [
-                'google'    => Customsetting::get('webmaster_tag_google', $siteId),
-                'bing'      => Customsetting::get('webmaster_tag_bing', $siteId),
-                'alexa'     => Customsetting::get('webmaster_tag_alexa', $siteId),
+                'google' => Customsetting::get('webmaster_tag_google', $siteId),
+                'bing' => Customsetting::get('webmaster_tag_bing', $siteId),
+                'alexa' => Customsetting::get('webmaster_tag_alexa', $siteId),
                 'pinterest' => Customsetting::get('webmaster_tag_pinterest', $siteId),
-                'yandex'    => Customsetting::get('webmaster_tag_yandex', $siteId),
-                'norton'    => Customsetting::get('webmaster_tag_norton', $siteId),
+                'yandex' => Customsetting::get('webmaster_tag_yandex', $siteId),
+                'norton' => Customsetting::get('webmaster_tag_norton', $siteId),
             ];
 
             $siteName = Customsetting::get('site_name', $siteId, 'Website');
@@ -49,68 +45,68 @@ class FrontendMiddleware
             $logo = Customsetting::get('site_logo', $siteId, '');
             $favicon = Customsetting::get('site_favicon', $siteId, '');
 
-            $companyStreet       = Customsetting::get('company_street', $siteId);
+            $companyStreet = Customsetting::get('company_street', $siteId);
             $companyStreetNumber = Customsetting::get('company_street_number', $siteId);
-            $companyPostalCode   = Customsetting::get('company_postal_code', $siteId);
-            $companyCity         = Customsetting::get('company_city', $siteId);
-            $companyCountry      = Customsetting::get('company_country', $siteId);
+            $companyPostalCode = Customsetting::get('company_postal_code', $siteId);
+            $companyCity = Customsetting::get('company_city', $siteId);
+            $companyCountry = Customsetting::get('company_country', $siteId);
 
-            $siteEmail    = Customsetting::get('site_to_email', $siteId);
+            $siteEmail = Customsetting::get('site_to_email', $siteId);
             $companyPhone = Customsetting::get('company_phone_number', $siteId);
 
-            $googleMapsSynced      = Customsetting::get('google_maps_reviews_synced', $siteId, false);
-            $googleMapsRating      = Customsetting::get('google_maps_rating', $siteId);
+            $googleMapsSynced = Customsetting::get('google_maps_reviews_synced', $siteId, false);
+            $googleMapsRating = Customsetting::get('google_maps_rating', $siteId);
             $googleMapsReviewCount = Customsetting::get('google_maps_review_count', $siteId);
 
             // Tracking / marketing settings
-            $googleTagmanagerId              = Customsetting::get('google_tagmanager_id', $siteId);
-            $triggerTikTokEvents             = Customsetting::get('trigger_tiktok_events', $siteId, false);
-            $facebookPixelConversionId       = Customsetting::get('facebook_pixel_conversion_id', $siteId);
-            $facebookPixelSiteId             = Customsetting::get('facebook_pixel_site_id', $siteId);
-            $triggerFacebookEvents           = Customsetting::get('trigger_facebook_events', $siteId, false);
-            $googleMerchantCenterId          = Customsetting::get('google_merchant_center_id', $siteId);
+            $googleTagmanagerId = Customsetting::get('google_tagmanager_id', $siteId);
+            $triggerTikTokEvents = Customsetting::get('trigger_tiktok_events', $siteId, false);
+            $facebookPixelConversionId = Customsetting::get('facebook_pixel_conversion_id', $siteId);
+            $facebookPixelSiteId = Customsetting::get('facebook_pixel_site_id', $siteId);
+            $triggerFacebookEvents = Customsetting::get('trigger_facebook_events', $siteId, false);
+            $googleMerchantCenterId = Customsetting::get('google_merchant_center_id', $siteId);
             $enableGoogleMerchantReviewSurvey = Customsetting::get('enable_google_merchant_center_review_survey', $siteId, false);
-            $enableGoogleMerchantReviewBadge  = Customsetting::get('enable_google_merchant_center_review_badge', $siteId, false);
-            $googleAnalyticsId               = Customsetting::get('google_analytics_id', $siteId);
+            $enableGoogleMerchantReviewBadge = Customsetting::get('enable_google_merchant_center_review_badge', $siteId, false);
+            $googleAnalyticsId = Customsetting::get('google_analytics_id', $siteId);
 
             $extraBodyScripts = Customsetting::get('extra_body_scripts', $siteId, '');
             $extraHeadScripts = Customsetting::get('extra_scripts', $siteId, '');
 
             return [
-                'site_id'                => $siteId,
-                'site_name'              => $siteName,
-                'webmaster_tags'         => $webmasterTags,
-                'default_meta_image_id'  => $defaultMetaImageId,
+                'site_id' => $siteId,
+                'site_name' => $siteName,
+                'webmaster_tags' => $webmasterTags,
+                'default_meta_image_id' => $defaultMetaImageId,
 
-                'logo'    => $logo,
+                'logo' => $logo,
                 'favicon' => $favicon,
 
                 'company' => [
-                    'street'        => $companyStreet,
+                    'street' => $companyStreet,
                     'street_number' => $companyStreetNumber,
-                    'postal_code'   => $companyPostalCode,
-                    'city'          => $companyCity,
-                    'country'       => $companyCountry,
-                    'email'         => $siteEmail,
-                    'phone'         => $companyPhone,
+                    'postal_code' => $companyPostalCode,
+                    'city' => $companyCity,
+                    'country' => $companyCountry,
+                    'email' => $siteEmail,
+                    'phone' => $companyPhone,
                 ],
 
                 'google_maps' => [
-                    'synced'       => (bool) $googleMapsSynced,
-                    'rating'       => $googleMapsRating,
+                    'synced' => (bool) $googleMapsSynced,
+                    'rating' => $googleMapsRating,
                     'review_count' => $googleMapsReviewCount,
                 ],
 
                 'tracking' => [
-                    'google_tagmanager_id'                   => $googleTagmanagerId,
-                    'trigger_tiktok_events'                  => (bool) $triggerTikTokEvents,
-                    'facebook_pixel_conversion_id'           => $facebookPixelConversionId,
-                    'facebook_pixel_site_id'                 => $facebookPixelSiteId,
-                    'trigger_facebook_events'                => (bool) $triggerFacebookEvents,
-                    'google_merchant_center_id'              => $googleMerchantCenterId,
+                    'google_tagmanager_id' => $googleTagmanagerId,
+                    'trigger_tiktok_events' => (bool) $triggerTikTokEvents,
+                    'facebook_pixel_conversion_id' => $facebookPixelConversionId,
+                    'facebook_pixel_site_id' => $facebookPixelSiteId,
+                    'trigger_facebook_events' => (bool) $triggerFacebookEvents,
+                    'google_merchant_center_id' => $googleMerchantCenterId,
                     'enable_google_merchant_center_review_survey' => (bool) $enableGoogleMerchantReviewSurvey,
-                    'enable_google_merchant_center_review_badge'  => (bool) $enableGoogleMerchantReviewBadge,
-                    'google_analytics_id'                    => $googleAnalyticsId,
+                    'enable_google_merchant_center_review_badge' => (bool) $enableGoogleMerchantReviewBadge,
+                    'google_analytics_id' => $googleAnalyticsId,
                 ],
 
                 'extra_body_scripts' => $extraBodyScripts,
@@ -129,7 +125,7 @@ class FrontendMiddleware
             seo()->metaData('metaImage', $defaultMedia->url ?? '');
         }
 
-        $logo    = $settings['logo'];
+        $logo = $settings['logo'];
         $favicon = $settings['favicon'];
         $company = $settings['company'];
 
@@ -149,8 +145,8 @@ class FrontendMiddleware
             ->addProperties([
                 'address' => [
                     'streetAddress' => $company['street'] . ' ' . $company['street_number'],
-                    'postalCode'    => $company['postal_code'],
-                    'addressCountry'=> $company['country'],
+                    'postalCode' => $company['postal_code'],
+                    'addressCountry' => $company['country'],
                 ],
             ])
             ->url($request->url())
@@ -185,11 +181,7 @@ class FrontendMiddleware
         View::share('extraHeadScripts', $settings['extra_head_scripts']);
         View::share('siteName', $settings['site_name']);
 
-        $this->logMemory('after settings + schema');
-
         $response = $next($request);
-
-        $this->logMemory('after response');
 
         return $response;
     }
@@ -202,5 +194,4 @@ class FrontendMiddleware
 
         logger()->info("MEM [FrontendMiddleware - {$label}]: " . round(memory_get_usage(true) / 1024 / 1024, 2) . ' MB');
     }
-
 }

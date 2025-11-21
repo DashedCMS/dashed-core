@@ -147,9 +147,9 @@ class Customsetting extends Model
 
         static::updateOrCreate(
             [
-                'name'    => $name,
+                'name' => $name,
                 'site_id' => $siteId,
-                'locale'  => $locale,
+                'locale' => $locale,
             ],
             [$valueField => $value]
         );

@@ -2,14 +2,14 @@
 
 namespace Dashed\DashedCore\Controllers\Frontend;
 
+use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use Dashed\DashedCore\Classes\Sites;
-use Dashed\DashedCore\Classes\Locales;
-use Dashed\DashedCore\Models\Customsetting;
-use Dashed\DashedCore\Models\NotFoundPage;
-use Dashed\DashedCore\Models\Redirect;
 use Illuminate\Support\Facades\View;
-use Illuminate\Support\Str;
+use Dashed\DashedCore\Classes\Locales;
+use Dashed\DashedCore\Models\Redirect;
+use Dashed\DashedCore\Models\NotFoundPage;
+use Dashed\DashedCore\Models\Customsetting;
 
 class FrontendController extends Controller
 {
@@ -100,7 +100,7 @@ class FrontendController extends Controller
 
                 return view('dashed-core::layouts.livewire-master', [
                     'livewireComponent' => $response['livewireComponent'],
-                    'parameters'        => $response['parameters'] ?? [],
+                    'parameters' => $response['parameters'] ?? [],
                 ]);
             }
         }
