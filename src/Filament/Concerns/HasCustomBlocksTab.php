@@ -9,13 +9,22 @@ use Filament\Infolists\Components\TextEntry;
 
 trait HasCustomBlocksTab
 {
-    protected static function customBlocksTab(string $blocks): array
+    protected static function customBlocksTab(array|string $blocks): array
     {
+        if (!is_array($blocks)) {
+            $blocks = [$blocks];
+        }
+
         cms()->activateBuilderBlockClasses();
 
-        $schema = cms()->builder($blocks);
+        $schema = [];
 
-        if (! count($schema)) {
+        foreach($blocks as $block) {
+            $schema = array_merge($schema, cms()->builder($block));
+        }
+//        $schema = cms()->builder($blocks);
+
+        if (!count($schema)) {
             return [];
         }
 
@@ -25,15 +34,15 @@ trait HasCustomBlocksTab
                 ->schema(array_merge($schema, [
                     TextEntry::make('savefirst')
                         ->state('Andere talen invullen werkt alleen op de bewerk pagina, sla deze eerst op')
-                        ->hidden(fn ($record) => $record)
+                        ->hidden(fn($record) => $record)
                         ->columnSpanFull(),
                 ]))
                 ->columns(2)
                 ->columnSpanFull()
                 ->relationship('customBlocks')
-                ->afterStateHydrated(fn ($set, $record, $livewire) => $set('customBlocks', $record && $record->customBlocks ? $record->customBlocks->getTranslation('blocks', $livewire->getActiveSchemaLocale()) : []))
+                ->afterStateHydrated(fn($set, $record, $livewire) => $set('customBlocks', $record && $record->customBlocks ? $record->customBlocks->getTranslation('blocks', $livewire->getActiveSchemaLocale()) : []))
                 ->loadStateFromRelationshipsUsing(function ($set, $record, Page $livewire) {
-                    if (! $record->customBlocks) {
+                    if (!$record->customBlocks) {
                         $record->customBlocks()->create([]);
                         $record->refresh();
                     }

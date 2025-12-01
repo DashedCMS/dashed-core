@@ -23,7 +23,7 @@ class TranslateAction
                     ->options(Locales::getLocalesArray())
                     ->preload()
                     ->searchable()
-                    ->default(fn($livewire) => collect(Locales::getLocalesArrayWithoutCurrent($livewire->activeLocale))->keys()->toArray())
+                    ->default(fn ($livewire) => collect(Locales::getLocalesArrayWithoutCurrent($livewire->activeLocale))->keys()->toArray())
                     ->required()
                     ->label('Naar talen')
                     ->multiple(),
