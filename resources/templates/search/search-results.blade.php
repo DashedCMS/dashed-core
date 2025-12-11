@@ -4,7 +4,7 @@
         <div class="grid gap-4">
             <h1 class="text-2xl font-bold md:text-4xl font-display">{{ $blockData['title'] }}</h1>
 
-            <input wire:model.live="search" wire:change="searchForResults" wire:keyup="searchForResults" class="form-input max-w-[300px]"
+            <input wire:model.live="search" wire:change="searchForResults" wire:keyup="searchForResults" class="custom-form-input max-w-[300px]"
                    placeholder="{{ Translation::get('search', 'search', 'Zoeken...') }}" type="text"/>
 
             @if($search)

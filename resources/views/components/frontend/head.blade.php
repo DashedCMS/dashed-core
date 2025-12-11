@@ -55,19 +55,45 @@
 
 
 @if($favicon)
-    <link rel="apple-touch-icon" sizes="57x57" href="{{ $favicon->url ?? false }}">
-    <link rel="apple-touch-icon" sizes="60x60" href="{{ $favicon->url ?? false }}">
-    <link rel="apple-touch-icon" sizes="72x72" href="{{ $favicon->url ?? false }}">
-    <link rel="apple-touch-icon" sizes="76x76" href="{{ $favicon->url ?? false }}">
-    <link rel="apple-touch-icon" sizes="114x114" href="{{ $favicon->url ?? false }}">
-    <link rel="apple-touch-icon" sizes="120x120" href="{{ $favicon->url ?? false }}">
-    <link rel="apple-touch-icon" sizes="144x144" href="{{ $favicon->url ?? false }}">
-    <link rel="apple-touch-icon" sizes="152x152" href="{{ $favicon->url ?? false }}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ $favicon->url ?? false }}">
-    <link rel="icon" type="image/png" sizes="192x192" href="{{ $favicon->url ?? false }}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ $favicon->url ?? false }}">
-    <link rel="icon" type="image/png" sizes="96x96" href="{{ $favicon->url ?? false }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ $favicon->url ?? false }}">
+    <link rel="apple-touch-icon" sizes="57x57" href="{{ mediaHelper()->getSingleMedia($favicon, [
+    'fit' => [57,57]
+])->url ?? '' }}">
+    <link rel="apple-touch-icon" sizes="60x60" href="{{ mediaHelper()->getSingleMedia($favicon, [
+    'fit' => [60,60]
+])->url ?? '' }}">
+    <link rel="apple-touch-icon" sizes="72x72" href="{{ mediaHelper()->getSingleMedia($favicon, [
+    'fit' => [72,72]
+])->url ?? '' }}">
+    <link rel="apple-touch-icon" sizes="76x76" href="{{ mediaHelper()->getSingleMedia($favicon, [
+    'fit' => [76,76]
+])->url ?? '' }}">
+    <link rel="apple-touch-icon" sizes="114x114" href="{{ mediaHelper()->getSingleMedia($favicon, [
+    'fit' => [114,114]
+])->url ?? '' }}">
+    <link rel="apple-touch-icon" sizes="120x120" href="{{ mediaHelper()->getSingleMedia($favicon, [
+    'fit' => [120,120]
+])->url ?? '' }}">
+    <link rel="apple-touch-icon" sizes="144x144" href="{{ mediaHelper()->getSingleMedia($favicon, [
+    'fit' => [144,144]
+])->url ?? '' }}">
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ mediaHelper()->getSingleMedia($favicon, [
+    'fit' => [152,152]
+])->url ?? '' }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ mediaHelper()->getSingleMedia($favicon, [
+    'fit' => [180,180]
+])->url ?? '' }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ mediaHelper()->getSingleMedia($favicon, [
+    'fit' => [192,192]
+])->url ?? '' }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ mediaHelper()->getSingleMedia($favicon, [
+    'fit' => [32,32]
+])->url ?? '' }}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{{ mediaHelper()->getSingleMedia($favicon, [
+    'fit' => [96,96]
+])->url ?? '' }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ mediaHelper()->getSingleMedia($favicon, [
+    'fit' => [16,16]
+])->url ?? '' }}">
 @endif
 
 @if(isset($model))

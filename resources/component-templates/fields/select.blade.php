@@ -8,7 +8,7 @@
         </label>
         <div class="mt-1">
             @endif
-            <select class="form-input {{ $class ?? '' }}"
+            <select class="custom-form-input {{ $class ?? '' }}"
                    id="{{ $id ?? rand(1000,10000) }}"
                    name="{{ $name ?? ($id ?? rand(1000,10000)) }}"
                    @if($required ?? false) required @endif

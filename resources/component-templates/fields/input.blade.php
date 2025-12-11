@@ -9,7 +9,7 @@
         <div class="mt-1">
             @endif
             <input type="{{ $type ?? 'text' }}"
-                   class="form-input {{ $class ?? '' }}"
+                   class="custom-form-input {{ $class ?? '' }}"
                    id="{{ $id ?? rand(1000,10000) }}"
                    name="{{ $name ?? ($id ?? rand(1000,10000)) }}"
                    @if($min ?? false) min="{{ $min }}" @endif
