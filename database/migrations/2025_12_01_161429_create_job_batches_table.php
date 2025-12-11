@@ -23,9 +23,7 @@ return new class extends Migration {
                 $table->integer('created_at');
                 $table->integer('finished_at')->nullable();
             });
-        }
 
-        if (!Schema::hasTable('job_batches')) {
             Schema::create('imports', function (Blueprint $table): void {
                 $table->id();
                 $table->timestamp('completed_at')->nullable();
@@ -38,9 +36,7 @@ return new class extends Migration {
                 $table->foreignId('user_id')->constrained()->cascadeOnDelete();
                 $table->timestamps();
             });
-        }
 
-        if (!Schema::hasTable('job_batches')) {
             Schema::create('exports', function (Blueprint $table): void {
                 $table->id();
                 $table->timestamp('completed_at')->nullable();
