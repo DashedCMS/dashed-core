@@ -49,16 +49,16 @@ return new class extends Migration {
                 $table->foreignId('user_id')->constrained()->cascadeOnDelete();
                 $table->timestamps();
             });
-        }
 
-        if (!Schema::hasTable('failed_import_rows')) {
-            Schema::create('failed_import_rows', function (Blueprint $table): void {
-                $table->id();
-                $table->json('data');
-                $table->foreignId('import_id')->constrained()->cascadeOnDelete();
-                $table->text('validation_error')->nullable();
-                $table->timestamps();
-            });
+            if (!Schema::hasTable('failed_import_rows')) {
+                Schema::create('failed_import_rows', function (Blueprint $table): void {
+                    $table->id();
+                    $table->json('data');
+                    $table->foreignId('import_id')->constrained()->cascadeOnDelete();
+                    $table->text('validation_error')->nullable();
+                    $table->timestamps();
+                });
+            }
         }
     }
 
