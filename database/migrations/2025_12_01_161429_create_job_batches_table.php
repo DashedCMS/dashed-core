@@ -1,16 +1,16 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-return new class extends Migration {
+return new class () extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        if (!Schema::hasTable('job_batches')) {
+        if (! Schema::hasTable('job_batches')) {
             Schema::create('job_batches', function (Blueprint $table) {
                 $table->string('id')->primary();
                 $table->string('name');
@@ -50,7 +50,7 @@ return new class extends Migration {
                 $table->timestamps();
             });
 
-            if (!Schema::hasTable('failed_import_rows')) {
+            if (! Schema::hasTable('failed_import_rows')) {
                 Schema::create('failed_import_rows', function (Blueprint $table): void {
                     $table->id();
                     $table->json('data');
