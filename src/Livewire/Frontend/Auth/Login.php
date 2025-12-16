@@ -116,6 +116,6 @@ class Login extends Component
 
     public function render()
     {
-        return view(config('dashed-core.site_theme') . '.auth.login');
+        return view(config('dashed-core.site_theme', 'dashed') . '.auth.login');
     }
 }

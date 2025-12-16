@@ -20,7 +20,7 @@ class NotificationMail extends Mailable
 
     public function build()
     {
-        $view = view()->exists(config('dashed-core.site_theme') . '.emails.notification') ? config('dashed-core.site_theme') . '.emails.notification' : 'dashed-core::emails.notification';
+        $view = view()->exists(config('dashed-core.site_theme', 'dashed') . '.emails.notification') ? config('dashed-core.site_theme', 'dashed') . '.emails.notification' : 'dashed-core::emails.notification';
 
         return $this->view($view)
             ->from(Customsetting::get('site_from_email'), Customsetting::get('site_name'))

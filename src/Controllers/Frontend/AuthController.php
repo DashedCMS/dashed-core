@@ -19,7 +19,7 @@ class AuthController extends FrontendController
             return redirect(route('dashed.frontend.account'))->with('success', Translation::get('already-logged-in', 'login', 'You are already logged in'));
         }
 
-        if (View::exists(config('dashed-core.site_theme') . '.auth.login')) {
+        if (View::exists(config('dashed-core.site_theme', 'dashed') . '.auth.login')) {
             seo()->metaData('metaTitle', Translation::get('login-page-meta-title', 'login', 'Login'));
             seo()->metaData('metaDescription', Translation::get('login-page-meta-description', 'login', 'Login to your account'));
 
@@ -27,7 +27,7 @@ class AuthController extends FrontendController
                 'livewireComponent' => Login::class,
             ]);
 
-            return view(config('dashed-core.site_theme') . '.auth.login');
+            return view(config('dashed-core.site_theme', 'dashed') . '.auth.login');
         } else {
             return $this->pageNotFound();
         }
@@ -50,7 +50,7 @@ class AuthController extends FrontendController
             return redirect(route('dashed.frontend.account'))->with('success', Translation::get('already-logged-in', 'login', 'You are already logged in'));
         }
 
-        if (View::exists(config('dashed-core.site_theme') . '.auth.forgot-password')) {
+        if (View::exists(config('dashed-core.site_theme', 'dashed') . '.auth.forgot-password')) {
             seo()->metaData('metaTitle', Translation::get('forgot-password-page-meta-title', 'login', 'Forgot password'));
             seo()->metaData('metaDescription', Translation::get('forgot-password-page-meta-description', 'login', 'Forgot your password?'));
 
@@ -58,7 +58,7 @@ class AuthController extends FrontendController
                 'livewireComponent' => ForgotPassword::class,
             ]);
 
-            return view(config('dashed-core.site_theme') . '.auth.forgot-password');
+            return view(config('dashed-core.site_theme', 'dashed') . '.auth.forgot-password');
         } else {
             return $this->pageNotFound();
         }
@@ -70,7 +70,7 @@ class AuthController extends FrontendController
             return redirect(route('dashed.frontend.account'))->with('success', Translation::get('already-logged-in', 'login', 'You are already logged in'));
         }
 
-        if (View::exists(config('dashed-core.site_theme') . '.auth.reset-password')) {
+        if (View::exists(config('dashed-core.site_theme', 'dashed') . '.auth.reset-password')) {
             seo()->metaData('metaTitle', Translation::get('reset-password-page-meta-title', 'login', 'Reset password'));
             seo()->metaData('metaDescription', Translation::get('reset-password-page-meta-description', 'login', 'Reset your password'));
 
@@ -91,7 +91,7 @@ class AuthController extends FrontendController
                 ],
             ]);
 
-            return view(config('dashed-core.site_theme') . '.auth.reset-password');
+            return view(config('dashed-core.site_theme', 'dashed') . '.auth.reset-password');
         } else {
             return $this->pageNotFound();
         }

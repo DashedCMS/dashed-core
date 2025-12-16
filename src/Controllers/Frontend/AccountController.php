@@ -21,7 +21,7 @@ class AccountController extends FrontendController
                 'livewireComponent' => Account::class,
             ]);
 
-            return view(config('dashed-core.site_theme').'.account.show');
+            return view(config('dashed-core.site_theme', 'dashed').'.account.show');
         } else {
             return $this->pageNotFound();
         }

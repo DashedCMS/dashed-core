@@ -17,9 +17,9 @@ class FrontendController extends Controller
     {
         seo()->metaData('metaTitle', 'Pagina niet gevonden');
 
-        if (View::exists(config('dashed-core.site_theme') . '.not-found.show')) {
+        if (View::exists(config('dashed-core.site_theme', 'dashed') . '.not-found.show')) {
             return response()
-                ->view(config('dashed-core.site_theme') . '.not-found.show')
+                ->view(config('dashed-core.site_theme', 'dashed') . '.not-found.show')
                 ->setStatusCode(404);
         }
 

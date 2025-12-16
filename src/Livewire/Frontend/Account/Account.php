@@ -80,6 +80,6 @@ class Account extends Component
 
     public function render()
     {
-        return view(config('dashed-core.site_theme') . '.account.account');
+        return view(config('dashed-core.site_theme', 'dashed') . '.account.account');
     }
 }

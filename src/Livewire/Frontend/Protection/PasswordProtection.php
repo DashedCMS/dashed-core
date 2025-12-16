@@ -65,6 +65,6 @@ class PasswordProtection extends Component
 
     public function render()
     {
-        return view(config('dashed-core.site_theme') . '.protection.password-protection');
+        return view(config('dashed-core.site_theme', 'dashed') . '.protection.password-protection');
     }
 }
