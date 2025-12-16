@@ -61,4 +61,4 @@
     });
 </script>
 
-@include('cookie-consent::index')
+{{--@include('cookie-consent::index')--}}
