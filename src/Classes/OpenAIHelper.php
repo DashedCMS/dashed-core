@@ -6,6 +6,7 @@ use Dashed\DashedCore\Models\Customsetting;
 use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use RalphJSmit\Filament\MediaLibrary\Models\MediaLibraryItem;
 
 class OpenAIHelper
@@ -134,6 +135,8 @@ class OpenAIHelper
         if ($response->successful()) {
             $response = $response->json();
             $response = $response['choices'][0]['message']['content'] ?? '';
+            $response = Str::markdown($response);
+            return $response;
         }
 
         return null;
