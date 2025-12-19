@@ -13,6 +13,8 @@ class NewAdminAccountMail extends Mailable
 {
     use Queueable;
     use SerializesModels;
+    public User $user;
+    public string $password;
 
     /**
      * Create a new message instance.

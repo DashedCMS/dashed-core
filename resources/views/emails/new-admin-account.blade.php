@@ -348,9 +348,8 @@
                                                                 <div
                                                                     style="font-family: Open Sans, Helvetica, Tahoma, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 25px; text-align: left; color: #4F4F4F;">
                                                                     <br>
-                                                                    {!! nl2br(Translation::get('new-admin-account-email-content', 'login', 'Je account is aangemaakt en je kan nu inloggen met wachtwoord :password:. Het is verstandig dit wachtwoord te wijzigen. Inloggen kan via :loginUrl:', 'textarea', [
+                                                                    {!! nl2br(Translation::get('new-admin-account-email-content', 'login', 'Je account is aangemaakt en je kan nu inloggen met wachtwoord :password:. Het is verstandig dit wachtwoord te wijzigen.', 'textarea', [
     'password' => $password,
-    'loginUrl' => route('filament.dashed.auth.login'),
 ])) !!}
                                                                 </div>
                                                             </td>
@@ -367,9 +366,9 @@
                                                                             role="presentation"
                                                                             style="font-family: Open Sans, Helvetica, Tahoma, Arial, sans-serif; border: none; border-radius: 3px; cursor: auto; mso-padding-alt: 10px 25px; background: {{Translation::get('primary-color-code', 'emails', '#A0131C')}};"
                                                                             valign="middle"><a
-                                                                                href="{{ \Dashed\DashedCore\Classes\AccountHelper::getResetPasswordUrl($user->password_reset_token) }}"
+                                                                                href="{{ route('filament.dashed.auth.login') }}"
                                                                                 style="display: inline-block; background: {{Translation::get('primary-color-code', 'emails', '#A0131C')}}; color: #ffffff; font-family: Open Sans, Helvetica, Tahoma, Arial, sans-serif; font-size: 18px; font-weight: bold; line-height: 120%; margin: 0; text-decoration: none; text-transform: none; padding: 10px 25px; mso-padding-alt: 0px; border-radius: 3px;"
-                                                                                target="_blank"> {{Translation::get('reset-password', 'login', 'Reset wachtwoord')}} </a>
+                                                                                target="_blank"> {{Translation::get('login', 'login', 'Login')}} </a>
                                                                         </td>
                                                                     </tr>
                                                                 </table>
