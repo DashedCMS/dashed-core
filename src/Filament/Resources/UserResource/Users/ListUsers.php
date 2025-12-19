@@ -18,9 +18,9 @@ class ListUsers extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        $user = \App\Models\User::first();
-        Mail::to('robin@dashed.nl')->send(new NewAdminAccountMail($user, 'test'));
-        dd('asdf');
+//        $user = \App\Models\User::first();
+//        Mail::to('robin@dashed.nl')->send(new NewAdminAccountMail($user, 'test'));
+//        dd('asdf');
         return [
             CreateAction::make(),
             Action::make('createAdminUser')
