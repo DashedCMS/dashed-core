@@ -18,9 +18,6 @@ class ListUsers extends ListRecords
 
     protected function getHeaderActions(): array
     {
-//        $user = \App\Models\User::first();
-//        Mail::to('robin@dashed.nl')->send(new NewAdminAccountMail($user, 'test'));
-//        dd('asdf');
         return [
             CreateAction::make(),
             Action::make('createAdminUser')
@@ -35,6 +32,7 @@ class ListUsers extends ListRecords
                         ->label('Achternaam'),
                     TextInput::make('email')
                         ->required()
+                        ->unique('users', 'email')
                         ->email()
                         ->label('E-mail'),
                 ])
@@ -49,14 +47,14 @@ class ListUsers extends ListRecords
                         'role' => 'admin',
                     ]);
 
-//                    try{
+                    try{
                        Mail::to($user->email)->send(new NewAdminAccountMail($user, $password));
-//                    }catch (\Exception $exception){
-//                        Notification::make()
-//                            ->title('Fout bij het verzenden van de e-mail: ' . $exception->getMessage())
-//                            ->danger()
-//                            ->send();
-//                    }
+                    }catch (\Exception $exception){
+                        Notification::make()
+                            ->title('Fout bij het verzenden van de e-mail: ' . $exception->getMessage())
+                            ->danger()
+                            ->send();
+                    }
 
                     Notification::make()
                         ->title('Admin gebruiker ' . $user->first_name . ' ' . $user->last_name . ' is aangemaakt.')
