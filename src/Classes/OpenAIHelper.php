@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore\Classes;
 
+use Dashed\DashedCore\Models\Customsetting;
 use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -11,7 +12,7 @@ class OpenAIHelper
 {
     public static function isConnected(?string $apiKey = null): bool
     {
-        if (! $apiKey) {
+        if (!$apiKey) {
             return false;
         }
 
@@ -27,20 +28,24 @@ class OpenAIHelper
         return $response->successful() || $response->status() === 429;
     }
 
-    public static function getAltTextForImage(string $apiKey, MediaLibraryItem $mediaLibraryItem): ?string
+    public static function getAltTextForImage(?string $apiKey = null, MediaLibraryItem $mediaLibraryItem): ?string
     {
-        if (! self::isConnected($apiKey)) {
+        if (!$apiKey) {
+            $apiKey = Customsetting::get('open_ai_api_key');
+        }
+
+        if (!self::isConnected($apiKey)) {
             return null;
         }
 
         $media = $mediaLibraryItem->media->first();
-        if (! $media) {
+        if (!$media) {
             return null;
         }
 
         $imagePath = $media->getPath();
 
-        if (! in_array($media->mime_type, ['image/jpeg', 'image/png', 'image/webp'])) {
+        if (!in_array($media->mime_type, ['image/jpeg', 'image/png', 'image/webp'])) {
             return null;
         }
 
@@ -86,6 +91,49 @@ class OpenAIHelper
                 $mediaLibraryItem->alt_text = str($altText)->trim()->limit(200, '')->toString();
                 $mediaLibraryItem->save();
             }
+        }
+
+        return null;
+    }
+
+    public static function runPrompt(?string $apiKey = null, string $prompt = ''): ?string
+    {
+        if (!$apiKey) {
+            $apiKey = Customsetting::get('open_ai_api_key');
+        }
+
+        if (!self::isConnected($apiKey)) {
+            return null;
+        }
+
+        try {
+            $response = Http::withToken($apiKey)
+                ->withHeaders([
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json',
+                ])
+                ->post('https://api.openai.com/v1/chat/completions', [
+                    'model' => 'gpt-4o',
+                    'messages' => [
+                        [
+                            'role' => 'user',
+                            'content' => [
+                                [
+                                    'type' => 'text',
+                                    'text' => $prompt,
+                                ],
+                            ],
+                        ],
+                    ],
+                    'max_tokens' => 10000,
+                ]);
+        } catch (Exception $exception) {
+            return null;
+        }
+
+        if ($response->successful()) {
+            $response = $response->json();
+            dd($response);
         }
 
         return null;
