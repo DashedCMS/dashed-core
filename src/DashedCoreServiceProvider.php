@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore;
 
+use Dashed\DashedCore\Classes\RichEditorPlugins\HtmlIdPlugin;
 use Livewire\Livewire;
 use Illuminate\Support\Facades\Mail;
 use App\Providers\AppServiceProvider;
@@ -126,6 +127,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         cms()->builder('richEditorPlugins', [
             VideoEmbedPlugin::make(),
             MediaEmbedPlugin::make(),
+            HtmlIdPlugin::make(),
         ]);
 
         $this->logProviderMemory('bootingPackage:end');

@@ -27,6 +27,11 @@ class Mails
         return Customsetting::get('notification_invoice_emails', Sites::getActive(), []);
     }
 
+    public static function getBCCNotificationEmails(): array
+    {
+        return Customsetting::get('notification_bcc_order_emails', Sites::getActive(), []);
+    }
+
     //Todo: move to ecommerce package
     public static function getAdminLowStockNotificationEmails(): array
     {

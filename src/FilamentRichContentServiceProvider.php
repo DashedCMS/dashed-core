@@ -19,6 +19,10 @@ class FilamentRichContentServiceProvider extends ServiceProvider
                 'rich-content-plugins/media-embed',
                 __DIR__ . '/../resources/js/dist/filament/rich-content-plugins/media-embed.js'
             )->loadedOnRequest(),
+            Js::make(
+                'rich-content-plugins/html-id',
+                __DIR__ . '/../resources/js/dist/filament/rich-content-plugins/id-attribute.js'
+            )->loadedOnRequest(),
         ], 'dashed-core');
     }
 }

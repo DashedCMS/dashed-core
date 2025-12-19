@@ -390,6 +390,7 @@ class CMSManager
                 'attachFiles',
                 'mediaEmbed',
                 'insertExternalVideo',
+//                'htmlId',
                 'blockquote',
                 'bold',
                 'bulletList',
