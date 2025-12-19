@@ -133,7 +133,7 @@ class OpenAIHelper
 
         if ($response->successful()) {
             $response = $response->json();
-            dd($response);
+            $response = $response['choices'][0]['message']['content'] ?? '';
         }
 
         return null;
