@@ -143,7 +143,7 @@ class MigrateToV4 extends Command
 
         // Set PHP and Laravel versions
         $composer['require']['php'] = '^8.4';
-        $composer['require']['laravel/framework'] = '^11.0';
+        $composer['require']['laravel/framework'] = '^12.0';
 
         // Bump all dashed/* to ^4.0.0 in both require & require-dev
         $updatedDashed = [];
