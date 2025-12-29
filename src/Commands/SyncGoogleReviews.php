@@ -52,8 +52,8 @@ class SyncGoogleReviews extends Command
             $reviews = Http::get($url)->json();
             if ($reviews['status'] === 'OK') {
                 $reviews = $reviews['result'];
-                Customsetting::set('google_maps_rating', $reviews['rating']);
-                Customsetting::set('google_maps_review_count', $reviews['user_ratings_total']);
+                Customsetting::set('google_maps_rating', $reviews['rating'] ?? 0);
+                Customsetting::set('google_maps_review_count', $reviews['user_ratings_total'] ?? 0);
                 Customsetting::set('google_maps_reviews_synced', 1);
                 $this->info('Google Reviews Synced');
             } else {
