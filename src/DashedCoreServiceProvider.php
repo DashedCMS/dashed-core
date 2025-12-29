@@ -127,7 +127,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         cms()->builder('richEditorPlugins', [
             VideoEmbedPlugin::make(),
             MediaEmbedPlugin::make(),
-            HtmlIdPlugin::make(),
+//            HtmlIdPlugin::make(),
         ]);
 
         $this->logProviderMemory('bootingPackage:end');
