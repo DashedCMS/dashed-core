@@ -391,7 +391,6 @@ class CMSManager
                 'mediaEmbed',
                 'insertExternalVideo',
 //                'htmlId',
-                'source-ai',
                 'blockquote',
                 'bold',
                 'bulletList',
