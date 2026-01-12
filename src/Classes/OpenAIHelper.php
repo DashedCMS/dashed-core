@@ -2,18 +2,18 @@
 
 namespace Dashed\DashedCore\Classes;
 
-use Dashed\DashedCore\Models\Customsetting;
 use Exception;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
+use Dashed\DashedCore\Models\Customsetting;
 use RalphJSmit\Filament\MediaLibrary\Models\MediaLibraryItem;
 
 class OpenAIHelper
 {
     public static function isConnected(?string $apiKey = null): bool
     {
-        if (!$apiKey) {
+        if (! $apiKey) {
             return false;
         }
 
@@ -31,22 +31,22 @@ class OpenAIHelper
 
     public static function getAltTextForImage(?string $apiKey = null, MediaLibraryItem $mediaLibraryItem): ?string
     {
-        if (!$apiKey) {
+        if (! $apiKey) {
             $apiKey = Customsetting::get('open_ai_api_key');
         }
 
-        if (!self::isConnected($apiKey)) {
+        if (! self::isConnected($apiKey)) {
             return null;
         }
 
         $media = $mediaLibraryItem->media->first();
-        if (!$media) {
+        if (! $media) {
             return null;
         }
 
         $imagePath = $media->getPath();
 
-        if (!in_array($media->mime_type, ['image/jpeg', 'image/png', 'image/webp'])) {
+        if (! in_array($media->mime_type, ['image/jpeg', 'image/png', 'image/webp'])) {
             return null;
         }
 
@@ -99,11 +99,11 @@ class OpenAIHelper
 
     public static function runPrompt(?string $apiKey = null, string $prompt = ''): ?string
     {
-        if (!$apiKey) {
+        if (! $apiKey) {
             $apiKey = Customsetting::get('open_ai_api_key');
         }
 
-        if (!self::isConnected($apiKey)) {
+        if (! self::isConnected($apiKey)) {
             return null;
         }
 
@@ -136,6 +136,7 @@ class OpenAIHelper
             $response = $response->json();
             $response = $response['choices'][0]['message']['content'] ?? '';
             $response = Str::markdown($response);
+
             return $response;
         }
 

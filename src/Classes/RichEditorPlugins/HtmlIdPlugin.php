@@ -3,14 +3,14 @@
 namespace Dashed\DashedCore\Classes\RichEditorPlugins;
 
 use Filament\Actions\Action;
-use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\RichEditor\EditorCommand;
-use Filament\Forms\Components\RichEditor\RichEditorTool;
-use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\RichEditor;
 use Filament\Support\Facades\FilamentAsset;
+use Filament\Forms\Components\RichEditor\EditorCommand;
+use Filament\Forms\Components\RichEditor\RichEditorTool;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
 
 class HtmlIdPlugin implements RichContentPlugin
@@ -70,5 +70,4 @@ class HtmlIdPlugin implements RichContentPlugin
                 }),
         ];
     }
-
 }

@@ -2,7 +2,6 @@
 
 namespace Dashed\DashedCore;
 
-use Dashed\DashedCore\Classes\RichEditorPlugins\HtmlIdPlugin;
 use Livewire\Livewire;
 use Illuminate\Support\Facades\Mail;
 use App\Providers\AppServiceProvider;
@@ -37,6 +36,7 @@ use Dashed\DashedCore\Commands\ReplaceEditorStringsInFiles;
 use Dashed\DashedCore\Livewire\Frontend\Auth\ResetPassword;
 use Dashed\DashedCore\Livewire\Frontend\Auth\ForgotPassword;
 use Dashed\DashedCore\Livewire\Frontend\Notification\Toastr;
+use Dashed\DashedCore\Classes\RichEditorPlugins\HtmlIdPlugin;
 use Dashed\DashedCore\Commands\InvalidatePasswordResetTokens;
 use Dashed\DashedCore\Filament\Pages\Settings\AISettingsPage;
 use Dashed\DashedCore\Livewire\Frontend\Search\SearchResults;

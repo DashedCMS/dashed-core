@@ -2,15 +2,14 @@
 
 namespace Dashed\DashedCore\Filament\Resources\UserResource\Users;
 
-use Dashed\DashedCore\Mail\NewAdminAccountMail;
-use Dashed\DashedCore\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
+use Illuminate\Support\Facades\Mail;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
+use Dashed\DashedCore\Mail\NewAdminAccountMail;
 use Dashed\DashedCore\Filament\Resources\UserResource;
-use Illuminate\Support\Facades\Mail;
 
 class ListUsers extends ListRecords
 {
@@ -47,9 +46,9 @@ class ListUsers extends ListRecords
                         'role' => 'admin',
                     ]);
 
-                    try{
-                       Mail::to($user->email)->send(new NewAdminAccountMail($user, $password));
-                    }catch (\Exception $exception){
+                    try {
+                        Mail::to($user->email)->send(new NewAdminAccountMail($user, $password));
+                    } catch (\Exception $exception) {
                         Notification::make()
                             ->title('Fout bij het verzenden van de e-mail: ' . $exception->getMessage())
                             ->danger()

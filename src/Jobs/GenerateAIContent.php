@@ -2,18 +2,12 @@
 
 namespace Dashed\DashedCore\Jobs;
 
-use Dashed\DashedCore\Classes\OpenAIHelper;
 use Illuminate\Bus\Queueable;
-use Illuminate\Support\Facades\DB;
-use Dashed\DashedCore\Classes\Locales;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
+use Dashed\DashedCore\Classes\OpenAIHelper;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Dashed\DashedEcommerceCore\Models\Product;
-use Dashed\DashedTranslations\Models\Translation;
-use Dashed\DashedEcommerceCore\Models\ProductGroup;
-use Dashed\DashedEcommerceCore\Models\ProductFilterOption;
 
 class GenerateAIContent implements ShouldQueue
 {

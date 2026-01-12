@@ -391,6 +391,7 @@ class CMSManager
                 'mediaEmbed',
                 'insertExternalVideo',
 //                'htmlId',
+                'source-ai',
                 'blockquote',
                 'bold',
                 'bulletList',
@@ -485,7 +486,7 @@ class CMSManager
             switch ($type) {
                 case 'heading':
                     // Filament v4 ondersteunt text alignment op headings
-                    $node['attrs'] = $pick($attrs, ['level', 'textAlign']);
+                    $node['attrs'] = $pick($attrs, ['level', 'textAlign', 'id']);
 
                     break;
 
@@ -592,10 +593,92 @@ class CMSManager
             return '';
         }
 
-        return RichEditor\RichContentRenderer::make($content)
+        $html = RichEditor\RichContentRenderer::make($content)
             ->plugins(cms()->builder('richEditorPlugins'))
             ->toUnsafeHtml();
+
+        return $this->addHeadingIdsToHtml($html);
     }
+
+    protected function addHeadingIdsToHtml(string $html): string
+    {
+        if (trim($html) === '') {
+            return $html;
+        }
+
+        $dom = new \DOMDocument('1.0', 'UTF-8');
+
+        // DOMDocument is soms drama met encoding + wrappers, dus we wrappen ff in een div
+        $wrapped = '<div>' . $html . '</div>';
+
+        libxml_use_internal_errors(true);
+        $dom->loadHTML('<?xml encoding="UTF-8">' . $wrapped, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        libxml_clear_errors();
+
+        $xpath = new \DOMXPath($dom);
+
+        // Verzamel bestaande ids zodat we geen collisions krijgen
+        $usedIds = [];
+        foreach ($xpath->query('//*[@id]') as $el) {
+            /** @var \DOMElement $el */
+            $id = (string) $el->getAttribute('id');
+            if ($id !== '') {
+                $usedIds[$id] = true;
+            }
+        }
+
+        // Pak alle headings
+        $headings = $xpath->query('//h1|//h2|//h3|//h4|//h5|//h6');
+
+        foreach ($headings as $heading) {
+            /** @var \DOMElement $heading */
+
+            // Als er al een id is: laten staan
+            if ($heading->hasAttribute('id') && trim((string) $heading->getAttribute('id')) !== '') {
+                continue;
+            }
+
+            // Visible text (zonder HTML tags)
+            $text = trim(preg_replace('/\s+/u', ' ', $heading->textContent ?? ''));
+
+            if ($text === '') {
+                continue;
+            }
+
+            // Slug maken (Laravel)
+            $base = \Illuminate\Support\Str::slug($text);
+
+            // Als slug leeg is (bijv alleen emoji/tekens), fallback
+            if ($base === '') {
+                $base = 'heading';
+            }
+
+            // Uniek maken
+            $candidate = $base;
+            $i = 2;
+            while (isset($usedIds[$candidate])) {
+                $candidate = $base . '-' . $i;
+                $i++;
+            }
+
+            $heading->setAttribute('id', $candidate);
+            $usedIds[$candidate] = true;
+        }
+
+        // Unwrap de outer div weer (we willen niet extra wrapper HTML teruggeven)
+        $container = $dom->getElementsByTagName('div')->item(0);
+
+        $result = '';
+        if ($container) {
+            foreach ($container->childNodes as $child) {
+                $result .= $dom->saveHTML($child);
+            }
+            return $result;
+        }
+
+        return $html;
+    }
+
 
     public function convertToArray($content): string|array
     {
