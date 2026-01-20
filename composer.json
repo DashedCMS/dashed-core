@@ -17,6 +17,7 @@
     ],
     "require": {
         "php": "^8.4",
+        "awcodes/richer-editor": "^1.1",
         "binafy/laravel-stub": "^1.0",
         "dashed/filament-numpad-field": "^1.0",
         "dashed/laravel-drift": "^1.0",

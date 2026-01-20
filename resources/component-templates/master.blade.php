@@ -56,14 +56,18 @@
 {{--        x-intersect:leave="$store.top = false"--}}
 {{--></div>--}}
 
+<x-dashed-core::global-blocks name="before-navbar"/>
 <x-navbar />
+<x-dashed-core::global-blocks name="after-navbar"/>
 <x-blocks.breadcrumbs/>
 
 <main class="grow">
     {{ $slot }}
 </main>
 
+<x-dashed-core::global-blocks name="before-footer"/>
 <x-footer />
+<x-dashed-core::global-blocks name="after-footer"/>
 @livewire('notifications')
 @filamentScripts
 {{--<x-livewire-range-slider::scripts />--}}
