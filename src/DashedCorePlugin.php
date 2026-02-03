@@ -49,7 +49,7 @@ class DashedCorePlugin implements Plugin
             ->widgets([
                 WelcomeWidget::class,
                 //                NotFoundPageStats::class,
-                //                NotFoundPageGlobalStats::class,
+                //                AutomatedTranslationStats::class,
             ]);
     }
 

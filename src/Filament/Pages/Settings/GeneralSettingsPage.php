@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore\Filament\Pages\Settings;
 
+use Dashed\DashedCore\Jobs\SyncGoogleReviews;
 use UnitEnum;
 use BackedEnum;
 use Filament\Pages\Page;
@@ -22,13 +23,13 @@ use Filament\Schemas\Components\Utilities\Get;
 
 class GeneralSettingsPage extends Page
 {
-    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-cog';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-cog';
 
     protected static bool $shouldRegisterNavigation = false;
 
     protected static ?string $navigationLabel = 'Algemene instellingen';
 
-    protected static string | UnitEnum | null $navigationGroup = 'Overige';
+    protected static string|UnitEnum|null $navigationGroup = 'Overige';
 
     protected static ?string $title = 'Algemene instellingen';
 
@@ -308,7 +309,9 @@ class GeneralSettingsPage extends Page
             //            Customsetting::set('site_theme', $this->form->getState()["site_theme_{$site['id']}"], $site['id']);
         }
 
-        Artisan::call('dashed:sync-google-reviews');
+        if (Customsetting::get('google_maps_places_key') && Customsetting::get('google_maps_places_id')) {
+            SyncGoogleReviews::dispatch();
+        }
 
         Notification::make()
             ->title('De algemene instellingen zijn opgeslagen')
