@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore\Filament\Resources;
 
+use STS\FilamentImpersonate\Actions\Impersonate;
 use UnitEnum;
 use BackedEnum;
 use App\Models\User;
@@ -119,6 +120,7 @@ class UserResource extends Resource
                 //
             ])
             ->recordActions([
+                Impersonate::make(),
                 EditAction::make()
                     ->button(),
                 DeleteAction::make(),

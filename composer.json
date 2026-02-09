@@ -40,6 +40,7 @@
         "spatie/laravel-package-tools": "^1.16",
         "spatie/laravel-sitemap": "^7.2",
         "spatie/schema-org": "^3.23",
+        "stechstudio/filament-impersonate": "^4.1",
         "symfony/http-client": "^7.1",
         "symfony/postmark-mailer": "^7.1"
     },
