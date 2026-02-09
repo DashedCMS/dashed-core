@@ -6,6 +6,7 @@ use Filament\Actions\DeleteAction;
 use Illuminate\Support\Facades\Hash;
 use Filament\Resources\Pages\EditRecord;
 use Dashed\DashedCore\Filament\Resources\UserResource;
+use STS\FilamentImpersonate\Actions\Impersonate;
 
 class EditUser extends EditRecord
 {
@@ -14,6 +15,7 @@ class EditUser extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Impersonate::make(),
             DeleteAction::make(),
         ];
     }
