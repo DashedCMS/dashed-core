@@ -1,3 +1,5 @@
+<x-impersonate::banner/>
+
 @php
     $tracking = $trackingSettings ?? [];
 
