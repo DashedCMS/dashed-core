@@ -54,7 +54,7 @@ class ResetPassword extends Component
 
         auth()->login($this->user);
 
-        return redirect(route('dashed.frontend.account'))->with('success', Translation::get('reset-password-post-success', 'login', 'Your password has been reset!'));
+        return redirect(AccountHelper::getAccountUrl())->with('success', Translation::get('reset-password-post-success', 'login', 'Your password has been reset!'));
     }
 
     public function render()
