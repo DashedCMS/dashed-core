@@ -53,7 +53,7 @@ class AccountHelper
         $pageId = Customsetting::get('forgot_password_page_id');
         $page = Page::publicShowable()->where('id', $pageId)->first();
 
-        return $page?->getUrl() ?? 'forgot-password';
+        return url($page?->getUrl() ?? 'forgot-password');
     }
 
     public static function getResetPasswordUrl($resetToken)
@@ -61,7 +61,7 @@ class AccountHelper
         $pageId = Customsetting::get('reset_password_page_id');
         $page = Page::publicShowable()->where('id', $pageId)->first();
 
-        return ($page?->getUrl() ?? 'reset-password') . '?passwordResetToken=' . $resetToken;
+        return url(($page?->getUrl() ?? 'reset-password') . '?passwordResetToken=' . $resetToken);
     }
 
     public static function getPasswordProtectionUrl()
@@ -69,7 +69,7 @@ class AccountHelper
         $pageId = Customsetting::get('password_protection_page_id');
         $page = Page::publicShowable()->where('id', $pageId)->first();
 
-        return ($page?->getUrl() ?? 'password-protection');
+        return url( ($page?->getUrl() ?? 'password-protection'));
     }
 
     //    public static function getForgotPasswordPostUrl()
