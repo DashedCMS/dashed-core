@@ -380,10 +380,10 @@
                                                                         <td align="center"
                                                                             bgcolor="{{Translation::get('primary-color-code', 'emails', '#A0131C')}}"
                                                                             role="presentation"
-                                                                            style="font-family: Open Sans, Helvetica, Tahoma, Arial, sans-serif; border: none; border-radius: 3px; cursor: auto; mso-padding-alt: 10px 25px; background: {{Translation::get('primary-color-code', 'emails', '#A0131C')}};"
+                                                                            style="font-family: Open Sans, Helvetica, Tahoma, Arial, sans-serif; border: none; border-radius: 3px; cursor: auto; mso-padding-alt: 10px 25px;"
                                                                             valign="middle">Als de knop hierboven niet werkt, kopieer en plak dan de volgende link in je webbrowser: <a
                                                                                 href="{{ \Dashed\DashedCore\Classes\AccountHelper::getResetPasswordUrl($user->password_reset_token) }}"
-                                                                                style="color: {{Translation::get('primary-color-code', 'emails', '#A0131C')}}; font-family: Open Sans, Helvetica, Tahoma, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 120%; margin: 0; text-decoration: none; text-transform: none;"
+                                                                                style="font-family: Open Sans, Helvetica, Tahoma, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 120%; margin: 0; text-decoration: none; text-transform: none;"
                                                                                 target="_blank"> {{ \Dashed\DashedCore\Classes\AccountHelper::getResetPasswordUrl($user->password_reset_token) }} </a>
                                                                         </td>
                                                                     </tr>
