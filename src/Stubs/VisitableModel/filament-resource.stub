@@ -3,27 +3,27 @@
 namespace App\Filament\Resources;
 
 use App\Models\{{ MODELCLASS }};
-use Filament\Forms\Set;
-use Filament\Forms\Form;
+use App\Filament\Resources\{{ MODELCLASS }}Resource\Pages;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Filament\Resources\Resource;
-use Filament\Forms\Components\Section;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
-use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Filters\TrashedFilter;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Resources\Concerns\Translatable;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\RestoreBulkAction;
-use App\Filament\Resources\{{ MODELCLASS }}Resource\Pages;
-use Filament\Tables\Actions\ForceDeleteBulkAction;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Dashed\DashedCore\Classes\QueryHelpers\SearchQuery;
 use Dashed\DashedCore\Filament\Concerns\HasVisitableTab;
 use Dashed\DashedCore\Filament\Concerns\HasCustomBlocksTab;
+use LaraZeus\SpatieTranslatable\Resources\Concerns\Translatable;
 
 class {{ CLASS }} extends Resource
 {
@@ -34,8 +34,8 @@ class {{ CLASS }} extends Resource
     protected static ?string $model = {{ MODELCLASS }}::class;
 
     protected static ?string $recordTitleAttribute = 'name';
-    protected static ?string $navigationIcon = 'heroicon-o-book-open';
-    protected static ?string $navigationGroup = 'Custom modules';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-book-open';
+    protected static string | \UnitEnum | null $navigationGroup = 'Custom modules';
     protected static ?string $navigationLabel = '{{ PLURAL }}';
     protected static ?string $label = '{{ SINGLE }}';
     protected static ?string $pluralLabel = '{{ PLURAL }}';
@@ -57,9 +57,9 @@ class {{ CLASS }} extends Resource
             ]);
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 Section::make('Content')
                     ->schema(array_merge([
@@ -81,11 +81,14 @@ class {{ CLASS }} extends Resource
                             ->maxLength(255),
                         cms()->getFilamentBuilderBlock(),
                     ], static::customBlocksTab('{{ SINGLELOW }}Blocks')))
-                    ->columns(2),
+                    ->columns(2)
+                ->columnSpanFull(),
                 Section::make('Globale informatie')
-                    ->schema(static::publishTab()),
+                    ->schema(static::publishTab())
+                ->columnSpanFull(),
                 Section::make('Meta data')
-                    ->schema(static::metadataTab()),
+                    ->schema(static::metadataTab())
+                ->columnSpanFull(),
             ]);
     }
 
@@ -101,7 +104,7 @@ class {{ CLASS }} extends Resource
             ->filters([
                 TrashedFilter::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                     RestoreBulkAction::make(),
@@ -109,7 +112,7 @@ class {{ CLASS }} extends Resource
                 ]),
             ])
             ->reorderable('order')
-            ->actions([
+            ->recordActions([
                 EditAction::make()
                     ->button(),
                 DeleteAction::make(),

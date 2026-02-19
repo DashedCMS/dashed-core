@@ -2,11 +2,11 @@
 
 namespace App\Filament\Resources\{{ MODELCLASS }}Resource\Pages;
 
-use Filament\Actions\CreateAction;
-use Filament\Actions\LocaleSwitcher;
-use Filament\Resources\Pages\ListRecords;
 use App\Filament\Resources\{{ MODELCLASS }}Resource;
-use Filament\Resources\Pages\ListRecords\Concerns\Translatable;
+use Filament\Actions\CreateAction;
+use Filament\Resources\Pages\ListRecords;
+use LaraZeus\SpatieTranslatable\Actions\LocaleSwitcher;
+use LaraZeus\SpatieTranslatable\Resources\Concerns\Translatable;
 
 class List{{ PLURAL }} extends ListRecords
 {

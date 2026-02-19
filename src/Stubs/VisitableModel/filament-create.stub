@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources\{{ MODELCLASS }}Resource\Pages;
 
-use Filament\Actions\LocaleSwitcher;
-use Filament\Resources\Pages\CreateRecord;
 use App\Filament\Resources\{{ MODELCLASS }}Resource;
-use Filament\Resources\Pages\CreateRecord\Concerns\Translatable;
+use Filament\Resources\Pages\CreateRecord;
+use LaraZeus\SpatieTranslatable\Actions\LocaleSwitcher;
+use LaraZeus\SpatieTranslatable\Resources\Concerns\Translatable;
 
 class Create{{ SINGLE }} extends CreateRecord
 {

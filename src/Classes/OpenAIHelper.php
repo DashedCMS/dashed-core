@@ -17,14 +17,18 @@ class OpenAIHelper
             return false;
         }
 
-        $response = Http::withToken($apiKey)
-            ->post('https://api.openai.com/v1/chat/completions', [
-                'model' => 'gpt-3.5-turbo',
-                'messages' => [
-                    ['role' => 'user', 'content' => 'Hello!'],
-                ],
-                'max_tokens' => 1,
-            ]);
+        try{
+            $response = Http::withToken($apiKey)
+                ->post('https://api.openai.com/v1/chat/completions', [
+                    'model' => 'gpt-3.5-turbo',
+                    'messages' => [
+                        ['role' => 'user', 'content' => 'Hello!'],
+                    ],
+                    'max_tokens' => 1,
+                ]);
+        }catch (Exception $e){
+            return false;
+        }
 
         return $response->successful() || $response->status() === 429;
     }
