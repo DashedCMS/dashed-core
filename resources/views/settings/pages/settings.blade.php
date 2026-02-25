@@ -5,7 +5,7 @@
             <div>
                 <h2 class="text-gray-500 text-xs font-medium uppercase tracking-wide">Kies een optie</h2>
                 <p class="mt-1 text-sm text-gray-500">
-                    Zoek snel je settings page 👀
+                    of zoek snel je instellingen pagina
                 </p>
             </div>
 
@@ -21,7 +21,7 @@
                         type="text"
                         wire:model.live.debounce.200ms="search"
                         placeholder="Zoek op naam of omschrijving…"
-                        class="block w-full rounded-lg border-gray-300 pl-10 pr-10 text-sm shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                        class="block w-full rounded-lg border-gray-300 pl-10 pr-10 text-sm shadow-sm focus:border-primary-500 focus:ring-primary-500 py-4 bg-white border-2 text-gray-600"
                     />
 
                     @if(strlen($search ?? '') > 0)

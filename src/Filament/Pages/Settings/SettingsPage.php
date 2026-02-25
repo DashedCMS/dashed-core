@@ -13,6 +13,7 @@ class SettingsPage extends Page
     protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-cog';
 
     protected static ?string $navigationLabel = 'Instellingen';
+    protected static ?string $title = 'Instellingen';
 
     protected static string | UnitEnum | null $navigationGroup = 'Overige';
 
