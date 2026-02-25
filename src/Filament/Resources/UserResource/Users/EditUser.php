@@ -5,8 +5,8 @@ namespace Dashed\DashedCore\Filament\Resources\UserResource\Users;
 use Filament\Actions\DeleteAction;
 use Illuminate\Support\Facades\Hash;
 use Filament\Resources\Pages\EditRecord;
-use Dashed\DashedCore\Filament\Resources\UserResource;
 use STS\FilamentImpersonate\Actions\Impersonate;
+use Dashed\DashedCore\Filament\Resources\UserResource;
 
 class EditUser extends EditRecord
 {

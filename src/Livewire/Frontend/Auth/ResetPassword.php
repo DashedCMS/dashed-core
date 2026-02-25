@@ -22,7 +22,7 @@ class ResetPassword extends Component
             return redirect(AccountHelper::getAccountUrl())->with('success', 'Je bent succesvol ingelogd');
         }
 
-        if(!$passwordResetToken){
+        if (! $passwordResetToken) {
             $passwordResetToken = request()->query('passwordResetToken');
         }
 

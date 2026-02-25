@@ -49,9 +49,9 @@ trait IsVisitable
         });
 
         static::saved(function ($model) {
-//            if (Customsetting::get('seo_check_models', null, false)) {
-//                ScanSpecificResult::dispatch($model);
-//            }
+            //            if (Customsetting::get('seo_check_models', null, false)) {
+            //                ScanSpecificResult::dispatch($model);
+            //            }
 
             if (self::runHistoryCheck()) {
                 Customsetting::set('run_history_check', true);

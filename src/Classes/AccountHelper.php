@@ -69,7 +69,7 @@ class AccountHelper
         $pageId = Customsetting::get('password_protection_page_id');
         $page = Page::publicShowable()->where('id', $pageId)->first();
 
-        return url( ($page?->getUrl() ?? 'password-protection'));
+        return url(($page?->getUrl() ?? 'password-protection'));
     }
 
     //    public static function getForgotPasswordPostUrl()

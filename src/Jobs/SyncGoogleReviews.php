@@ -2,10 +2,10 @@
 
 namespace Dashed\DashedCore\Jobs;
 
-use Dashed\DashedCore\Models\Customsetting;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
+use Dashed\DashedCore\Models\Customsetting;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 
@@ -19,7 +19,6 @@ class SyncGoogleReviews implements ShouldQueue
     public $tries = 1;
 
     public $timeout = 60 * 60 * 3;
-
 
     public function handle(): void
     {

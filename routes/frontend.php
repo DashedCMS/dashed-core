@@ -1,6 +1,5 @@
 <?php
 
-use Dashed\DashedCore\Middleware\AddLivewireReferrerToFlareMiddleware;
 use Illuminate\Support\Facades\Route;
 use Dashed\DashedCore\Middleware\AuthMiddleware;
 use Dashed\DashedCore\Middleware\GuestMiddleware;
@@ -10,6 +9,7 @@ use Dashed\DashedCore\Controllers\Frontend\AuthController;
 use Dashed\LaravelLocalization\Facades\LaravelLocalization;
 use Dashed\DashedCore\Controllers\Frontend\AccountController;
 use Dashed\DashedCore\Controllers\Frontend\FrontendController;
+use Dashed\DashedCore\Middleware\AddLivewireReferrerToFlareMiddleware;
 use Dashed\LaravelLocalization\Middleware\LaravelLocalizationViewPath;
 use Dashed\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter;
 

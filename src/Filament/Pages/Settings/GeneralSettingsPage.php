@@ -2,7 +2,6 @@
 
 namespace Dashed\DashedCore\Filament\Pages\Settings;
 
-use Dashed\DashedCore\Jobs\SyncGoogleReviews;
 use UnitEnum;
 use BackedEnum;
 use Filament\Pages\Page;
@@ -13,12 +12,12 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Tabs;
 use Filament\Forms\Components\Textarea;
-use Illuminate\Support\Facades\Artisan;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Tabs\Tab;
 use Dashed\DashedCore\Models\Customsetting;
 use Filament\Infolists\Components\TextEntry;
+use Dashed\DashedCore\Jobs\SyncGoogleReviews;
 use Filament\Schemas\Components\Utilities\Get;
 
 class GeneralSettingsPage extends Page

@@ -39,8 +39,8 @@ class RunUrlHistoryCheckCommand extends Command
      */
     public function handle()
     {
-//        if (Customsetting::get('run_history_check') == true && Customsetting::get('last_history_check', null, now()->subWeek()) < now()->subHour()) {
-            RunUrlHistoryCheck::dispatch();
-//        }
+        //        if (Customsetting::get('run_history_check') == true && Customsetting::get('last_history_check', null, now()->subWeek()) < now()->subHour()) {
+        RunUrlHistoryCheck::dispatch();
+        //        }
     }
 }

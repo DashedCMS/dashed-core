@@ -2,11 +2,11 @@
 
 namespace Dashed\DashedCore\Filament\Pages\Settings;
 
+use UnitEnum;
 use BackedEnum;
 use Filament\Pages\Page;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use UnitEnum;
+use Illuminate\Support\Collection;
 
 class SettingsPage extends Page
 {

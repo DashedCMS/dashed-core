@@ -5,10 +5,6 @@ namespace Dashed\DashedCore\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Spatie\LaravelFlare\Facades\Flare;
-use Spatie\SchemaOrg\Schema;
-use Dashed\DashedCore\Classes\Sites;
-use Illuminate\Support\Facades\View;
-use Dashed\DashedCore\Models\Customsetting;
 
 class AddLivewireReferrerToFlareMiddleware
 {

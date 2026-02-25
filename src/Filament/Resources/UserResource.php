@@ -2,7 +2,6 @@
 
 namespace Dashed\DashedCore\Filament\Resources;
 
-use STS\FilamentImpersonate\Actions\Impersonate;
 use UnitEnum;
 use BackedEnum;
 use App\Models\User;
@@ -18,6 +17,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
+use STS\FilamentImpersonate\Actions\Impersonate;
 use Dashed\DashedCore\Filament\Resources\UserResource\Users\EditUser;
 use Dashed\DashedCore\Filament\Resources\UserResource\Users\ListUsers;
 use Dashed\DashedCore\Filament\Resources\UserResource\Users\CreateUser;

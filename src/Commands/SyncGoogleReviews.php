@@ -3,7 +3,6 @@
 namespace Dashed\DashedCore\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Http;
 use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedCore\Helpers\Http\UrlBuilderTrait;
 
