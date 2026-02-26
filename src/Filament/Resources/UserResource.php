@@ -2,7 +2,6 @@
 
 namespace Dashed\DashedCore\Filament\Resources;
 
-use Filament\Forms\Components\Toggle;
 use UnitEnum;
 use BackedEnum;
 use App\Models\User;
@@ -13,6 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;

@@ -9,6 +9,7 @@ use Dashed\DashedCore\Controllers\Frontend\AuthController;
 use Dashed\LaravelLocalization\Facades\LaravelLocalization;
 use Dashed\DashedCore\Controllers\Frontend\AccountController;
 use Dashed\DashedCore\Controllers\Frontend\FrontendController;
+use Dashed\DashedCore\Controllers\OAuth\GoogleOAuthController;
 use Dashed\DashedCore\Middleware\AddLivewireReferrerToFlareMiddleware;
 use Dashed\LaravelLocalization\Middleware\LaravelLocalizationViewPath;
 use Dashed\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter;
@@ -49,6 +50,11 @@ if (config('dashed-core.default_auth_pages_enabled', true)) {
         }
     );
 }
+
+Route::get('/oauth/google', [GoogleOAuthController::class, 'redirect'])
+    ->name('google.oauth.redirect');
+Route::get('/oauth/google/callback', [GoogleOAuthController::class, 'callback'])
+    ->name('google.oauth.callback');
 
 Route::fallback([FrontendController::class, 'index'])
     ->middleware(array_merge(['web', FrontendMiddleware::class, AddLivewireReferrerToFlareMiddleware::class, \Dashed\DashedCore\Middleware\LocaleSessionRedirect::class, LaravelLocalizationRedirectFilter::class, LaravelLocalizationViewPath::class], cms()->builder('frontendMiddlewares')))

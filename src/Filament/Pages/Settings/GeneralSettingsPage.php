@@ -38,6 +38,8 @@ class GeneralSettingsPage extends Page
 
     public function mount(): void
     {
+        //        SyncGoogleReviews::dispatch();
+
         $formData = [];
         $sites = Sites::getSites();
         foreach ($sites as $site) {

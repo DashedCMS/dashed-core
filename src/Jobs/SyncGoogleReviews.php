@@ -3,17 +3,20 @@
 namespace Dashed\DashedCore\Jobs;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Dashed\DashedCore\Models\Customsetting;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
 class SyncGoogleReviews implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     public int $tries = 3;
 
@@ -26,11 +29,12 @@ class SyncGoogleReviews implements ShouldQueue
         $key = (string) Customsetting::get('google_maps_places_key');
         $placeId = (string) Customsetting::get('google_maps_places_id');
 
-        if (!$key || !$placeId) {
+        if (! $key || ! $placeId) {
             // netjes: als config mist, markeer als niet gesynced
             Customsetting::set('google_maps_rating', null);
             Customsetting::set('google_maps_review_count', null);
             Customsetting::set('google_maps_reviews_synced', 0);
+
             return;
         }
 
@@ -42,15 +46,16 @@ class SyncGoogleReviews implements ShouldQueue
                 ->get($url, [
                     'place_id' => $placeId,
                     'key' => $key,
-                    'fields' => 'rating,user_ratings_total',
+                    'fields' => 'rating,user_ratings_total,reviews',
                 ]);
 
-            if (!$response->ok()) {
+            if (! $response->ok()) {
                 $this->markFailed();
                 Log::warning('SyncGoogleReviews: non-200 response', [
                     'status' => $response->status(),
                     'body' => $response->body(),
                 ]);
+
                 return;
             }
 
@@ -58,6 +63,7 @@ class SyncGoogleReviews implements ShouldQueue
 
             $status = $json['status'] ?? null;
 
+            dd($json);
             if ($status !== 'OK') {
                 // Google statuses: ZERO_RESULTS, OVER_QUERY_LIMIT, REQUEST_DENIED, INVALID_REQUEST, UNKNOWN_ERROR
                 $this->markFailed();
@@ -65,6 +71,7 @@ class SyncGoogleReviews implements ShouldQueue
                     'status' => $status,
                     'error_message' => $json['error_message'] ?? null,
                 ]);
+
                 return;
             }
 
@@ -80,6 +87,7 @@ class SyncGoogleReviews implements ShouldQueue
                 'class' => get_class($e),
             ]);
         }
+        dd('asdf');
     }
 
     protected function markFailed(): void

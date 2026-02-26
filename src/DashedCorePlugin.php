@@ -15,6 +15,7 @@ use Dashed\DashedCore\Filament\Pages\Settings\SEOSettingsPage;
 use Dashed\DashedCore\Filament\Resources\NotFoundPageResource;
 use Dashed\DashedCore\Filament\Pages\Settings\CacheSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
+use Dashed\DashedCore\Filament\Resources\Reviews\ReviewResource;
 use Dashed\DashedCore\Filament\Pages\Settings\SearchSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\AccountSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
@@ -34,6 +35,7 @@ class DashedCorePlugin implements Plugin
                 RedirectResource::class,
                 NotFoundPageResource::class,
                 GlobalBlockResource::class,
+                ReviewResource::class,
             ])
             ->pages([
                 SettingsPage::class,
