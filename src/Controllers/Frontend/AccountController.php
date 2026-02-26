@@ -9,7 +9,7 @@ use Dashed\DashedTranslations\Models\Translation;
 use Dashed\DashedCore\Livewire\Frontend\Account\Account;
 use Dashed\DashedCore\Requests\Frontend\UpdateAccountRequest;
 
-class AccountController extends GoogleOAuthController
+class AccountController extends Controller
 {
     public function account()
     {

@@ -11,7 +11,7 @@ use Dashed\DashedCore\Livewire\Frontend\Auth\Login;
 use Dashed\DashedCore\Livewire\Frontend\Auth\ResetPassword;
 use Dashed\DashedCore\Livewire\Frontend\Auth\ForgotPassword;
 
-class AuthController extends GoogleOAuthController
+class AuthController extends Controller
 {
     public function login()
     {
