@@ -43,7 +43,7 @@ class ListReviews extends ListRecords
                     Kies: Web application.<br><br>
 
                     <strong>Belangrijk:</strong> Voeg bij “Authorized redirect URI” deze URL toe:<br>
-                    <code>'.url('/oath/google').'</code><br><br>
+                    <code>'.route('google.oauth.callback').'</code><br><br>
 
                     Daarna krijg je je Client ID en Client Secret.
                 </div>
