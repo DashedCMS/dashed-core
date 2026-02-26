@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore\Filament\Resources\Reviews\Tables;
 
+use Filament\Actions\DeleteAction;
 use Filament\Tables\Table;
 use Filament\Actions\EditAction;
 use Dashed\DashedCore\Models\Review;
@@ -35,11 +36,6 @@ class ReviewsTable
                     ->searchable()
                     ->toggleable(),
 
-                TextColumn::make('review')
-                    ->limit(60)
-                    ->wrap()
-                    ->searchable(),
-
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -60,6 +56,7 @@ class ReviewsTable
             ])
             ->recordActions([
                 EditAction::make(),
+                DeleteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

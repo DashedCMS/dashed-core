@@ -3,7 +3,9 @@
 namespace Dashed\DashedCore\Middleware;
 
 use Closure;
+use Dashed\DashedCore\Models\Review;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Spatie\SchemaOrg\Schema;
 use Dashed\DashedCore\Classes\Sites;
 use Illuminate\Support\Facades\View;
@@ -73,13 +75,13 @@ class FrontendMiddleware
 
         $trackingSettings = [
             'google_tagmanager_id' => $googleTagmanagerId,
-            'trigger_tiktok_events' => (bool) $triggerTikTokEvents,
+            'trigger_tiktok_events' => (bool)$triggerTikTokEvents,
             'facebook_pixel_conversion_id' => $facebookPixelConversionId,
             'facebook_pixel_site_id' => $facebookPixelSiteId,
-            'trigger_facebook_events' => (bool) $triggerFacebookEvents,
+            'trigger_facebook_events' => (bool)$triggerFacebookEvents,
             'google_merchant_center_id' => $googleMerchantCenterId,
-            'enable_google_merchant_center_review_survey' => (bool) $enableGoogleMerchantReviewSurvey,
-            'enable_google_merchant_center_review_badge' => (bool) $enableGoogleMerchantReviewBadge,
+            'enable_google_merchant_center_review_survey' => (bool)$enableGoogleMerchantReviewSurvey,
+            'enable_google_merchant_center_review_badge' => (bool)$enableGoogleMerchantReviewBadge,
             'google_analytics_id' => $googleAnalyticsId,
         ];
 
@@ -94,7 +96,7 @@ class FrontendMiddleware
         ];
 
         $googleMaps = [
-            'synced' => (bool) $googleMapsSynced,
+            'synced' => (bool)$googleMapsSynced,
             'rating' => $googleMapsRating,
             'review_count' => $googleMapsReviewCount,
         ];
@@ -105,7 +107,7 @@ class FrontendMiddleware
         seo()->metaData('robots', app()->isLocal() ? 'noindex, nofollow' : 'index, follow');
         seo()->metaData('metaTitle', $siteName);
 
-        if (! seo()->metaData('metaImage') && $defaultMetaImageId) {
+        if (!seo()->metaData('metaImage') && $defaultMetaImageId) {
             $defaultMedia = mediaHelper()->getSingleMedia($defaultMetaImageId, 'original');
             seo()->metaData('metaImage', $defaultMedia->url ?? '');
         }
@@ -137,15 +139,83 @@ class FrontendMiddleware
                     ->email($company['email'])
             );
 
-        if ($googleMaps['synced']) {
-            $schema->aggregateRating(
-                Schema::aggregateRating()
-                    ->ratingValue($googleMaps['rating'])
-                    ->bestRating(5)
-                    ->worstRating(1)
-                    ->reviewCount($googleMaps['review_count'])
-                    ->url('https://www.google.com/')
-            );
+        $reviewSchemas = Cache::remember(
+            "schema:reviews:site:{$siteId}:v1",
+            now()->addDay(),
+            function () use ($siteId) {
+                $reviews = Review::query()
+                    ->whereNotNull('stars')
+                    ->whereNotNull('review')
+                    ->orderBy('stars', 'desc')
+                    ->latest()
+                    ->take(10)
+                    ->get();
+
+                if ($reviews->isEmpty()) {
+                    return [];
+                }
+
+                $ratingMap = [
+                    1 => '1',
+                    2 => '2',
+                    3 => '3',
+                    4 => '4',
+                    5 => '5',
+                ];
+
+                return $reviews->map(function ($review) use ($ratingMap) {
+                    return Schema::review()
+                        ->author(
+                            Schema::person()->name($review->name ?: 'Anoniem')
+                        )
+                        ->reviewBody((string)$review->review)
+                        ->reviewRating(
+                            Schema::rating()
+                                ->ratingValue($ratingMap[(int)$review->stars] ?? (string)$review->stars)
+                                ->bestRating('5')
+                                ->worstRating('1')
+                        );
+                })->all();
+            }
+        );
+
+        if (!empty($reviewSchemas)) {
+            $schema->addProperties([
+                'review' => $reviewSchemas,
+            ]);
+
+            foreach(Review::distinct('provider')->pluck('provider') as $provider) {
+                $amountOfReviews = Review::query()
+                    ->where('provider', $provider)
+                    ->whereNotNull('stars')
+                    ->whereNotNull('review')
+                    ->count();
+                $rating = Review::query()
+                    ->where('provider', $provider)
+                    ->whereNotNull('stars')
+                    ->whereNotNull('review')
+                    ->avg('stars');
+
+                $schema->aggregateRating(
+                    Schema::aggregateRating()
+                        ->ratingValue((int)$rating)
+                        ->bestRating(5)
+                        ->worstRating(1)
+                        ->reviewCount($amountOfReviews)
+                        ->url($provider === 'own' ? url('/') : ($provider === 'google' ? 'https://www.google.com/' : ('https://www.' . $provider . '.com/'))),
+                );
+            }
+        } else {
+            if ($googleMaps['synced']) {
+                $schema->aggregateRating(
+                    Schema::aggregateRating()
+                        ->ratingValue($googleMaps['rating'])
+                        ->bestRating(5)
+                        ->worstRating(1)
+                        ->reviewCount($googleMaps['review_count'])
+                        ->url('https://www.google.com/')
+                );
+            }
         }
 
         seo()->metaData('schemas', array_merge([
@@ -169,7 +239,7 @@ class FrontendMiddleware
 
     protected function logMemory(string $label): void
     {
-        if (! app()->environment('local')) {
+        if (!app()->environment('local')) {
             return;
         }
 

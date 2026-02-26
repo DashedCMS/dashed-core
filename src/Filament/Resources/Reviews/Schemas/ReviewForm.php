@@ -19,8 +19,7 @@ class ReviewForm
                         'google' => 'Google',
                         'trustpilot' => 'Trustpilot',
                     ])
-                    ->disabled()
-//                    ->required()
+                    ->required()
                     ->default('own'),
 
                 TextInput::make('review_id')
@@ -50,6 +49,7 @@ class ReviewForm
 
                 Textarea::make('review')
                     ->rows(5)
+                    ->required()
                     ->columnSpanFull(),
             ]);
     }
