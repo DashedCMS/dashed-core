@@ -8,40 +8,84 @@ use Illuminate\Queue\InteractsWithQueue;
 use Dashed\DashedCore\Models\Customsetting;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class SyncGoogleReviews implements ShouldQueue
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $tries = 1;
+    public int $tries = 3;
 
-    public $timeout = 60 * 60 * 3;
+    public array $backoff = [60, 300, 900]; // 1m, 5m, 15m
+
+    public int $timeout = 60; // job timeout (seconds)
 
     public function handle(): void
     {
-        if (Customsetting::get('google_maps_places_key') && Customsetting::get('google_maps_places_id')) {
-            $url = $this->buildUrl('https://maps.googleapis.com/maps/api/place/details/json', [
-                'place_id' => Customsetting::get('google_maps_places_id'),
-                'key' => Customsetting::get('google_maps_places_key'),
-                'fields' => 'rating,user_ratings_total',
-            ]);
+        $key = (string) Customsetting::get('google_maps_places_key');
+        $placeId = (string) Customsetting::get('google_maps_places_id');
 
-            $reviews = Http::get($url)->json();
-            if ($reviews['status'] === 'OK') {
-                $reviews = $reviews['result'];
-                Customsetting::set('google_maps_rating', $reviews['rating'] ?? 0);
-                Customsetting::set('google_maps_review_count', $reviews['user_ratings_total'] ?? 0);
-                Customsetting::set('google_maps_reviews_synced', 1);
-                $this->info('Google Reviews Synced');
-            } else {
-                $this->error('Google Reviews Sync Failed');
-                Customsetting::set('google_maps_rating', null);
-                Customsetting::set('google_maps_review_count', null);
-                Customsetting::set('google_maps_reviews_synced', 0);
-            }
+        if (!$key || !$placeId) {
+            // netjes: als config mist, markeer als niet gesynced
+            Customsetting::set('google_maps_rating', null);
+            Customsetting::set('google_maps_review_count', null);
+            Customsetting::set('google_maps_reviews_synced', 0);
+            return;
         }
+
+        $url = 'https://maps.googleapis.com/maps/api/place/details/json';
+
+        try {
+            $response = Http::timeout(15)
+                ->retry(2, 500) // 2 retries, 0.5s delay
+                ->get($url, [
+                    'place_id' => $placeId,
+                    'key' => $key,
+                    'fields' => 'rating,user_ratings_total',
+                ]);
+
+            if (!$response->ok()) {
+                $this->markFailed();
+                Log::warning('SyncGoogleReviews: non-200 response', [
+                    'status' => $response->status(),
+                    'body' => $response->body(),
+                ]);
+                return;
+            }
+
+            $json = $response->json();
+
+            $status = $json['status'] ?? null;
+
+            if ($status !== 'OK') {
+                // Google statuses: ZERO_RESULTS, OVER_QUERY_LIMIT, REQUEST_DENIED, INVALID_REQUEST, UNKNOWN_ERROR
+                $this->markFailed();
+                Log::warning('SyncGoogleReviews: Google API status not OK', [
+                    'status' => $status,
+                    'error_message' => $json['error_message'] ?? null,
+                ]);
+                return;
+            }
+
+            $result = $json['result'] ?? [];
+
+            Customsetting::set('google_maps_rating', $result['rating'] ?? 0);
+            Customsetting::set('google_maps_review_count', $result['user_ratings_total'] ?? 0);
+            Customsetting::set('google_maps_reviews_synced', 1);
+        } catch (\Throwable $e) {
+            $this->markFailed();
+            Log::error('SyncGoogleReviews: exception', [
+                'message' => $e->getMessage(),
+                'class' => get_class($e),
+            ]);
+        }
+    }
+
+    protected function markFailed(): void
+    {
+        Customsetting::set('google_maps_rating', null);
+        Customsetting::set('google_maps_review_count', null);
+        Customsetting::set('google_maps_reviews_synced', 0);
     }
 }
