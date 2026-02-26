@@ -18,7 +18,7 @@ class GoogleOAuthController extends Controller
         $client = new GoogleClient();
         $client->setClientId($clientId);
         $client->setClientSecret($clientSecret);
-        $client->setRedirectUri(route('google.oauth.callback'));
+        $client->setRedirectUri(route('google.oauth.redirect'));
 
         $client->setScopes(['https://www.googleapis.com/auth/business.manage']);
         $client->setAccessType('offline');
