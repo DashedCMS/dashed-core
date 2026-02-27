@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore\Filament\Resources\Reviews\Pages;
 
+use Dashed\DashedCore\Support\GoogleBusinessLocationsService;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Components\TextInput;
@@ -84,10 +85,48 @@ class ListReviews extends ListRecords
                         ->default(fn () => Customsetting::get('google_oauth_refresh_token'))
                         ->columnSpanFull(),
 
-                    TextInput::make('google_business_location_name')
-                        ->label('Business Location Name')
-                        ->helperText('Bijvoorbeeld: accounts/123456789/locations/987654321')
-                        ->default(fn () => Customsetting::get('google_business_location_name'))
+                    Placeholder::make('location_help')
+                        ->content(new HtmlString('
+                <div style="font-size:14px; line-height:1.6;">
+                    <strong>Business Location</strong><br><br>
+                    Na koppelen kunnen we automatisch je locaties ophalen.<br>
+                    Kies hier de juiste locatie uit de dropdown.<br><br>
+                    Zie je niks? Klik dan eerst op <strong>Koppel met Google</strong> en daarna op <strong>Ververs lijst</strong> ✅
+                </div>
+            '))
+                        ->columnSpanFull(),
+
+                    Select::make('google_business_location_name')
+                        ->label('Business Location')
+                        ->searchable()
+                        ->preload()
+                        ->options(function () {
+                            try {
+                                return app(GoogleBusinessLocationsService::class)->getLocationOptions();
+                            } catch (\Throwable $e) {
+                                // Als Google faalt: toon leeg en laat user refreshen / settings checken
+                                return [];
+                            }
+                        })
+                        ->default(function () {
+                            $siteId = Sites::getActive();
+                            return Customsetting::get('google_business_location_name', $siteId);
+                        })
+                        ->required()
+                        ->helperText('Kies de locatie die bij jouw Google Business Profile hoort.')
+                        ->hintAction(
+                            Action::make('refreshLocations')
+                                ->label('Ververs lijst')
+                                ->icon('heroicon-o-arrow-path')
+                                ->action(function () {
+                                    app(GoogleBusinessLocationsService::class)->clearCache();
+
+                                    Notification::make()
+                                        ->title('Locaties worden opnieuw opgehaald ✅')
+                                        ->success()
+                                        ->send();
+                                })
+                        )
                         ->columnSpanFull(),
                 ])
                 ->extraModalFooterActions([

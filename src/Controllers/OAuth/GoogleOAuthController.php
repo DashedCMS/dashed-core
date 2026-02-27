@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore\Controllers\OAuth;
 
+use Filament\Notifications\Notification;
 use Illuminate\Http\Request;
 use Google\Client as GoogleClient;
 use App\Http\Controllers\Controller;
@@ -37,7 +38,7 @@ class GoogleOAuthController extends Controller
 
         $clientId = (string) Customsetting::get('google_oauth_client_id');
         $clientSecret = (string) Customsetting::get('google_oauth_client_secret');
-        $redirectUri = (string) route('google.oauth.callback');
+        $redirectUri = route('google.oauth.callback');
 
         $client = new GoogleClient();
         $client->setClientId($clientId);
@@ -51,14 +52,21 @@ class GoogleOAuthController extends Controller
         $token = $client->fetchAccessTokenWithAuthCode($code);
 
         if (isset($token['error'])) {
-            return redirect('/')->with('error', 'OAuth error: ' . ($token['error_description'] ?? $token['error']));
+            Notification::make()
+                ->danger()
+                ->body('OAuth error: ' . ($token['error_description'] ?? $token['error']))
+                ->send();
+            return redirect(route('filament.dashed.resources.reviews.index'));
         }
 
-        // refresh_token komt vaak alleen de eerste keer (of met prompt=consent)
         if (! empty($token['refresh_token'])) {
             Customsetting::set('google_oauth_refresh_token', $token['refresh_token']);
         }
 
-        return redirect('/')->with('success', 'Google OAuth gekoppeld ✅');
+        Notification::make()
+            ->success()
+            ->body('Google OAuth gekoppeld ✅')
+            ->send();
+        return redirect(route('filament.dashed.resources.reviews.index'));
     }
 }
