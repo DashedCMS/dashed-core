@@ -3,7 +3,7 @@
 namespace Dashed\DashedCore\Filament\Resources\Reviews\Pages;
 
 use Dashed\DashedCore\Classes\Sites;
-use Dashed\DashedCore\Service\GoogleBusinessLocationsService;
+use Dashed\DashedCore\Services\GoogleBusinessLocationsService;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Components\Select;
@@ -104,6 +104,7 @@ class ListReviews extends ListRecords
                         ->searchable()
                         ->preload()
                         ->options(function () {
+                            dd(app(GoogleBusinessLocationsService::class)->getLocationOptions());
                             try {
                                 return app(GoogleBusinessLocationsService::class)->getLocationOptions();
                             } catch (\Throwable $e) {
@@ -115,7 +116,6 @@ class ListReviews extends ListRecords
                             $siteId = Sites::getActive();
                             return Customsetting::get('google_business_location_name', $siteId);
                         })
-                        ->required()
                         ->helperText('Kies de locatie die bij jouw Google Business Profile hoort.')
                         ->hintAction(
                             Action::make('refreshLocations')

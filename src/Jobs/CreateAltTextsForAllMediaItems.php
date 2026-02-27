@@ -60,7 +60,11 @@ class CreateAltTextsForAllMediaItems implements ShouldBeUnique, ShouldQueue
                         'image/webp',
                         'image/svg+xml',
                     ]);
-                })->update(['alt_text' => null]);
+                })
+                ->update([
+                    'alt_text' => null,
+                    'automatic_alt_tries' => 0,
+                ]);
         }
 
         $delayInSeconds = 0;
@@ -74,9 +78,13 @@ class CreateAltTextsForAllMediaItems implements ShouldBeUnique, ShouldQueue
                              'image/webp',
                              'image/svg+xml',
                          ]);
-                     })->get() as $mediaItem) {
+                     })
+            ->where('automatic_alt_tries', '<', 3)
+                     ->get() as $mediaItem) {
             CreateAltTextForMediaItem::dispatch($mediaItem)
                 ->delay(now()->addSeconds($delayInSeconds));
+            $mediaItem->automatic_alt_tries++;
+            $mediaItem->save();
             $delayInSeconds += 3;
         }
     }
