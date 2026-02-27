@@ -3,6 +3,7 @@
 namespace Dashed\DashedCore;
 
 use Dashed\DashedCore\Filament\Pages\Settings\ReviewSettingsPage;
+use Filament\Schemas\Components\Utilities\Get;
 use Livewire\Livewire;
 use Illuminate\Support\Facades\Mail;
 use App\Providers\AppServiceProvider;
@@ -398,6 +399,64 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                 ->label('Zoekresultaten')
                 ->schema([
                     AppServiceProvider::getDefaultBlockFields(),
+                ]),
+            Block::make('reviews-with-content')
+                ->label('Reviews met content')
+                ->schema([
+                    AppServiceProvider::getDefaultBlockFields(),
+                    Toggle::make('hide_content')
+                        ->label('Content verbergen')
+                        ->default(false),
+                    TextInput::make('title')
+                        ->label('Titel')
+                        ->visible(fn(Get $get) => !$get('hide_content')),
+                    TextInput::make('subtitle')
+                        ->label('Subtitel')
+                        ->visible(fn(Get $get) => !$get('hide_content')),
+                    cms()->editorField('content', 'Content')
+                        ->visible(fn(Get $get) => !$get('hide_content')),
+                    AppServiceProvider::getButtonRepeater('buttons', 'Buttons')
+                        ->visible(fn(Get $get) => !$get('hide_content')),
+                    TextInput::make('amount_of_reviews')
+                        ->label('Aantal reviews')
+                        ->numeric()
+                        ->default(12),
+                    Toggle::make('random_reviews')
+                        ->label('Random reviews'),
+                    Select::make('min_stars')
+                        ->label('Minimaal aantal sterren')
+                        ->options([
+                            0 => 'Alle reviews',
+                            1 => '1 ster en hoger',
+                            2 => '2 sterren en hoger',
+                            3 => '3 sterren en hoger',
+                            4 => '4 sterren en hoger',
+                            5 => '5 sterren',
+                        ]),
+                ]),
+            Block::make('reviews-slider')
+                ->label('Reviews slider')
+                ->schema([
+                    AppServiceProvider::getDefaultBlockFields(),
+                    TextInput::make('title')
+                        ->label('Titel'),
+                    AppServiceProvider::getButtonRepeater('buttons', 'Buttons'),
+                    TextInput::make('amount_of_reviews')
+                        ->label('Aantal reviews')
+                        ->numeric()
+                        ->default(12),
+                    Toggle::make('random_reviews')
+                        ->label('Random reviews'),
+                    Select::make('min_stars')
+                        ->label('Minimaal aantal sterren')
+                        ->options([
+                            0 => 'Alle reviews',
+                            1 => '1 ster en hoger',
+                            2 => '2 sterren en hoger',
+                            3 => '3 sterren en hoger',
+                            4 => '4 sterren en hoger',
+                            5 => '5 sterren',
+                        ]),
                 ]),
         ];
 

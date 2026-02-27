@@ -54,7 +54,7 @@ class ReviewForm
                     ->columnSpanFull(),
 
                 DateTimePicker::make('created_at')
-                    ->required()
+                    ->label('Aangemaakt op')
                     ->columnSpanFull(),
             ]);
     }
