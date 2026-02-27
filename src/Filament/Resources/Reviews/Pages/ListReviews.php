@@ -101,10 +101,7 @@ class ListReviews extends ListRecords
 
                     Select::make('google_business_location_name')
                         ->label('Business Location')
-                        ->searchable()
-                        ->preload()
                         ->options(function () {
-                            dd(app(GoogleBusinessLocationsService::class)->getLocationOptions());
                             try {
                                 return app(GoogleBusinessLocationsService::class)->getLocationOptions();
                             } catch (\Throwable $e) {
@@ -122,7 +119,15 @@ class ListReviews extends ListRecords
                                 ->label('Ververs lijst')
                                 ->icon('heroicon-o-arrow-path')
                                 ->action(function () {
-                                    app(GoogleBusinessLocationsService::class)->clearCache();
+                                    $service = app(GoogleBusinessLocationsService::class);
+                                    $service->clearCache();
+
+                                    $options = $service->getLocationOptions();
+
+                                    // Als er maar 1 is, auto selecteren
+                                    if (count($options) === 1) {
+                                        $set('google_business_location_name', array_key_first($options));
+                                    }
 
                                     Notification::make()
                                         ->title('Locaties worden opnieuw opgehaald ✅')

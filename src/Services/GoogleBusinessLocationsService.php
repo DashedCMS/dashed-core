@@ -14,89 +14,89 @@ class GoogleBusinessLocationsService
     {
         $siteId = Sites::getActive();
 
-        return Cache::remember("google:business:locations:site:{$siteId}:v1", now()->addMinutes(10), function () use ($siteId) {
-            $refreshToken = (string) Customsetting::get('google_oauth_refresh_token', $siteId);
+//        return Cache::remember("google:business:locations:site:{$siteId}:v1", now()->addMinutes(10), function () use ($siteId) {
+        $refreshToken = (string) Customsetting::get('google_oauth_refresh_token', $siteId);
 
-            if (! $refreshToken) {
-                return [];
+        if (! $refreshToken) {
+            return [];
+        }
+
+        /** @var GoogleBusinessClient $google */
+        $google = app(GoogleBusinessClient::class);
+        $accessToken = $google->getAccessToken();
+
+        // 1) Accounts
+        $accountsRes = Http::withToken($accessToken)
+            ->timeout(20)
+            ->retry(2, 500)
+            ->get('https://mybusinessaccountmanagement.googleapis.com/v1/accounts');
+
+        if (! $accountsRes->ok()) {
+            throw new \RuntimeException('Accounts ophalen faalde: ' . $accountsRes->status());
+        }
+
+        $accounts = $accountsRes->json('accounts') ?? [];
+
+        $locations = [];
+
+        // 2) Locations per account (met pagination)
+        foreach ($accounts as $account) {
+            $accountName = $account['name'] ?? null; // accounts/123
+            if (! $accountName) {
+                continue;
             }
 
-            /** @var GoogleBusinessClient $google */
-            $google = app(GoogleBusinessClient::class);
-            $accessToken = $google->getAccessToken();
+            $pageToken = null;
 
-            // 1) Accounts
-            $accountsRes = Http::withToken($accessToken)
-                ->timeout(20)
-                ->retry(2, 500)
-                ->get('https://mybusinessaccountmanagement.googleapis.com/v1/accounts');
+            do {
+                $locRes = Http::withToken($accessToken)
+                    ->timeout(20)
+                    ->retry(2, 500)
+                    ->get("https://mybusinessbusinessinformation.googleapis.com/v1/{$accountName}/locations", array_filter([
+                        'pageSize' => 100,
+                        'pageToken' => $pageToken,
+                    ]));
 
-            if (! $accountsRes->ok()) {
-                throw new \RuntimeException('Accounts ophalen faalde: ' . $accountsRes->status());
-            }
-
-            $accounts = $accountsRes->json('accounts') ?? [];
-
-            $locations = [];
-
-            // 2) Locations per account (met pagination)
-            foreach ($accounts as $account) {
-                $accountName = $account['name'] ?? null; // accounts/123
-                if (! $accountName) {
-                    continue;
+                if (! $locRes->ok()) {
+                    throw new \RuntimeException("Locaties ophalen faalde ({$accountName}): " . $locRes->status());
                 }
 
-                $pageToken = null;
+                $locations = array_merge($locations, $locRes->json('locations') ?? []);
+                $pageToken = $locRes->json('nextPageToken');
+            } while ($pageToken);
+        }
 
-                do {
-                    $locRes = Http::withToken($accessToken)
-                        ->timeout(20)
-                        ->retry(2, 500)
-                        ->get("https://mybusinessbusinessinformation.googleapis.com/v1/{$accountName}/locations", array_filter([
-                            'pageSize' => 100,
-                            'pageToken' => $pageToken,
-                        ]));
+        // Dropdown options: [locationName => label]
+        $options = [];
 
-                    if (! $locRes->ok()) {
-                        throw new \RuntimeException("Locaties ophalen faalde ({$accountName}): " . $locRes->status());
-                    }
-
-                    $locations = array_merge($locations, $locRes->json('locations') ?? []);
-                    $pageToken = $locRes->json('nextPageToken');
-                } while ($pageToken);
+        foreach ($locations as $location) {
+            $name = $location['name'] ?? null; // accounts/.../locations/...
+            if (! $name) {
+                continue;
             }
 
-            // Dropdown options: [locationName => label]
-            $options = [];
+            $title = $location['title'] ?? 'Onbekende locatie';
 
-            foreach ($locations as $location) {
-                $name = $location['name'] ?? null; // accounts/.../locations/...
-                if (! $name) {
-                    continue;
-                }
+            $addr = $location['storefrontAddress'] ?? [];
+            $street = trim(($addr['addressLines'][0] ?? '') . ' ' . ($addr['addressLines'][1] ?? ''));
+            $postal = $addr['postalCode'] ?? '';
+            $city = $addr['locality'] ?? '';
+            $country = $addr['regionCode'] ?? '';
 
-                $title = $location['title'] ?? 'Onbekende locatie';
+            $pretty = trim(implode(', ', array_filter([
+                $title,
+                trim($street),
+                trim("{$postal} {$city}"),
+                $country,
+            ])));
 
-                $addr = $location['storefrontAddress'] ?? [];
-                $street = trim(($addr['addressLines'][0] ?? '') . ' ' . ($addr['addressLines'][1] ?? ''));
-                $postal = $addr['postalCode'] ?? '';
-                $city = $addr['locality'] ?? '';
-                $country = $addr['regionCode'] ?? '';
+            $options[$name] = $pretty;
+        }
 
-                $pretty = trim(implode(', ', array_filter([
-                    $title,
-                    trim($street),
-                    trim("{$postal} {$city}"),
-                    $country,
-                ])));
+        asort($options);
 
-                $options[$name] = $pretty;
-            }
-
-            asort($options);
-
-            return $options;
-        });
+        return $options;
+//        });
     }
 
     public function clearCache(): void

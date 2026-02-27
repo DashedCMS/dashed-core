@@ -16,7 +16,6 @@ class GoogleBusinessClient
         $refreshToken = (string) Customsetting::get('google_oauth_refresh_token');
 
         if (! $clientId || ! $clientSecret || ! $redirectUri || ! $refreshToken) {
-            dd($clientId,$clientSecret,$redirectUri,$refreshToken);
             throw new \RuntimeException('Google OAuth instellingen ontbreken.');
         }
 
