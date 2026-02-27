@@ -27,7 +27,7 @@ use Dashed\DashedCore\Commands\CreateDefaultPages;
 use Dashed\DashedCore\Commands\MigrateDatabaseToV4;
 use Dashed\DashedCore\Livewire\Frontend\Auth\Login;
 use Dashed\DashedCore\Commands\CreateVisitableModel;
-use Dashed\DashedCore\Support\GoogleBusinessLocationsService;
+use Dashed\DashedCore\Support\MeasuresServiceProvider;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Dashed\DashedCore\Livewire\Frontend\Account\Account;
 use Dashed\DashedCore\Commands\RunUrlHistoryCheckCommand;
@@ -55,7 +55,7 @@ use Dashed\DashedCore\Commands\AutomaticlyCreateAltTextsForAllMediaItems;
 
 class DashedCoreServiceProvider extends PackageServiceProvider
 {
-    use GoogleBusinessLocationsService;
+    use MeasuresServiceProvider;
 
     public static string $name = 'dashed-core';
 

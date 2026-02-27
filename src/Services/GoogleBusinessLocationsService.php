@@ -1,6 +1,6 @@
 <?php
 
-namespace Dashed\DashedCore\Support;
+namespace Dashed\DashedCore\Service;
 
 use Dashed\DashedCore\Classes\GoogleBusinessClient;
 use Dashed\DashedCore\Classes\Sites;
