@@ -37,7 +37,7 @@ class GoogleOAuthController extends Controller
 
         $clientId = (string) Customsetting::get('google_oauth_client_id');
         $clientSecret = (string) Customsetting::get('google_oauth_client_secret');
-        $redirectUri = (string) Customsetting::get('google_oauth_redirect_uri');
+        $redirectUri = (string) route('google.oauth.callback');
 
         $client = new GoogleClient();
         $client->setClientId($clientId);
