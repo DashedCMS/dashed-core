@@ -11,6 +11,7 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Forms\Components\Placeholder;
 use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedCore\Filament\Resources\Reviews\ReviewResource;
+use Illuminate\Support\HtmlString;
 
 class ListReviews extends ListRecords
 {
@@ -28,7 +29,7 @@ class ListReviews extends ListRecords
                 ->schema([
 
                     Placeholder::make('uitleg')
-                        ->content(new \Illuminate\Support\HtmlString('
+                        ->content(new HtmlString('
                 <div style="font-size:14px; line-height:1.6;">
                     <strong>Stap 1 – Maak een Google Cloud project</strong><br>
                     Ga naar <a href="https://console.cloud.google.com/" target="_blank">console.cloud.google.com</a><br>
@@ -65,7 +66,7 @@ class ListReviews extends ListRecords
                         ->columnSpanFull(),
 
                     Placeholder::make('refresh_token_uitleg')
-                        ->content(new \Illuminate\Support\HtmlString('
+                        ->content(new HtmlString('
                 <div style="font-size:14px;">
                     <strong>Refresh Token verkrijgen:</strong><br>
                     1. Ga naar jouw OAuth redirect startpagina (bijv. /admin/google/oauth).<br>
