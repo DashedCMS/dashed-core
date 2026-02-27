@@ -8,9 +8,9 @@ use Dashed\DashedCore\Models\Review;
 
 class Reviews
 {
-    public static function get($limit = 12, $orderBy = 'created_at', $order = 'DESC', int $minStars = 0, bool $random = false)
+    public static function get($limit = 12, $orderBy = 'created_at', $order = 'DESC', ?int $minStars = 0, bool $random = false)
     {
-        $reviews = Review::where('stars', '>=', $minStars);
+        $reviews = Review::where('stars', '>=', $minStars ?: 0);
 
         if ($random) {
             $reviews->inRandomOrder();
