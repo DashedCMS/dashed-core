@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore;
 
+use Dashed\DashedCore\Filament\Pages\Settings\ReviewSettingsPage;
 use Filament\Panel;
 use Filament\Contracts\Plugin;
 use Dashed\DashedCore\Filament\Widgets\WelcomeWidget;
@@ -47,6 +48,7 @@ class DashedCorePlugin implements Plugin
                 AccountSettingsPage::class,
                 SearchSettingsPage::class,
                 AISettingsPage::class,
+                ReviewSettingsPage::class,
             ])
             ->widgets([
                 WelcomeWidget::class,

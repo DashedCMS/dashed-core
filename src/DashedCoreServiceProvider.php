@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore;
 
+use Dashed\DashedCore\Filament\Pages\Settings\ReviewSettingsPage;
 use Livewire\Livewire;
 use Illuminate\Support\Facades\Mail;
 use App\Providers\AppServiceProvider;
@@ -448,6 +449,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         cms()->registerSettingsPage(CacheSettingsPage::class, 'Cache', 'photo', 'Cache van de website');
         cms()->registerSettingsPage(SearchSettingsPage::class, 'Search', 'magnifying-glass', 'Zoek instellingen van de website');
         cms()->registerSettingsPage(AISettingsPage::class, 'AI', 'magnifying-glass', 'AI instellingen van de website');
+        cms()->registerSettingsPage(ReviewSettingsPage::class, 'Review', 'star', 'Review instellingen van de website');
 
         $package
             ->name(static::$name)
