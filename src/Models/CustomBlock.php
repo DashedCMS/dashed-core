@@ -2,6 +2,8 @@
 
 namespace Dashed\DashedCore\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Translatable\HasTranslations;
@@ -25,5 +27,10 @@ class CustomBlock extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults();
+    }
+
+    public function model(): MorphTo
+    {
+        return $this->morphTo('blockable');
     }
 }
