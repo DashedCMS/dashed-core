@@ -6,7 +6,6 @@ use Illuminate\Bus\Queueable;
 use Dashed\DashedCore\Classes\Sites;
 use Dashed\DashedCore\Classes\Locales;
 use Illuminate\Queue\SerializesModels;
-use Dashed\DashedCore\Models\UrlHistory;
 use Illuminate\Queue\InteractsWithQueue;
 use Dashed\DashedCore\Models\Customsetting;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -20,57 +19,56 @@ class RunUrlHistoryCheck implements ShouldBeUnique, ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public $timeout = 1200;
+    public int $timeout = 1200;
+    public int $uniqueFor = 1200;
 
-    public $uniqueFor = 1200;
-
-    /**
-     * Get the unique ID for the job.
-     */
     public function uniqueId(): string
     {
         return 'url-history-check';
     }
 
-    /**
-     * Create a new job instance.
-     */
-    public function __construct()
-    {
-    }
-
-    /**
-     * Execute the job.
-     */
     public function handle(): void
     {
         Customsetting::set('last_history_check', now());
 
-        //        $batchNumber = UrlHistory::orderBy('batch', 'desc')->first()?->batch + 1;
-        foreach (cms()->builder('routeModels') as $routeModel) {
-            foreach ($routeModel['class']::publicShowable()->get() as $model) {
-                foreach (Locales::getLocales() as $locale) {
-                    if (in_array($locale['id'], Sites::get()['locales'])) {
-                        Locales::setLocale($locale['id']);
-                        $urlHistory = $model->urlHistory()->updateOrCreate([
-                            //                            'batch' => $batchNumber,
-                            //                            'url' => $model->getUrl(),
-                            'method' => 'getUrl',
-                            'site_id' => Sites::getActive(),
-                            'locale' => $locale['id'],
-                        ]);
+        $site = Sites::get();
+        $siteId = Sites::getActive();
+        $allowedLocales = $site['locales'] ?? [];
 
-                        if ($urlHistory->url) {
-                            $urlHistory->previous_url = $urlHistory->url;
+        foreach (cms()->builder('routeModels') as $routeModel) {
+            $modelClass = $routeModel['class'];
+
+            $modelClass::publicShowable()
+                ->chunk(200, function ($models) use ($allowedLocales, $siteId) {
+                    foreach ($models as $model) {
+                        foreach (Locales::getLocales() as $locale) {
+                            $localeId = $locale['id'];
+
+                            if (! in_array($localeId, $allowedLocales, true)) {
+                                continue;
+                            }
+
+                            Locales::setLocale($localeId);
+
+                            $newUrl = $model->url;
+
+                            $urlHistory = $model->urlHistory()->firstOrNew([
+                                'method' => 'getUrl',
+                                'site_id' => $siteId,
+                                'locale' => $localeId,
+                            ]);
+
+                            if ($urlHistory->exists && $urlHistory->url !== $newUrl) {
+                                $urlHistory->previous_url = $urlHistory->url;
+                            }
+
+                            $urlHistory->url = $newUrl;
+                            $urlHistory->save();
                         }
-                        $urlHistory->url = $model->url;
-                        $urlHistory->save();
                     }
-                }
-            }
+                });
         }
 
-        //        UrlHistory::where('batch', '<', $batchNumber - 50)->delete();
-        CreateRedirectsFromHistoryUrls::dispatch(Sites::getActive());
+        CreateRedirectsFromHistoryUrls::dispatch($siteId);
     }
 }
