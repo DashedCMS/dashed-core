@@ -108,6 +108,10 @@ class Dashboard extends BaseDashboard
             $startDate = now()->subDays(365)->startOfDay();
             $endDate = now()->endOfDay();
             $steps = 'per_month';
+        }else{
+            $startDate = now()->startOfMonth();
+            $endDate = now()->endOfMonth();
+            $steps = 'per_day';
         }
 
         $formats = self::getFormatsByStep($steps);
