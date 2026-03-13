@@ -83,7 +83,6 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             $schedule = app(Schedule::class);
             $schedule->command(CreateSitemap::class)->daily();
             $schedule->command(InvalidatePasswordResetTokens::class)->everyFifteenMinutes();
-            $schedule->command(RunUrlHistoryCheckCommand::class)->everyFifteenMinutes();
             $schedule->command(SyncGoogleReviews::class)->twiceDaily();
             $schedule->command(AutomaticlyCreateAltTextsForAllMediaItems::class)->daily();
             //            $schedule->command(SeoScan::class)->daily();
@@ -538,7 +537,6 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                 InvalidatePasswordResetTokens::class,
                 CreateSitemap::class,
                 CreateVisitableModel::class,
-                RunUrlHistoryCheckCommand::class,
                 SyncGoogleReviews::class,
                 CreateDefaultPages::class,
                 ReplaceEditorStringsInFiles::class,

@@ -3,6 +3,7 @@
 namespace Dashed\DashedCore\Models\Concerns;
 
 use Carbon\Carbon;
+use Dashed\DashedCore\Jobs\SyncModelUrlHistoryJob;
 use Illuminate\Support\Str;
 use Spatie\Sitemap\Sitemap;
 use Dashed\Seo\Traits\HasSeoScore;
@@ -53,8 +54,13 @@ trait IsVisitable
             //                ScanSpecificResult::dispatch($model);
             //            }
 
-            if (self::runHistoryCheck()) {
+            if ($model->shouldRunUrlHistoryCheck()) {
                 Customsetting::set('run_history_check', true);
+
+                dispatch(new SyncModelUrlHistoryJob(
+                    $model::class,
+                    $model->getKey()
+                ))->afterCommit();
             }
 
             foreach (config('dashed-core.blocks.relations', []) as $modelClass => $relation) {
@@ -120,6 +126,102 @@ trait IsVisitable
     public function urlHistory(): MorphOne
     {
         return $this->morphOne(UrlHistory::class, 'model');
+    }
+
+    public function urlHistories()
+    {
+        return $this->morphMany(UrlHistory::class, 'model');
+    }
+
+    public function urlHistoryFor(string $locale, string $siteId, string $method = 'getUrl')
+    {
+        return $this->urlHistories()->firstOrNew([
+            'method' => $method,
+            'site_id' => $siteId,
+            'locale' => $locale,
+        ]);
+    }
+
+    public function shouldRunUrlHistoryCheck(): bool
+    {
+        if (! static::runHistoryCheck()) {
+            return false;
+        }
+
+        if (! $this->wasRecentlyCreated && ! $this->wasChanged()) {
+            return false;
+        }
+
+        $watchedAttributes = [
+            'slug',
+        ];
+
+        foreach ($watchedAttributes as $attribute) {
+            if ($this->wasChanged($attribute)) {
+                return true;
+            }
+        }
+
+        return $this->wasRecentlyCreated;
+    }
+
+    public function shouldRunUrlHistoryCheck(): bool
+    {
+        if (! static::runHistoryCheck()) {
+            return false;
+        }
+
+        if ($this->wasRecentlyCreated) {
+            return true;
+        }
+
+        foreach ($this->getUrlHistoryWatchedAttributes() as $attribute) {
+            if ($this->wasChanged($attribute)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function shouldCascadeUrlHistoryCheckToChildren(): bool
+    {
+        if (! static::runHistoryCheck()) {
+            return false;
+        }
+
+        if (! static::canHaveParent()) {
+            return false;
+        }
+
+        if (! method_exists($this, 'children')) {
+            return false;
+        }
+
+        return $this->wasChanged('slug')
+            || $this->wasChanged('parent_id')
+            || $this->wasChanged('public')
+            || $this->wasChanged('start_date')
+            || $this->wasChanged('end_date');
+    }
+
+    public function getUrlHistoryWatchedAttributes(): array
+    {
+        return [
+            'slug',
+            'name',
+            'parent_id',
+            'site_ids',
+            'is_home',
+            'public',
+            'start_date',
+            'end_date',
+        ];
+    }
+
+    public function children()
+    {
+        return $this->hasMany(self::class, 'parent_id');
     }
 
     //    public static function getSitemapUrls(Sitemap $sitemap): Sitemap
