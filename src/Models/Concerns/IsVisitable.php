@@ -63,6 +63,13 @@ trait IsVisitable
                 ))->afterCommit();
             }
 
+            if ($model->shouldCascadeUrlHistoryCheckToChildren()) {
+                \Dashed\DashedCore\Jobs\SyncChildUrlHistoriesJob::dispatch(
+                    $model::class,
+                    $model->getKey()
+                )->afterCommit();
+            }
+
             foreach (config('dashed-core.blocks.relations', []) as $modelClass => $relation) {
                 if ($model instanceof $modelClass) {
                     if ($relation['id'] == '*' || (is_array($relation['id']) && in_array($model->id, $relation['id'])) || $relation['id'] == $model->id) {
@@ -140,29 +147,6 @@ trait IsVisitable
             'site_id' => $siteId,
             'locale' => $locale,
         ]);
-    }
-
-    public function shouldRunUrlHistoryCheck(): bool
-    {
-        if (! static::runHistoryCheck()) {
-            return false;
-        }
-
-        if (! $this->wasRecentlyCreated && ! $this->wasChanged()) {
-            return false;
-        }
-
-        $watchedAttributes = [
-            'slug',
-        ];
-
-        foreach ($watchedAttributes as $attribute) {
-            if ($this->wasChanged($attribute)) {
-                return true;
-            }
-        }
-
-        return $this->wasRecentlyCreated;
     }
 
     public function shouldRunUrlHistoryCheck(): bool
