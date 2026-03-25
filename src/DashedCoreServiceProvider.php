@@ -2,8 +2,6 @@
 
 namespace Dashed\DashedCore;
 
-use Dashed\DashedCore\Filament\Pages\Settings\ReviewSettingsPage;
-use Filament\Schemas\Components\Utilities\Get;
 use Livewire\Livewire;
 use Illuminate\Support\Facades\Mail;
 use App\Providers\AppServiceProvider;
@@ -22,6 +20,7 @@ use Filament\Forms\Components\Builder\Block;
 use Dashed\DashedCore\Commands\CreateSitemap;
 use Dashed\DashedCore\Commands\UpdateCommand;
 use Dashed\DashedCore\Commands\InstallCommand;
+use Filament\Schemas\Components\Utilities\Get;
 use Guava\FilamentIconPicker\Forms\IconPicker;
 use Dashed\DashedCore\Commands\CreateAdminUser;
 use Dashed\DashedCore\Commands\SyncGoogleReviews;
@@ -32,7 +31,6 @@ use Dashed\DashedCore\Commands\CreateVisitableModel;
 use Dashed\DashedCore\Support\MeasuresServiceProvider;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Dashed\DashedCore\Livewire\Frontend\Account\Account;
-use Dashed\DashedCore\Commands\RunUrlHistoryCheckCommand;
 use Dashed\DashedCore\Filament\Widgets\NotFoundPageStats;
 use Dashed\DashedCore\Commands\ReplaceEditorStringsInFiles;
 use Dashed\DashedCore\Livewire\Frontend\Auth\ResetPassword;
@@ -49,6 +47,7 @@ use Dashed\DashedCore\Filament\Pages\Settings\CacheSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
 use Dashed\DashedCore\Classes\RichEditorPlugins\MediaEmbedPlugin;
 use Dashed\DashedCore\Classes\RichEditorPlugins\VideoEmbedPlugin;
+use Dashed\DashedCore\Filament\Pages\Settings\ReviewSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\SearchSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\AccountSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
@@ -408,14 +407,14 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                         ->default(false),
                     TextInput::make('title')
                         ->label('Titel')
-                        ->visible(fn(Get $get) => !$get('hide_content')),
+                        ->visible(fn (Get $get) => ! $get('hide_content')),
                     TextInput::make('subtitle')
                         ->label('Subtitel')
-                        ->visible(fn(Get $get) => !$get('hide_content')),
+                        ->visible(fn (Get $get) => ! $get('hide_content')),
                     cms()->editorField('content', 'Content')
-                        ->visible(fn(Get $get) => !$get('hide_content')),
+                        ->visible(fn (Get $get) => ! $get('hide_content')),
                     AppServiceProvider::getButtonRepeater('buttons', 'Buttons')
-                        ->visible(fn(Get $get) => !$get('hide_content')),
+                        ->visible(fn (Get $get) => ! $get('hide_content')),
                     TextInput::make('amount_of_reviews')
                         ->label('Aantal reviews')
                         ->numeric()

@@ -2,18 +2,18 @@
 
 namespace Dashed\DashedCore\Filament\Resources\Reviews\Pages;
 
-use Dashed\DashedCore\Classes\Sites;
-use Dashed\DashedCore\Services\GoogleBusinessLocationsService;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
+use Illuminate\Support\HtmlString;
+use Dashed\DashedCore\Classes\Sites;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Forms\Components\Placeholder;
 use Dashed\DashedCore\Models\Customsetting;
+use Dashed\DashedCore\Services\GoogleBusinessLocationsService;
 use Dashed\DashedCore\Filament\Resources\Reviews\ReviewResource;
-use Illuminate\Support\HtmlString;
 
 class ListReviews extends ListRecords
 {
@@ -111,6 +111,7 @@ class ListReviews extends ListRecords
                         })
                         ->default(function () {
                             $siteId = Sites::getActive();
+
                             return Customsetting::get('google_business_location_name', $siteId);
                         })
                         ->helperText('Kies de locatie die bij jouw Google Business Profile hoort.')

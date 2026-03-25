@@ -2,11 +2,11 @@
 
 namespace Dashed\DashedCore\Controllers\OAuth;
 
-use Filament\Notifications\Notification;
 use Illuminate\Http\Request;
 use Google\Client as GoogleClient;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
+use Filament\Notifications\Notification;
 use Dashed\DashedCore\Models\Customsetting;
 
 class GoogleOAuthController extends Controller
@@ -56,6 +56,7 @@ class GoogleOAuthController extends Controller
                 ->danger()
                 ->body('OAuth error: ' . ($token['error_description'] ?? $token['error']))
                 ->send();
+
             return redirect(route('filament.dashed.resources.reviews.index'));
         }
 
@@ -67,6 +68,7 @@ class GoogleOAuthController extends Controller
             ->success()
             ->body('Google OAuth gekoppeld ✅')
             ->send();
+
         return redirect(route('filament.dashed.resources.reviews.index'));
     }
 }

@@ -2,11 +2,11 @@
 
 namespace Dashed\DashedCore\Services;
 
-use Dashed\DashedCore\Classes\GoogleBusinessClient;
 use Dashed\DashedCore\Classes\Sites;
-use Dashed\DashedCore\Models\Customsetting;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
+use Dashed\DashedCore\Models\Customsetting;
+use Dashed\DashedCore\Classes\GoogleBusinessClient;
 
 class GoogleBusinessLocationsService
 {
@@ -14,7 +14,7 @@ class GoogleBusinessLocationsService
     {
         $siteId = Sites::getActive();
 
-//        return Cache::remember("google:business:locations:site:{$siteId}:v1", now()->addMinutes(10), function () use ($siteId) {
+        //        return Cache::remember("google:business:locations:site:{$siteId}:v1", now()->addMinutes(10), function () use ($siteId) {
         $refreshToken = (string) Customsetting::get('google_oauth_refresh_token', $siteId);
 
         if (! $refreshToken) {
@@ -96,7 +96,7 @@ class GoogleBusinessLocationsService
         asort($options);
 
         return $options;
-//        });
+        //        });
     }
 
     public function clearCache(): void

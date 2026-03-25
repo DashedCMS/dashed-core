@@ -2,8 +2,8 @@
 
 namespace Dashed\DashedCore\Controllers\Frontend;
 
-use App\Http\Controllers\Controller;
 use Dashed\DashedCore\Models\User;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 use Dashed\DashedCore\Classes\AccountHelper;

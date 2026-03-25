@@ -3,12 +3,12 @@
 namespace Dashed\DashedCore\Middleware;
 
 use Closure;
-use Dashed\DashedCore\Models\Review;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Spatie\SchemaOrg\Schema;
 use Dashed\DashedCore\Classes\Sites;
+use Dashed\DashedCore\Models\Review;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Cache;
 use Dashed\DashedCore\Models\Customsetting;
 
 class FrontendMiddleware
@@ -107,7 +107,7 @@ class FrontendMiddleware
         seo()->metaData('robots', app()->isLocal() ? 'noindex, nofollow' : 'index, follow');
         seo()->metaData('metaTitle', $siteName);
 
-        if (!seo()->metaData('metaImage') && $defaultMetaImageId) {
+        if (! seo()->metaData('metaImage') && $defaultMetaImageId) {
             $defaultMedia = mediaHelper()->getSingleMedia($defaultMetaImageId, 'original');
             seo()->metaData('metaImage', $defaultMedia->url ?? '');
         }
@@ -179,12 +179,12 @@ class FrontendMiddleware
             }
         );
 
-        if (!empty($reviewSchemas)) {
+        if (! empty($reviewSchemas)) {
             $schema->addProperties([
                 'review' => $reviewSchemas,
             ]);
 
-            foreach(Review::distinct('provider')->pluck('provider') as $provider) {
+            foreach (Review::distinct('provider')->pluck('provider') as $provider) {
                 $amountOfReviews = Review::query()
                     ->where('provider', $provider)
                     ->whereNotNull('stars')
@@ -239,7 +239,7 @@ class FrontendMiddleware
 
     protected function logMemory(string $label): void
     {
-        if (!app()->environment('local')) {
+        if (! app()->environment('local')) {
             return;
         }
 

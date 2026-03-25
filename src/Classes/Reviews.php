@@ -2,9 +2,8 @@
 
 namespace Dashed\DashedCore\Classes;
 
-use Dashed\DashedArticles\Models\Article;
-use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedCore\Models\Review;
+use Dashed\DashedCore\Models\Customsetting;
 
 class Reviews
 {
@@ -22,12 +21,13 @@ class Reviews
     public static function getOverviewUrl(): ?string
     {
         $pageId = Customsetting::get('review_overview_page_id');
-        if($pageId){
+        if ($pageId) {
             $page = Review::find($pageId);
-            if($page){
+            if ($page) {
                 return $page->getUrl() ?? '#';
             }
         }
+
         return '#';
     }
 }

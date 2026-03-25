@@ -2,9 +2,9 @@
 
 namespace Dashed\DashedCore\Filament\Resources\Reviews\Tables;
 
-use Filament\Actions\DeleteAction;
 use Filament\Tables\Table;
 use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
 use Dashed\DashedCore\Models\Review;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;

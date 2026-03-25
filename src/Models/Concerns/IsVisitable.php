@@ -3,7 +3,6 @@
 namespace Dashed\DashedCore\Models\Concerns;
 
 use Carbon\Carbon;
-use Dashed\DashedCore\Jobs\SyncModelUrlHistoryJob;
 use Illuminate\Support\Str;
 use Spatie\Sitemap\Sitemap;
 use Dashed\Seo\Traits\HasSeoScore;
@@ -19,6 +18,7 @@ use Spatie\Translatable\HasTranslations;
 use Dashed\DashedCore\Models\Customsetting;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Dashed\DashedCore\Jobs\SyncModelUrlHistoryJob;
 use Dashed\DashedCore\Jobs\ClearContentBlocksCache;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
