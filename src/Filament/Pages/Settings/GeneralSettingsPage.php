@@ -18,10 +18,13 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Dashed\DashedCore\Models\Customsetting;
 use Filament\Infolists\Components\TextEntry;
 use Dashed\DashedCore\Jobs\SyncGoogleReviews;
+use Dashed\DashedCore\Traits\HasSettingsPermission;
 use Filament\Schemas\Components\Utilities\Get;
 
 class GeneralSettingsPage extends Page
 {
+    use HasSettingsPermission;
+
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-cog';
 
     protected static bool $shouldRegisterNavigation = false;
@@ -73,6 +76,7 @@ class GeneralSettingsPage extends Page
             $formData["webmaster_tag_norton_{$site['id']}"] = Customsetting::get('webmaster_tag_norton', $site['id']);
             $formData["extra_scripts_{$site['id']}"] = Customsetting::get('extra_scripts', $site['id']);
             $formData["extra_body_scripts_{$site['id']}"] = Customsetting::get('extra_body_scripts', $site['id']);
+            $formData["admin_bar_enabled_{$site['id']}"] = Customsetting::get('admin_bar_enabled', $site['id'], default: true);
             //            $formData["site_theme_{$site['id']}"] = Customsetting::get('site_theme', $site['id'], 'dashed');
         }
 
@@ -251,6 +255,13 @@ class GeneralSettingsPage extends Page
                         'default' => 1,
                         'lg' => 2,
                     ]),
+                Toggle::make("admin_bar_enabled_{$site['id']}")
+                    ->label('Admin-balk inschakelen')
+                    ->helperText('Toon een balk bovenaan de website voor admins met een directe link naar de bewerkpagina van het huidige model.')
+                    ->columnSpan([
+                        'default' => 1,
+                        'lg' => 2,
+                    ]),
 //                Select::make("site_theme_{$site['id']}")
 //                    ->label('Selecteer het frontend thema voor deze website')
 //                    ->required()
@@ -307,6 +318,7 @@ class GeneralSettingsPage extends Page
             Customsetting::set('webmaster_tag_norton', $this->form->getState()["webmaster_tag_norton_{$site['id']}"], $site['id']);
             Customsetting::set('extra_scripts', $this->form->getState()["extra_scripts_{$site['id']}"], $site['id']);
             Customsetting::set('extra_body_scripts', $this->form->getState()["extra_body_scripts_{$site['id']}"], $site['id']);
+            Customsetting::set('admin_bar_enabled', $this->form->getState()["admin_bar_enabled_{$site['id']}"], $site['id']);
             //            Customsetting::set('site_theme', $this->form->getState()["site_theme_{$site['id']}"], $site['id']);
         }
 

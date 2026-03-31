@@ -5,6 +5,7 @@ namespace Dashed\DashedCore\Models;
 use Filament\Panel;
 use Spatie\Activitylog\LogOptions;
 use Filament\Models\Contracts\HasAvatar;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\FilamentUser;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -64,13 +65,14 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasAppAut
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->role === 'admin';
+        return in_array($this->role, ['superadmin', 'admin']) || $this->roles->isNotEmpty();
     }
 
     public function getFilamentName(): string
     {
         return $this->name;
     }
+
 
     public function getNameAttribute()
     {
@@ -85,6 +87,21 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasAppAut
         } else {
             return $this->email;
         }
+    }
+
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(Role::class, 'dashed__model_has_roles', 'user_id', 'role_id');
+    }
+
+    public function assignRole(Role $role): void
+    {
+        $this->roles()->syncWithoutDetaching([$role->id]);
+    }
+
+    public function removeRole(Role $role): void
+    {
+        $this->roles()->detach($role->id);
     }
 
     public function getFilamentAvatarUrl(): ?string

@@ -18,6 +18,11 @@ class HorizonPage extends Page
 
     protected string $view = 'dashed-core::settings.pages.settings';
 
+    public static function canAccess(): bool
+    {
+        return auth()->check() && auth()->user()->can('view_horizon');
+    }
+
     public static function getNavigationUrl(): string
     {
         return '/horizon';

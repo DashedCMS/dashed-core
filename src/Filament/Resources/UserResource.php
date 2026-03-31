@@ -79,10 +79,20 @@ class UserResource extends Resource
                         Select::make('role')
                             ->label('Rol')
                             ->required()
+                            ->reactive()
                             ->options([
                                 'customer' => 'Customer',
                                 'admin' => 'Admin',
+                                'superadmin' => 'Superadmin',
                             ]),
+
+                        Select::make('roles')
+                            ->label('Rollen')
+                            ->multiple()
+                            ->relationship('roles', 'name')
+                            ->preload()
+                            ->visible(fn (Get $get) => $get('role') === 'admin')
+                            ->helperText('Wijs rollen toe om te bepalen tot welke onderdelen deze gebruiker toegang heeft.'),
 
                         TextInput::make('password')
                             ->label('Wachtwoord')

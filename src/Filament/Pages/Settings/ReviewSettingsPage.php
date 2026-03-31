@@ -12,11 +12,13 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Contracts\HasSchemas;
 use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedPages\Models\Page as PageModel;
+use Dashed\DashedCore\Traits\HasSettingsPermission;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 
 class ReviewSettingsPage extends Page implements HasSchemas
 {
     use InteractsWithSchemas;
+    use HasSettingsPermission;
     protected static bool $shouldRegisterNavigation = false;
 
     protected static ?string $title = 'Review';

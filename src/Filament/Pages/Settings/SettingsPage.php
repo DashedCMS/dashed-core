@@ -23,12 +23,40 @@ class SettingsPage extends Page
 
     public string $search = '';
 
+    public static function canAccess(): bool
+    {
+        if (! auth()->check()) {
+            return false;
+        }
+
+        foreach (cms()->builder('settingPages') as $page) {
+            $permission = $page['permission'] ?? null;
+            if (! $permission || auth()->user()->can($permission)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return static::canAccess();
+    }
+
     /**
      * Livewire computed property: $this->settingPages
      */
     public function getSettingPagesProperty(): Collection
     {
-        $pages = collect(cms()->builder('settingPages'));
+        $user = auth()->user();
+
+        $pages = collect(cms()->builder('settingPages'))
+            ->filter(function ($page) use ($user) {
+                $permission = $page['permission'] ?? null;
+
+                return ! $permission || $user->can($permission);
+            });
 
         $search = trim($this->search);
 

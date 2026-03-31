@@ -8,10 +8,13 @@ use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Cache;
 use Filament\Notifications\Notification;
+use Dashed\DashedCore\Traits\HasSettingsPermission;
 use Filament\Infolists\Components\TextEntry;
 
 class CacheSettingsPage extends Page
 {
+    use HasSettingsPermission;
+
     protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-cog';
 
     protected static bool $shouldRegisterNavigation = false;

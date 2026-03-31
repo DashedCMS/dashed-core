@@ -3,6 +3,7 @@
 namespace Dashed\DashedCore;
 
 use Livewire\Livewire;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
 use App\Providers\AppServiceProvider;
 use Dashed\DashedForms\Classes\Forms;
@@ -28,7 +29,6 @@ use Dashed\DashedCore\Commands\CreateDefaultPages;
 use Dashed\DashedCore\Commands\MigrateDatabaseToV4;
 use Dashed\DashedCore\Livewire\Frontend\Auth\Login;
 use Dashed\DashedCore\Commands\CreateVisitableModel;
-use Dashed\DashedCore\Support\MeasuresServiceProvider;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Dashed\DashedCore\Livewire\Frontend\Account\Account;
 use Dashed\DashedCore\Filament\Widgets\NotFoundPageStats;
@@ -56,14 +56,67 @@ use Dashed\DashedCore\Commands\AutomaticlyCreateAltTextsForAllMediaItems;
 
 class DashedCoreServiceProvider extends PackageServiceProvider
 {
-    use MeasuresServiceProvider;
-
     public static string $name = 'dashed-core';
 
     public function bootingPackage()
     {
-        $this->logProviderMemory('bootingPackage:start');
         Model::unguard();
+
+        Gate::before(function (\Dashed\DashedCore\Models\User $user, string $ability) {
+            if ($user->role === 'superadmin') {
+                return true;
+            }
+
+            foreach ($user->roles as $role) {
+                $perms = $role->extra_permissions ?? [];
+                if (is_array($perms) && in_array($ability, $perms)) {
+                    return true;
+                }
+            }
+
+            return null;
+        });
+
+        Gate::policy(\Dashed\DashedCore\Models\GlobalBlock::class, \Dashed\DashedCore\Policies\GlobalBlockPolicy::class);
+        Gate::policy(\Dashed\DashedCore\Models\NotFoundPage::class, \Dashed\DashedCore\Policies\NotFoundPagePolicy::class);
+        Gate::policy(\Dashed\DashedCore\Models\Redirect::class, \Dashed\DashedCore\Policies\RedirectPolicy::class);
+        Gate::policy(\Dashed\DashedCore\Models\Review::class, \Dashed\DashedCore\Policies\ReviewPolicy::class);
+        Gate::policy(\Dashed\DashedCore\Models\User::class, \Dashed\DashedCore\Policies\UserPolicy::class);
+        Gate::policy(\Dashed\DashedCore\Models\Role::class, \Dashed\DashedCore\Policies\RolePolicy::class);
+
+        cms()->registerRolePermissions('Inhoud', [
+            'view_global_block' => 'Globale blokken bekijken',
+            'edit_global_block' => 'Globale blokken bewerken',
+            'delete_global_block' => 'Globale blokken verwijderen',
+        ]);
+
+        cms()->registerRolePermissions('SEO', [
+            'view_not_found_page' => 'Niet-gevonden pagina\'s bekijken',
+            'edit_not_found_page' => 'Niet-gevonden pagina\'s bewerken',
+            'delete_not_found_page' => 'Niet-gevonden pagina\'s verwijderen',
+            'view_redirect' => 'Redirects bekijken',
+            'edit_redirect' => 'Redirects bewerken',
+            'delete_redirect' => 'Redirects verwijderen',
+        ]);
+
+        cms()->registerRolePermissions('Reviews', [
+            'view_review' => 'Reviews bekijken',
+            'edit_review' => 'Reviews bewerken',
+            'delete_review' => 'Reviews verwijderen',
+        ]);
+
+        cms()->registerRolePermissions('Gebruikers', [
+            'view_user' => 'Gebruikers bekijken',
+            'edit_user' => 'Gebruikers bewerken',
+            'delete_user' => 'Gebruikers verwijderen',
+            'view_role' => 'Rollen bekijken',
+            'edit_role' => 'Rollen bewerken',
+            'delete_role' => 'Rollen verwijderen',
+        ]);
+
+        cms()->registerRolePermissions('Overige', [
+            'view_horizon' => 'Horizon bekijken',
+        ]);
 
         Livewire::component('notification.toastr', Toastr::class);
         Livewire::component('auth.login', Login::class);
@@ -130,7 +183,6 @@ class DashedCoreServiceProvider extends PackageServiceProvider
 //            HtmlIdPlugin::make(),
         ]);
 
-        $this->logProviderMemory('bootingPackage:end');
     }
 
     public static function builderBlocks()
@@ -488,8 +540,6 @@ class DashedCoreServiceProvider extends PackageServiceProvider
 
     public function configurePackage(Package $package): void
     {
-        $this->logProviderMemory('configurePackage:start');
-
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
         //        $this->loadViewsFrom(__DIR__ . '/../resources/views/frontend', 'dashed-core');
@@ -544,7 +594,6 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                 MigrateDatabaseToV4::class,
             ]);
 
-        $this->logProviderMemory('configurePackage:end');
     }
 
     public static function createDefaultPages(): void

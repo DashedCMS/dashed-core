@@ -15,11 +15,13 @@ use Dashed\DashedCore\Models\Customsetting;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Dashed\DashedCore\Jobs\CreateAltTextsForAllMediaItems;
+use Dashed\DashedCore\Traits\HasSettingsPermission;
 use RalphJSmit\Filament\MediaLibrary\Models\MediaLibraryItem;
 
 class AISettingsPage extends Page implements HasSchemas
 {
     use InteractsWithSchemas;
+    use HasSettingsPermission;
     protected static bool $shouldRegisterNavigation = false;
 
     protected static ?string $title = 'AI Settings';

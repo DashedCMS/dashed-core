@@ -6,6 +6,7 @@ use Filament\Panel;
 use Filament\Contracts\Plugin;
 use Dashed\DashedCore\Filament\Widgets\WelcomeWidget;
 use Dashed\DashedCore\Filament\Resources\UserResource;
+use Dashed\DashedCore\Filament\Resources\RoleResource;
 use Dashed\DashedCore\Filament\Pages\Settings\HorizonPage;
 use Dashed\DashedCore\Filament\Resources\RedirectResource;
 use Dashed\DashedCore\Filament\Pages\Settings\SettingsPage;
@@ -33,6 +34,7 @@ class DashedCorePlugin implements Plugin
         $panel
             ->resources([
                 UserResource::class,
+                RoleResource::class,
                 RedirectResource::class,
                 NotFoundPageResource::class,
                 GlobalBlockResource::class,

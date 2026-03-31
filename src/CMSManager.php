@@ -60,6 +60,7 @@ class CMSManager
         'ignorableColumnsForTranslations' => [],
         'classes' => [],
         'richEditorPlugins' => [],
+        'rolePermissions' => [],
     ];
 
     protected static $builderBlocksActivated = [
@@ -299,9 +300,30 @@ class CMSManager
         ]);
     }
 
-    public function registerSettingsPage($settingsPage, $name, $icon = 'rss', $description = ''): void
+    public function registerRolePermissions(string $group, array $permissions): void
+    {
+        $existing = static::$builders['rolePermissions'][$group] ?? [];
+        static::$builders['rolePermissions'][$group] = array_merge($existing, $permissions);
+    }
+
+    public function getRolePermissions(): array
+    {
+        return static::$builders['rolePermissions'];
+    }
+
+    public function registerSettingsPage($settingsPage, $name, $icon = 'rss', $description = '', ?string $permission = null): void
     {
         $className = str(str($settingsPage)->explode("\\")->last())->camel()->singular()->toString();
+
+        // Auto-generate permission key from name: 'Facturatie instellingen' → 'view_settings_facturatie_instellingen'
+        if ($permission === null) {
+            $permission = 'view_settings_' . \Illuminate\Support\Str::snake(str_replace(' ', '_', $name));
+        }
+
+        $baseName = trim(preg_replace('/\s*instellingen\s*/i', ' ', $name));
+        $this->registerRolePermissions('Instellingen', [
+            $permission => trim($baseName) . ' instellingen bekijken',
+        ]);
 
         cms()->builder('settingPages', [
             $className => [
@@ -309,8 +331,20 @@ class CMSManager
                 'description' => $description ?: 'Instellingen voor ' . str($name)->plural()->lower(),
                 'icon' => $icon,
                 'page' => $settingsPage,
+                'permission' => $permission,
             ],
         ]);
+    }
+
+    public function getSettingsPagePermission(string $pageClass): ?string
+    {
+        foreach (static::$builders['settingPages'] ?? [] as $page) {
+            if (($page['page'] ?? null) === $pageClass) {
+                return $page['permission'] ?? null;
+            }
+        }
+
+        return null;
     }
 
     public function checkModelPassword()
