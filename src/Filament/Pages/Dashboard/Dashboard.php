@@ -100,9 +100,29 @@ class Dashboard extends BaseDashboard
             $startDate = now()->subDays(30)->startOfDay();
             $endDate = now()->endOfDay();
             $steps = 'per_day';
+        } elseif ($period == 'last_week') {
+            $startDate = now()->subWeek()->startOfWeek();
+            $endDate = now()->subWeek()->endOfWeek();
+            $steps = 'per_day';
+        } elseif ($period == 'last_month') {
+            $startDate = now()->subMonth()->startOfMonth();
+            $endDate = now()->subMonth()->endOfMonth();
+            $steps = 'per_day';
+        } elseif ($period == 'this_quarter') {
+            $startDate = now()->startOfQuarter();
+            $endDate = now()->endOfQuarter();
+            $steps = 'per_month';
+        } elseif ($period == 'last_quarter') {
+            $startDate = now()->subQuarter()->startOfQuarter();
+            $endDate = now()->subQuarter()->endOfQuarter();
+            $steps = 'per_month';
         } elseif ($period == 'this_year') {
             $startDate = now()->startOfYear();
             $endDate = now()->endOfYear();
+            $steps = 'per_month';
+        } elseif ($period == 'last_year') {
+            $startDate = now()->subYear()->startOfYear();
+            $endDate = now()->subYear()->endOfYear();
             $steps = 'per_month';
         } elseif ($period == 'year') {
             $startDate = now()->subDays(365)->startOfDay();
@@ -136,11 +156,16 @@ class Dashboard extends BaseDashboard
             'today' => 'Vandaag',
             'yesterday' => 'Gisteren',
             'this_week' => 'Deze week',
+            'last_week' => 'Vorige week',
             'week' => 'Afgelopen 7 dagen',
             'this_month' => 'Deze maand',
+            'last_month' => 'Vorige maand',
             'month' => 'Afgelopen 30 dagen',
+            'this_quarter' => 'Dit kwartaal',
+            'last_quarter' => 'Vorig kwartaal',
             'this_year' => 'Dit jaar',
-            'year' => 'Afgelopen jaar',
+            'last_year' => 'Vorig jaar',
+            'year' => 'Afgelopen 365 dagen',
         ];
     }
 
