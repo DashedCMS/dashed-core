@@ -39,6 +39,7 @@ use Dashed\DashedCore\Livewire\Frontend\Notification\Toastr;
 use Dashed\DashedCore\Classes\RichEditorPlugins\HtmlIdPlugin;
 use Dashed\DashedCore\Commands\InvalidatePasswordResetTokens;
 use Dashed\DashedCore\Filament\Pages\Settings\AISettingsPage;
+use Dashed\DashedCore\Filament\Pages\Settings\ClaudeSettingsPage;
 use Dashed\DashedCore\Livewire\Frontend\Search\SearchResults;
 use Dashed\DashedCore\Filament\Pages\Settings\SEOSettingsPage;
 use Dashed\DashedCore\Livewire\Infolists\SEO\SEOScoreInfoList;
@@ -555,7 +556,8 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         cms()->registerSettingsPage(ImageSettingsPage::class, 'Afbeelding', 'photo', 'Afbeelding van de website');
         cms()->registerSettingsPage(CacheSettingsPage::class, 'Cache', 'photo', 'Cache van de website');
         cms()->registerSettingsPage(SearchSettingsPage::class, 'Search', 'magnifying-glass', 'Zoek instellingen van de website');
-        cms()->registerSettingsPage(AISettingsPage::class, 'AI', 'magnifying-glass', 'AI instellingen van de website');
+        cms()->registerSettingsPage(AISettingsPage::class, 'AI (OpenAI)', 'magnifying-glass', 'AI instellingen van de website');
+        cms()->registerSettingsPage(ClaudeSettingsPage::class, 'Claude AI', 'sparkles', 'Claude AI instellingen, merkbeschrijving en schrijfstijl');
         cms()->registerSettingsPage(ReviewSettingsPage::class, 'Review', 'star', 'Review instellingen van de website');
 
         $package
