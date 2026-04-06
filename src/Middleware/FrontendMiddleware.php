@@ -164,11 +164,17 @@ class FrontendMiddleware
                 ];
 
                 return $reviews->map(function ($review) use ($ratingMap) {
+                    $reviewText = (string) $review->review;
+                    $reviewName = mb_strlen($reviewText) > 60
+                        ? mb_substr($reviewText, 0, 57) . '...'
+                        : $reviewText;
+
                     return Schema::review()
+                        ->name($reviewName ?: 'Review')
                         ->author(
                             Schema::person()->name($review->name ?: 'Anoniem')
                         )
-                        ->reviewBody((string)$review->review)
+                        ->reviewBody($reviewText)
                         ->reviewRating(
                             Schema::rating()
                                 ->ratingValue($ratingMap[(int)$review->stars] ?? (string)$review->stars)
