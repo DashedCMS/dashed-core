@@ -14,6 +14,7 @@ use Filament\Infolists\Components\TextEntry;
 use LaraZeus\SpatieTranslatable\Actions\LocaleSwitcher;
 use Dashed\DashedCore\Filament\Actions\ShowSEOScoreAction;
 use Dashed\DashedCore\Filament\Actions\AnalyzeSeoAction;
+use Dashed\DashedCore\Filament\Actions\GenerateArticleAction;
 use Dashed\DashedTranslations\Classes\AutomatedTranslation;
 use LaraZeus\SpatieTranslatable\Resources\Pages\EditRecord\Concerns\Translatable;
 
@@ -130,6 +131,7 @@ trait HasEditableCMSActions
             ->color('warning');
 
         $actions[] = AnalyzeSeoAction::make();
+        $actions[] = GenerateArticleAction::make();
 
         //        if (method_exists($this->record, 'getUrl')) {
         //            $actions[] = ShowSEOScoreAction::make();
