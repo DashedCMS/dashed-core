@@ -95,8 +95,10 @@ trait HasEditableCMSActions
             }
         }
 
+        $groupedActions = [];
+
         if (method_exists($this->record, 'getUrl')) {
-            $actions[] = Action::make('insertTemplateBlock')
+            $groupedActions[] = Action::make('insertTemplateBlock')
                 ->label('Template blok invoegen')
                 ->visible(GlobalBlock::count() > 0)
                 ->schema([
@@ -124,24 +126,26 @@ trait HasEditableCMSActions
                 ->color('primary');
         }
 
-        $actions[] = Action::make('Dupliceer')
+        $groupedActions[] = Action::make('Dupliceer')
             ->action('duplicate')
             ->icon('heroicon-o-document-duplicate')
             ->color('warning');
 
-        $actions[] = AnalyzeSeoAction::make();
+        $groupedActions[] = AnalyzeSeoAction::make();
 
         if (class_exists(\Dashed\DashedArticles\Filament\Actions\GenerateArticleAction::class)) {
-            $actions[] = \Dashed\DashedArticles\Filament\Actions\GenerateArticleAction::make();
+            $groupedActions[] = \Dashed\DashedArticles\Filament\Actions\GenerateArticleAction::make();
         }
 
-        //        if (method_exists($this->record, 'getUrl')) {
-        //            $actions[] = ShowSEOScoreAction::make();
-        //        }
+        $groupedActions[] = self::translateAction();
+        $groupedActions[] = self::copyAction();
+
+        $actions[] = ActionGroup::make($groupedActions)
+            ->label('Acties')
+            ->icon('heroicon-o-ellipsis-vertical')
+            ->button();
 
         return array_merge($actions, [
-            self::translateAction(),
-            self::copyAction(),
             LocaleSwitcher::make()
                 ->icon('heroicon-o-language'),
             DeleteAction::make()
