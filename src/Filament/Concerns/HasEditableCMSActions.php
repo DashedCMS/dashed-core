@@ -133,7 +133,9 @@ trait HasEditableCMSActions
 
         $groupedActions[] = AnalyzeSeoAction::make();
 
-        if (class_exists(\Dashed\DashedArticles\Filament\Actions\GenerateArticleAction::class)) {
+        if (class_exists(\Dashed\DashedArticles\Filament\Actions\GenerateArticleAction::class)
+            && class_exists(\Dashed\DashedArticles\Models\Article::class)
+            && $this->record instanceof \Dashed\DashedArticles\Models\Article) {
             $groupedActions[] = \Dashed\DashedArticles\Filament\Actions\GenerateArticleAction::make();
         }
 
