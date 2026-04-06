@@ -2,11 +2,11 @@
 
 namespace Dashed\DashedCore\Filament\Resources\ArticleDraftResource\Pages;
 
-use Filament\Forms\Form;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 use Dashed\DashedCore\Classes\Locales;
 use Dashed\DashedCore\Jobs\GenerateArticleJob;
 use Dashed\DashedCore\Models\ArticleDraft;
@@ -18,9 +18,9 @@ class CreateArticleDraft extends CreateRecord
 
     protected static ?string $title = 'Nieuw artikel schrijven';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->schema([
             TextInput::make('keyword')
                 ->label('Zoekwoord / onderwerp')
                 ->placeholder('Bijv: duurzame tuinmeubelen, wat is een hypotheek, enz.')
