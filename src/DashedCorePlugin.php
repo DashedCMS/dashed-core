@@ -22,7 +22,7 @@ use Dashed\DashedCore\Filament\Pages\Settings\SearchSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\AccountSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\ClaudeSettingsPage;
-use Dashed\DashedCore\Filament\Resources\SeoVerbetervoorstelResource;
+use Dashed\DashedCore\Filament\Resources\SeoImprovementResource;
 
 class DashedCorePlugin implements Plugin
 {
@@ -41,7 +41,7 @@ class DashedCorePlugin implements Plugin
                 NotFoundPageResource::class,
                 GlobalBlockResource::class,
                 ReviewResource::class,
-                SeoVerbetervoorstelResource::class,
+                SeoImprovementResource::class,
             ])
             ->pages([
                 SettingsPage::class,

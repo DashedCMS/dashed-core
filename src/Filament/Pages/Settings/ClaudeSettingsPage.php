@@ -15,7 +15,6 @@ use Dashed\DashedCore\Models\Customsetting;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Dashed\DashedCore\Traits\HasSettingsPermission;
-use Dashed\DashedCore\Models\Metadata;
 
 class ClaudeSettingsPage extends Page implements HasSchemas
 {
@@ -32,8 +31,18 @@ class ClaudeSettingsPage extends Page implements HasSchemas
 
     public function mount(): void
     {
+        $apiKey = Customsetting::get('claude_api_key');
+
+        // Re-verify connection on page load
+        if ($apiKey) {
+            $connected = ClaudeHelper::isConnected($apiKey);
+            foreach (Sites::getSites() as $site) {
+                Customsetting::set('claude_connected', $connected, $site['id']);
+            }
+        }
+
         $this->form->fill([
-            'claude_api_key' => Customsetting::get('claude_api_key'),
+            'claude_api_key' => $apiKey,
             'claude_brand_description' => Customsetting::get('claude_brand_description'),
             'claude_tone_voice' => Customsetting::get('claude_tone_voice'),
         ]);
@@ -42,24 +51,51 @@ class ClaudeSettingsPage extends Page implements HasSchemas
     public function form(Schema $schema): Schema
     {
         $connected = (bool) Customsetting::get('claude_connected');
+        $usage = ClaudeHelper::getUsage();
+
+        $usageRow = fn (array $period, string $label) =>
+            TextEntry::make('usage_' . md5($label))
+                ->label($label)
+                ->state(
+                    number_format($period['total_tokens']) . ' tokens' .
+                    '  (' . number_format($period['input_tokens']) . ' in / ' . number_format($period['output_tokens']) . ' out)' .
+                    '  •  ' . $period['calls'] . ' aanvragen' .
+                    '  •  ~$' . $period['estimated_cost_usd']
+                );
 
         return $schema->schema([
             TextEntry::make('connection_status')
                 ->label('Verbindingsstatus')
-                ->state('Claude is ' . ($connected ? 'verbonden' : 'niet verbonden')),
+                ->state('Claude is ' . ($connected ? 'verbonden' : 'niet verbonden'))
+                ->badge()
+                ->color($connected ? 'success' : 'danger'),
+
+            \Filament\Schemas\Components\Section::make('Verbruik (claude-sonnet-4-6) — beta')
+                ->description('Het verbruik en de kostenschatting zijn indicatief en kunnen afwijken van de werkelijke kosten op je Anthropic factuur.')
+                ->schema([
+                    $usageRow($usage['daily'], 'Vandaag'),
+                    $usageRow($usage['weekly'], 'Afgelopen 7 dagen'),
+                    $usageRow($usage['monthly'], 'Deze maand'),
+                    TextEntry::make('usage_reset')
+                        ->label('Maandelijkse reset op')
+                        ->state($usage['resets_at']),
+                ])
+                ->columns(1)
+                ->visible($connected),
 
             TextInput::make('claude_api_key')
                 ->label('Claude API sleutel')
                 ->password()
                 ->revealable()
                 ->placeholder('sk-ant-...')
+                ->helperText('Je vindt je API sleutel op console.anthropic.com → API Keys.')
                 ->reactive(),
 
             Textarea::make('claude_brand_description')
                 ->label('Merkbeschrijving')
                 ->helperText('Beschrijf je merk, producten/diensten en doelgroep. Claude gebruikt dit als context bij het schrijven van teksten.')
                 ->rows(5)
-                ->placeholder("Bijv: Wij zijn een Nederlandse webshop die 3D-geprinte designvazen verkoopt. Onze producten zijn handgemaakt, duurzaam (PLA) en in 30+ kleuren beschikbaar. Onze doelgroep zijn woonliefhebbers en cadeaukopers."),
+                ->placeholder("Bijv: Dashed is een Nederlands bureau dat maatwerk Laravel-websites en webshops bouwt voor het MKB. We bouwen op ons eigen Dashed CMS, een open-source pakket bovenop Laravel en Filament. Onze klanten zijn ondernemers en marketing managers die een betrouwbaar, snel en gebruiksvriendelijk CMS willen zonder afhankelijk te zijn van WordPress."),
 
             Textarea::make('claude_tone_voice')
                 ->label('Toon en schrijfstijl')
@@ -100,24 +136,12 @@ class ClaudeSettingsPage extends Page implements HasSchemas
                 ->visible(fn () => (bool) Customsetting::get('claude_api_key'))
                 ->requiresConfirmation()
                 ->modalHeading('Merkbeschrijving automatisch genereren')
-                ->modalDescription('Claude analyseert de huidige website-inhoud (meta titels en beschrijvingen) en genereert automatisch een merkbeschrijving en schrijfstijl. De bestaande waarden worden overschreven.')
+                ->modalDescription('Claude analyseert de huidige website-inhoud en genereert automatisch een merkbeschrijving en schrijfstijl. De bestaande waarden worden overschreven.')
                 ->modalSubmitActionLabel('Genereer')
                 ->action(function (): void {
                     $siteName = Customsetting::get('site_name') ?: config('app.name');
 
-                    // Gather sample content from metadata
-                    $samples = Metadata::query()
-                        ->whereNotNull('title')
-                        ->limit(20)
-                        ->get()
-                        ->map(function ($meta) {
-                            $title = is_array($meta->title) ? (array_values($meta->title)[0] ?? '') : $meta->title;
-                            $desc = is_array($meta->description) ? (array_values($meta->description)[0] ?? '') : $meta->description;
-
-                            return "- Titel: {$title}\n  Beschrijving: {$desc}";
-                        })
-                        ->filter()
-                        ->implode("\n");
+                    $samples = ClaudeHelper::collectWebsiteContent();
 
                     if (! $samples) {
                         Notification::make()

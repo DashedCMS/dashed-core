@@ -7,7 +7,7 @@ use Illuminate\Database\Migrations\Migration;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('dashed__seo_verbetervoorstellen', function (Blueprint $table) {
+        Schema::create('dashed__seo_improvements', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('subject_type');
             $table->unsignedBigInteger('subject_id');
@@ -20,12 +20,12 @@ return new class () extends Migration {
             $table->unsignedBigInteger('applied_by')->nullable();
             $table->timestamp('applied_at')->nullable();
             $table->timestamps();
-            $table->index(['subject_type', 'subject_id'], 'seo_voorstel_subject');
+            $table->index(['subject_type', 'subject_id'], 'seo_improvement_subject');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('dashed__seo_verbetervoorstellen');
+        Schema::dropIfExists('dashed__seo_improvements');
     }
 };

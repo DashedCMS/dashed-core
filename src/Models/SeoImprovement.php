@@ -5,15 +5,21 @@ namespace Dashed\DashedCore\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-class SeoVerbetervoorstel extends Model
+class SeoImprovement extends Model
 {
-    protected $table = 'dashed__seo_verbetervoorstellen';
+    protected $table = 'dashed__seo_improvements';
 
     protected $casts = [
         'keyword_research' => 'array',
         'field_proposals' => 'array',
+        'block_proposals' => 'array',
         'applied_at' => 'datetime',
     ];
+
+    public function setProgress(string $message): void
+    {
+        $this->update(['progress_message' => $message]);
+    }
 
     public function subject(): MorphTo
     {

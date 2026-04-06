@@ -8,8 +8,7 @@ use Filament\Notifications\Notification;
 use Dashed\DashedCore\Classes\ClaudeHelper;
 use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedCore\Jobs\AnalyzeSeoJob;
-use Dashed\DashedCore\Models\SeoVerbetervoorstel;
-use Dashed\DashedCore\Filament\Resources\SeoVerbetervoorstelResource;
+use Dashed\DashedCore\Models\SeoImprovement;
 
 class AnalyzeSeoAction extends Action
 {
@@ -26,8 +25,7 @@ class AnalyzeSeoAction extends Action
         $this->icon('heroicon-o-magnifying-glass');
         $this->color('info');
 
-        $this->visible(fn ($livewire) => ClaudeHelper::isConnected()
-            && method_exists($livewire->record, 'metadata'));
+        $this->visible(fn () => ClaudeHelper::isConnected());
 
         $this->schema([
             Textarea::make('instruction')
@@ -39,12 +37,23 @@ class AnalyzeSeoAction extends Action
         $this->action(function (array $data, $livewire): void {
             $record = $livewire->record;
 
-            $voorstel = SeoVerbetervoorstel::create([
-                'subject_type' => $record->getMorphClass(),
-                'subject_id' => $record->getKey(),
-                'status' => 'analyzing',
-                'created_by' => auth()->id(),
-            ]);
+            $voorstel = SeoImprovement::updateOrCreate(
+                [
+                    'subject_type' => $record->getMorphClass(),
+                    'subject_id' => $record->getKey(),
+                ],
+                [
+                    'status' => 'analyzing',
+                    'created_by' => auth()->id(),
+                    'keyword_research' => null,
+                    'analysis_summary' => null,
+                    'field_proposals' => null,
+                    'block_proposals' => null,
+                    'error_message' => null,
+                    'applied_at' => null,
+                    'applied_by' => null,
+                ],
+            );
 
             AnalyzeSeoJob::dispatch(
                 $voorstel,
