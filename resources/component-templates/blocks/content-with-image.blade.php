@@ -20,7 +20,7 @@
                     @if($data['subtitle'] ?? false)
                         <p class="text-base font-semibold leading-7 text-secondary">{{ $data['subtitle'] }}</p>
                     @endif
-                    <h1 class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">{{ $data['title'] }}</h1>
+                    <h2 class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">{{ $data['title'] }}</h2>
                 </div>
                 <div class="max-w-xl text-base leading-7 text-gray-700 lg:max-w-lg mt-4 prose">
                     {!! cms()->convertToHtml($data['content'] ?? '') !!}

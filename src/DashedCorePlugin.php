@@ -23,7 +23,6 @@ use Dashed\DashedCore\Filament\Pages\Settings\AccountSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\ClaudeSettingsPage;
 use Dashed\DashedCore\Filament\Resources\SeoImprovementResource;
-use Dashed\DashedCore\Filament\Resources\ArticleDraftResource;
 
 class DashedCorePlugin implements Plugin
 {
@@ -43,7 +42,6 @@ class DashedCorePlugin implements Plugin
                 GlobalBlockResource::class,
                 ReviewResource::class,
                 SeoImprovementResource::class,
-                ArticleDraftResource::class,
             ])
             ->pages([
                 SettingsPage::class,
