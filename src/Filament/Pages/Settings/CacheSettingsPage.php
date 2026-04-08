@@ -8,8 +8,8 @@ use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Cache;
 use Filament\Notifications\Notification;
-use Dashed\DashedCore\Traits\HasSettingsPermission;
 use Filament\Infolists\Components\TextEntry;
+use Dashed\DashedCore\Traits\HasSettingsPermission;
 
 class CacheSettingsPage extends Page
 {

@@ -4,8 +4,8 @@ namespace Dashed\DashedCore\Filament\Resources\RoleResource\Pages;
 
 use App\Models\User;
 use Filament\Actions\DeleteAction;
-use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Resources\Pages\EditRecord;
 use Dashed\DashedCore\Filament\Resources\RoleResource;
 
 class EditRole extends EditRecord

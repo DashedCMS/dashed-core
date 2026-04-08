@@ -3,8 +3,8 @@
 namespace Dashed\DashedCore\Filament\Resources\RoleResource\Pages;
 
 use App\Models\User;
-use Filament\Resources\Pages\CreateRecord;
 use Dashed\DashedCore\Models\Role;
+use Filament\Resources\Pages\CreateRecord;
 use Dashed\DashedCore\Filament\Resources\RoleResource;
 
 class CreateRole extends CreateRecord

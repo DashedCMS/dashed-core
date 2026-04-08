@@ -6,13 +6,13 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Illuminate\Support\Facades\Schema;
 use Filament\Actions\RestoreBulkAction;
+use Dashed\DashedCore\Classes\ClaudeHelper;
 use Filament\Actions\ForceDeleteBulkAction;
 use Dashed\DashedCore\Classes\Actions\SetPublicAction;
 use Dashed\DashedCore\Classes\Actions\TranslateAction;
 use Dashed\DashedCore\Classes\Actions\SetNotPublicAction;
-use Dashed\DashedCore\Classes\ClaudeHelper;
-use Dashed\DashedCore\Filament\Actions\BulkAnalyzeSeoAction;
 use Dashed\DashedTranslations\Classes\AutomatedTranslation;
+use Dashed\DashedCore\Filament\Actions\BulkAnalyzeSeoAction;
 
 class ToolbarActions
 {

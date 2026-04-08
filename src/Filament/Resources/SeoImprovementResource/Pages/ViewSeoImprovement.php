@@ -3,15 +3,15 @@
 namespace Dashed\DashedCore\Filament\Resources\SeoImprovementResource\Pages;
 
 use Filament\Actions\Action;
+use Filament\Schemas\Schema;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Toggle;
-use Filament\Infolists\Components\TextEntry;
+use Dashed\DashedCore\Classes\Locales;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Schema;
-use Filament\Facades\Filament;
-use Dashed\DashedCore\Classes\Locales;
 use Dashed\DashedCore\Jobs\AnalyzeSeoJob;
+use Filament\Infolists\Components\TextEntry;
 use Dashed\DashedCore\Filament\Resources\SeoImprovementResource;
 
 class ViewSeoImprovement extends ViewRecord
@@ -153,6 +153,7 @@ class ViewSeoImprovement extends ViewRecord
                         if ($action === 'update') {
                             $blockIdx = $proposal['block_index'] ?? null;
                             $currentBlockData = [];
+
                             try {
                                 if ($blockIdx !== null && $record->subject) {
                                     $blocks = method_exists($record->subject, 'getTranslation')
@@ -160,7 +161,8 @@ class ViewSeoImprovement extends ViewRecord
                                         : ($record->subject->content ?? []);
                                     $currentBlockData = $blocks[$blockIdx]['data'] ?? [];
                                 }
-                            } catch (\Throwable) {}
+                            } catch (\Throwable) {
+                            }
                             $flatFields = $this->flattenData($currentBlockData);
                             $fieldUpdates = $proposal['field_updates'] ?? [];
 

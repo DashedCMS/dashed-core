@@ -5,9 +5,8 @@ namespace Dashed\DashedCore\Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
-use Dashed\DashedCore\Classes\ClaudeHelper;
-use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedCore\Jobs\AnalyzeSeoJob;
+use Dashed\DashedCore\Classes\ClaudeHelper;
 use Dashed\DashedCore\Models\SeoImprovement;
 
 class AnalyzeSeoAction extends Action

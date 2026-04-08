@@ -13,9 +13,9 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Dashed\DashedCore\Classes\OpenAIHelper;
 use Dashed\DashedCore\Models\Customsetting;
 use Filament\Infolists\Components\TextEntry;
+use Dashed\DashedCore\Traits\HasSettingsPermission;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Dashed\DashedCore\Jobs\CreateAltTextsForAllMediaItems;
-use Dashed\DashedCore\Traits\HasSettingsPermission;
 use RalphJSmit\Filament\MediaLibrary\Models\MediaLibraryItem;
 
 class AISettingsPage extends Page implements HasSchemas

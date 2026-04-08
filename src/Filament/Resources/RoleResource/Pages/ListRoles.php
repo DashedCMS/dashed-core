@@ -3,10 +3,10 @@
 namespace Dashed\DashedCore\Filament\Resources\RoleResource\Pages;
 
 use Filament\Actions\Action;
+use Dashed\DashedCore\Models\Role;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ListRecords;
-use Dashed\DashedCore\Models\Role;
 use Dashed\DashedCore\Filament\Resources\RoleResource;
 
 class ListRoles extends ListRecords

@@ -31,27 +31,37 @@ class ClaudeHelper
             $lines = [];
             foreach ($records as $record) {
                 $name = '';
+
                 try {
                     $name = method_exists($record, 'getTranslation')
                         ? $record->getTranslation($nameField, $locale)
                         : $record->$nameField;
-                } catch (\Throwable) {}
+                } catch (\Throwable) {
+                }
 
                 $metaTitle = $record->metadata?->getTranslation('title', $locale) ?? '';
                 $metaDesc = $record->metadata?->getTranslation('description', $locale) ?? '';
 
                 $blockText = '';
+
                 try {
                     $blocks = $record->customBlocks?->getTranslation('blocks', $locale);
                     if ($blocks) {
                         $blockText = static::extractTextFromBlocks($blocks);
                     }
-                } catch (\Throwable) {}
+                } catch (\Throwable) {
+                }
 
                 $line = "- {$name}";
-                if ($metaTitle) $line .= " | Meta: {$metaTitle}";
-                if ($metaDesc) $line .= " | {$metaDesc}";
-                if ($blockText) $line .= "\n  Inhoud: " . mb_substr($blockText, 0, 300);
+                if ($metaTitle) {
+                    $line .= " | Meta: {$metaTitle}";
+                }
+                if ($metaDesc) {
+                    $line .= " | {$metaDesc}";
+                }
+                if ($blockText) {
+                    $line .= "\n  Inhoud: " . mb_substr($blockText, 0, 300);
+                }
 
                 if ($name || $metaTitle) {
                     $lines[] = $line;

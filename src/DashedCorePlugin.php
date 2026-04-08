@@ -5,8 +5,8 @@ namespace Dashed\DashedCore;
 use Filament\Panel;
 use Filament\Contracts\Plugin;
 use Dashed\DashedCore\Filament\Widgets\WelcomeWidget;
-use Dashed\DashedCore\Filament\Resources\UserResource;
 use Dashed\DashedCore\Filament\Resources\RoleResource;
+use Dashed\DashedCore\Filament\Resources\UserResource;
 use Dashed\DashedCore\Filament\Pages\Settings\HorizonPage;
 use Dashed\DashedCore\Filament\Resources\RedirectResource;
 use Dashed\DashedCore\Filament\Pages\Settings\SettingsPage;
@@ -17,12 +17,12 @@ use Dashed\DashedCore\Filament\Resources\NotFoundPageResource;
 use Dashed\DashedCore\Filament\Pages\Settings\CacheSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
 use Dashed\DashedCore\Filament\Resources\Reviews\ReviewResource;
+use Dashed\DashedCore\Filament\Resources\SeoImprovementResource;
+use Dashed\DashedCore\Filament\Pages\Settings\ClaudeSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\ReviewSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\SearchSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\AccountSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
-use Dashed\DashedCore\Filament\Pages\Settings\ClaudeSettingsPage;
-use Dashed\DashedCore\Filament\Resources\SeoImprovementResource;
 
 class DashedCorePlugin implements Plugin
 {

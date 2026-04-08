@@ -8,18 +8,18 @@ use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Actions\DeleteAction;
+use Filament\Tables\Filters\Filter;
 use Filament\Actions\BulkActionGroup;
+use Dashed\DashedCore\Classes\Locales;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Filters\Filter;
 use Filament\Notifications\Notification;
-use Illuminate\Database\Eloquent\Builder;
-use Dashed\DashedCore\Classes\Locales;
 use Dashed\DashedCore\Jobs\AnalyzeSeoJob;
+use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
 use Dashed\DashedCore\Models\SeoImprovement;
-use Dashed\DashedCore\Filament\Resources\SeoImprovementResource\Pages\ListSeoImprovements;
 use Dashed\DashedCore\Filament\Resources\SeoImprovementResource\Pages\ViewSeoImprovement;
+use Dashed\DashedCore\Filament\Resources\SeoImprovementResource\Pages\ListSeoImprovements;
 
 class SeoImprovementResource extends Resource
 {

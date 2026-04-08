@@ -2,7 +2,7 @@
 
 @php
     $adminBarEnabled = \Dashed\DashedCore\Models\Customsetting::get('admin_bar_enabled', default: true);
-    $showAdminBar = $adminBarEnabled && auth()->check() && auth()->user()->role === 'admin';
+    $showAdminBar = $adminBarEnabled && auth()->check() && auth()->user()->role === 'superadmin';
 
     if ($showAdminBar) {
         $adminBarModel = View::shared('model');

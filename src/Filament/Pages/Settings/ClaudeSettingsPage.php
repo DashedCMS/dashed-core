@@ -13,8 +13,8 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Dashed\DashedCore\Classes\ClaudeHelper;
 use Dashed\DashedCore\Models\Customsetting;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Dashed\DashedCore\Traits\HasSettingsPermission;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
 
 class ClaudeSettingsPage extends Page implements HasSchemas
 {

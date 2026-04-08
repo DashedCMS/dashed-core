@@ -12,7 +12,6 @@ use Filament\Notifications\Notification;
 use Dashed\DashedCore\Models\GlobalBlock;
 use Filament\Infolists\Components\TextEntry;
 use LaraZeus\SpatieTranslatable\Actions\LocaleSwitcher;
-use Dashed\DashedCore\Filament\Actions\ShowSEOScoreAction;
 use Dashed\DashedCore\Filament\Actions\AnalyzeSeoAction;
 use Dashed\DashedTranslations\Classes\AutomatedTranslation;
 use LaraZeus\SpatieTranslatable\Resources\Pages\EditRecord\Concerns\Translatable;

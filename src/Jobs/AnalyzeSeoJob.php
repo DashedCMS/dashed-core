@@ -6,9 +6,9 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Dashed\DashedCore\Classes\ClaudeHelper;
+use Dashed\DashedCore\Models\Customsetting;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedCore\Models\SeoImprovement;
 use Dashed\DashedCore\Exceptions\ClaudeRateLimitException;
 
@@ -32,7 +32,8 @@ class AnalyzeSeoJob implements ShouldQueue
         public SeoImprovement $voorstel,
         public string $locale,
         public string $instruction = '',
-    ) {}
+    ) {
+    }
 
     public function failed(\Throwable $exception): void
     {
@@ -65,6 +66,7 @@ class AnalyzeSeoJob implements ShouldQueue
         $primaryKeyword = '';
         $progressPrefix = $attempt > 1 ? " (poging {$attempt}/{$this->tries})" : '';
         $this->voorstel->setProgress("Stap 1/{$totalSteps} — SEO velden en zoekwoorden analyseren...{$progressPrefix}");
+
         try {
             $seoResult = ClaudeHelper::runJsonPrompt(
                 $this->buildSeoPrompt($context),
@@ -91,6 +93,7 @@ class AnalyzeSeoJob implements ShouldQueue
         } catch (\Throwable $e) {
             // Let Laravel retry automatically — failed() is called only when retries are exhausted
             $this->voorstel->setProgress("Stap 1/{$totalSteps} — mislukt, opnieuw proberen... ({$e->getMessage()})");
+
             throw $e;
         }
 
@@ -101,6 +104,7 @@ class AnalyzeSeoJob implements ShouldQueue
             $blockType = $block['type'] ?? 'unknown';
             $stepNum = 2 + $blockIndex;
             $this->voorstel->setProgress("Stap {$stepNum}/{$totalSteps} — Blok '{$blockType}' analyseren...");
+
             try {
                 $result = ClaudeHelper::runJsonPrompt(
                     $this->buildSingleBlockPrompt($context, $block, $blockIndex, $primaryKeyword),
@@ -174,8 +178,13 @@ class AnalyzeSeoJob implements ShouldQueue
             foreach (['name', 'title'] as $field) {
                 try {
                     $val = $record->getTranslation($field, $locale);
-                    if ($val) { $name = $val; break; }
-                } catch (\Throwable) {}
+                    if ($val) {
+                        $name = $val;
+
+                        break;
+                    }
+                } catch (\Throwable) {
+                }
             }
         }
         if (! $name) {
@@ -184,7 +193,11 @@ class AnalyzeSeoJob implements ShouldQueue
                     $val = is_array($record->$field)
                         ? ($record->$field[$locale] ?? reset($record->$field))
                         : $record->$field;
-                    if ($val) { $name = $val; break; }
+                    if ($val) {
+                        $name = $val;
+
+                        break;
+                    }
                 }
             }
         }
@@ -193,29 +206,36 @@ class AnalyzeSeoJob implements ShouldQueue
         $metaDescription = $record->metadata?->getTranslation('description', $locale) ?? '';
 
         $translatableLines = [];
+
         try {
             foreach ($record->translatable ?? [] as $field) {
                 if (in_array($field, ['content', 'name', 'title', 'slug'])) {
                     continue;
                 }
+
                 try {
                     $val = $record->getTranslation($field, $locale);
                     if (is_string($val) && $val !== '') {
                         $translatableLines[] = "- {$field}: " . mb_substr(strip_tags($val), 0, 200);
                     }
-                } catch (\Throwable) {}
+                } catch (\Throwable) {
+                }
             }
-        } catch (\Throwable) {}
+        } catch (\Throwable) {
+        }
 
         $blocks = [];
+
         try {
             if (in_array('content', $record->translatable ?? [])) {
                 $blocks = $record->getTranslation('content', $locale) ?: [];
             }
-        } catch (\Throwable) {}
+        } catch (\Throwable) {
+        }
 
         // Collect internal URLs from all visitable models (for link building suggestions)
         $internalLinks = [];
+
         try {
             foreach (cms()->builder('routeModels') as $routeModel) {
                 $class = $routeModel['class'];
@@ -230,15 +250,18 @@ class AnalyzeSeoJob implements ShouldQueue
                         continue;
                     }
                     $linkName = '';
+
                     try {
                         $linkName = method_exists($r, 'getTranslation') ? $r->getTranslation($nameField, $locale) : $r->$nameField;
-                    } catch (\Throwable) {}
+                    } catch (\Throwable) {
+                    }
                     if ($linkName) {
                         $internalLinks[] = "- {$linkName}: {$linkUrl}";
                     }
                 }
             }
-        } catch (\Throwable) {}
+        } catch (\Throwable) {
+        }
 
         return compact('url', 'name', 'metaTitle', 'metaDescription', 'translatableLines', 'blocks', 'record', 'locale', 'internalLinks');
     }
@@ -514,7 +537,8 @@ class AnalyzeSeoJob implements ShouldQueue
                     return $subFields;
                 }
             }
-        } catch (\Throwable) {}
+        } catch (\Throwable) {
+        }
 
         return [];
     }

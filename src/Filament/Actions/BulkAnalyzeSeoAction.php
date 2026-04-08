@@ -5,10 +5,10 @@ namespace Dashed\DashedCore\Filament\Actions;
 use Filament\Actions\BulkAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
-use Illuminate\Database\Eloquent\Collection;
-use Dashed\DashedCore\Classes\ClaudeHelper;
 use Dashed\DashedCore\Jobs\AnalyzeSeoJob;
+use Dashed\DashedCore\Classes\ClaudeHelper;
 use Dashed\DashedCore\Models\SeoImprovement;
+use Illuminate\Database\Eloquent\Collection;
 
 class BulkAnalyzeSeoAction extends BulkAction
 {

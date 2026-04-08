@@ -18,8 +18,8 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Dashed\DashedCore\Models\Customsetting;
 use Filament\Infolists\Components\TextEntry;
 use Dashed\DashedCore\Jobs\SyncGoogleReviews;
-use Dashed\DashedCore\Traits\HasSettingsPermission;
 use Filament\Schemas\Components\Utilities\Get;
+use Dashed\DashedCore\Traits\HasSettingsPermission;
 
 class GeneralSettingsPage extends Page
 {

@@ -19,9 +19,9 @@ class AdminMiddleware
             return redirect('/'.config('filament.path').'/login')->with('error', 'Je moet ingelogd zijn om deze pagina te bezoeken');
         }
 
-//        if (Auth::user()->role != 'admin') {
-//            return redirect('/')->with('error', 'Je moet ingelogd zijn om deze pagina te bezoeken');
-//        }
+        //        if (Auth::user()->role != 'admin') {
+        //            return redirect('/')->with('error', 'Je moet ingelogd zijn om deze pagina te bezoeken');
+        //        }
 
         return $next($request);
     }

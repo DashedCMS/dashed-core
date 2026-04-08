@@ -192,9 +192,9 @@ class Dashboard extends BaseDashboard
     {
         $defaultData = self::getDefaultDataByPeriod($period);
         $this->data['startDate'] = $defaultData['startDate'];
-        $this->data['endDate']   = $defaultData['endDate'];
-        $this->data['period']    = $defaultData['period'];
-        $this->data['steps']     = $defaultData['steps'];
+        $this->data['endDate'] = $defaultData['endDate'];
+        $this->data['period'] = $defaultData['period'];
+        $this->data['steps'] = $defaultData['steps'];
         $this->filtersForm->fill($this->data);
         $this->updateData();
     }
@@ -237,12 +237,12 @@ class Dashboard extends BaseDashboard
                             ->label('Stappen')
                             ->reactive()
                             ->options([
-                                'per_hour'    => 'Per uur',
-                                'per_day'     => 'Per dag',
-                                'per_week'    => 'Per week',
-                                'per_month'   => 'Per maand',
+                                'per_hour' => 'Per uur',
+                                'per_day' => 'Per dag',
+                                'per_week' => 'Per week',
+                                'per_month' => 'Per maand',
                                 'per_quarter' => 'Per kwartaal',
-                                'per_year'    => 'Per jaar',
+                                'per_year' => 'Per jaar',
                             ])
                             ->default(self::getStartData()['steps'])
                             ->afterStateUpdated(function () {
