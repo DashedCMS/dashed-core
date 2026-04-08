@@ -61,7 +61,6 @@ class CMSManager
         'classes' => [],
         'richEditorPlugins' => [],
         'rolePermissions' => [],
-        'documentationSections' => [],
     ];
 
     protected static $builderBlocksActivated = [
@@ -310,16 +309,6 @@ class CMSManager
     public function getRolePermissions(): array
     {
         return static::$builders['rolePermissions'];
-    }
-
-    public function registerDocumentation(string $package, string $label, string $icon, string $docsPath, int $sort = 0): void
-    {
-        static::$builders['documentationSections'][$package] = [
-            'label' => $label,
-            'icon' => $icon,
-            'path' => $docsPath,
-            'sort' => $sort,
-        ];
     }
 
     public function registerSettingsPage($settingsPage, $name, $icon = 'rss', $description = '', ?string $permission = null): void

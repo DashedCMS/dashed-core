@@ -23,7 +23,6 @@ use Dashed\DashedCore\Filament\Pages\Settings\ReviewSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\SearchSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\AccountSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
-use Dashed\DashedCore\Filament\Pages\Documentation\DocumentationPage;
 
 class DashedCorePlugin implements Plugin
 {
@@ -56,7 +55,6 @@ class DashedCorePlugin implements Plugin
                 AISettingsPage::class,
                 ReviewSettingsPage::class,
                 ClaudeSettingsPage::class,
-                DocumentationPage::class,
             ])
             ->widgets([
                 WelcomeWidget::class,

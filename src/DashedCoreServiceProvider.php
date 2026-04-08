@@ -550,8 +550,6 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             __DIR__ . '/../resources/component-templates' => resource_path('views/components'),
         ], 'dashed-templates');
 
-        cms()->registerDocumentation('dashed-core', 'DashedCMS Basis', 'cog-6-tooth', __DIR__ . '/../docs', 0);
-
         cms()->registerSettingsPage(GeneralSettingsPage::class, 'Algemeen', 'cog', 'Algemene informatie van de website');
         cms()->registerSettingsPage(AccountSettingsPage::class, 'Account', 'user', 'Account instellingen van de website');
         cms()->registerSettingsPage(SEOSettingsPage::class, 'SEO', 'identification', 'SEO van de website');
