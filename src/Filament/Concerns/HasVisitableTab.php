@@ -139,7 +139,10 @@ trait HasVisitableTab
 
     protected static function visitableTableColumns(): array
     {
-        if (method_exists(self::$model, 'parent') && Schema::hasColumn(app(self::$model)->getTable(), 'parent_id')) {
+        $schema = [];
+        $table = app(self::$model)->getTable();
+
+        if (method_exists(self::$model, 'parent') && \Illuminate\Support\Facades\Cache::remember("schema_has_parent_id_{$table}", 3600, fn () => Schema::hasColumn($table, 'parent_id'))) {
             $schema[] =
                 TextColumn::make('parent.name')
                     ->label('Bovenliggende item')
@@ -150,8 +153,7 @@ trait HasVisitableTab
                 ->label('Actief op sites')
                 ->sortable()
                 ->badge()
-                ->hidden(! (Sites::getAmountOfSites() > 1))
-                ->searchable();
+                ->hidden(! (Sites::getAmountOfSites() > 1));
         $schema[] = IconColumn::make('status')
             ->label('Status')
             ->trueIcon('heroicon-o-check-circle')
@@ -160,12 +162,6 @@ trait HasVisitableTab
             ->label('Aangemaakt op')
             ->sortable()
             ->dateTime();
-
-        if (Customsetting::get('seo_check_models', null, false)) {
-            $schema[] = TextColumn::make('seo_score')
-                ->label('SEO score')
-                ->getStateUsing(fn ($record) => $record->getActualScore());
-        }
 
         return $schema;
     }
