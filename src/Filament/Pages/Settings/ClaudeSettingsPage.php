@@ -33,13 +33,7 @@ class ClaudeSettingsPage extends Page implements HasSchemas
     {
         $apiKey = Customsetting::get('claude_api_key');
 
-        // Re-verify connection on page load
-        if ($apiKey) {
-            $connected = ClaudeHelper::isConnected($apiKey);
-            foreach (Sites::getSites() as $site) {
-                Customsetting::set('claude_connected', $connected, $site['id']);
-            }
-        }
+        // Connection status is cached and only re-verified on save
 
         $this->form->fill([
             'claude_api_key' => $apiKey,
@@ -109,6 +103,7 @@ class ClaudeSettingsPage extends Page implements HasSchemas
     {
         $formData = $this->form->getState();
         $apiKey = $formData['claude_api_key'] ?? null;
+        cache()->forget('claude_api_connected');
         $connected = ClaudeHelper::isConnected($apiKey);
 
         foreach (Sites::getSites() as $site) {

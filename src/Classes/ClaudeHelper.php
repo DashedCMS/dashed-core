@@ -120,23 +120,25 @@ class ClaudeHelper
             return false;
         }
 
-        try {
-            $response = Http::withHeaders([
-                'x-api-key' => $apiKey,
-                'anthropic-version' => '2023-06-01',
-                'Content-Type' => 'application/json',
-            ])->post('https://api.anthropic.com/v1/messages', [
-                'model' => 'claude-haiku-4-5-20251001',
-                'max_tokens' => 1,
-                'messages' => [
-                    ['role' => 'user', 'content' => 'Hi'],
-                ],
-            ]);
-        } catch (Exception $e) {
-            return false;
-        }
+        return cache()->rememberForever('claude_api_connected', function () use ($apiKey) {
+            try {
+                $response = Http::withHeaders([
+                    'x-api-key' => $apiKey,
+                    'anthropic-version' => '2023-06-01',
+                    'Content-Type' => 'application/json',
+                ])->post('https://api.anthropic.com/v1/messages', [
+                    'model' => 'claude-haiku-4-5-20251001',
+                    'max_tokens' => 1,
+                    'messages' => [
+                        ['role' => 'user', 'content' => 'Hi'],
+                    ],
+                ]);
+            } catch (Exception $e) {
+                return false;
+            }
 
-        return $response->successful() || $response->status() === 429;
+            return $response->successful() || $response->status() === 429;
+        });
     }
 
     public static function runPrompt(string $prompt, ?string $apiKey = null, int $maxTokens = 4000): ?string
