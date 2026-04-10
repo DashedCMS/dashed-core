@@ -24,6 +24,7 @@ use Dashed\DashedCore\Commands\InstallCommand;
 use Filament\Schemas\Components\Utilities\Get;
 use Guava\FilamentIconPicker\Forms\IconPicker;
 use Dashed\DashedCore\Commands\CreateAdminUser;
+use Dashed\DashedCore\Commands\CleanupOldExports;
 use Dashed\DashedCore\Commands\SyncGoogleReviews;
 use Dashed\DashedCore\Commands\CreateDefaultPages;
 use Dashed\DashedCore\Commands\MigrateDatabaseToV4;
@@ -37,7 +38,6 @@ use Dashed\DashedCore\Livewire\Frontend\Auth\ResetPassword;
 use Dashed\DashedCore\Livewire\Frontend\Auth\ForgotPassword;
 use Dashed\DashedCore\Livewire\Frontend\Notification\Toastr;
 use Dashed\DashedCore\Classes\RichEditorPlugins\HtmlIdPlugin;
-use Dashed\DashedCore\Commands\CleanupOldExports;
 use Dashed\DashedCore\Commands\InvalidatePasswordResetTokens;
 use Dashed\DashedCore\Filament\Pages\Settings\AISettingsPage;
 use Dashed\DashedCore\Livewire\Frontend\Search\SearchResults;
@@ -63,6 +63,17 @@ class DashedCoreServiceProvider extends PackageServiceProvider
 
     public function bootingPackage()
     {
+        $this->app->singleton(\Dashed\DashedCore\Mail\EmailTemplateRegistry::class);
+        $this->app->singleton(\Dashed\DashedCore\Mail\EmailRenderer::class);
+
+        cms()
+            ->emailBlock('heading', \Dashed\DashedCore\Mail\EmailBlocks\HeadingBlock::class)
+            ->emailBlock('text', \Dashed\DashedCore\Mail\EmailBlocks\TextBlock::class)
+            ->emailBlock('button', \Dashed\DashedCore\Mail\EmailBlocks\ButtonBlock::class)
+            ->emailBlock('image', \Dashed\DashedCore\Mail\EmailBlocks\ImageBlock::class)
+            ->emailBlock('divider', \Dashed\DashedCore\Mail\EmailBlocks\DividerBlock::class)
+            ->emailBlock('order-summary', \Dashed\DashedCore\Mail\EmailBlocks\OrderSummaryBlock::class);
+
         Model::unguard();
 
         Gate::before(function (\Dashed\DashedCore\Models\User $user, string $ability) {

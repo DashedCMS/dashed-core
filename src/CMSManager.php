@@ -78,6 +78,33 @@ class CMSManager
         return $this;
     }
 
+    protected static array $emailBlocks = [];
+
+    public function emailBlock(string $key, string $blockClass): self
+    {
+        static::$emailBlocks[$key] = $blockClass;
+
+        return $this;
+    }
+
+    /** @return array<string, class-string> */
+    public function emailBlocks(): array
+    {
+        return static::$emailBlocks;
+    }
+
+    public function emailTemplateRegistry(): \Dashed\DashedCore\Mail\EmailTemplateRegistry
+    {
+        return app(\Dashed\DashedCore\Mail\EmailTemplateRegistry::class);
+    }
+
+    public function registerMailable(string $mailableClass): self
+    {
+        $this->emailTemplateRegistry()->register($mailableClass);
+
+        return $this;
+    }
+
     public function class(string $name, string|array $value = null): self|array|string
     {
         if (! $value) {
