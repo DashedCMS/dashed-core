@@ -37,6 +37,7 @@ use Dashed\DashedCore\Livewire\Frontend\Auth\ResetPassword;
 use Dashed\DashedCore\Livewire\Frontend\Auth\ForgotPassword;
 use Dashed\DashedCore\Livewire\Frontend\Notification\Toastr;
 use Dashed\DashedCore\Classes\RichEditorPlugins\HtmlIdPlugin;
+use Dashed\DashedCore\Commands\CleanupOldExports;
 use Dashed\DashedCore\Commands\InvalidatePasswordResetTokens;
 use Dashed\DashedCore\Filament\Pages\Settings\AISettingsPage;
 use Dashed\DashedCore\Livewire\Frontend\Search\SearchResults;
@@ -48,6 +49,7 @@ use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
 use Dashed\DashedCore\Classes\RichEditorPlugins\MediaEmbedPlugin;
 use Dashed\DashedCore\Classes\RichEditorPlugins\VideoEmbedPlugin;
 use Dashed\DashedCore\Filament\Pages\Settings\ClaudeSettingsPage;
+use Dashed\DashedCore\Filament\Pages\Settings\ExportSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\ReviewSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\SearchSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\AccountSettingsPage;
@@ -117,6 +119,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
 
         cms()->registerRolePermissions('Overige', [
             'view_horizon' => 'Horizon bekijken',
+            'view_exports' => 'Exports bekijken',
         ]);
 
         Livewire::component('notification.toastr', Toastr::class);
@@ -136,6 +139,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             $schedule = app(Schedule::class);
             $schedule->command(CreateSitemap::class)->daily();
             $schedule->command(InvalidatePasswordResetTokens::class)->everyFifteenMinutes();
+            $schedule->command(CleanupOldExports::class)->daily();
             $schedule->command(SyncGoogleReviews::class)->twiceDaily();
             $schedule->command(AutomaticlyCreateAltTextsForAllMediaItems::class)->daily();
             //            $schedule->command(SeoScan::class)->daily();
@@ -558,6 +562,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         cms()->registerSettingsPage(SearchSettingsPage::class, 'Search', 'magnifying-glass', 'Zoek instellingen van de website');
         cms()->registerSettingsPage(AISettingsPage::class, 'AI (OpenAI)', 'magnifying-glass', 'AI instellingen van de website');
         cms()->registerSettingsPage(ClaudeSettingsPage::class, 'Claude AI', 'sparkles', 'Claude AI instellingen, merkbeschrijving en schrijfstijl');
+        cms()->registerSettingsPage(ExportSettingsPage::class, 'Exports', 'document-arrow-down', 'Bewaartermijn van exports instellen');
         cms()->registerSettingsPage(ReviewSettingsPage::class, 'Review', 'star', 'Review instellingen van de website');
 
         $package
@@ -586,6 +591,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                 InstallCommand::class,
                 UpdateCommand::class,
                 InvalidatePasswordResetTokens::class,
+                CleanupOldExports::class,
                 CreateSitemap::class,
                 CreateVisitableModel::class,
                 SyncGoogleReviews::class,

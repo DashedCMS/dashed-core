@@ -17,8 +17,10 @@ use Dashed\DashedCore\Filament\Resources\NotFoundPageResource;
 use Dashed\DashedCore\Filament\Pages\Settings\CacheSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
 use Dashed\DashedCore\Filament\Resources\Reviews\ReviewResource;
+use Dashed\DashedCore\Filament\Resources\ExportResource;
 use Dashed\DashedCore\Filament\Resources\SeoImprovementResource;
 use Dashed\DashedCore\Filament\Pages\Settings\ClaudeSettingsPage;
+use Dashed\DashedCore\Filament\Pages\Settings\ExportSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\ReviewSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\SearchSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\AccountSettingsPage;
@@ -42,6 +44,7 @@ class DashedCorePlugin implements Plugin
                 GlobalBlockResource::class,
                 ReviewResource::class,
                 SeoImprovementResource::class,
+                ExportResource::class,
             ])
             ->pages([
                 SettingsPage::class,
@@ -55,6 +58,7 @@ class DashedCorePlugin implements Plugin
                 AISettingsPage::class,
                 ReviewSettingsPage::class,
                 ClaudeSettingsPage::class,
+                ExportSettingsPage::class,
             ])
             ->widgets([
                 WelcomeWidget::class,

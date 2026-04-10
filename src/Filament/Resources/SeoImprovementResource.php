@@ -14,6 +14,7 @@ use Dashed\DashedCore\Classes\Locales;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Notifications\Notification;
+use Dashed\DashedCore\Classes\ClaudeHelper;
 use Dashed\DashedCore\Jobs\AnalyzeSeoJob;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
@@ -38,6 +39,11 @@ class SeoImprovementResource extends Resource
     protected static ?int $navigationSort = 10;
 
     protected static bool $isGloballySearchable = false;
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return ClaudeHelper::isConnected();
+    }
 
     public static function form(Schema $schema): Schema
     {
