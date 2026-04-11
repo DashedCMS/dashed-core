@@ -23,6 +23,7 @@ use Dashed\DashedCore\Filament\Resources\Reviews\ReviewResource;
 use Dashed\DashedCore\Filament\Resources\SeoImprovementResource;
 use Dashed\DashedCore\Filament\Pages\Settings\ClaudeSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\ExportSettingsPage;
+use Dashed\DashedCore\Filament\Pages\Performance\WebVitalsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\ReviewSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\SearchSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\AccountSettingsPage;
@@ -63,6 +64,7 @@ class DashedCorePlugin implements Plugin
                 ClaudeSettingsPage::class,
                 ExportSettingsPage::class,
                 EmailSettingsPage::class,
+                WebVitalsPage::class,
             ])
             ->widgets([
                 WelcomeWidget::class,
