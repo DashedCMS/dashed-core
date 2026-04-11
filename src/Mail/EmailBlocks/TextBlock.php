@@ -25,7 +25,6 @@ class TextBlock extends EmailBlock
             ->schema([
                 RichEditor::make('body')
                     ->label('Inhoud')
-                    ->helperText('Gebruik {{ variabele }} voor dynamische inhoud')
                     ->required(),
             ]);
     }

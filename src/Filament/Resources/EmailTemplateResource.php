@@ -8,12 +8,14 @@ use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
+use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Builder;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\Placeholder;
 use Dashed\DashedCore\Models\EmailTemplate;
 use Dashed\DashedCore\Mail\EmailBlocks\EmailBlock;
 use Dashed\DashedCore\Filament\Resources\EmailTemplateResource\Pages\EditEmailTemplate;
@@ -38,6 +40,17 @@ class EmailTemplateResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->schema([
+            Section::make('Beschikbare variabelen')
+                ->description('Gebruik deze variabelen in onderwerp en tekstblokken. Ze worden vervangen door de echte waarde bij verzenden.')
+                ->schema([
+                    Placeholder::make('available_variables')
+                        ->hiddenLabel()
+                        ->content(fn ($record) => self::availableVariablesList($record))
+                        ->columnSpanFull(),
+                ])
+                ->visible(fn ($record) => $record && cms()->emailTemplateRegistry()->find($record->mailable_key))
+                ->columnSpanFull(),
+
             Section::make('Algemeen')
                 ->schema([
                     TextInput::make('name')
@@ -50,11 +63,17 @@ class EmailTemplateResource extends Resource
                         ->dehydrated(false),
                     TextInput::make('subject')
                         ->label('Onderwerp')
-                        ->helperText(fn ($record) => self::variableHint($record))
                         ->required()
                         ->columnSpanFull(),
-                    TextInput::make('from_name')->label('Afzender naam'),
-                    TextInput::make('from_email')->label('Afzender e-mail')->email(),
+                    TextInput::make('from_name')
+                        ->label('Afzender naam')
+                        ->placeholder(fn () => \Dashed\DashedCore\Models\Customsetting::get('site_name'))
+                        ->helperText('Laat leeg om de standaard afzendernaam uit de site instellingen te gebruiken.'),
+                    TextInput::make('from_email')
+                        ->label('Afzender e-mail')
+                        ->email()
+                        ->placeholder(fn () => \Dashed\DashedCore\Models\Customsetting::get('site_from_email'))
+                        ->helperText('Laat leeg om het standaard afzenderadres uit de site instellingen te gebruiken.'),
                     Toggle::make('is_active')->label('Actief')->columnSpanFull(),
                 ])
                 ->columns(2)
@@ -73,18 +92,25 @@ class EmailTemplateResource extends Resource
         ]);
     }
 
-    protected static function variableHint($record): string
+    protected static function availableVariablesList($record): HtmlString
     {
         if (! $record) {
-            return '';
+            return new HtmlString('');
         }
         $mailable = cms()->emailTemplateRegistry()->find($record->mailable_key);
         if (! $mailable) {
-            return '';
+            return new HtmlString('');
         }
         $vars = $mailable::availableVariables();
+        if (empty($vars)) {
+            return new HtmlString('<em>Geen variabelen beschikbaar voor deze mailable.</em>');
+        }
 
-        return $vars ? 'Beschikbaar: ' . collect($vars)->map(fn ($v) => '{{ ' . $v . ' }}')->join(', ') : '';
+        $text = collect($vars)
+            ->map(fn ($v) => ':' . $v . ':')
+            ->join(', ');
+
+        return new HtmlString(e($text));
     }
 
     /** @return array<int, \Filament\Forms\Components\Builder\Block> */

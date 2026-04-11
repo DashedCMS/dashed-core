@@ -45,6 +45,7 @@ use Dashed\DashedCore\Filament\Pages\Settings\SEOSettingsPage;
 use Dashed\DashedCore\Livewire\Infolists\SEO\SEOScoreInfoList;
 use Dashed\DashedCore\Filament\Widgets\NotFoundPageGlobalStats;
 use Dashed\DashedCore\Filament\Pages\Settings\CacheSettingsPage;
+use Dashed\DashedCore\Filament\Pages\Settings\EmailSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
 use Dashed\DashedCore\Classes\RichEditorPlugins\MediaEmbedPlugin;
 use Dashed\DashedCore\Classes\RichEditorPlugins\VideoEmbedPlugin;
@@ -73,6 +74,11 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             ->emailBlock('image', \Dashed\DashedCore\Mail\EmailBlocks\ImageBlock::class)
             ->emailBlock('divider', \Dashed\DashedCore\Mail\EmailBlocks\DividerBlock::class)
             ->emailBlock('order-summary', \Dashed\DashedCore\Mail\EmailBlocks\OrderSummaryBlock::class);
+
+        cms()
+            ->registerMailable(\Dashed\DashedCore\Mail\NotificationMail::class)
+            ->registerMailable(\Dashed\DashedCore\Mail\PasswordResetMail::class)
+            ->registerMailable(\Dashed\DashedCore\Mail\NewAdminAccountMail::class);
 
         Model::unguard();
 
@@ -574,6 +580,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         cms()->registerSettingsPage(AISettingsPage::class, 'AI (OpenAI)', 'magnifying-glass', 'AI instellingen van de website');
         cms()->registerSettingsPage(ClaudeSettingsPage::class, 'Claude AI', 'sparkles', 'Claude AI instellingen, merkbeschrijving en schrijfstijl');
         cms()->registerSettingsPage(ExportSettingsPage::class, 'Exports', 'document-arrow-down', 'Bewaartermijn van exports instellen');
+        cms()->registerSettingsPage(EmailSettingsPage::class, 'E-mail', 'envelope', 'Kleuren en styling van verzonden e-mails');
         cms()->registerSettingsPage(ReviewSettingsPage::class, 'Review', 'star', 'Review instellingen van de website');
 
         $package

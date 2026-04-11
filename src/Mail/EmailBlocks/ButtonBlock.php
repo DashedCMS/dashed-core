@@ -36,8 +36,8 @@ class ButtonBlock extends EmailBlock
         return view('dashed-core::emails.blocks.button', [
             'label' => self::substitute($blockData['label'] ?? '', $context),
             'url' => self::substitute($blockData['url'] ?? '#', $context),
-            'background' => $blockData['background'] ?? '#111827',
-            'color' => $blockData['color'] ?? '#ffffff',
+            'background' => self::substitute($blockData['background'] ?? '#111827', $context),
+            'color' => self::substitute($blockData['color'] ?? '#ffffff', $context),
         ])->render();
     }
 }

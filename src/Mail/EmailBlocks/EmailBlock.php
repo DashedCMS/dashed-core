@@ -16,8 +16,8 @@ abstract class EmailBlock
 
     protected static function substitute(string $text, array $context): string
     {
-        return preg_replace_callback('/\{\{\s*(\w+)\s*\}\}/', function ($m) use ($context) {
-            return (string) ($context[$m[1]] ?? '');
+        return preg_replace_callback('/:(\w+):/', function ($m) use ($context) {
+            return array_key_exists($m[1], $context) ? (string) $context[$m[1]] : $m[0];
         }, $text);
     }
 }

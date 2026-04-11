@@ -31,15 +31,24 @@ class EditEmailTemplate extends EditRecord
                     $record = $this->getRecord();
                     $mailableClass = cms()->emailTemplateRegistry()->find($record->mailable_key);
 
-                    $context = $mailableClass ? $mailableClass::sampleData() : [];
-                    $renderer = app(EmailRenderer::class);
-                    $html = $renderer->render($record, $context);
-                    $subject = $renderer->renderSubject($record, $context) ?: $record->name;
+                    $mailable = null;
+                    if ($mailableClass && method_exists($mailableClass, 'makeForTest')) {
+                        $mailable = $mailableClass::makeForTest();
+                    }
 
-                    Mail::html($html, function ($message) use ($data, $subject) {
-                        $message->to($data['recipient'])
-                            ->subject('[TEST] ' . $subject);
-                    });
+                    if ($mailable) {
+                        Mail::to($data['recipient'])->send($mailable);
+                    } else {
+                        $context = $mailableClass ? $mailableClass::sampleData() : [];
+                        $renderer = app(EmailRenderer::class);
+                        $html = $renderer->render($record, $context);
+                        $subject = $renderer->renderSubject($record, $context) ?: $record->name;
+
+                        Mail::html($html, function ($message) use ($data, $subject) {
+                            $message->to($data['recipient'])
+                                ->subject('[TEST] ' . $subject);
+                        });
+                    }
 
                     Notification::make()
                         ->title('Test mail verzonden naar ' . $data['recipient'])
