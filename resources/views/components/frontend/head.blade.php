@@ -18,6 +18,35 @@
     $ogSiteName = $siteName ?? config('app.name');
 ?>
 
+@if(config('dashed-core.performance.web_vitals_enabled'))
+    @php
+        $perfSiteId = (int) (\Dashed\DashedCore\Classes\Sites::getActive() ?? 0);
+    @endphp
+    <script>window.dashedSiteId = {{ $perfSiteId }};</script>
+    <script type="module">
+        import { onLCP, onCLS, onINP, onFCP, onTTFB } from 'https://unpkg.com/web-vitals@4?module';
+
+        const ENDPOINT = '/_dashed/perf/vitals';
+
+        const beacon = (metric) => {
+            if (typeof navigator === 'undefined' || typeof navigator.sendBeacon !== 'function') return;
+            const payload = JSON.stringify({
+                name: metric.name,
+                value: metric.value,
+                rating: metric.rating,
+                url: window.location.pathname,
+                device: /Mobi/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
+                site: window.dashedSiteId || null,
+            });
+            try {
+                navigator.sendBeacon(ENDPOINT, new Blob([payload], { type: 'application/json' }));
+            } catch (e) {}
+        };
+
+        [onLCP, onCLS, onINP, onFCP, onTTFB].forEach(fn => fn(beacon));
+    </script>
+@endif
+
 @if(app()->isProduction())
     @if($gtmId)
         <script>
