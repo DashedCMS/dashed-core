@@ -25,6 +25,8 @@ use Filament\Schemas\Components\Utilities\Get;
 use Guava\FilamentIconPicker\Forms\IconPicker;
 use Dashed\DashedCore\Commands\CreateAdminUser;
 use Dashed\DashedCore\Commands\CleanupOldExports;
+use Dashed\DashedCore\Commands\AggregateWebVitalsCommand;
+use Dashed\DashedCore\Commands\PruneWebVitalsCommand;
 use Dashed\DashedCore\Commands\SyncGoogleReviews;
 use Dashed\DashedCore\Commands\CreateDefaultPages;
 use Dashed\DashedCore\Commands\MigrateDatabaseToV4;
@@ -171,6 +173,8 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             $schedule->command(SyncGoogleReviews::class)->twiceDaily();
             $schedule->command(AutomaticlyCreateAltTextsForAllMediaItems::class)->daily();
             //            $schedule->command(SeoScan::class)->daily();
+            $schedule->command(AggregateWebVitalsCommand::class)->dailyAt('03:00');
+            $schedule->command(PruneWebVitalsCommand::class)->dailyAt('03:15');
         });
 
         if (! $this->app->environment('production')) {
@@ -629,6 +633,8 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                 AutomaticlyCreateAltTextsForAllMediaItems::class,
                 MigrateToV4::class,
                 MigrateDatabaseToV4::class,
+                AggregateWebVitalsCommand::class,
+                PruneWebVitalsCommand::class,
             ]);
 
     }
