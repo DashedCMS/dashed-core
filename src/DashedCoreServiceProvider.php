@@ -67,6 +67,13 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         $this->app->singleton(\Dashed\DashedCore\Mail\EmailTemplateRegistry::class);
         $this->app->singleton(\Dashed\DashedCore\Mail\EmailRenderer::class);
 
+        $this->app->scoped(
+            \Dashed\DashedCore\Performance\Images\ImagePriorityTracker::class
+        );
+        $this->app->scoped(
+            \Dashed\DashedCore\Performance\Scripts\DeferredScriptStore::class
+        );
+
         cms()
             ->emailBlock('heading', \Dashed\DashedCore\Mail\EmailBlocks\HeadingBlock::class)
             ->emailBlock('text', \Dashed\DashedCore\Mail\EmailBlocks\TextBlock::class)
