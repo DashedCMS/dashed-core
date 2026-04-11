@@ -66,17 +66,25 @@
     @endif
 
     @if($gaId)
-        <script async src="https://www.googletagmanager.com/gtag/js?id={{ $gaId }}"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-
-            function gtag() {
-                dataLayer.push(arguments);
-            }
-
-            gtag('js', new Date());
-            gtag('config', '{{ $gaId }}');
-        </script>
+        @if(config('dashed-core.performance.defer_third_party_scripts'))
+            <script async src="https://www.googletagmanager.com/gtag/js?id={{ $gaId }}"></script>
+            @php
+                app(\Dashed\DashedCore\Performance\Scripts\DeferredScriptStore::class)->add('ga-config',
+                    "window.dataLayer = window.dataLayer || [];\n" .
+                    "function gtag(){dataLayer.push(arguments);}\n" .
+                    "gtag('js', new Date());\n" .
+                    "gtag('config', '" . $gaId . "');"
+                );
+            @endphp
+        @else
+            <script async src="https://www.googletagmanager.com/gtag/js?id={{ $gaId }}"></script>
+            <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag() { dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', '{{ $gaId }}');
+            </script>
+        @endif
     @endif
 @endif
 
@@ -196,37 +204,48 @@
 {!! $slot !!}
 
 @if($facebookEnabled)
-    <script>
-        !function (f, b, e, v, n, t, s) {
-            if (f.fbq) return;
-            n = f.fbq = function () {
-                n.callMethod
-                    ? n.callMethod.apply(n, arguments)
-                    : n.queue.push(arguments);
-            };
-            if (!f._fbq) f._fbq = n;
-            n.push = n;
-            n.loaded = !0;
-            n.version = '2.0';
-            n.queue = [];
-            t = b.createElement(e);
-            t.async = !0;
-            t.src = v;
-            s = b.getElementsByTagName(e)[0];
-            s.parentNode.insertBefore(t, s);
-        }(window, document, 'script',
-            'https://connect.facebook.net/en_US/fbevents.js');
+    @if(config('dashed-core.performance.defer_third_party_scripts'))
+        @php
+            $fbIds = array_filter([$fbConversionId, $fbSiteId]);
+            $fbInits = implode("\n", array_map(fn($id) => "fbq('init', '{$id}');", $fbIds));
+            $fbScript = "!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');\n" .
+                $fbInits . "\n" .
+                "fbq('track', 'PageView');";
+            app(\Dashed\DashedCore\Performance\Scripts\DeferredScriptStore::class)->add('facebook-pixel', $fbScript);
+        @endphp
+    @else
+        <script>
+            !function (f, b, e, v, n, t, s) {
+                if (f.fbq) return;
+                n = f.fbq = function () {
+                    n.callMethod
+                        ? n.callMethod.apply(n, arguments)
+                        : n.queue.push(arguments);
+                };
+                if (!f._fbq) f._fbq = n;
+                n.push = n;
+                n.loaded = !0;
+                n.version = '2.0';
+                n.queue = [];
+                t = b.createElement(e);
+                t.async = !0;
+                t.src = v;
+                s = b.getElementsByTagName(e)[0];
+                s.parentNode.insertBefore(t, s);
+            }(window, document, 'script',
+                'https://connect.facebook.net/en_US/fbevents.js');
 
-        @if($fbConversionId)
-        fbq('init', '{{ $fbConversionId }}');
-        @endif
+            @if($fbConversionId)
+            fbq('init', '{{ $fbConversionId }}');
+            @endif
 
-        @if($fbSiteId)
-        fbq('init', '{{ $fbSiteId }}');
-        @endif
+            @if($fbSiteId)
+            fbq('init', '{{ $fbSiteId }}');
+            @endif
 
-        fbq('track', 'PageView');
-    </script>
+            fbq('track', 'PageView');
+        </script>
+    @endif
 
     @if($fbConversionId)
         <noscript>
