@@ -73,9 +73,11 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         $this->app->singleton(\Dashed\DashedCore\Mail\EmailTemplateRegistry::class);
         $this->app->singleton(\Dashed\DashedCore\Mail\EmailRenderer::class);
 
-        $this->app->scoped(
-            \Dashed\DashedCore\Performance\Images\ImagePriorityTracker::class
-        );
+        $this->app->scoped(\Dashed\DashedCore\Performance\Images\ImagePriorityTracker::class, function () {
+            return new \Dashed\DashedCore\Performance\Images\ImagePriorityTracker(
+                firstEagerCount: (int) config('dashed-core.performance.lazy_images_first_eager_count', 3),
+            );
+        });
         $this->app->scoped(
             \Dashed\DashedCore\Performance\Scripts\DeferredScriptStore::class
         );
