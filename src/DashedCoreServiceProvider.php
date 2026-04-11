@@ -64,6 +64,10 @@ class DashedCoreServiceProvider extends PackageServiceProvider
 
     public function bootingPackage()
     {
+        if (file_exists(__DIR__ . '/../routes/api.php')) {
+            $this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
+        }
+
         $this->app->singleton(\Dashed\DashedCore\Mail\EmailTemplateRegistry::class);
         $this->app->singleton(\Dashed\DashedCore\Mail\EmailRenderer::class);
 
