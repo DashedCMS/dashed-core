@@ -1,10 +1,10 @@
-@php(cms()->checkModelPassword($model ?? null))
-
-@if(is_numeric(seo()->metaData('metaImage')))
-    @php(seo()->metaData('metaImage', mediaHelper()->getSingleMedia(seo()->metaData('metaImage'), 'original')->url ?? ''))
-@endif
-
 <?php
+    cms()->checkModelPassword($model ?? null);
+
+    if (is_numeric(seo()->metaData('metaImage'))) {
+        seo()->metaData('metaImage', mediaHelper()->getSingleMedia(seo()->metaData('metaImage'), 'original')->url ?? '');
+    }
+?><?php
     $tracking = $trackingSettings ?? [];
 
     $gtmId = $tracking['google_tagmanager_id'] ?? null;
@@ -123,12 +123,16 @@
 <title>{{ seo()->metaData('metaTitle') }}</title>
 
 @isset($model)
-    @php($hreflangLocales = \Dashed\DashedCore\Classes\Locales::getLocales())
+    @php
+        $hreflangLocales = \Dashed\DashedCore\Classes\Locales::getLocales();
+    @endphp
     @if(count($hreflangLocales) > 1)
         <link rel="alternate" hreflang="x-default"
               href="{{ $model->getUrl($hreflangLocales[0]['id'], false) }}"/>
         @foreach($hreflangLocales as $locale)
-            @php($hreflangCode = !empty($locale['regional']) ? str_replace('_', '-', $locale['regional']) : $locale['id'])
+            @php
+                $hreflangCode = !empty($locale['regional']) ? str_replace('_', '-', $locale['regional']) : $locale['id'];
+            @endphp
             <link rel="alternate" hreflang="{{ $hreflangCode }}" href="{{ $model->getUrl($locale['id'], false) }}"/>
         @endforeach
     @endif
