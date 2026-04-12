@@ -92,45 +92,28 @@
 
 
 @if($favicon)
-    <link rel="apple-touch-icon" sizes="57x57" href="{{ mediaHelper()->getSingleMedia($favicon, [
-    'fit' => [57,57]
-])->url ?? '' }}">
-    <link rel="apple-touch-icon" sizes="60x60" href="{{ mediaHelper()->getSingleMedia($favicon, [
-    'fit' => [60,60]
-])->url ?? '' }}">
-    <link rel="apple-touch-icon" sizes="72x72" href="{{ mediaHelper()->getSingleMedia($favicon, [
-    'fit' => [72,72]
-])->url ?? '' }}">
-    <link rel="apple-touch-icon" sizes="76x76" href="{{ mediaHelper()->getSingleMedia($favicon, [
-    'fit' => [76,76]
-])->url ?? '' }}">
-    <link rel="apple-touch-icon" sizes="114x114" href="{{ mediaHelper()->getSingleMedia($favicon, [
-    'fit' => [114,114]
-])->url ?? '' }}">
-    <link rel="apple-touch-icon" sizes="120x120" href="{{ mediaHelper()->getSingleMedia($favicon, [
-    'fit' => [120,120]
-])->url ?? '' }}">
-    <link rel="apple-touch-icon" sizes="144x144" href="{{ mediaHelper()->getSingleMedia($favicon, [
-    'fit' => [144,144]
-])->url ?? '' }}">
-    <link rel="apple-touch-icon" sizes="152x152" href="{{ mediaHelper()->getSingleMedia($favicon, [
-    'fit' => [152,152]
-])->url ?? '' }}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ mediaHelper()->getSingleMedia($favicon, [
-    'fit' => [180,180]
-])->url ?? '' }}">
-    <link rel="icon" type="image/png" sizes="192x192" href="{{ mediaHelper()->getSingleMedia($favicon, [
-    'fit' => [192,192]
-])->url ?? '' }}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ mediaHelper()->getSingleMedia($favicon, [
-    'fit' => [32,32]
-])->url ?? '' }}">
-    <link rel="icon" type="image/png" sizes="96x96" href="{{ mediaHelper()->getSingleMedia($favicon, [
-    'fit' => [96,96]
-])->url ?? '' }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ mediaHelper()->getSingleMedia($favicon, [
-    'fit' => [16,16]
-])->url ?? '' }}">
+    @php
+        $siteId = (int) (\Dashed\DashedCore\Classes\Sites::getActive() ?? 0);
+        $faviconDir = "/favicons/{$siteId}";
+        $faviconDirExists = $siteId > 0 && file_exists(public_path("favicons/{$siteId}"));
+    @endphp
+
+    @if($faviconDirExists)
+        <link rel="apple-touch-icon" sizes="57x57" href="{{ $faviconDir }}/favicon-57.png">
+        <link rel="apple-touch-icon" sizes="60x60" href="{{ $faviconDir }}/favicon-60.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="{{ $faviconDir }}/favicon-72.png">
+        <link rel="apple-touch-icon" sizes="76x76" href="{{ $faviconDir }}/favicon-76.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="{{ $faviconDir }}/favicon-114.png">
+        <link rel="apple-touch-icon" sizes="120x120" href="{{ $faviconDir }}/favicon-120.png">
+        <link rel="apple-touch-icon" sizes="144x144" href="{{ $faviconDir }}/favicon-144.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="{{ $faviconDir }}/favicon-152.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ $faviconDir }}/favicon-180.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ $faviconDir }}/favicon-16.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ $faviconDir }}/favicon-32.png">
+        <link rel="icon" type="image/png" sizes="96x96" href="{{ $faviconDir }}/favicon-96.png">
+        <link rel="icon" type="image/png" sizes="128x128" href="{{ $faviconDir }}/favicon-128.png">
+        <link rel="icon" type="image/png" sizes="192x192" href="{{ $faviconDir }}/favicon-192.png">
+    @endif
 @endif
 
 @if(isset($model))

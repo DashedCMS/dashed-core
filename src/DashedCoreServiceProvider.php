@@ -26,6 +26,7 @@ use Guava\FilamentIconPicker\Forms\IconPicker;
 use Dashed\DashedCore\Commands\CreateAdminUser;
 use Dashed\DashedCore\Commands\CleanupOldExports;
 use Dashed\DashedCore\Commands\AggregateWebVitalsCommand;
+use Dashed\DashedCore\Commands\GenerateFaviconsCommand;
 use Dashed\DashedCore\Commands\PruneWebVitalsCommand;
 use Dashed\DashedCore\Commands\SyncGoogleReviews;
 use Dashed\DashedCore\Commands\CreateDefaultPages;
@@ -637,6 +638,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                 MigrateDatabaseToV4::class,
                 AggregateWebVitalsCommand::class,
                 PruneWebVitalsCommand::class,
+                GenerateFaviconsCommand::class,
             ]);
 
     }
