@@ -21,7 +21,6 @@ use Dashed\DashedCore\Filament\Pages\Settings\CacheSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\EmailSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
 use Dashed\DashedCore\Filament\Resources\Reviews\ReviewResource;
-use Dashed\DashedCore\Filament\Resources\SeoImprovementResource;
 use Dashed\DashedCore\Filament\Pages\Settings\ClaudeSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\ExportSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\ReviewSettingsPage;
@@ -46,7 +45,6 @@ class DashedCorePlugin implements Plugin
                 NotFoundPageResource::class,
                 GlobalBlockResource::class,
                 ReviewResource::class,
-                SeoImprovementResource::class,
                 ExportResource::class,
                 EmailTemplateResource::class,
             ])

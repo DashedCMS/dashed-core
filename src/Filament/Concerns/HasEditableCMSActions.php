@@ -12,7 +12,6 @@ use Filament\Notifications\Notification;
 use Dashed\DashedCore\Models\GlobalBlock;
 use Filament\Infolists\Components\TextEntry;
 use LaraZeus\SpatieTranslatable\Actions\LocaleSwitcher;
-use Dashed\DashedCore\Filament\Actions\AnalyzeSeoAction;
 use Dashed\DashedTranslations\Classes\AutomatedTranslation;
 use LaraZeus\SpatieTranslatable\Resources\Pages\EditRecord\Concerns\Translatable;
 
@@ -129,14 +128,6 @@ trait HasEditableCMSActions
             ->action('duplicate')
             ->icon('heroicon-o-document-duplicate')
             ->color('warning');
-
-        $groupedActions[] = AnalyzeSeoAction::make();
-
-        if (class_exists(\Dashed\DashedArticles\Filament\Actions\GenerateArticleAction::class)
-            && class_exists(\Dashed\DashedArticles\Models\Article::class)
-            && $this->record instanceof \Dashed\DashedArticles\Models\Article) {
-            $groupedActions[] = \Dashed\DashedArticles\Filament\Actions\GenerateArticleAction::make();
-        }
 
         $groupedActions[] = self::translateAction();
         $groupedActions[] = self::copyAction();

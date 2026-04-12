@@ -6,25 +6,16 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Illuminate\Support\Facades\Schema;
 use Filament\Actions\RestoreBulkAction;
-use Dashed\DashedCore\Classes\ClaudeHelper;
 use Filament\Actions\ForceDeleteBulkAction;
 use Dashed\DashedCore\Classes\Actions\SetPublicAction;
 use Dashed\DashedCore\Classes\Actions\TranslateAction;
 use Dashed\DashedCore\Classes\Actions\SetNotPublicAction;
 use Dashed\DashedTranslations\Classes\AutomatedTranslation;
-use Dashed\DashedCore\Filament\Actions\BulkAnalyzeSeoAction;
-
 class ToolbarActions
 {
     public static function getActions(array $actions = []): array
     {
         return array_merge($actions, [
-            BulkActionGroup::make([
-                BulkAnalyzeSeoAction::make(),
-            ])
-                ->visible(fn () => ClaudeHelper::isConnected())
-                ->icon('heroicon-o-sparkles')
-                ->label('SEO'),
             BulkActionGroup::make([
                 DeleteBulkAction::make(),
                 RestoreBulkAction::make()
