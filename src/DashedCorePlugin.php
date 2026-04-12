@@ -2,31 +2,31 @@
 
 namespace Dashed\DashedCore;
 
-use Filament\Panel;
-use Filament\Contracts\Plugin;
-use Dashed\DashedCore\Filament\Widgets\WelcomeWidget;
-use Dashed\DashedCore\Filament\Resources\RoleResource;
-use Dashed\DashedCore\Filament\Resources\UserResource;
-use Dashed\DashedCore\Filament\Resources\ExportResource;
-use Dashed\DashedCore\Filament\Pages\Settings\HorizonPage;
-use Dashed\DashedCore\Filament\Resources\RedirectResource;
-use Dashed\DashedCore\Filament\Pages\Settings\SettingsPage;
-use Dashed\DashedCore\Filament\Pages\Settings\AISettingsPage;
-use Dashed\DashedCore\Filament\Resources\GlobalBlockResource;
-use Dashed\DashedCore\Filament\Pages\Settings\SEOSettingsPage;
-use Dashed\DashedCore\Filament\Resources\NotFoundPageResource;
 use Dashed\DashedCore\Filament\Pages\Performance\WebVitalsPage;
-use Dashed\DashedCore\Filament\Resources\EmailTemplateResource;
+use Dashed\DashedCore\Filament\Pages\Settings\AccountSettingsPage;
+use Dashed\DashedCore\Filament\Pages\Settings\AISettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\CacheSettingsPage;
-use Dashed\DashedCore\Filament\Pages\Settings\EmailSettingsPage;
-use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
-use Dashed\DashedCore\Filament\Resources\Reviews\ReviewResource;
 use Dashed\DashedCore\Filament\Pages\Settings\ClaudeSettingsPage;
+use Dashed\DashedCore\Filament\Pages\Settings\EmailSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\ExportSettingsPage;
+use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
+use Dashed\DashedCore\Filament\Pages\Settings\HorizonDashboardPage;
+use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\ReviewSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\SearchSettingsPage;
-use Dashed\DashedCore\Filament\Pages\Settings\AccountSettingsPage;
-use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
+use Dashed\DashedCore\Filament\Pages\Settings\SEOSettingsPage;
+use Dashed\DashedCore\Filament\Pages\Settings\SettingsPage;
+use Dashed\DashedCore\Filament\Resources\EmailTemplateResource;
+use Dashed\DashedCore\Filament\Resources\ExportResource;
+use Dashed\DashedCore\Filament\Resources\GlobalBlockResource;
+use Dashed\DashedCore\Filament\Resources\NotFoundPageResource;
+use Dashed\DashedCore\Filament\Resources\RedirectResource;
+use Dashed\DashedCore\Filament\Resources\Reviews\ReviewResource;
+use Dashed\DashedCore\Filament\Resources\RoleResource;
+use Dashed\DashedCore\Filament\Resources\UserResource;
+use Dashed\DashedCore\Filament\Widgets\WelcomeWidget;
+use Filament\Contracts\Plugin;
+use Filament\Panel;
 
 class DashedCorePlugin implements Plugin
 {
@@ -54,7 +54,7 @@ class DashedCorePlugin implements Plugin
                 SEOSettingsPage::class,
                 ImageSettingsPage::class,
                 CacheSettingsPage::class,
-                HorizonPage::class,
+                HorizonDashboardPage::class,
                 AccountSettingsPage::class,
                 SearchSettingsPage::class,
                 AISettingsPage::class,
@@ -71,7 +71,5 @@ class DashedCorePlugin implements Plugin
             ]);
     }
 
-    public function boot(Panel $panel): void
-    {
-    }
+    public function boot(Panel $panel): void {}
 }
