@@ -2,12 +2,12 @@
 
 namespace Dashed\DashedCore\Performance\WebVitals;
 
-use Dashed\DashedCore\Models\WebVital;
 use Illuminate\Bus\Queueable;
+use Dashed\DashedCore\Models\WebVital;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 
 class StoreVitalsJob implements ShouldQueue
 {
@@ -20,7 +20,9 @@ class StoreVitalsJob implements ShouldQueue
 
     public array $backoff = [10, 30, 60];
 
-    public function __construct(public array $payload) {}
+    public function __construct(public array $payload)
+    {
+    }
 
     public function handle(): void
     {

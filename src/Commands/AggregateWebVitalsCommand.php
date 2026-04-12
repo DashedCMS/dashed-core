@@ -2,9 +2,9 @@
 
 namespace Dashed\DashedCore\Commands;
 
+use Illuminate\Console\Command;
 use Dashed\DashedCore\Models\WebVital;
 use Dashed\DashedCore\Models\WebVitalDaily;
-use Illuminate\Console\Command;
 
 class AggregateWebVitalsCommand extends Command
 {

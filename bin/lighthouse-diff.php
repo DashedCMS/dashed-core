@@ -42,7 +42,8 @@ foreach ($metrics as $label => $path) {
     $delta = $b - $a;
     $arrow = $label === 'score' ? ($delta >= 0 ? '↑' : '↓') : ($delta <= 0 ? '↑' : '↓');
 
-    printf("%-15s %15s %15s %14s%s\n",
+    printf(
+        "%-15s %15s %15s %14s%s\n",
         $label,
         number_format((float) $a, $label === 'score' ? 2 : 0),
         number_format((float) $b, $label === 'score' ? 2 : 0),

@@ -8,7 +8,8 @@ class ImagePriorityTracker
 
     public function __construct(
         public readonly int $firstEagerCount = 3,
-    ) {}
+    ) {
+    }
 
     public function next(): string
     {

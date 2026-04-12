@@ -2,10 +2,10 @@
 
 namespace Dashed\DashedCore\Filament\Pages\Performance;
 
-use BackedEnum;
-use Dashed\DashedCore\Models\WebVitalDaily;
-use Filament\Pages\Page;
 use UnitEnum;
+use BackedEnum;
+use Filament\Pages\Page;
+use Dashed\DashedCore\Models\WebVitalDaily;
 
 class WebVitalsPage extends Page
 {

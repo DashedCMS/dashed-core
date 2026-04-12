@@ -2,8 +2,8 @@
 
 namespace Dashed\DashedCore\Commands;
 
-use Dashed\DashedCore\Models\WebVital;
 use Illuminate\Console\Command;
+use Dashed\DashedCore\Models\WebVital;
 
 class PruneWebVitalsCommand extends Command
 {

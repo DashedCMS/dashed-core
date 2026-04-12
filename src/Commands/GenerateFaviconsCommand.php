@@ -2,10 +2,10 @@
 
 namespace Dashed\DashedCore\Commands;
 
-use Dashed\DashedCore\Classes\Sites;
-use Dashed\DashedCore\Models\Customsetting;
 use Illuminate\Console\Command;
+use Dashed\DashedCore\Classes\Sites;
 use Illuminate\Support\Facades\File;
+use Dashed\DashedCore\Models\Customsetting;
 
 class GenerateFaviconsCommand extends Command
 {
@@ -29,12 +29,14 @@ class GenerateFaviconsCommand extends Command
             $faviconId = Customsetting::get('site_favicon', $siteId);
             if (! $faviconId) {
                 $this->warn("Site {$siteId}: no favicon set, skipping");
+
                 continue;
             }
 
             $media = mediaHelper()->getSingleMedia($faviconId);
             if (! $media) {
                 $this->warn("Site {$siteId}: favicon media not found");
+
                 continue;
             }
 
@@ -55,6 +57,7 @@ class GenerateFaviconsCommand extends Command
 
             if (! $sourcePath || ! file_exists($sourcePath)) {
                 $this->warn("Site {$siteId}: favicon file missing on disk");
+
                 continue;
             }
 
