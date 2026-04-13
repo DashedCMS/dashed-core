@@ -2,23 +2,23 @@
 
 namespace Dashed\DashedCore\Filament\Pages\Settings;
 
+use UnitEnum;
 use BackedEnum;
-use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonFailedJobsTable;
-use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonOverviewStats;
-use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonQueueStats;
-use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonThroughputChart;
-use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonWaitTimeChart;
-use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
-use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
-use Laravel\Horizon\Contracts\MasterSupervisorRepository;
-use Laravel\Horizon\Contracts\SupervisorRepository;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Laravel\Horizon\MasterSupervisor;
-use UnitEnum;
+use Illuminate\Support\Facades\Artisan;
+use Filament\Notifications\Notification;
+use Laravel\Horizon\Contracts\SupervisorRepository;
+use Laravel\Horizon\Contracts\MasterSupervisorRepository;
+use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonQueueStats;
+use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonOverviewStats;
+use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonWaitTimeChart;
+use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonFailedJobsTable;
+use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonThroughputChart;
 
 class HorizonDashboardPage extends Page
 {

@@ -11,6 +11,7 @@ use Dashed\DashedCore\Classes\Actions\SetPublicAction;
 use Dashed\DashedCore\Classes\Actions\TranslateAction;
 use Dashed\DashedCore\Classes\Actions\SetNotPublicAction;
 use Dashed\DashedTranslations\Classes\AutomatedTranslation;
+
 class ToolbarActions
 {
     public static function getActions(array $actions = []): array

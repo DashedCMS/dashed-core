@@ -2,9 +2,9 @@
 
 namespace Dashed\DashedCore\Filament\Widgets\Horizon;
 
-use Filament\Notifications\Notification;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Artisan;
+use Filament\Notifications\Notification;
 use Laravel\Horizon\Contracts\JobRepository;
 
 class HorizonFailedJobsTable extends Widget

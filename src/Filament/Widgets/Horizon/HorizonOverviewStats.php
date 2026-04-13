@@ -3,8 +3,8 @@
 namespace Dashed\DashedCore\Filament\Widgets\Horizon;
 
 use Filament\Widgets\StatsOverviewWidget;
-use Filament\Widgets\StatsOverviewWidget\Stat;
 use Laravel\Horizon\Contracts\JobRepository;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 use Laravel\Horizon\Contracts\MetricsRepository;
 
 class HorizonOverviewStats extends StatsOverviewWidget

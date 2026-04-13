@@ -2,96 +2,93 @@
 
 namespace Dashed\DashedCore;
 
-use App\Providers\AppServiceProvider;
-use Dashed\DashedCore\Classes\Locales;
-use Dashed\DashedCore\Classes\RichEditorPlugins\HtmlIdPlugin;
-use Dashed\DashedCore\Classes\RichEditorPlugins\MediaEmbedPlugin;
-use Dashed\DashedCore\Classes\RichEditorPlugins\VideoEmbedPlugin;
-use Dashed\DashedCore\Commands\AggregateWebVitalsCommand;
-use Dashed\DashedCore\Commands\AutomaticlyCreateAltTextsForAllMediaItems;
-use Dashed\DashedCore\Commands\CleanupOldExports;
-use Dashed\DashedCore\Commands\CreateAdminUser;
-use Dashed\DashedCore\Commands\CreateDefaultPages;
-use Dashed\DashedCore\Commands\CreateSitemap;
-use Dashed\DashedCore\Commands\CreateVisitableModel;
-use Dashed\DashedCore\Commands\GenerateFaviconsCommand;
-use Dashed\DashedCore\Commands\InstallCommand;
-use Dashed\DashedCore\Commands\InvalidatePasswordResetTokens;
-use Dashed\DashedCore\Commands\MigrateDatabaseToV4;
-use Dashed\DashedCore\Commands\MigrateToV4;
-use Dashed\DashedCore\Commands\PruneWebVitalsCommand;
-use Dashed\DashedCore\Commands\ReplaceEditorStringsInFiles;
-use Dashed\DashedCore\Commands\SyncGoogleReviews;
-use Dashed\DashedCore\Commands\UpdateCommand;
-use Dashed\DashedCore\Filament\Pages\Settings\AccountSettingsPage;
-use Dashed\DashedCore\Filament\Pages\Settings\AISettingsPage;
-use Dashed\DashedCore\Filament\Pages\Settings\CacheSettingsPage;
-use Dashed\DashedCore\Filament\Pages\Settings\ClaudeSettingsPage;
-use Dashed\DashedCore\Filament\Pages\Settings\EmailSettingsPage;
-use Dashed\DashedCore\Filament\Pages\Settings\ExportSettingsPage;
-use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
-use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
-use Dashed\DashedCore\Filament\Pages\Settings\ReviewSettingsPage;
-use Dashed\DashedCore\Filament\Pages\Settings\SearchSettingsPage;
-use Dashed\DashedCore\Filament\Pages\Settings\SEOSettingsPage;
-use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonFailedJobsTable;
-use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonOverviewStats;
-use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonQueueStats;
-use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonThroughputChart;
-use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonWaitTimeChart;
-use Dashed\DashedCore\Filament\Widgets\NotFoundPageGlobalStats;
-use Dashed\DashedCore\Filament\Widgets\NotFoundPageStats;
-use Dashed\DashedCore\Livewire\Frontend\Account\Account;
-use Dashed\DashedCore\Livewire\Frontend\Auth\ForgotPassword;
-use Dashed\DashedCore\Livewire\Frontend\Auth\Login;
-use Dashed\DashedCore\Livewire\Frontend\Auth\ResetPassword;
-use Dashed\DashedCore\Livewire\Frontend\Notification\Toastr;
-use Dashed\DashedCore\Livewire\Frontend\Protection\PasswordProtection;
-use Dashed\DashedCore\Livewire\Frontend\Search\SearchResults;
-use Dashed\DashedCore\Livewire\Infolists\SEO\SEOScoreInfoList;
-use Dashed\DashedCore\Mail\EmailBlocks\ButtonBlock;
-use Dashed\DashedCore\Mail\EmailBlocks\DividerBlock;
-use Dashed\DashedCore\Mail\EmailBlocks\HeadingBlock;
-use Dashed\DashedCore\Mail\EmailBlocks\ImageBlock;
-use Dashed\DashedCore\Mail\EmailBlocks\OrderSummaryBlock;
-use Dashed\DashedCore\Mail\EmailBlocks\TextBlock;
-use Dashed\DashedCore\Mail\EmailRenderer;
-use Dashed\DashedCore\Mail\EmailTemplateRegistry;
-use Dashed\DashedCore\Mail\NewAdminAccountMail;
-use Dashed\DashedCore\Mail\NotificationMail;
-use Dashed\DashedCore\Mail\PasswordResetMail;
-use Dashed\DashedCore\Models\Customsetting;
-use Dashed\DashedCore\Models\GlobalBlock;
-use Dashed\DashedCore\Models\NotFoundPage;
-use Dashed\DashedCore\Models\Redirect;
-use Dashed\DashedCore\Models\Review;
+use Livewire\Livewire;
 use Dashed\DashedCore\Models\Role;
 use Dashed\DashedCore\Models\User;
-use Dashed\DashedCore\Performance\Images\ImagePriorityTracker;
-use Dashed\DashedCore\Performance\Scripts\DeferredScriptStore;
-use Dashed\DashedCore\Policies\GlobalBlockPolicy;
-use Dashed\DashedCore\Policies\NotFoundPagePolicy;
-use Dashed\DashedCore\Policies\RedirectPolicy;
-use Dashed\DashedCore\Policies\ReviewPolicy;
-use Dashed\DashedCore\Policies\RolePolicy;
-use Dashed\DashedCore\Policies\UserPolicy;
-use Dashed\DashedForms\Classes\Forms;
 use Dashed\DashedPages\Models\Page;
-use Filament\Forms\Components\Builder\Block;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Components\Utilities\Get;
-use Guava\FilamentIconPicker\Forms\IconPicker;
-use Illuminate\Console\Scheduling\Schedule;
-use Illuminate\Database\Eloquent\Model;
+use Dashed\DashedCore\Models\Review;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
-use Livewire\Livewire;
+use App\Providers\AppServiceProvider;
+use Dashed\DashedForms\Classes\Forms;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
+use Dashed\DashedCore\Classes\Locales;
+use Dashed\DashedCore\Models\Redirect;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Textarea;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\LaravelPackageTools\Package;
+use Filament\Forms\Components\TextInput;
+use Dashed\DashedCore\Mail\EmailRenderer;
+use Dashed\DashedCore\Models\GlobalBlock;
+use Dashed\DashedCore\Models\NotFoundPage;
+use Dashed\DashedCore\Policies\RolePolicy;
+use Dashed\DashedCore\Policies\UserPolicy;
+use Dashed\DashedCore\Commands\MigrateToV4;
+use Dashed\DashedCore\Models\Customsetting;
+use Illuminate\Console\Scheduling\Schedule;
+use Dashed\DashedCore\Mail\NotificationMail;
+use Dashed\DashedCore\Policies\ReviewPolicy;
+use Filament\Forms\Components\Builder\Block;
+use Dashed\DashedCore\Commands\CreateSitemap;
+use Dashed\DashedCore\Commands\UpdateCommand;
+use Dashed\DashedCore\Mail\PasswordResetMail;
+use Dashed\DashedCore\Commands\InstallCommand;
+use Dashed\DashedCore\Policies\RedirectPolicy;
+use Filament\Schemas\Components\Utilities\Get;
+use Guava\FilamentIconPicker\Forms\IconPicker;
+use Dashed\DashedCore\Commands\CreateAdminUser;
+use Dashed\DashedCore\Mail\NewAdminAccountMail;
+use Dashed\DashedCore\Commands\CleanupOldExports;
+use Dashed\DashedCore\Commands\SyncGoogleReviews;
+use Dashed\DashedCore\Mail\EmailBlocks\TextBlock;
+use Dashed\DashedCore\Mail\EmailTemplateRegistry;
+use Dashed\DashedCore\Policies\GlobalBlockPolicy;
+use Dashed\DashedCore\Commands\CreateDefaultPages;
+use Dashed\DashedCore\Mail\EmailBlocks\ImageBlock;
+use Dashed\DashedCore\Policies\NotFoundPagePolicy;
+use Dashed\DashedCore\Commands\MigrateDatabaseToV4;
+use Dashed\DashedCore\Livewire\Frontend\Auth\Login;
+use Dashed\DashedCore\Mail\EmailBlocks\ButtonBlock;
+use Dashed\DashedCore\Commands\CreateVisitableModel;
+use Dashed\DashedCore\Mail\EmailBlocks\DividerBlock;
+use Dashed\DashedCore\Mail\EmailBlocks\HeadingBlock;
+use Dashed\DashedCore\Commands\PruneWebVitalsCommand;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Dashed\DashedCore\Commands\GenerateFaviconsCommand;
+use Dashed\DashedCore\Livewire\Frontend\Account\Account;
+use Dashed\DashedCore\Commands\AggregateWebVitalsCommand;
+use Dashed\DashedCore\Filament\Widgets\NotFoundPageStats;
+use Dashed\DashedCore\Mail\EmailBlocks\OrderSummaryBlock;
+use Dashed\DashedCore\Commands\ReplaceEditorStringsInFiles;
+use Dashed\DashedCore\Livewire\Frontend\Auth\ResetPassword;
+use Dashed\DashedCore\Livewire\Frontend\Auth\ForgotPassword;
+use Dashed\DashedCore\Livewire\Frontend\Notification\Toastr;
+use Dashed\DashedCore\Classes\RichEditorPlugins\HtmlIdPlugin;
+use Dashed\DashedCore\Commands\InvalidatePasswordResetTokens;
+use Dashed\DashedCore\Livewire\Frontend\Search\SearchResults;
+use Dashed\DashedCore\Filament\Pages\Settings\SEOSettingsPage;
+use Dashed\DashedCore\Livewire\Infolists\SEO\SEOScoreInfoList;
+use Dashed\DashedCore\Performance\Images\ImagePriorityTracker;
+use Dashed\DashedCore\Performance\Scripts\DeferredScriptStore;
+use Dashed\DashedCore\Filament\Widgets\NotFoundPageGlobalStats;
+use Dashed\DashedCore\Filament\Pages\Settings\CacheSettingsPage;
+use Dashed\DashedCore\Filament\Pages\Settings\EmailSettingsPage;
+use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
+use Dashed\DashedCore\Classes\RichEditorPlugins\MediaEmbedPlugin;
+use Dashed\DashedCore\Classes\RichEditorPlugins\VideoEmbedPlugin;
+use Dashed\DashedCore\Filament\Pages\Settings\ExportSettingsPage;
+use Dashed\DashedCore\Filament\Pages\Settings\ReviewSettingsPage;
+use Dashed\DashedCore\Filament\Pages\Settings\SearchSettingsPage;
+use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonQueueStats;
+use Dashed\DashedCore\Filament\Pages\Settings\AccountSettingsPage;
+use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
+use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonOverviewStats;
+use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonWaitTimeChart;
+use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonFailedJobsTable;
+use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonThroughputChart;
+use Dashed\DashedCore\Livewire\Frontend\Protection\PasswordProtection;
 
 class DashedCoreServiceProvider extends PackageServiceProvider
 {
@@ -213,7 +210,6 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             $schedule->command(InvalidatePasswordResetTokens::class)->everyFifteenMinutes();
             $schedule->command(CleanupOldExports::class)->daily();
             $schedule->command(SyncGoogleReviews::class)->twiceDaily();
-            $schedule->command(AutomaticlyCreateAltTextsForAllMediaItems::class)->daily();
             //            $schedule->command(SeoScan::class)->daily();
             $schedule->command(AggregateWebVitalsCommand::class)->dailyAt('03:00');
             $schedule->command(PruneWebVitalsCommand::class)->dailyAt('03:15');
@@ -253,7 +249,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         ]);
 
         cms()->builder('plugins', [
-            new DashedCorePlugin,
+            new DashedCorePlugin(),
         ]);
 
         cms()->builder('richEditorPlugins', [
@@ -634,8 +630,6 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         cms()->registerSettingsPage(ImageSettingsPage::class, 'Afbeelding', 'photo', 'Afbeelding van de website');
         cms()->registerSettingsPage(CacheSettingsPage::class, 'Cache', 'photo', 'Cache van de website');
         cms()->registerSettingsPage(SearchSettingsPage::class, 'Search', 'magnifying-glass', 'Zoek instellingen van de website');
-        cms()->registerSettingsPage(AISettingsPage::class, 'AI (OpenAI)', 'magnifying-glass', 'AI instellingen van de website');
-        cms()->registerSettingsPage(ClaudeSettingsPage::class, 'Claude AI', 'sparkles', 'Claude AI instellingen, merkbeschrijving en schrijfstijl');
         cms()->registerSettingsPage(ExportSettingsPage::class, 'Exports', 'document-arrow-down', 'Bewaartermijn van exports instellen');
         cms()->registerSettingsPage(EmailSettingsPage::class, 'E-mail', 'envelope', 'Kleuren en styling van verzonden e-mails');
         cms()->registerSettingsPage(ReviewSettingsPage::class, 'Review', 'star', 'Review instellingen van de website');
@@ -672,7 +666,6 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                 SyncGoogleReviews::class,
                 CreateDefaultPages::class,
                 ReplaceEditorStringsInFiles::class,
-                AutomaticlyCreateAltTextsForAllMediaItems::class,
                 MigrateToV4::class,
                 MigrateDatabaseToV4::class,
                 AggregateWebVitalsCommand::class,
@@ -685,7 +678,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
     public static function createDefaultPages(): void
     {
         if (! Page::where('is_home', 1)->count()) {
-            $page = new Page;
+            $page = new Page();
             foreach (Locales::getActivatedLocalesFromSites() as $locale) {
                 $page->setTranslation('name', $locale, 'Home');
                 $page->setTranslation('slug', $locale, 'home');
@@ -693,7 +686,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             $page->is_home = 1;
             $page->save();
 
-            $page = new Page;
+            $page = new Page();
             foreach (Locales::getActivatedLocalesFromSites() as $locale) {
                 $page->setTranslation('name', $locale, 'Contact');
                 $page->setTranslation('slug', $locale, 'contact');
@@ -702,7 +695,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         }
 
         if (! Customsetting::get('search_page_id')) {
-            $page = new Page;
+            $page = new Page();
             foreach (Locales::getActivatedLocalesFromSites() as $locale) {
                 $page->setTranslation('name', $locale, 'Zoek resultaten');
                 $page->setTranslation('slug', $locale, 'zoeken');
@@ -723,7 +716,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         }
 
         if (! Customsetting::get('login_page_id')) {
-            $page = new Page;
+            $page = new Page();
             foreach (Locales::getActivatedLocalesFromSites() as $locale) {
                 $page->setTranslation('name', $locale, 'Login');
                 $page->setTranslation('slug', $locale, 'login');
@@ -744,7 +737,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         }
 
         if (! Customsetting::get('account_page_id')) {
-            $page = new Page;
+            $page = new Page();
             foreach (Locales::getActivatedLocalesFromSites() as $locale) {
                 $page->setTranslation('name', $locale, 'Account');
                 $page->setTranslation('slug', $locale, 'account');
@@ -769,7 +762,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         }
 
         if (! Customsetting::get('forgot_password_page_id')) {
-            $page = new Page;
+            $page = new Page();
             foreach (Locales::getActivatedLocalesFromSites() as $locale) {
                 $page->setTranslation('name', $locale, 'Wachtwoord vergeten');
                 $page->setTranslation('slug', $locale, 'wachtwoord-vergeten');
@@ -790,7 +783,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         }
 
         if (! Customsetting::get('reset_password_page_id')) {
-            $page = new Page;
+            $page = new Page();
             foreach (Locales::getActivatedLocalesFromSites() as $locale) {
                 $page->setTranslation('name', $locale, 'Reset wachtwoord');
                 $page->setTranslation('slug', $locale, 'reset-wachtwoord');

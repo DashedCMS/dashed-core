@@ -23,9 +23,14 @@ class WebVitalsPage extends Page
 
     public int $days = 7;
 
+    public static function canAccess(): bool
+    {
+        return str_contains(auth()->user()?->email ?? '', '@dashed');
+    }
+
     public function mount(): void
     {
-        //
+        abort_unless(static::canAccess(), 403);
     }
 
     public function getRows(): array
