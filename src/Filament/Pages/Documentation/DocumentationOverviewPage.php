@@ -110,7 +110,7 @@ class DocumentationOverviewPage extends Page
 
         $segments = explode('\\', $key);
 
-        // Class names are typically Vendor\Package\... — take the package segment.
+        // Class names are typically Vendor\Package\..., take the package segment.
         $package = $segments[1] ?? $segments[0];
 
         // Humanise: "DashedCore" → "Dashed Core"
