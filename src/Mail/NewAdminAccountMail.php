@@ -10,8 +10,10 @@ use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedTranslations\Models\Translation;
 use Dashed\DashedCore\Mail\Concerns\HasEmailTemplate;
 use Dashed\DashedCore\Mail\Contracts\RegistersEmailTemplate;
+use Dashed\DashedCore\Notifications\Contracts\SendsToTelegram;
+use Dashed\DashedCore\Notifications\DTOs\TelegramSummary;
 
-class NewAdminAccountMail extends Mailable implements RegistersEmailTemplate
+class NewAdminAccountMail extends Mailable implements RegistersEmailTemplate, SendsToTelegram
 {
     use HasEmailTemplate;
     use Queueable;
@@ -110,5 +112,17 @@ class NewAdminAccountMail extends Mailable implements RegistersEmailTemplate
             ->from(Customsetting::get('site_from_email'), Customsetting::get('site_name'))
             ->subject($fallbackSubject)
             ->with(['user' => $this->user, 'password' => $this->password]);
+    }
+
+    public function telegramSummary(): TelegramSummary
+    {
+        return new TelegramSummary(
+            title: 'Nieuw admin account',
+            fields: [
+                'Naam' => $this->user->name ?? '—',
+                'E-mail' => $this->user->email ?? '—',
+            ],
+            emoji: '👤',
+        );
     }
 }

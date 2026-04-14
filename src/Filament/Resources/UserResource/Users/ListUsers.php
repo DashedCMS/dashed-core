@@ -6,6 +6,7 @@ use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Illuminate\Support\Facades\Mail;
 use Filament\Forms\Components\TextInput;
+use Dashed\DashedCore\Notifications\AdminNotifier;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Dashed\DashedCore\Mail\NewAdminAccountMail;
@@ -47,7 +48,7 @@ class ListUsers extends ListRecords
                     ]);
 
                     try {
-                        Mail::to($user->email)->send(new NewAdminAccountMail($user, $password));
+                        AdminNotifier::send(new NewAdminAccountMail($user, $password), $user->email);
                     } catch (\Exception $exception) {
                         Notification::make()
                             ->title('Fout bij het verzenden van de e-mail: ' . $exception->getMessage())

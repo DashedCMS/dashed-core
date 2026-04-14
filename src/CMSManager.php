@@ -105,6 +105,64 @@ class CMSManager
         return $this;
     }
 
+    public function docsRegistry(): \Dashed\DashedCore\Services\DocsRegistry
+    {
+        return app(\Dashed\DashedCore\Services\DocsRegistry::class);
+    }
+
+    public function registerResourceDocs(
+        string $resource,
+        string $title,
+        ?string $intro = null,
+        array $sections = [],
+        array $tips = [],
+    ): self {
+        $this->docsRegistry()->registerResource($resource, [
+            'title' => $title,
+            'intro' => $intro,
+            'sections' => $sections,
+            'tips' => $tips,
+        ]);
+
+        return $this;
+    }
+
+    public function registerSettingsDocs(
+        string $page,
+        string $title,
+        ?string $intro = null,
+        array $sections = [],
+        array $tips = [],
+        array $fields = [],
+    ): self {
+        $this->docsRegistry()->registerSettingsPage($page, [
+            'title' => $title,
+            'intro' => $intro,
+            'sections' => $sections,
+            'tips' => $tips,
+            'fields' => $fields,
+        ]);
+
+        return $this;
+    }
+
+    public function registerDocTopic(
+        string $key,
+        string $title,
+        ?string $intro = null,
+        array $sections = [],
+        array $tips = [],
+    ): self {
+        $this->docsRegistry()->registerTopic($key, [
+            'title' => $title,
+            'intro' => $intro,
+            'sections' => $sections,
+            'tips' => $tips,
+        ]);
+
+        return $this;
+    }
+
     public function class(string $name, string|array $value = null): self|array|string
     {
         if (! $value) {

@@ -102,6 +102,9 @@ class DashedCoreServiceProvider extends PackageServiceProvider
 
         $this->app->singleton(EmailTemplateRegistry::class);
         $this->app->singleton(EmailRenderer::class);
+        $this->app->singleton(\Dashed\DashedCore\Notifications\Channels\TelegramChannel::class);
+        $this->app->singleton(\Dashed\DashedCore\Notifications\AdminNotifier::class);
+        $this->app->singleton(\Dashed\DashedCore\Services\DocsRegistry::class);
 
         $this->app->scoped(ImagePriorityTracker::class, function () {
             return new ImagePriorityTracker(
@@ -124,6 +127,26 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             ->registerMailable(NotificationMail::class)
             ->registerMailable(PasswordResetMail::class)
             ->registerMailable(NewAdminAccountMail::class);
+
+        cms()->registerSettingsDocs(
+            page: \Dashed\DashedCore\Filament\Pages\Settings\NotificationSettingsPage::class,
+            title: 'Notificaties',
+            intro: 'Stuur admin meldingen naast e-mail ook naar een Telegram kanaal of groep.',
+            sections: [
+                [
+                    'heading' => 'Wat doet deze pagina?',
+                    'body' => 'Hier configureer je een Telegram bot zodat belangrijke admin meldingen (zoals nieuwe bestellingen of formulier inzendingen) direct in een Telegram chat verschijnen. E-mail blijft altijd werken — Telegram komt **erbij**.',
+                ],
+                [
+                    'heading' => 'Een bot opzetten',
+                    'body' => "1. Praat met [@BotFather](https://t.me/BotFather) op Telegram.\n2. Maak een nieuwe bot aan met `/newbot` en kopieer de token.\n3. Plak de token hieronder en kies wie er toegang krijgt.",
+                ],
+            ],
+            tips: [
+                'Test eerst met je eigen account voordat je een hele groep koppelt.',
+                'Een ongeldige bot token zorgt ervoor dat alle Telegram meldingen stilletjes worden overgeslagen — controleer de status na het opslaan.',
+            ],
+        );
 
         Model::unguard();
 
@@ -624,6 +647,10 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             __DIR__.'/../resources/component-templates' => resource_path('views/components'),
         ], 'dashed-templates');
 
+        $this->publishes([
+            __DIR__.'/../resources/views/docs' => resource_path('views/vendor/dashed-core/docs'),
+        ], 'dashed-docs-views');
+
         cms()->registerSettingsPage(GeneralSettingsPage::class, 'Algemeen', 'cog', 'Algemene informatie van de website');
         cms()->registerSettingsPage(AccountSettingsPage::class, 'Account', 'user', 'Account instellingen van de website');
         cms()->registerSettingsPage(SEOSettingsPage::class, 'SEO', 'identification', 'SEO van de website');
@@ -632,6 +659,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         cms()->registerSettingsPage(SearchSettingsPage::class, 'Search', 'magnifying-glass', 'Zoek instellingen van de website');
         cms()->registerSettingsPage(ExportSettingsPage::class, 'Exports', 'document-arrow-down', 'Bewaartermijn van exports instellen');
         cms()->registerSettingsPage(EmailSettingsPage::class, 'E-mail', 'envelope', 'Kleuren en styling van verzonden e-mails');
+        cms()->registerSettingsPage(\Dashed\DashedCore\Filament\Pages\Settings\NotificationSettingsPage::class, 'Notificaties', 'bell', 'Telegram kanaal voor admin notificaties');
         cms()->registerSettingsPage(ReviewSettingsPage::class, 'Review', 'star', 'Review instellingen van de website');
 
         $package

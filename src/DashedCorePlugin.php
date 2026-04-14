@@ -14,6 +14,7 @@ use Dashed\DashedCore\Filament\Resources\GlobalBlockResource;
 use Dashed\DashedCore\Filament\Pages\Settings\SEOSettingsPage;
 use Dashed\DashedCore\Filament\Resources\NotFoundPageResource;
 use Dashed\DashedCore\Filament\Pages\Performance\WebVitalsPage;
+use Dashed\DashedCore\Filament\Pages\Documentation\DocumentationOverviewPage;
 use Dashed\DashedCore\Filament\Resources\EmailTemplateResource;
 use Dashed\DashedCore\Filament\Pages\Settings\CacheSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\EmailSettingsPage;
@@ -25,6 +26,7 @@ use Dashed\DashedCore\Filament\Pages\Settings\SearchSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\AccountSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\HorizonDashboardPage;
+use Dashed\DashedCore\Filament\Pages\Settings\NotificationSettingsPage;
 
 class DashedCorePlugin implements Plugin
 {
@@ -58,7 +60,9 @@ class DashedCorePlugin implements Plugin
                 ReviewSettingsPage::class,
                 ExportSettingsPage::class,
                 EmailSettingsPage::class,
+                NotificationSettingsPage::class,
                 WebVitalsPage::class,
+                DocumentationOverviewPage::class,
             ])
             ->widgets([
                 WelcomeWidget::class,
