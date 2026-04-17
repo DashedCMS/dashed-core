@@ -125,3 +125,13 @@
 </script>
 
 {{--@include('cookie-consent::index')--}}
+
+@if(class_exists(\Dashed\DashedPopups\Models\Popup::class))
+    @foreach(\Dashed\DashedPopups\Models\Popup::query()
+        ->where('active', true)
+        ->where('start_date', '<=', now())
+        ->where('end_date', '>=', now())
+        ->get() as $activePopup)
+        <livewire:dashed-popups.popup :popupId="(string) $activePopup->id" :key="'popup-'.$activePopup->id"/>
+    @endforeach
+@endif
