@@ -2,34 +2,50 @@
 
 namespace Dashed\DashedCore\Notifications;
 
-use Dashed\DashedCore\Notifications\Channels\TelegramChannel;
-use Dashed\DashedCore\Notifications\Contracts\SendsToTelegram;
+use Throwable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Throwable;
+use Dashed\DashedCore\Notifications\Channels\TelegramChannel;
+use Dashed\DashedCore\Notifications\Contracts\SendsToTelegram;
 
 class AdminNotifier
 {
     public function __construct(
         private readonly TelegramChannel $telegram,
-    ) {}
-
-    /**
-     * @param  string|array<int, string>|null  $to
-     */
-    public static function send(Mailable $mailable, string|array|null $to = null): void
-    {
-        app(self::class)->dispatch($mailable, $to);
+    ) {
     }
 
     /**
      * @param  string|array<int, string>|null  $to
+     * @param  array<int, string>|null  $allowedChannels
      */
-    public function dispatch(Mailable $mailable, string|array|null $to = null): void
+    public static function send(Mailable $mailable, string|array|null $to = null, ?array $allowedChannels = null): void
     {
-        $this->sendMail($mailable, $to);
-        $this->sendTelegram($mailable);
+        app(self::class)->dispatch($mailable, $to, $allowedChannels);
+    }
+
+    /**
+     * @param  string|array<int, string>|null  $to
+     * @param  array<int, string>|null  $allowedChannels
+     */
+    public function dispatch(Mailable $mailable, string|array|null $to = null, ?array $allowedChannels = null): void
+    {
+        if ($this->channelAllowed('mail', $allowedChannels)) {
+            $this->sendMail($mailable, $to);
+        }
+
+        if ($this->channelAllowed('telegram', $allowedChannels)) {
+            $this->sendTelegram($mailable);
+        }
+    }
+
+    /**
+     * @param  array<int, string>|null  $allowedChannels
+     */
+    private function channelAllowed(string $channel, ?array $allowedChannels): bool
+    {
+        return $allowedChannels === null || in_array($channel, $allowedChannels, true);
     }
 
     private function sendMail(Mailable $mailable, string|array|null $to): void

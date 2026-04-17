@@ -96,6 +96,9 @@ class DashedCoreServiceProvider extends PackageServiceProvider
 
     public function bootingPackage()
     {
+        \Dashed\DashedCore\Notifications\NotificationChannels::register('mail', 'E-mail');
+        \Dashed\DashedCore\Notifications\NotificationChannels::register('telegram', 'Telegram');
+
         if (file_exists(__DIR__.'/../routes/api.php')) {
             $this->loadRoutesFrom(__DIR__.'/../routes/api.php');
         }
