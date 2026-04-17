@@ -6,8 +6,10 @@ use Illuminate\Database\Migrations\Migration;
 return new class () extends Migration {
     public function up(): void
     {
-        // Expand users.role enum to include superadmin
-        DB::statement("ALTER TABLE users MODIFY COLUMN role ENUM('superadmin', 'admin', 'customer') NOT NULL DEFAULT 'customer'");
+        // Expand users.role enum to include superadmin (MySQL only – SQLite has no ENUM type)
+        if (DB::connection()->getDriverName() !== 'sqlite') {
+            DB::statement("ALTER TABLE users MODIFY COLUMN role ENUM('superadmin', 'admin', 'customer') NOT NULL DEFAULT 'customer'");
+        }
 
         // Rename all existing admins to superadmin
         DB::table('users')->where('role', 'admin')->update(['role' => 'superadmin']);

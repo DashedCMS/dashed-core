@@ -26,7 +26,12 @@ return new class () extends Migration {
         });
 
         Schema::table('dashed__url_history', function (Blueprint $table) {
-            $table->index([\Illuminate\Support\Facades\DB::raw('url(255)'), 'locale', 'site_id'], 'index_u_l_s');
+            // MySQL uses a prefix index url(255) for TEXT columns; SQLite does not
+            // support prefix indexes so we fall back to a plain column index.
+            $urlColumn = \Illuminate\Support\Facades\DB::connection()->getDriverName() === 'sqlite'
+                ? 'url'
+                : \Illuminate\Support\Facades\DB::raw('url(255)');
+            $table->index([$urlColumn, 'locale', 'site_id'], 'index_u_l_s');
         });
     }
 
