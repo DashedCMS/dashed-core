@@ -43,7 +43,7 @@ class EmailRenderer
         return view('dashed-core::emails.layout', [
             'blocks' => $renderedBlocks,
             'siteName' => $siteName,
-            'siteLogo' => Customsetting::get('site_logo'),
+            'siteLogo' => Customsetting::get('mail_logo') ?: Customsetting::get('site_logo'),
             'primaryColor' => $primaryColor,
             'textColor' => $textColor,
             'backgroundColor' => $backgroundColor,

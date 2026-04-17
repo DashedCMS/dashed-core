@@ -33,6 +33,7 @@ class EmailSettingsPage extends Page implements HasSchemas
             : '#A0131C';
 
         $this->form->fill([
+            'mail_logo' => Customsetting::get('mail_logo'),
             'mail_primary_color' => Customsetting::get('mail_primary_color') ?: $defaultPrimary,
             'mail_text_color' => Customsetting::get('mail_text_color', null, '#ffffff'),
             'mail_background_color' => Customsetting::get('mail_background_color', null, '#f3f4f6'),
@@ -43,6 +44,8 @@ class EmailSettingsPage extends Page implements HasSchemas
     public function form(Schema $schema): Schema
     {
         return $schema->schema([
+            mediaHelper()->field('mail_logo', 'Logo', false, false, true)
+                ->helperText('Laat leeg om het logo uit de algemene instellingen te gebruiken.'),
             ColorPicker::make('mail_primary_color')
                 ->label('Primaire kleur')
                 ->helperText('Wordt gebruikt voor de bovenbalk en knoppen in e-mails.')
@@ -66,6 +69,7 @@ class EmailSettingsPage extends Page implements HasSchemas
         $formData = $this->form->getState();
 
         foreach (Sites::getSites() as $site) {
+            Customsetting::set('mail_logo', $formData['mail_logo'] ?? '', $site['id']);
             Customsetting::set('mail_primary_color', $formData['mail_primary_color'], $site['id']);
             Customsetting::set('mail_text_color', $formData['mail_text_color'], $site['id']);
             Customsetting::set('mail_background_color', $formData['mail_background_color'], $site['id']);
