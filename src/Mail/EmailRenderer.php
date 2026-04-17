@@ -41,7 +41,7 @@ class EmailRenderer
         }
 
         $logoId = Customsetting::get('mail_logo') ?: Customsetting::get('site_logo');
-        $siteLogo = $logoId ? (mediaHelper()->getSingleMedia($logoId)?->getFullUrl()) : null;
+        $siteLogo = $logoId ? (mediaHelper()->getSingleMedia($logoId)->url ?? '') : null;
 
         return view('dashed-core::emails.layout', [
             'blocks' => $renderedBlocks,
