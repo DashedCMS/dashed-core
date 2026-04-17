@@ -46,7 +46,7 @@
         </div>
     @empty
         <div class="p-8 text-center text-gray-500">
-            Nog geen data. Web Vitals worden opgebouwd terwijl bezoekers de site gebruiken. Check morgenochtend — de rollup draait 's nachts.
+            Nog geen data. Web Vitals worden opgebouwd terwijl bezoekers de site gebruiken. Check morgenochtend - de rollup draait 's nachts.
         </div>
     @endforelse
 </x-filament-panels::page>

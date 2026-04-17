@@ -2,11 +2,11 @@
 
 namespace Dashed\DashedCore\Notifications\Channels;
 
-use Dashed\DashedCore\Models\Customsetting;
-use Dashed\DashedCore\Notifications\DTOs\TelegramSummary;
+use RuntimeException;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
-use RuntimeException;
+use Dashed\DashedCore\Models\Customsetting;
+use Dashed\DashedCore\Notifications\DTOs\TelegramSummary;
 
 class TelegramChannel
 {
@@ -61,7 +61,7 @@ class TelegramChannel
         }
 
         throw new RuntimeException(sprintf(
-            'Telegram API error: HTTP %d — %s',
+            'Telegram API error: HTTP %d - %s',
             $response->status(),
             $response->json('description') ?? $response->body()
         ));

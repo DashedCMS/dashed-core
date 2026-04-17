@@ -95,11 +95,11 @@
                                     <span
                                         class="text-xs text-red-600 dark:text-red-400 cursor-help"
                                         title="{{ $exception }}"
-                                    >{{ $shortException ?: '—' }}</span>
+                                    >{{ $shortException ?: '-' }}</span>
                                 </td>
                                 <td class="px-4 py-3 whitespace-nowrap">
                                     <span class="text-xs text-gray-500 dark:text-gray-400">
-                                        {{ $failedAt ? $failedAt->format('d-m-Y H:i:s') : '—' }}
+                                        {{ $failedAt ? $failedAt->format('d-m-Y H:i:s') : '-' }}
                                     </span>
                                 </td>
                                 <td class="px-4 py-3">

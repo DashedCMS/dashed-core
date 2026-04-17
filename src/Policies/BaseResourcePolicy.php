@@ -10,10 +10,10 @@ use Illuminate\Database\Eloquent\Model;
  * Base policy for all Filament resources.
  *
  * Bundles Filament's granular policy methods into 4 permissions:
- *   View:{Resource}      — viewAny + view
- *   Edit:{Resource}      — create + update
- *   Delete:{Resource}    — delete + deleteAny + restore + forceDelete + restoreAny + forceDeleteAny
- *   Duplicate:{Resource} — replicate
+ *   View:{Resource}      - viewAny + view
+ *   Edit:{Resource}      - create + update
+ *   Delete:{Resource}    - delete + deleteAny + restore + forceDelete + restoreAny + forceDeleteAny
+ *   Duplicate:{Resource} - replicate
  */
 abstract class BaseResourcePolicy
 {

@@ -2,20 +2,20 @@
 
 namespace Dashed\DashedCore\Filament\Pages\Settings;
 
-use Dashed\DashedCore\Classes\Sites;
-use Dashed\DashedCore\Models\Customsetting;
-use Dashed\DashedCore\Notifications\Channels\TelegramChannel;
-use Dashed\DashedCore\Traits\HasSettingsPermission;
-use Filament\Actions\Action;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Notifications\Notification;
-use Filament\Pages\Page;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Concerns\InteractsWithSchemas;
-use Filament\Schemas\Contracts\HasSchemas;
-use Filament\Schemas\Schema;
 use Throwable;
+use Filament\Pages\Page;
+use Filament\Actions\Action;
+use Filament\Schemas\Schema;
+use Dashed\DashedCore\Classes\Sites;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Contracts\HasSchemas;
+use Dashed\DashedCore\Models\Customsetting;
+use Dashed\DashedCore\Traits\HasSettingsPermission;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Dashed\DashedCore\Notifications\Channels\TelegramChannel;
 
 class NotificationSettingsPage extends Page implements HasSchemas
 {
@@ -44,7 +44,7 @@ class NotificationSettingsPage extends Page implements HasSchemas
         return $schema
             ->schema([
                 Section::make('Telegram')
-                    ->description('Stuur admin-notificaties (nieuwe orders, formulier inzendingen, lage voorraad, etc.) als beknopte berichten naar een Telegram chat. Mail blijft altijd verstuurd worden — Telegram is een aanvullend kanaal.')
+                    ->description('Stuur admin-notificaties (nieuwe orders, formulier inzendingen, lage voorraad, etc.) als beknopte berichten naar een Telegram chat. Mail blijft altijd verstuurd worden - Telegram is een aanvullend kanaal.')
                     ->schema([
                         Toggle::make('telegram_enabled')
                             ->label('Telegram kanaal actief')

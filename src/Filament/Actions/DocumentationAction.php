@@ -2,11 +2,11 @@
 
 namespace Dashed\DashedCore\Filament\Actions;
 
-use Dashed\DashedCore\Services\DocsRegistry;
-use Filament\Actions\Action;
-use Illuminate\Contracts\View\View;
-use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use Filament\Actions\Action;
+use Illuminate\Support\HtmlString;
+use Illuminate\Contracts\View\View;
+use Dashed\DashedCore\Services\DocsRegistry;
 
 class DocumentationAction extends Action
 {

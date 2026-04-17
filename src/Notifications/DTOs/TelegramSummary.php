@@ -13,7 +13,8 @@ final class TelegramSummary
         public readonly ?string $adminUrl = null,
         public readonly ?string $emoji = null,
         public readonly ?string $linkLabel = null,
-    ) {}
+    ) {
+    }
 
     public function toMarkdown(): string
     {

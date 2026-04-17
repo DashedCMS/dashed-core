@@ -2,16 +2,16 @@
 
 namespace Dashed\DashedCore\Filament\Resources\EmailTemplateResource\Pages;
 
-use Dashed\DashedCore\Filament\Resources\EmailTemplateResource;
-use Dashed\DashedCore\Mail\EmailRenderer;
-use Dashed\DashedCore\Notifications\Channels\TelegramChannel;
-use Dashed\DashedCore\Notifications\Contracts\SendsToTelegram;
+use Throwable;
 use Filament\Actions\Action;
+use Illuminate\Support\Facades\Mail;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
-use Illuminate\Support\Facades\Mail;
-use Throwable;
+use Dashed\DashedCore\Mail\EmailRenderer;
+use Dashed\DashedCore\Notifications\Channels\TelegramChannel;
+use Dashed\DashedCore\Notifications\Contracts\SendsToTelegram;
+use Dashed\DashedCore\Filament\Resources\EmailTemplateResource;
 
 class EditEmailTemplate extends EditRecord
 {

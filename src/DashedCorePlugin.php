@@ -14,7 +14,6 @@ use Dashed\DashedCore\Filament\Resources\GlobalBlockResource;
 use Dashed\DashedCore\Filament\Pages\Settings\SEOSettingsPage;
 use Dashed\DashedCore\Filament\Resources\NotFoundPageResource;
 use Dashed\DashedCore\Filament\Pages\Performance\WebVitalsPage;
-use Dashed\DashedCore\Filament\Pages\Documentation\DocumentationOverviewPage;
 use Dashed\DashedCore\Filament\Resources\EmailTemplateResource;
 use Dashed\DashedCore\Filament\Pages\Settings\CacheSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\EmailSettingsPage;
@@ -27,6 +26,7 @@ use Dashed\DashedCore\Filament\Pages\Settings\AccountSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\HorizonDashboardPage;
 use Dashed\DashedCore\Filament\Pages\Settings\NotificationSettingsPage;
+use Dashed\DashedCore\Filament\Pages\Documentation\DocumentationOverviewPage;
 
 class DashedCorePlugin implements Plugin
 {

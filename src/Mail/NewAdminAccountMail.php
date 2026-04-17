@@ -9,9 +9,9 @@ use Illuminate\Queue\SerializesModels;
 use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedTranslations\Models\Translation;
 use Dashed\DashedCore\Mail\Concerns\HasEmailTemplate;
+use Dashed\DashedCore\Notifications\DTOs\TelegramSummary;
 use Dashed\DashedCore\Mail\Contracts\RegistersEmailTemplate;
 use Dashed\DashedCore\Notifications\Contracts\SendsToTelegram;
-use Dashed\DashedCore\Notifications\DTOs\TelegramSummary;
 
 class NewAdminAccountMail extends Mailable implements RegistersEmailTemplate, SendsToTelegram
 {
@@ -119,8 +119,8 @@ class NewAdminAccountMail extends Mailable implements RegistersEmailTemplate, Se
         return new TelegramSummary(
             title: 'Nieuw admin account',
             fields: [
-                'Naam' => $this->user->name ?? '—',
-                'E-mail' => $this->user->email ?? '—',
+                'Naam' => $this->user->name ?? '-',
+                'E-mail' => $this->user->email ?? '-',
             ],
             emoji: '👤',
         );

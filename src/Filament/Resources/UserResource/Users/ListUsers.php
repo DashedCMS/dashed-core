@@ -4,12 +4,11 @@ namespace Dashed\DashedCore\Filament\Resources\UserResource\Users;
 
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
-use Illuminate\Support\Facades\Mail;
 use Filament\Forms\Components\TextInput;
-use Dashed\DashedCore\Notifications\AdminNotifier;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Dashed\DashedCore\Mail\NewAdminAccountMail;
+use Dashed\DashedCore\Notifications\AdminNotifier;
 use Dashed\DashedCore\Filament\Resources\UserResource;
 
 class ListUsers extends ListRecords
