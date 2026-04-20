@@ -40,13 +40,20 @@ class EmailRenderer
             $renderedBlocks[] = $class::render($data, $context);
         }
 
-        $logoId = Customsetting::get('mail_logo') ?: Customsetting::get('site_logo');
-        $siteLogo = $logoId ? (mediaHelper()->getSingleMedia($logoId)->url ?? '') : null;
+        $showLogo = (bool) Customsetting::get('mail_show_logo', null, 1);
+        $showSiteName = (bool) Customsetting::get('mail_show_site_name', null, 1);
+
+        $siteLogo = null;
+        if ($showLogo) {
+            $logoId = Customsetting::get('mail_logo') ?: Customsetting::get('site_logo');
+            $siteLogo = $logoId ? (mediaHelper()->getSingleMedia($logoId)->url ?? '') : null;
+        }
 
         return view('dashed-core::emails.layout', [
             'blocks' => $renderedBlocks,
             'siteName' => $siteName,
             'siteLogo' => $siteLogo,
+            'showSiteName' => $showSiteName,
             'primaryColor' => $primaryColor,
             'textColor' => $textColor,
             'backgroundColor' => $backgroundColor,
