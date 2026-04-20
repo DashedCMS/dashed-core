@@ -33,7 +33,7 @@ final class TelegramSummary
 
         if ($this->adminUrl !== null && $this->adminUrl !== '') {
             $lines[] = '';
-            $label = $this->linkLabel ?? 'Bekijk in admin';
+            $label = $this->linkLabel ?? 'Bekijk in CMS';
             $escapedUrl = $this->escapeLinkUrl($this->adminUrl);
             $lines[] = '[' . $this->escape($label) . '](' . $escapedUrl . ')';
         }
