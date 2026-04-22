@@ -2,17 +2,18 @@
 
 namespace Dashed\DashedCore\Filament\Concerns;
 
-use Illuminate\Support\Str;
+use Dashed\DashedCore\Classes\Locales;
+use Dashed\DashedCore\Models\GlobalBlock;
+use Dashed\DashedMarketing\Filament\Actions\RequestSeoImprovementAction;
+use Dashed\DashedTranslations\Classes\AutomatedTranslation;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
-use Dashed\DashedCore\Classes\Locales;
-use Filament\Notifications\Notification;
-use Dashed\DashedCore\Models\GlobalBlock;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Notifications\Notification;
+use Illuminate\Support\Str;
 use LaraZeus\SpatieTranslatable\Actions\LocaleSwitcher;
-use Dashed\DashedTranslations\Classes\AutomatedTranslation;
 use LaraZeus\SpatieTranslatable\Resources\Pages\EditRecord\Concerns\Translatable;
 
 trait HasEditableCMSActions
@@ -128,6 +129,10 @@ trait HasEditableCMSActions
             ->action('duplicate')
             ->icon('heroicon-o-document-duplicate')
             ->color('warning');
+
+        if (class_exists(RequestSeoImprovementAction::class)) {
+            $groupedActions[] = RequestSeoImprovementAction::make();
+        }
 
         $groupedActions[] = self::translateAction();
         $groupedActions[] = self::copyAction();
@@ -276,8 +281,8 @@ trait HasEditableCMSActions
         if (in_array('slug', $this->record->translatable)) {
             foreach (Locales::getLocales() as $locale) {
                 $newModel->setTranslation('slug', $locale['id'], $newModel->getTranslation('slug', $locale['id']));
-                while ($this->record::class::where('slug->' . $locale['id'], $newModel->getTranslation('slug', $locale['id']))->count()) {
-                    $newModel->setTranslation('slug', $locale['id'], $newModel->getTranslation('slug', $locale['id']) . Str::random(1));
+                while ($this->record::class::where('slug->'.$locale['id'], $newModel->getTranslation('slug', $locale['id']))->count()) {
+                    $newModel->setTranslation('slug', $locale['id'], $newModel->getTranslation('slug', $locale['id']).Str::random(1));
                 }
             }
         }
@@ -324,7 +329,7 @@ trait HasEditableCMSActions
 
     public function mutateFormDataBeforeSave(array $data): array
     {
-        //Save order for content blocks
+        // Save order for content blocks
         if ($data['content'] ?? false) {
             $data['content'] = self::removeUUIDKeys($data['content']);
         }
