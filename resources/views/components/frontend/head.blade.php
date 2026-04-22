@@ -177,6 +177,13 @@ $ogSiteName = $siteName ?? config('app.name');
     {!! $schema !!}
 @endforeach
 
+{{-- Custom structured data (CustomStructuredData records pushed via seo()->metaData('customStructuredData', [...])) --}}
+@foreach((array) seo()->metaData('customStructuredData') as $__jsonLd)
+    @if(is_string($__jsonLd) && trim($__jsonLd) !== '')
+        <script type="application/ld+json">{!! $__jsonLd !!}</script>
+    @endif
+@endforeach
+
 @stack('metadata')
 
 {!! $slot !!}
