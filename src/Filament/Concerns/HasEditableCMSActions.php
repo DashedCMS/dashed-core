@@ -4,7 +4,7 @@ namespace Dashed\DashedCore\Filament\Concerns;
 
 use Dashed\DashedCore\Classes\Locales;
 use Dashed\DashedCore\Models\GlobalBlock;
-use Dashed\DashedMarketing\Filament\Actions\RequestSeoImprovementAction;
+use Dashed\DashedMarketing\Filament\Actions\RequestSeoAuditAction;
 use Dashed\DashedTranslations\Classes\AutomatedTranslation;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -130,8 +130,8 @@ trait HasEditableCMSActions
             ->icon('heroicon-o-document-duplicate')
             ->color('warning');
 
-        if (class_exists(RequestSeoImprovementAction::class)) {
-            $groupedActions[] = RequestSeoImprovementAction::make();
+        if (class_exists(RequestSeoAuditAction::class)) {
+            $groupedActions[] = RequestSeoAuditAction::make();
         }
 
         $groupedActions[] = self::translateAction();
