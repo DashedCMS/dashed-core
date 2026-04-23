@@ -135,3 +135,7 @@
         <livewire:dashed-popups.popup :popupId="(string) $activePopup->id" :key="'popup-'.$activePopup->id"/>
     @endforeach
 @endif
+
+@if(isset($model) && $model && method_exists($model, 'breadcrumbs'))
+    <x-dashed-core::frontend.breadcrumbs.schema :breadcrumbs="$model->breadcrumbs()" />
+@endif
