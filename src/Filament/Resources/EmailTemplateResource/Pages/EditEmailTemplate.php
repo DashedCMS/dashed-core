@@ -12,6 +12,7 @@ use Dashed\DashedCore\Mail\EmailRenderer;
 use LaraZeus\SpatieTranslatable\Actions\LocaleSwitcher;
 use Dashed\DashedCore\Notifications\Channels\TelegramChannel;
 use Dashed\DashedCore\Notifications\Contracts\SendsToTelegram;
+use Dashed\DashedCore\Classes\Actions\CopyEmailTemplateLocaleAction;
 use Dashed\DashedCore\Filament\Resources\EmailTemplateResource;
 use LaraZeus\SpatieTranslatable\Resources\Pages\EditRecord\Concerns\Translatable;
 
@@ -25,6 +26,7 @@ class EditEmailTemplate extends EditRecord
     {
         return [
             LocaleSwitcher::make(),
+            CopyEmailTemplateLocaleAction::make(),
             Action::make('sendTest')
                 ->label('Test mail sturen')
                 ->icon('heroicon-o-paper-airplane')
