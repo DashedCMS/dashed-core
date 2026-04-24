@@ -15,8 +15,15 @@ All notable changes to `Dashed core` will be documented in this file.
 ### Changed
 - `EmailRenderer::render()` en `renderSubject()` accepteren een `?string $locale`; rendering scoped binnen een locale-savepoint om `__()`/`trans()` in block-renderers correct te laten werken.
 
+### Fixed
+- `name` en `mailable_key` blijven zichtbaar bij taalwisseling (`Placeholder` in plaats van disabled `TextInput`).
+- "Kopieer naar locale" en "Vertaal met DeepL" modals: `from_locale` defaultet op de huidige actieve locale, `to_locales` op alle andere.
+- `EmailTemplate::getFallbackLocale()` valt terug op een locale die daadwerkelijk inhoud heeft (niet blindelings op `config('app.fallback_locale')`), zodat renderen nooit naar een lege locale valt.
+- Waarschuwingstekst en badge-tooltip tonen locale-codes in hoofdletters (NL, EN).
+
 ### Migration
-- `2026_04_24_100000_make_email_templates_translatable.php`: converteert `subject` en `from_name` naar `longText` en wikkelt bestaande data onder `config('app.fallback_locale')`.
+- `2026_04_24_100000_make_email_templates_translatable.php`: converteert `subject` en `from_name` naar `longText` en wikkelt bestaande data onder `config('app.locale')`.
+- `2026_04_24_120000_relocate_email_template_locale_key.php`: repair-migratie die op installs met `app.locale != app.fallback_locale` de door de eerste migratie onder `app.fallback_locale` gezette data terugzet onder `app.locale` — alleen wanneer de `app.locale`-key nog leeg is.
 
 ## v4.0.137 - 2026-04-22
 
