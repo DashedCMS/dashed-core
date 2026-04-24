@@ -13,7 +13,7 @@ return new class () extends Migration {
             $table->longText('from_name')->nullable()->change();
         });
 
-        WrapEmailTemplateTranslations::wrapExisting(config('app.fallback_locale', 'nl'));
+        WrapEmailTemplateTranslations::wrapExisting(config('app.locale', 'nl'));
     }
 
     public function down(): void
