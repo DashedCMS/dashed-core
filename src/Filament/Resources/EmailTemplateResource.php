@@ -43,6 +43,14 @@ class EmailTemplateResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->schema([
+            Placeholder::make('locale_warning')
+                ->hiddenLabel()
+                ->visible(fn ($record) => $record && self::localeWarningText($record) !== null)
+                ->content(fn ($record) => new HtmlString(
+                    '<div class="text-sm text-warning-600">' . e(self::localeWarningText($record)) . '</div>'
+                ))
+                ->columnSpanFull(),
+
             Section::make('Beschikbare variabelen')
                 ->description('Gebruik deze variabelen in onderwerp en tekstblokken. Ze worden vervangen door de echte waarde bij verzenden.')
                 ->schema([
@@ -144,12 +152,44 @@ class EmailTemplateResource extends Resource
                 TextColumn::make('name')->label('Naam')->searchable()->sortable(),
                 TextColumn::make('mailable_key')->label('Mailable')->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('subject')->label('Onderwerp')->limit(40),
+                TextColumn::make('locale_status')
+                    ->label('Locales')
+                    ->state(fn ($record) => self::localeStatusLabel($record))
+                    ->badge()
+                    ->color(fn ($record) => empty($record->missingLocales()) ? 'success' : 'warning')
+                    ->tooltip(fn ($record) => empty($record->missingLocales())
+                        ? null
+                        : 'Ontbrekend: ' . implode(', ', $record->missingLocales())),
                 IconColumn::make('is_active')->boolean()->label('Actief'),
                 TextColumn::make('updated_at')->label('Bijgewerkt')->dateTime('d-m-Y H:i')->sortable(),
             ])
             ->recordActions([
                 EditAction::make()->button(),
             ]);
+    }
+
+    public static function localeStatusLabel(EmailTemplate $template): string
+    {
+        $total = count(\Dashed\DashedCore\Classes\Locales::getLocales());
+        $filled = $total - count($template->missingLocales());
+
+        return "{$filled} / {$total}";
+    }
+
+    public static function localeWarningText(EmailTemplate $template): ?string
+    {
+        $missing = $template->missingLocales();
+        if (empty($missing)) {
+            return null;
+        }
+
+        $fallback = config('app.fallback_locale');
+
+        return sprintf(
+            'Let op: de locales %s zijn nog niet volledig ingevuld. Verzending naar klanten in die talen valt terug op %s.',
+            implode(', ', $missing),
+            $fallback
+        );
     }
 
     public static function getPages(): array
