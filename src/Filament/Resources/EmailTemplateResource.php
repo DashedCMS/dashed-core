@@ -157,7 +157,7 @@ class EmailTemplateResource extends Resource
                     ->color(fn ($record) => empty($record->missingLocales()) ? 'success' : 'warning')
                     ->tooltip(fn ($record) => empty($record->missingLocales())
                         ? null
-                        : 'Ontbrekend: ' . implode(', ', $record->missingLocales())),
+                        : 'Ontbrekend: ' . implode(', ', array_map('strtoupper', $record->missingLocales()))),
                 IconColumn::make('is_active')->boolean()->label('Actief'),
                 TextColumn::make('updated_at')->label('Bijgewerkt')->dateTime('d-m-Y H:i')->sortable(),
             ])
@@ -181,12 +181,12 @@ class EmailTemplateResource extends Resource
             return null;
         }
 
-        $fallback = config('app.fallback_locale');
+        $fallback = $template->getFallbackLocale();
 
         return sprintf(
             'Let op: de locales %s zijn nog niet volledig ingevuld. Verzending naar klanten in die talen valt terug op %s.',
-            implode(', ', $missing),
-            $fallback
+            implode(', ', array_map('strtoupper', $missing)),
+            strtoupper((string) $fallback)
         );
     }
 

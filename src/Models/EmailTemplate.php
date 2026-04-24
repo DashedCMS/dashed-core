@@ -33,7 +33,20 @@ class EmailTemplate extends Model
 
     public function getFallbackLocale(): ?string
     {
-        return config('app.fallback_locale');
+        $appFallback = config('app.fallback_locale');
+        $subjectTranslations = $this->getTranslations('subject');
+
+        if ($appFallback && filled($subjectTranslations[$appFallback] ?? null)) {
+            return $appFallback;
+        }
+
+        foreach (Locales::getLocales() as $locale) {
+            if (filled($subjectTranslations[$locale['id']] ?? null)) {
+                return $locale['id'];
+            }
+        }
+
+        return $appFallback;
     }
 
     public static function forMailable(string $mailableClass): ?self
