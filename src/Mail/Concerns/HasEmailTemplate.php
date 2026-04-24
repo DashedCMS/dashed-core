@@ -6,6 +6,39 @@ use Dashed\DashedCore\Mail\EmailRenderer;
 use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedCore\Models\EmailTemplate;
 
+/**
+ * Voor locale-aware mails met order/customer-context:
+ *
+ *     use HasEmailTemplate, ResolvesEmailLocale;
+ *
+ *     public function content(): Content
+ *     {
+ *         $locale = $this->resolveLocale($this->order, $this->order?->customer);
+ *
+ *         return new Content(
+ *             htmlString: $this->renderFromTemplate(['order' => $this->order], $locale),
+ *         );
+ *     }
+ *
+ *     public function envelope(): Envelope
+ *     {
+ *         $locale = $this->resolveLocale($this->order, $this->order?->customer);
+ *
+ *         [$fromEmail, $fromName] = $this->templateFrom(
+ *             Customsetting::get('site_from_email'),
+ *             Customsetting::get('site_name'),
+ *             $locale,
+ *         );
+ *
+ *         return new Envelope(
+ *             from: new Address($fromEmail, $fromName),
+ *             subject: $this->templateSubject('Fallback', ['order' => $this->order], $locale),
+ *         );
+ *     }
+ *
+ * Mails zonder order/customer-context mogen $locale weglaten: de trait valt
+ * dan terug op app()->getLocale() (zie NotificationMail als referentie).
+ */
 trait HasEmailTemplate
 {
     public static function emailTemplateKey(): string
