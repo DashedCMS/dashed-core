@@ -9,17 +9,22 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Dashed\DashedCore\Mail\EmailRenderer;
+use LaraZeus\SpatieTranslatable\Actions\LocaleSwitcher;
 use Dashed\DashedCore\Notifications\Channels\TelegramChannel;
 use Dashed\DashedCore\Notifications\Contracts\SendsToTelegram;
 use Dashed\DashedCore\Filament\Resources\EmailTemplateResource;
+use LaraZeus\SpatieTranslatable\Resources\Pages\EditRecord\Concerns\Translatable;
 
 class EditEmailTemplate extends EditRecord
 {
+    use Translatable;
+
     protected static string $resource = EmailTemplateResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
+            LocaleSwitcher::make(),
             Action::make('sendTest')
                 ->label('Test mail sturen')
                 ->icon('heroicon-o-paper-airplane')

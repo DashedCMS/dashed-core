@@ -5,11 +5,22 @@ namespace Dashed\DashedCore\Filament\Resources\EmailTemplateResource\Pages;
 use Filament\Resources\Pages\ListRecords;
 use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedCore\Models\EmailTemplate;
+use LaraZeus\SpatieTranslatable\Actions\LocaleSwitcher;
 use Dashed\DashedCore\Filament\Resources\EmailTemplateResource;
+use LaraZeus\SpatieTranslatable\Resources\Pages\ListRecords\Concerns\Translatable;
 
 class ListEmailTemplates extends ListRecords
 {
+    use Translatable;
+
     protected static string $resource = EmailTemplateResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            LocaleSwitcher::make(),
+        ];
+    }
 
     public function mount(): void
     {

@@ -18,11 +18,14 @@ use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Placeholder;
 use Dashed\DashedCore\Models\EmailTemplate;
 use Dashed\DashedCore\Mail\EmailBlocks\EmailBlock;
+use LaraZeus\SpatieTranslatable\Resources\Concerns\Translatable;
 use Dashed\DashedCore\Filament\Resources\EmailTemplateResource\Pages\EditEmailTemplate;
 use Dashed\DashedCore\Filament\Resources\EmailTemplateResource\Pages\ListEmailTemplates;
 
 class EmailTemplateResource extends Resource
 {
+    use Translatable;
+
     protected static ?string $model = EmailTemplate::class;
 
     protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-envelope';
@@ -155,5 +158,12 @@ class EmailTemplateResource extends Resource
             'index' => ListEmailTemplates::route('/'),
             'edit' => EditEmailTemplate::route('/{record}/edit'),
         ];
+    }
+
+    public static function getTranslatableLocales(): array
+    {
+        return collect(\Dashed\DashedCore\Classes\Locales::getLocales())
+            ->pluck('id')
+            ->all();
     }
 }
