@@ -21,11 +21,13 @@ class CopyEmailTemplateLocaleAction
                 Select::make('from_locale')
                     ->label('Van locale')
                     ->options(Locales::getLocalesArray())
+                    ->default(fn ($livewire) => $livewire->activeLocale ?? null)
                     ->required(),
                 Select::make('to_locales')
                     ->label('Naar locales')
                     ->multiple()
                     ->options(Locales::getLocalesArray())
+                    ->default(fn ($livewire) => array_keys(Locales::getLocalesArrayWithoutCurrent($livewire->activeLocale ?? null)))
                     ->required(),
             ])
             ->action(function (array $data, EmailTemplate $record) {
