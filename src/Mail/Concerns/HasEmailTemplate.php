@@ -38,37 +38,50 @@ trait HasEmailTemplate
         return ['siteName', 'primaryColor'];
     }
 
-    protected function renderFromTemplate(array $data): ?string
+    protected function renderFromTemplate(array $data, ?string $locale = null): ?string
     {
         $template = EmailTemplate::forMailable(static::emailTemplateKey());
         if (! $template) {
             return null;
         }
 
-        return app(EmailRenderer::class)->render($template, $data);
+        return app(EmailRenderer::class)->render($template, $data, $locale);
     }
 
-    protected function templateSubject(string $fallback, array $context = []): string
+    protected function templateSubject(string $fallback, array $context = [], ?string $locale = null): string
     {
         $template = EmailTemplate::forMailable(static::emailTemplateKey());
 
-        if (! $template?->subject) {
+        if (! $template) {
             return $fallback;
         }
 
-        return app(EmailRenderer::class)->renderSubject($template, $context);
+        $locale ??= app()->getLocale();
+        $subjectTranslation = $template->getTranslation('subject', $locale, useFallbackLocale: true);
+        if (blank($subjectTranslation)) {
+            return $fallback;
+        }
+
+        return app(EmailRenderer::class)->renderSubject($template, $context, $locale);
     }
 
     /**
      * @return array{0: string|null, 1: string|null} [email, name]
      */
-    protected function templateFrom(?string $fallbackEmail, ?string $fallbackName): array
+    protected function templateFrom(?string $fallbackEmail, ?string $fallbackName, ?string $locale = null): array
     {
         $template = EmailTemplate::forMailable(static::emailTemplateKey());
 
+        if (! $template) {
+            return [$fallbackEmail, $fallbackName];
+        }
+
+        $locale ??= app()->getLocale();
+        $fromName = $template->getTranslation('from_name', $locale, useFallbackLocale: true);
+
         return [
-            $template?->from_email ?: $fallbackEmail,
-            $template?->from_name ?: $fallbackName,
+            $template->from_email ?: $fallbackEmail,
+            filled($fromName) ? $fromName : $fallbackName,
         ];
     }
 }
