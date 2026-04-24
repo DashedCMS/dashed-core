@@ -64,14 +64,12 @@ class EmailTemplateResource extends Resource
 
             Section::make('Algemeen')
                 ->schema([
-                    TextInput::make('name')
+                    Placeholder::make('name')
                         ->label('Naam')
-                        ->disabled()
-                        ->dehydrated(false),
-                    TextInput::make('mailable_key')
+                        ->content(fn ($record) => $record?->name ?? '-'),
+                    Placeholder::make('mailable_key')
                         ->label('Mailable class')
-                        ->disabled()
-                        ->dehydrated(false),
+                        ->content(fn ($record) => $record?->mailable_key ?? '-'),
                     TextInput::make('subject')
                         ->label('Onderwerp')
                         ->required()
