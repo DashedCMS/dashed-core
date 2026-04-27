@@ -99,6 +99,12 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         \Dashed\DashedCore\Notifications\NotificationChannels::register('mail', 'E-mail');
         \Dashed\DashedCore\Notifications\NotificationChannels::register('telegram', 'Telegram');
 
+        cms()->registerNavigationGroup('Content', 10);
+        cms()->registerNavigationGroup('Gebruikers', 70);
+        cms()->registerNavigationGroup('Performance', 80);
+        cms()->registerNavigationGroup('Routes', 90);
+        cms()->registerNavigationGroup('Overige', 100);
+
         if (file_exists(__DIR__.'/../routes/api.php')) {
             $this->loadRoutesFrom(__DIR__.'/../routes/api.php');
         }

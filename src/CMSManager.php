@@ -316,6 +316,11 @@ class CMSManager
             $forceMFA = false;
         }
 
+        $navigationGroups = collect(static::$builders['navigationGroups'] ?? [])
+            ->sortBy(fn ($entry) => $entry['sort'] ?? 100)
+            ->keys()
+            ->all();
+
         $panel
             ->default()
             ->id('dashed')
@@ -327,6 +332,7 @@ class CMSManager
             ->emailVerification()
             ->emailChangeVerification()
             ->profile()
+            ->when(! empty($navigationGroups), fn (Panel $p) => $p->navigationGroups($navigationGroups))
             ->colors([
                 'primary' => config('dashed-core.dashed_cms.primary_color', '#00D2CD'),
             ])
@@ -389,6 +395,33 @@ class CMSManager
     {
         $existing = static::$builders['rolePermissions'][$group] ?? [];
         static::$builders['rolePermissions'][$group] = array_merge($existing, $permissions);
+    }
+
+    /**
+     * Register a Filament navigation group so it appears in the panel sidebar
+     * with a stable sort position. Called by each package that owns a group;
+     * if a package isn't installed, its group simply isn't registered and
+     * doesn't show up.
+     *
+     * Sort convention (lower = higher in the sidebar):
+     *   10  Content        70  Gebruikers
+     *   20  Artikelen      80  Performance
+     *   30  E-commerce     90  Routes
+     *   40  Producten     100  Overige
+     *   50  Formulieren   110  Statistics
+     *   60  Marketing     120  Export
+     */
+    public function registerNavigationGroup(string $name, int $sort = 100): void
+    {
+        $existing = static::$builders['navigationGroups'][$name] ?? null;
+
+        // First registration wins on sort to avoid plugins fighting over position;
+        // explicit re-registration via builder('navigationGroups', ...) still works.
+        if ($existing !== null && isset($existing['sort'])) {
+            return;
+        }
+
+        static::$builders['navigationGroups'][$name] = ['sort' => $sort];
     }
 
     public function getRolePermissions(): array

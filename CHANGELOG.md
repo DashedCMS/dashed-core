@@ -2,6 +2,13 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.2.0 - 2026-04-27
+
+### Added
+- Nieuwe public API `cms()->registerNavigationGroup(string $name, int $sort = 100)` waarmee elke package zelf zijn Filament navigatiegroep registreert. Eerste registratie per naam wint op sort zodat plugins niet over elkaars positie strijden. Sortwaarden gaan in stappen van 10 (10 Content, 20 Artikelen, 30 E-commerce, 40 Producten, 50 Formulieren, 60 Marketing, 70 Gebruikers, 80 Performance, 90 Routes, 100 Overige, 110 Statistics, 120 Export) zodat tussenliggende ruimte vrij is voor nieuwe groepen.
+- `CMSManager::getFilamentPanelItems()` leest nu `cms()->builder('navigationGroups')`, sorteert op `sort` en past `->navigationGroups([...])` toe op het Filament-panel. Roept `->navigationGroups()` alleen aan als er groepen geregistreerd zijn, dus geen lege call op een kale installatie.
+- `DashedCoreServiceProvider::bootingPackage()` registreert de eigen groepen Content, Gebruikers, Performance, Routes en Overige.
+
 ## v4.1.0 - 2026-04-24
 
 ### Added
