@@ -530,7 +530,7 @@ class CMSManager
             ->fileAttachmentsVisibility('public')
             ->floatingToolbars([
                 'paragraph' => [
-                    'bold', 'italic', 'underline', 'strike', 'subscript', 'superscript',
+                    'bold', 'italic', 'subscript', 'superscript',
                 ],
                 'heading' => [
                     'h1', 'h2', 'h3',
@@ -560,10 +560,6 @@ class CMSManager
                 'italic',
                 'link',
                 'orderedList',
-                'undo',
-                'redo',
-                'strike',
-                'underline',
                 'textColor',
                 'superscript',
                 'subscript',

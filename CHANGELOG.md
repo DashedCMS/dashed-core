@@ -2,6 +2,16 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.3.0 - 2026-05-01
+
+### Added
+- Schermvullende modus voor `cms()->editorField()`: een toggle-icoon rechtsboven in de toolbar opent de editor over het volledige scherm. Esc of nogmaals klikken sluit. Werkt automatisch op élke RichEditor in het Filament-panel via een MutationObserver — geen aanpassing aan losse veld-aanroepen nodig.
+- Sticky toolbar in elke RichEditor: de knoppenbalk blijft `position: sticky; top: 0` zodat hij altijd zichtbaar is bij het scrollen door lange content.
+- `FilamentRichContentServiceProvider` registreert nu een nieuwe `Css` en `Js` asset (`rich-editor-fullscreen`) die via `php artisan filament:assets` worden gepubliceerd.
+
+### Changed
+- `editorField()` toolbar opgeschoond: `undo`, `redo`, `strike` en `underline` verwijderd uit de hoofd-toolbar; `underline` en `strike` ook uit de paragraph floating-toolbar.
+
 ## v4.2.0 - 2026-04-27
 
 ### Added
