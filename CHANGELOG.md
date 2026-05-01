@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.3.1 - 2026-05-01
+
+### Changed
+- Fullscreen-toggle weer als regulier item in de toolbar (eerste positie) i.p.v. absoluut gepositioneerd. Past nu netjes op één regel doordat undo/redo/strike/underline al uit de lijst zijn gehaald.
+
 ## v4.3.0 - 2026-05-01
 
 ### Added
