@@ -2,10 +2,18 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.3.3 - 2026-05-03
+
+### Added
+- **Website-link in alle systeem-mails** via `dashed-core::emails.layout`. De header (logo of site-naam tegen de primaryColor band) is nu een clickable link naar de website, en boven de footer komt een "Bezoek :siteName:" CTA-button + onder de © regel een onderlijnde domein-link. URL wordt in deze volgorde opgelost: `Customsetting::get('site_url')` -> `config('app.url')`. `EmailRenderer::render()` levert `$siteUrl` mee aan de layout. Geldt automatisch voor admin order confirmation, payment-link, password reset, abandoned-cart en alle andere mails die de unified layout gebruiken.
+
+### Changed
+- Em-dashes (U+2014) verwijderd uit alle source-bestanden, blade-templates en CHANGELOG-entries van deze package.
+
 ## v4.3.2 - 2026-05-03
 
 ### Changed
-- `order-summary` email block toont nu de gebruikte kortingscode + percentage in het discount-label naast het kortingsbedrag (bv. "Korting (TERUG-ABCD1234 — 10%)" ipv enkel "Korting"). Wordt automatisch zichtbaar in alle emails die dit block gebruiken (admin order confirmation, payment link, cancelled order, etc.).
+- `order-summary` email block toont nu de gebruikte kortingscode + percentage in het discount-label naast het kortingsbedrag (bv. "Korting (TERUG-ABCD1234 - 10%)" ipv enkel "Korting"). Wordt automatisch zichtbaar in alle emails die dit block gebruiken (admin order confirmation, payment link, cancelled order, etc.).
 
 ## v4.3.1 - 2026-05-01
 
@@ -15,7 +23,7 @@ All notable changes to `Dashed core` will be documented in this file.
 ## v4.3.0 - 2026-05-01
 
 ### Added
-- Schermvullende modus voor `cms()->editorField()`: een toggle-icoon rechtsboven in de toolbar opent de editor over het volledige scherm. Esc of nogmaals klikken sluit. Werkt automatisch op élke RichEditor in het Filament-panel via een MutationObserver — geen aanpassing aan losse veld-aanroepen nodig.
+- Schermvullende modus voor `cms()->editorField()`: een toggle-icoon rechtsboven in de toolbar opent de editor over het volledige scherm. Esc of nogmaals klikken sluit. Werkt automatisch op élke RichEditor in het Filament-panel via een MutationObserver - geen aanpassing aan losse veld-aanroepen nodig.
 - Sticky toolbar in elke RichEditor: de knoppenbalk blijft `position: sticky; top: 0` zodat hij altijd zichtbaar is bij het scrollen door lange content.
 - `FilamentRichContentServiceProvider` registreert nu een nieuwe `Css` en `Js` asset (`rich-editor-fullscreen`) die via `php artisan filament:assets` worden gepubliceerd.
 
@@ -50,7 +58,7 @@ All notable changes to `Dashed core` will be documented in this file.
 
 ### Migration
 - `2026_04_24_100000_make_email_templates_translatable.php`: converteert `subject` en `from_name` naar `longText` en wikkelt bestaande data onder `config('app.locale')`.
-- `2026_04_24_120000_relocate_email_template_locale_key.php`: repair-migratie die op installs met `app.locale != app.fallback_locale` de door de eerste migratie onder `app.fallback_locale` gezette data terugzet onder `app.locale` — alleen wanneer de `app.locale`-key nog leeg is.
+- `2026_04_24_120000_relocate_email_template_locale_key.php`: repair-migratie die op installs met `app.locale != app.fallback_locale` de door de eerste migratie onder `app.fallback_locale` gezette data terugzet onder `app.locale` - alleen wanneer de `app.locale`-key nog leeg is.
 
 ## v4.0.137 - 2026-04-22
 

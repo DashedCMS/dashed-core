@@ -69,7 +69,7 @@
                     if ($discountCode) {
                         $discountLabel = 'Korting (' . $discountCode->code;
                         if ($discountCode->type === 'percentage' && $discountCode->discount_percentage) {
-                            $discountLabel .= ' — ' . (int) $discountCode->discount_percentage . '%';
+                            $discountLabel .= ' - ' . (int) $discountCode->discount_percentage . '%';
                         }
                         $discountLabel .= ')';
                     }

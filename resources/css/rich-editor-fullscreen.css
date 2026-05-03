@@ -17,7 +17,7 @@
     background: #18181b;
 }
 
-/* Toggle button — sits as a normal item at the front of the toolbar. */
+/* Toggle button - sits as a normal item at the front of the toolbar. */
 .dashed-editor-fullscreen-toggle {
     display: inline-flex;
     align-items: center;

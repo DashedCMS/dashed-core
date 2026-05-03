@@ -64,10 +64,13 @@ class EmailRenderer
                 $siteLogo = $logoId ? (mediaHelper()->getSingleMedia($logoId)->url ?? '') : null;
             }
 
+            $siteUrl = Customsetting::get('site_url') ?: config('app.url');
+
             return view('dashed-core::emails.layout', [
                 'blocks' => $renderedBlocks,
                 'siteName' => $siteName,
                 'siteLogo' => $siteLogo,
+                'siteUrl' => $siteUrl,
                 'showSiteName' => $showSiteName,
                 'primaryColor' => $primaryColor,
                 'textColor' => $textColor,
