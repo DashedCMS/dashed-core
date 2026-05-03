@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.3.2 - 2026-05-03
+
+### Changed
+- `order-summary` email block toont nu de gebruikte kortingscode + percentage in het discount-label naast het kortingsbedrag (bv. "Korting (TERUG-ABCD1234 — 10%)" ipv enkel "Korting"). Wordt automatisch zichtbaar in alle emails die dit block gebruiken (admin order confirmation, payment link, cancelled order, etc.).
+
 ## v4.3.1 - 2026-05-01
 
 ### Changed

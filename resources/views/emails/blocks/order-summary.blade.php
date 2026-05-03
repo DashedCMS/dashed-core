@@ -63,8 +63,19 @@
                 </tr>
             @endif
             @if(($order->discount ?? 0) > 0.01)
+                @php
+                    $discountCode = $order->discountCode ?? null;
+                    $discountLabel = 'Korting';
+                    if ($discountCode) {
+                        $discountLabel = 'Korting (' . $discountCode->code;
+                        if ($discountCode->type === 'percentage' && $discountCode->discount_percentage) {
+                            $discountLabel .= ' — ' . (int) $discountCode->discount_percentage . '%';
+                        }
+                        $discountLabel .= ')';
+                    }
+                @endphp
                 <tr>
-                    <td style="padding:4px 0; color:#6b7280;">Korting</td>
+                    <td style="padding:4px 0; color:#6b7280;">{{ $discountLabel }}</td>
                     <td align="right" style="padding:4px 0;">- {{ CurrencyHelper::formatPrice($order->discount) }}</td>
                 </tr>
             @endif
