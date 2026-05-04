@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.3.4 - 2026-05-04
+
+### Added
+- `dashed-core::emails.layout` accepteert nu optionele `$unsubscribeUrl` + `$unsubscribeLabel` props die als kleine onderlijnde link onderin de footer worden gerenderd (alleen zichtbaar wanneer `$unsubscribeUrl` is gezet). Mailables die in een automatische flow zitten kunnen hiermee een afmeld-link tonen zonder de layout-blade aan te passen.
+
 ## v4.3.3 - 2026-05-03
 
 ### Added

@@ -14,6 +14,9 @@
                 $showHeader = $hasLogo || $showSiteName;
                 $siteUrl = $siteUrl ?? config('app.url');
                 $hasSiteUrl = ! blank($siteUrl);
+                $unsubscribeUrl = $unsubscribeUrl ?? null;
+                $unsubscribeLabel = $unsubscribeLabel ?? 'Afmelden voor deze automatische e-mails';
+                $hasUnsubscribe = ! blank($unsubscribeUrl);
             @endphp
             <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background:#ffffff; border-radius:8px; max-width:600px; overflow:hidden;">
                 @if($showHeader)
@@ -50,6 +53,10 @@
                     @if($hasSiteUrl)
                         <br>
                         <a href="{{ $siteUrl }}" style="color:#9ca3af; text-decoration:underline;">{{ preg_replace('#^https?://#', '', rtrim($siteUrl, '/')) }}</a>
+                    @endif
+                    @if($hasUnsubscribe)
+                        <br><br>
+                        <a href="{{ $unsubscribeUrl }}" style="color:#9ca3af; text-decoration:underline; font-size:11px;">{{ $unsubscribeLabel }}</a>
                     @endif
                 </td></tr>
             </table>
