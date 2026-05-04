@@ -15,7 +15,7 @@
                 $siteUrl = $siteUrl ?? config('app.url');
                 $hasSiteUrl = ! blank($siteUrl);
                 $unsubscribeUrl = $unsubscribeUrl ?? null;
-                $unsubscribeLabel = $unsubscribeLabel ?? 'Afmelden voor deze automatische e-mails';
+                $unsubscribeLabel = $unsubscribeLabel ?? 'Afmelden';
                 $hasUnsubscribe = ! blank($unsubscribeUrl);
             @endphp
             <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background:#ffffff; border-radius:8px; max-width:600px; overflow:hidden;">

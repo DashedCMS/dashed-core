@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.3.5 - 2026-05-04
+
+### Changed
+- Standaard label van de afmeld-link in `dashed-core::emails.layout` ingekort van "Afmelden voor deze automatische e-mails" naar simpel **"Afmelden"**.
+
 ## v4.3.4 - 2026-05-04
 
 ### Added
