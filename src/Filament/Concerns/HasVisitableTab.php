@@ -156,7 +156,18 @@ trait HasVisitableTab
         $schema[] = IconColumn::make('status')
             ->label('Status')
             ->trueIcon('heroicon-o-check-circle')
-            ->falseIcon('heroicon-o-x-circle');
+            ->falseIcon('heroicon-o-x-circle')
+            ->sortable(query: function (\Illuminate\Database\Eloquent\Builder $query, string $direction): \Illuminate\Database\Eloquent\Builder {
+                $direction = strtolower($direction) === 'desc' ? 'desc' : 'asc';
+
+                return $query->orderByRaw(
+                    'CASE '
+                    . 'WHEN `public` = 0 THEN 0 '
+                    . 'WHEN `start_date` IS NOT NULL AND `start_date` > NOW() THEN 0 '
+                    . 'WHEN `end_date` IS NOT NULL AND `end_date` < NOW() THEN 0 '
+                    . 'ELSE 1 END ' . $direction
+                );
+            });
         $schema[] = TextColumn::make('created_at')
             ->label('Aangemaakt op')
             ->sortable()

@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.3.6 - 2026-05-05
+
+### Changed
+- De gedeelde "Status"-kolom uit `HasVisitableTab::visitableTableColumns()` is nu sorteerbaar. De accessor `getStatusAttribute()` is geen echt DB-veld, dus de sortable-callback ordent via `orderByRaw` op een `CASE`-expressie die `public`, `start_date` en `end_date` in dezelfde combinatie evalueert als de accessor zelf. Werkt automatisch door in alle Resources die `visitableTableColumns()` gebruiken (Page, Article, ArticleCategory, Vacancy, VacancyCategory, Product, ProductGroup, ProductCategory).
+
 ## v4.3.5 - 2026-05-04
 
 ### Changed
