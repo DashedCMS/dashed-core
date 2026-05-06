@@ -2,6 +2,12 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.4.0 - 2026-05-06
+
+### Added
+- **Inloggegevens-mail bij het aanmaken van een admin via het volledige formulier.** `CreateUser` (UserResource) verstuurt nu na save een `NewAdminAccountMail` met het zelf ingevulde plaintext-wachtwoord, mits de rol `admin` of `superadmin` is. Voorheen werd alleen via de "Admin user aanmaken"-quick-action op de lijst een mail verstuurd; bij het volledige create-formulier kreeg de nieuwe admin niets. Mail-fouten faillen niet de create maar tonen een waarschuwingsnotificatie.
+- **"Nieuw wachtwoord versturen"-knop op de gebruiker-edit-pagina.** Filament header-action met confirmation-modal die een willekeurig wachtwoord (`bin2hex(random_bytes(8))`, 16 hex-chars) genereert, hash't, opslaat en direct via `NewAdminAccountMail` naar de gebruiker mailt. Werkt voor elke gebruiker, niet alleen admins. Faalt-veilig: als de mail niet weg kan rolt het opgeslagen wachtwoord niet terug, maar wordt een danger-notification getoond zodat de admin het handmatig kan delen.
+
 ## v4.3.6 - 2026-05-05
 
 ### Changed
