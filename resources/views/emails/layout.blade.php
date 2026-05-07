@@ -41,7 +41,7 @@
                 @foreach($blocks as $block)
                     {!! $block !!}
                 @endforeach
-                @if($hasSiteUrl)
+                @if($hasSiteUrl && ($showVisitSiteCta ?? false))
                     <tr><td align="center" style="padding: 0 24px 24px 24px;">
                         <a href="{{ $siteUrl }}" style="display:inline-block; padding:12px 24px; background:{{ $primaryColor }}; color:{{ $textColor }}; text-decoration:none; border-radius:6px; font-family: Arial, sans-serif; font-size:14px; font-weight:bold;">
                             Bezoek {{ $siteName }}

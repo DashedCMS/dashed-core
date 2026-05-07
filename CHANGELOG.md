@@ -2,6 +2,24 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.5.0 - 2026-05-07
+
+### Changed
+- **`dashed-core::emails.layout` "Bezoek :siteName:"-CTA-button is nu opt-in** via een nieuwe `$showVisitSiteCta` prop (default `false`). Voorheen werd de button standaard onder elke mail getoond, wat te dominant was voor mails als order-opvolg / review-request. De header blijft clickable en de domein-link onder de copyright-regel blijft staan, dus de site-link is nog steeds aanwezig in de footer. Mailables die de CTA-button willen tonen kunnen `'showVisitSiteCta' => true` meegeven aan `->view(...)->with([...])`.
+
+### Added
+- **Framework voor admin samenvatting-mails (Fase 1).** Eerste stap van een feature waarmee admins zich kunnen abonneren op periodieke samenvattings van data uit de dashed-modules (omzet, popup-stats, follow-up flows, MyParcel labels, marketing posts, etc).
+  - Nieuwe migratie `dashed__summary_subscriptions` met unique index op (user_id, contributor_key) en een index op (next_send_at, frequency).
+  - Eloquent model `Dashed\DashedCore\Models\SummarySubscription` met `due()`-scope voor de scheduler.
+  - Contract `Dashed\DashedCore\Services\Summary\Contracts\SummaryContributorInterface` plus immutable DTOs `SummaryPeriod` en `SummarySection` zodat packages een sectie kunnen bijdragen.
+  - Twee nieuwe email-blocks `stats` en `table` (geregistreerd in `cms()->emailBlocks()`), inline-styled en mail-client-veilig, met afwisselende rij-achtergronden.
+  - Mailable `Dashed\DashedCore\Mail\SummaryMail` die de unified `dashed-core::emails.layout` gebruikt en secties stabiel sorteert op title.
+  - Artisan command `dashed:dispatch-summary-mails` met `nextTickFor()`-helper. Geregistreerd in de scheduler op `everyFifteenMinutes()->withoutOverlapping()`. Dispatch-uur is configureerbaar via `Customsetting::get('summary_dispatch_hour', null, 9)`. Iedere contributor-aanroep en mail-verzending zit in zijn eigen try/catch + `report()` zodat een falende contributor de hele dispatch niet blokkeert.
+  - Filament-pagina `Dashed\DashedCore\Filament\Pages\NotificationSubscriptions` op slug `me/summary-subscriptions` met een Select per geregistreerde contributor en een header-action "Stuur testmail nu" die synchronously alle actieve subscriptions van de huidige user mailt zonder `next_send_at` te updaten.
+  - Bestaande `NotificationSettingsPage` uitgebreid met sectie "Samenvattings-defaults": per contributor 1 select die schrijft naar `Customsetting::set("summary_default_{key}", $value, $siteId)`.
+  - Nieuwe builder-key `summaryContributors` zodat packages in hun eigen ServiceProvider hun contributor-class kunnen registreren via `cms()->builder('summaryContributors', [...])`.
+- Fase 2 (de feitelijke contributors per package) volgt in aparte minor-bumps van `dashed-ecommerce-core`, `dashed-popups`, `dashed-forms`, `dashed-marketing` en `dashed-ecommerce-myparcel`.
+
 ## v4.4.0 - 2026-05-06
 
 ### Added

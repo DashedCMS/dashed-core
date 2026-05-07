@@ -54,6 +54,10 @@ use Dashed\DashedCore\Mail\EmailBlocks\ButtonBlock;
 use Dashed\DashedCore\Commands\CreateVisitableModel;
 use Dashed\DashedCore\Mail\EmailBlocks\DividerBlock;
 use Dashed\DashedCore\Mail\EmailBlocks\HeadingBlock;
+use Dashed\DashedCore\Mail\EmailBlocks\StatsBlock;
+use Dashed\DashedCore\Mail\EmailBlocks\TableBlock;
+use Dashed\DashedCore\Commands\DispatchSummaryMailsCommand;
+use Dashed\DashedCore\Filament\Pages\NotificationSubscriptions;
 use Dashed\DashedCore\Commands\PruneWebVitalsCommand;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Dashed\DashedCore\Commands\GenerateFaviconsCommand;
@@ -130,7 +134,22 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             ->emailBlock('button', ButtonBlock::class)
             ->emailBlock('image', ImageBlock::class)
             ->emailBlock('divider', DividerBlock::class)
+            ->emailBlock('stats', StatsBlock::class)
+            ->emailBlock('table', TableBlock::class)
             ->emailBlock('order-summary', OrderSummaryBlock::class);
+
+        // Builder-key voor packages die een sectie willen bijdragen aan de
+        // admin samenvatting-mails. Initieel leeg zodat de key gevonden kan
+        // worden door dump-tools en de Filament-pagina niet faalt.
+        cms()->builder('summaryContributors', []);
+
+        // Scheduler voor de samenvatting-mails (elke 15 minuten).
+        $this->app->booted(function () {
+            $schedule = app(\Illuminate\Console\Scheduling\Schedule::class);
+            $schedule->command(DispatchSummaryMailsCommand::class)
+                ->everyFifteenMinutes()
+                ->withoutOverlapping();
+        });
 
         cms()
             ->registerMailable(NotificationMail::class)
@@ -1258,6 +1277,7 @@ MARKDOWN,
                 AggregateWebVitalsCommand::class,
                 PruneWebVitalsCommand::class,
                 GenerateFaviconsCommand::class,
+                DispatchSummaryMailsCommand::class,
             ]);
 
     }

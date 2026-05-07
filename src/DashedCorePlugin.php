@@ -25,6 +25,7 @@ use Dashed\DashedCore\Filament\Pages\Settings\SearchSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\AccountSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\HorizonDashboardPage;
+use Dashed\DashedCore\Filament\Pages\NotificationSubscriptions;
 use Dashed\DashedCore\Filament\Pages\Settings\NotificationSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Documentation\DocumentationOverviewPage;
 
@@ -61,6 +62,7 @@ class DashedCorePlugin implements Plugin
                 ExportSettingsPage::class,
                 EmailSettingsPage::class,
                 NotificationSettingsPage::class,
+                NotificationSubscriptions::class,
                 WebVitalsPage::class,
                 DocumentationOverviewPage::class,
             ])
