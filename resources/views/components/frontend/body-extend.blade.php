@@ -127,13 +127,22 @@
 {{--@include('cookie-consent::index')--}}
 
 @if(class_exists(\Dashed\DashedPopups\Models\Popup::class))
-    @foreach(\Dashed\DashedPopups\Models\Popup::query()
-        ->where('active', true)
-        ->where('start_date', '<=', now())
-        ->where('end_date', '>=', now())
-        ->get() as $activePopup)
+    @php
+        // Defensief: er hoort maximaal 1 actieve popup te zijn (boot-hook op
+        // Popup model bewaakt dat), maar voor het geval er om welke reden
+        // dan ook meerdere actieve popups in de DB staan, mounten we slechts
+        // de meest recente. De Livewire-component in dashed-popups doet
+        // daarna nog eigen targeting + per-sessie-suppression.
+        $activePopup = \Dashed\DashedPopups\Models\Popup::query()
+            ->where('active', true)
+            ->where('start_date', '<=', now())
+            ->where('end_date', '>=', now())
+            ->orderByDesc('id')
+            ->first();
+    @endphp
+    @if($activePopup)
         <livewire:dashed-popups.popup :popupId="(string) $activePopup->id" :key="'popup-'.$activePopup->id"/>
-    @endforeach
+    @endif
 @endif
 
 @if(isset($model) && $model && method_exists($model, 'breadcrumbs'))

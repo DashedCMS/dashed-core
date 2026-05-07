@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.6.1 - 2026-05-07
+
+### Fixed
+- `body-extend.blade.php` rendert nu maximaal 1 actieve popup als Livewire-component (sorteert op `id` desc en pakt de eerste). Voorheen werden alle actieve popups in een `@foreach` gemount, waardoor er bij meerdere actieve popups in de DB twee popups gelijktijdig konden verschijnen.
+
 ## v4.6.0 - 2026-05-07
 
 ### Added
