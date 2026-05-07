@@ -32,11 +32,11 @@ class NotificationSubscriptions extends Page implements HasSchemas
 
     protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-envelope';
 
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $title = 'Mijn samenvattingen';
 
     protected static ?string $navigationLabel = 'Mijn samenvattingen';
-
-    protected static string | UnitEnum | null $navigationGroup = 'Overige';
 
     protected static ?string $slug = 'me/summary-subscriptions';
 

@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.5.1 - 2026-05-07
+
+### Changed
+- `NotificationSubscriptions` Filament-pagina is verplaatst naar de Settings-pagina's (via `cms()->registerSettingsPage()`) en niet meer als losse sidebar-knop in de "Overige"-groep. `shouldRegisterNavigation = false` zodat de pagina niet meer in de hoofd-navigatie verschijnt; admins openen 'm via Instellingen > "Mijn samenvattingen".
+
 ## v4.5.0 - 2026-05-07
 
 ### Changed

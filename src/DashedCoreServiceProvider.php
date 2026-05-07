@@ -1237,6 +1237,7 @@ MARKDOWN,
         cms()->registerSettingsPage(SearchSettingsPage::class, 'Search', 'magnifying-glass', 'Zoek instellingen van de website');
         cms()->registerSettingsPage(ExportSettingsPage::class, 'Exports', 'document-arrow-down', 'Bewaartermijn van exports instellen');
         cms()->registerSettingsPage(EmailSettingsPage::class, 'E-mail', 'envelope', 'Kleuren en styling van verzonden e-mails');
+        cms()->registerSettingsPage(NotificationSubscriptions::class, 'Mijn samenvattingen', 'envelope-open', 'Beheer welke periodieke samenvatting-mails je wilt ontvangen.');
         cms()->registerSettingsPage(\Dashed\DashedCore\Filament\Pages\Settings\NotificationSettingsPage::class, 'Notificaties', 'bell', 'Telegram kanaal voor admin notificaties');
         cms()->registerSettingsPage(ReviewSettingsPage::class, 'Review', 'star', 'Review instellingen van de website');
 
