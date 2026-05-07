@@ -3,6 +3,7 @@
 namespace Dashed\DashedCore;
 
 use Livewire\Livewire;
+use Filament\Support\Assets\Js;
 use Dashed\DashedCore\Models\Role;
 use Dashed\DashedCore\Models\User;
 use Dashed\DashedPages\Models\Page;
@@ -27,6 +28,7 @@ use Dashed\DashedCore\Policies\RolePolicy;
 use Dashed\DashedCore\Policies\UserPolicy;
 use Dashed\DashedCore\Commands\MigrateToV4;
 use Dashed\DashedCore\Models\Customsetting;
+use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Console\Scheduling\Schedule;
 use Dashed\DashedCore\Mail\NotificationMail;
 use Dashed\DashedCore\Policies\ReviewPolicy;
@@ -41,13 +43,14 @@ use Guava\FilamentIconPicker\Forms\IconPicker;
 use Dashed\DashedCore\Commands\CreateAdminUser;
 use Dashed\DashedCore\Mail\NewAdminAccountMail;
 use Dashed\DashedCore\Commands\CleanupOldExports;
-use Dashed\DashedCore\Commands\CleanupOldNotFoundPageOccurrences;
 use Dashed\DashedCore\Commands\SyncGoogleReviews;
 use Dashed\DashedCore\Mail\EmailBlocks\TextBlock;
 use Dashed\DashedCore\Mail\EmailTemplateRegistry;
 use Dashed\DashedCore\Policies\GlobalBlockPolicy;
 use Dashed\DashedCore\Commands\CreateDefaultPages;
 use Dashed\DashedCore\Mail\EmailBlocks\ImageBlock;
+use Dashed\DashedCore\Mail\EmailBlocks\StatsBlock;
+use Dashed\DashedCore\Mail\EmailBlocks\TableBlock;
 use Dashed\DashedCore\Policies\NotFoundPagePolicy;
 use Dashed\DashedCore\Commands\MigrateDatabaseToV4;
 use Dashed\DashedCore\Livewire\Frontend\Auth\Login;
@@ -55,10 +58,6 @@ use Dashed\DashedCore\Mail\EmailBlocks\ButtonBlock;
 use Dashed\DashedCore\Commands\CreateVisitableModel;
 use Dashed\DashedCore\Mail\EmailBlocks\DividerBlock;
 use Dashed\DashedCore\Mail\EmailBlocks\HeadingBlock;
-use Dashed\DashedCore\Mail\EmailBlocks\StatsBlock;
-use Dashed\DashedCore\Mail\EmailBlocks\TableBlock;
-use Dashed\DashedCore\Commands\DispatchSummaryMailsCommand;
-use Dashed\DashedCore\Filament\Pages\NotificationSubscriptions;
 use Dashed\DashedCore\Commands\PruneWebVitalsCommand;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Dashed\DashedCore\Commands\GenerateFaviconsCommand;
@@ -66,6 +65,7 @@ use Dashed\DashedCore\Livewire\Frontend\Account\Account;
 use Dashed\DashedCore\Commands\AggregateWebVitalsCommand;
 use Dashed\DashedCore\Filament\Widgets\NotFoundPageStats;
 use Dashed\DashedCore\Mail\EmailBlocks\OrderSummaryBlock;
+use Dashed\DashedCore\Commands\DispatchSummaryMailsCommand;
 use Dashed\DashedCore\Commands\ReplaceEditorStringsInFiles;
 use Dashed\DashedCore\Livewire\Frontend\Auth\ResetPassword;
 use Dashed\DashedCore\Livewire\Frontend\Auth\ForgotPassword;
@@ -77,14 +77,15 @@ use Dashed\DashedCore\Filament\Pages\Settings\SEOSettingsPage;
 use Dashed\DashedCore\Livewire\Infolists\SEO\SEOScoreInfoList;
 use Dashed\DashedCore\Performance\Images\ImagePriorityTracker;
 use Dashed\DashedCore\Performance\Scripts\DeferredScriptStore;
+use Dashed\DashedCore\Filament\Pages\NotificationSubscriptions;
 use Dashed\DashedCore\Filament\Widgets\NotFoundPageGlobalStats;
 use Dashed\DashedCore\Filament\Pages\Settings\CacheSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\EmailSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
 use Dashed\DashedCore\Classes\RichEditorPlugins\MediaEmbedPlugin;
 use Dashed\DashedCore\Classes\RichEditorPlugins\VideoEmbedPlugin;
+use Dashed\DashedCore\Commands\CleanupOldNotFoundPageOccurrences;
 use Dashed\DashedCore\Filament\Pages\Settings\ExportSettingsPage;
-use Dashed\DashedCore\Filament\Pages\Settings\NotFoundPageSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\ReviewSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\SearchSettingsPage;
 use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonQueueStats;
@@ -95,6 +96,7 @@ use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonWaitTimeChart;
 use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonFailedJobsTable;
 use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonThroughputChart;
 use Dashed\DashedCore\Livewire\Frontend\Protection\PasswordProtection;
+use Dashed\DashedCore\Filament\Pages\Settings\NotFoundPageSettingsPage;
 
 class DashedCoreServiceProvider extends PackageServiceProvider
 {
@@ -102,6 +104,13 @@ class DashedCoreServiceProvider extends PackageServiceProvider
 
     public function bootingPackage()
     {
+        FilamentAsset::register([
+            Js::make(
+                'nestable-sorting',
+                __DIR__.'/../resources/js/nestable-sorting.js'
+            ),
+        ], 'dashed-core');
+
         \Dashed\DashedCore\Notifications\NotificationChannels::register('mail', 'E-mail');
         \Dashed\DashedCore\Notifications\NotificationChannels::register('telegram', 'Telegram');
 

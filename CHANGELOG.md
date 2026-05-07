@@ -2,6 +2,13 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.6.0 - 2026-05-07
+
+### Added
+- `Dashed\DashedCore\Filament\Actions\NestableSortingAction::make()` — gedeelde drag-and-drop tree-sorter Action voor Filament 4. Werkt op zowel `ListRecords`-pages als `RelationManager`s. Parameters: query-builder + `parentColumn`/`labelColumn`/`orderColumn` + optionele `labelResolver` closure + aanpasbare lege/succes-labels.
+- `Dashed\DashedCore\Filament\Concerns\HasNestableSortingAction` — trait voor `ListRecords`-pages die via `getNestableSortingHeaderAction()` automatisch de Sorteren-knop teruggeeft wanneer het Resource's model `IsVisitable` gebruikt en `canHaveParent() === true` retourneert. Multi-site `thisSite()` scope wordt automatisch toegepast wanneer aanwezig op het model.
+- Filament-asset `nestable-sorting.js` (geregistreerd via `FilamentAsset::register`) en views `dashed-core::filament.nestable-sorting-modal` + `_nestable-sorting-node`. JS laadt SortableJS via CDN op eerste open.
+
 ## v4.5.2 - 2026-05-07
 
 ### Added
