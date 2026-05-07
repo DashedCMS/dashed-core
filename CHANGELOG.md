@@ -2,6 +2,12 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.5.2 - 2026-05-07
+
+### Added
+- `dashed:cleanup-old-not-found-page-occurrences` Artisan-command. Verwijdert (force-delete) records uit `dashed__not_found_page_occurrences` ouder dan de geconfigureerde bewaartermijn (`Customsetting('not_found_page_occurrences_retention_days')`, default 30 dagen). De `NotFoundPage`-records zelf blijven staan; alleen hun bezoek-historie wordt opgeschoond. `total_occurrences` en `last_occurrence` op `NotFoundPage` worden na de opschoning herberekend zodat de teller in het admin-overzicht klopt. Geregistreerd in de scheduler op `daily()`.
+- `NotFoundPageSettingsPage` (Filament) onder Instellingen > "404-pagina" met één veld "Bewaartermijn 404-bezoeken (dagen)" (numeriek, 1–3650, default 30). Gebruikt dezelfde patroon als `ExportSettingsPage`. Schrijft per site naar `Customsetting('not_found_page_occurrences_retention_days')`.
+
 ## v4.5.1 - 2026-05-07
 
 ### Changed

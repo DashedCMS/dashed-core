@@ -41,6 +41,7 @@ use Guava\FilamentIconPicker\Forms\IconPicker;
 use Dashed\DashedCore\Commands\CreateAdminUser;
 use Dashed\DashedCore\Mail\NewAdminAccountMail;
 use Dashed\DashedCore\Commands\CleanupOldExports;
+use Dashed\DashedCore\Commands\CleanupOldNotFoundPageOccurrences;
 use Dashed\DashedCore\Commands\SyncGoogleReviews;
 use Dashed\DashedCore\Mail\EmailBlocks\TextBlock;
 use Dashed\DashedCore\Mail\EmailTemplateRegistry;
@@ -83,6 +84,7 @@ use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
 use Dashed\DashedCore\Classes\RichEditorPlugins\MediaEmbedPlugin;
 use Dashed\DashedCore\Classes\RichEditorPlugins\VideoEmbedPlugin;
 use Dashed\DashedCore\Filament\Pages\Settings\ExportSettingsPage;
+use Dashed\DashedCore\Filament\Pages\Settings\NotFoundPageSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\ReviewSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\SearchSettingsPage;
 use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonQueueStats;
@@ -810,6 +812,7 @@ MARKDOWN,
             $schedule->command(CreateSitemap::class)->daily();
             $schedule->command(InvalidatePasswordResetTokens::class)->everyFifteenMinutes();
             $schedule->command(CleanupOldExports::class)->daily();
+            $schedule->command(CleanupOldNotFoundPageOccurrences::class)->daily();
             $schedule->command(SyncGoogleReviews::class)->twiceDaily();
             //            $schedule->command(SeoScan::class)->daily();
             $schedule->command(AggregateWebVitalsCommand::class)->dailyAt('03:00');
@@ -1236,6 +1239,7 @@ MARKDOWN,
         cms()->registerSettingsPage(CacheSettingsPage::class, 'Cache', 'photo', 'Cache van de website');
         cms()->registerSettingsPage(SearchSettingsPage::class, 'Search', 'magnifying-glass', 'Zoek instellingen van de website');
         cms()->registerSettingsPage(ExportSettingsPage::class, 'Exports', 'document-arrow-down', 'Bewaartermijn van exports instellen');
+        cms()->registerSettingsPage(NotFoundPageSettingsPage::class, '404-pagina', 'exclamation-triangle', 'Bewaartermijn van 404-bezoeken instellen');
         cms()->registerSettingsPage(EmailSettingsPage::class, 'E-mail', 'envelope', 'Kleuren en styling van verzonden e-mails');
         cms()->registerSettingsPage(NotificationSubscriptions::class, 'Mijn samenvattingen', 'envelope-open', 'Beheer welke periodieke samenvatting-mails je wilt ontvangen.');
         cms()->registerSettingsPage(\Dashed\DashedCore\Filament\Pages\Settings\NotificationSettingsPage::class, 'Notificaties', 'bell', 'Telegram kanaal voor admin notificaties');
@@ -1268,6 +1272,7 @@ MARKDOWN,
                 UpdateCommand::class,
                 InvalidatePasswordResetTokens::class,
                 CleanupOldExports::class,
+                CleanupOldNotFoundPageOccurrences::class,
                 CreateSitemap::class,
                 CreateVisitableModel::class,
                 SyncGoogleReviews::class,

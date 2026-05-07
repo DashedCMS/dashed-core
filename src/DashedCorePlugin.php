@@ -20,6 +20,7 @@ use Dashed\DashedCore\Filament\Pages\Settings\EmailSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
 use Dashed\DashedCore\Filament\Resources\Reviews\ReviewResource;
 use Dashed\DashedCore\Filament\Pages\Settings\ExportSettingsPage;
+use Dashed\DashedCore\Filament\Pages\Settings\NotFoundPageSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\ReviewSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\SearchSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\AccountSettingsPage;
@@ -60,6 +61,7 @@ class DashedCorePlugin implements Plugin
                 SearchSettingsPage::class,
                 ReviewSettingsPage::class,
                 ExportSettingsPage::class,
+                NotFoundPageSettingsPage::class,
                 EmailSettingsPage::class,
                 NotificationSettingsPage::class,
                 NotificationSubscriptions::class,
