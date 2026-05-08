@@ -7,8 +7,8 @@ use Filament\Actions\DeleteAction;
 use Illuminate\Support\Facades\Hash;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
-use STS\FilamentImpersonate\Actions\Impersonate;
 use Dashed\DashedCore\Mail\NewAdminAccountMail;
+use STS\FilamentImpersonate\Actions\Impersonate;
 use Dashed\DashedCore\Notifications\AdminNotifier;
 use Dashed\DashedCore\Filament\Resources\UserResource;
 

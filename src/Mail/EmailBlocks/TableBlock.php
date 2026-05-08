@@ -2,9 +2,9 @@
 
 namespace Dashed\DashedCore\Mail\EmailBlocks;
 
-use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\Builder\Block;
 
 /**
  * Multi-koloms tabel-block, primair gebruikt voor top-N lijsten in de

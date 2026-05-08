@@ -4,8 +4,8 @@ namespace Dashed\DashedCore\Commands;
 
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedCore\Models\NotFoundPage;
+use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedCore\Models\NotFoundPageOccurrence;
 
 class CleanupOldNotFoundPageOccurrences extends Command

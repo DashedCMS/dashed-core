@@ -14,10 +14,10 @@ use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Contracts\HasSchemas;
 use Dashed\DashedCore\Models\Customsetting;
-use Dashed\DashedCore\Services\Summary\Contracts\SummaryContributorInterface;
 use Dashed\DashedCore\Traits\HasSettingsPermission;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Dashed\DashedCore\Notifications\Channels\TelegramChannel;
+use Dashed\DashedCore\Services\Summary\Contracts\SummaryContributorInterface;
 
 class NotificationSettingsPage extends Page implements HasSchemas
 {

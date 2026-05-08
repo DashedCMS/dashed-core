@@ -2,13 +2,13 @@
 
 namespace Dashed\DashedCore\Mail;
 
-use Dashed\DashedCore\Models\Customsetting;
-use Dashed\DashedCore\Models\User;
-use Dashed\DashedCore\Services\Summary\DTOs\SummaryPeriod;
-use Dashed\DashedCore\Services\Summary\DTOs\SummarySection;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
+use Dashed\DashedCore\Models\User;
 use Illuminate\Queue\SerializesModels;
+use Dashed\DashedCore\Models\Customsetting;
+use Dashed\DashedCore\Services\Summary\DTOs\SummaryPeriod;
+use Dashed\DashedCore\Services\Summary\DTOs\SummarySection;
 
 /**
  * Mailable voor de admin samenvatting-mail. Bouwt de unified

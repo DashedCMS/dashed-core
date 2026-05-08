@@ -2,18 +2,18 @@
 
 namespace Dashed\DashedCore\Filament\Concerns;
 
-use Dashed\DashedCore\Classes\Locales;
-use Dashed\DashedCore\Models\GlobalBlock;
-use Dashed\DashedMarketing\Filament\Actions\RequestSeoAuditAction;
-use Dashed\DashedTranslations\Classes\AutomatedTranslation;
+use Illuminate\Support\Str;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
-use Filament\Infolists\Components\TextEntry;
+use Dashed\DashedCore\Classes\Locales;
 use Filament\Notifications\Notification;
-use Illuminate\Support\Str;
+use Dashed\DashedCore\Models\GlobalBlock;
+use Filament\Infolists\Components\TextEntry;
 use LaraZeus\SpatieTranslatable\Actions\LocaleSwitcher;
+use Dashed\DashedTranslations\Classes\AutomatedTranslation;
+use Dashed\DashedMarketing\Filament\Actions\RequestSeoAuditAction;
 use LaraZeus\SpatieTranslatable\Resources\Pages\EditRecord\Concerns\Translatable;
 
 trait HasEditableCMSActions

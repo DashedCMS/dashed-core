@@ -2,16 +2,16 @@
 
 namespace Dashed\DashedCore\Commands;
 
+use Throwable;
 use Carbon\Carbon;
+use Illuminate\Console\Command;
+use Dashed\DashedCore\Models\User;
+use Illuminate\Support\Facades\Mail;
 use Dashed\DashedCore\Mail\SummaryMail;
 use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedCore\Models\SummarySubscription;
-use Dashed\DashedCore\Models\User;
-use Dashed\DashedCore\Services\Summary\Contracts\SummaryContributorInterface;
 use Dashed\DashedCore\Services\Summary\DTOs\SummaryPeriod;
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Mail;
-use Throwable;
+use Dashed\DashedCore\Services\Summary\Contracts\SummaryContributorInterface;
 
 /**
  * Verstuurt openstaande admin samenvatting-mails.
@@ -51,6 +51,7 @@ class DispatchSummaryMailsCommand extends Command
             $user = User::query()->find($userId);
             if (! $user || empty($user->email)) {
                 $skipped += $userSubs->count();
+
                 continue;
             }
 
@@ -101,6 +102,7 @@ class DispatchSummaryMailsCommand extends Command
                 } catch (Throwable $e) {
                     report($e);
                     $skipped += count($processed);
+
                     continue;
                 }
             }

@@ -2,8 +2,8 @@
 
 namespace Dashed\DashedCore;
 
-use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
+use Filament\Support\Assets\Css;
 use Illuminate\Support\ServiceProvider;
 use Filament\Support\Facades\FilamentAsset;
 

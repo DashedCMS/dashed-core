@@ -2,9 +2,9 @@
 
 namespace Dashed\DashedCore\Mail\EmailBlocks;
 
-use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Builder\Block;
 
 /**
  * Stats-block, primair gebruikt door de samenvatting-mails.

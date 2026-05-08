@@ -12,9 +12,9 @@ use Dashed\DashedCore\Mail\EmailRenderer;
 use LaraZeus\SpatieTranslatable\Actions\LocaleSwitcher;
 use Dashed\DashedCore\Notifications\Channels\TelegramChannel;
 use Dashed\DashedCore\Notifications\Contracts\SendsToTelegram;
-use Dashed\DashedCore\Classes\Actions\CopyEmailTemplateLocaleAction;
-use Dashed\DashedCore\Classes\Actions\TranslateEmailTemplateAction;
 use Dashed\DashedCore\Filament\Resources\EmailTemplateResource;
+use Dashed\DashedCore\Classes\Actions\TranslateEmailTemplateAction;
+use Dashed\DashedCore\Classes\Actions\CopyEmailTemplateLocaleAction;
 use LaraZeus\SpatieTranslatable\Resources\Pages\EditRecord\Concerns\Translatable;
 
 class EditEmailTemplate extends EditRecord

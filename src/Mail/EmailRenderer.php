@@ -2,10 +2,10 @@
 
 namespace Dashed\DashedCore\Mail;
 
-use Dashed\DashedCore\Mail\Exceptions\EmptyEmailTemplateException;
+use Illuminate\Support\Facades\App;
 use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedCore\Models\EmailTemplate;
-use Illuminate\Support\Facades\App;
+use Dashed\DashedCore\Mail\Exceptions\EmptyEmailTemplateException;
 
 class EmailRenderer
 {

@@ -2,24 +2,23 @@
 
 namespace Dashed\DashedCore\Filament\Pages;
 
+use Throwable;
 use BackedEnum;
 use Carbon\Carbon;
-use Dashed\DashedCore\Mail\SummaryMail;
-use Dashed\DashedCore\Models\Customsetting;
-use Dashed\DashedCore\Models\SummarySubscription;
-use Dashed\DashedCore\Services\Summary\Contracts\SummaryContributorInterface;
-use Dashed\DashedCore\Services\Summary\DTOs\SummaryPeriod;
-use Filament\Actions\Action;
-use Filament\Forms\Components\Select;
-use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Concerns\InteractsWithSchemas;
-use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Mail;
-use Throwable;
-use UnitEnum;
+use Filament\Forms\Components\Select;
+use Dashed\DashedCore\Mail\SummaryMail;
+use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Contracts\HasSchemas;
+use Dashed\DashedCore\Models\Customsetting;
+use Dashed\DashedCore\Models\SummarySubscription;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Dashed\DashedCore\Services\Summary\DTOs\SummaryPeriod;
+use Dashed\DashedCore\Services\Summary\Contracts\SummaryContributorInterface;
 
 /**
  * Per-user pagina waar elke admin zijn samenvatting-mail-voorkeuren
@@ -176,6 +175,7 @@ class NotificationSubscriptions extends Page implements HasSchemas
                 }
 
                 $sectionPeriod = $this->periodFor((string) $sub->frequency) ?? $period;
+
                 try {
                     $section = $class::contribute($sectionPeriod);
                 } catch (Throwable $e) {
