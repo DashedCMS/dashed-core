@@ -189,48 +189,47 @@ $ogSiteName = $siteName ?? config('app.name');
 {!! $slot !!}
 
 @if($facebookEnabled)
-    @if(config('dashed-core.performance.defer_third_party_scripts'))
-        @php
-            $fbIds = array_filter([$fbConversionId, $fbSiteId]);
-            $fbInits = implode("\n", array_map(fn($id) => "fbq('init', '{$id}');", $fbIds));
-            $fbScript = "!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');\n" .
-                $fbInits . "\n" .
-                "fbq('track', 'PageView');";
-            app(\Dashed\DashedCore\Performance\Scripts\DeferredScriptStore::class)->add('facebook-pixel', $fbScript);
-        @endphp
-    @else
-        <script>
-            !function (f, b, e, v, n, t, s) {
-                if (f.fbq) return;
-                n = f.fbq = function () {
-                    n.callMethod
-                        ? n.callMethod.apply(n, arguments)
-                        : n.queue.push(arguments);
-                };
-                if (!f._fbq) f._fbq = n;
-                n.push = n;
-                n.loaded = !0;
-                n.version = '2.0';
-                n.queue = [];
-                t = b.createElement(e);
-                t.async = !0;
-                t.src = v;
-                s = b.getElementsByTagName(e)[0];
-                s.parentNode.insertBefore(t, s);
-            }(window, document, 'script',
-                'https://connect.facebook.net/en_US/fbevents.js');
+    {{-- Facebook pixel altijd inline laden, niet via DeferredScriptStore.
+         De standaard FB-snippet definieert `fbq` synchroon als queueing
+         functie en laadt fbevents.js daarna async (`t.async=!0`), dus de
+         performance-impact is minimaal. Wrappen in window.load zou:
+           - `typeof fbq === 'undefined'` true maken voor alle Livewire-event
+             handlers die vóór load vuren (AddToCart, ViewContent, Purchase),
+             waardoor events stil verloren gaan;
+           - Facebook Pixel Helper / Events Manager geen PageView zien omdat
+             de pixel pas na window.load init't.
+         Daarom hier altijd inline. --}}
+    <script>
+        !function (f, b, e, v, n, t, s) {
+            if (f.fbq) return;
+            n = f.fbq = function () {
+                n.callMethod
+                    ? n.callMethod.apply(n, arguments)
+                    : n.queue.push(arguments);
+            };
+            if (!f._fbq) f._fbq = n;
+            n.push = n;
+            n.loaded = !0;
+            n.version = '2.0';
+            n.queue = [];
+            t = b.createElement(e);
+            t.async = !0;
+            t.src = v;
+            s = b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t, s);
+        }(window, document, 'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
 
-            @if($fbConversionId)
-            fbq('init', '{{ $fbConversionId }}');
-            @endif
+        @if($fbConversionId)
+        fbq('init', '{{ $fbConversionId }}');
+        @endif
 
-            @if($fbSiteId)
-            fbq('init', '{{ $fbSiteId }}');
-            @endif
+        @if($fbSiteId)
+        fbq('init', '{{ $fbSiteId }}');
+        @endif
 
-            fbq('track', 'PageView');
-        </script>
-    @endif
+        fbq('track', 'PageView');
+    </script>
 
     @if($fbConversionId)
         <noscript>

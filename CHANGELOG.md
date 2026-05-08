@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.6.3 - 2026-05-08
+
+### Fixed
+- Facebook Pixel snippet wordt niet meer in `window.addEventListener('load', ...)` ingepakt door `DeferredScriptStore`. Het base-snippet defineert `fbq` als queueing-functie en moet sync beschikbaar zijn vóór Livewire-event listeners (AddToCart, ViewContent, Purchase, AddPaymentInfo, InitiateCheckout) `typeof fbq` checken — anders gingen die events stil verloren wanneer ze vóór window.load vuurden. Bovendien zag Facebook Pixel Helper / Events Manager geen pixel omdat PageView pas na window.load init'te. Pixel laadt nu altijd inline in `<head>`; `fbevents.js` blijft async geladen via de standaard FB-snippet (`t.async=!0`) dus performance-impact is minimaal.
+
 ## v4.6.1 - 2026-05-07
 
 ### Fixed
