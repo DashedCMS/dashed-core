@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.6.6 - 2026-05-08
+
+### Added
+- `body-extend.blade.php` luistert nu naar `livewire:navigated` en vuurt bij iedere Livewire-SPA-navigatie opnieuw `fbq('track', 'PageView')` + een `dataLayer.push({event: 'page_view', page_path})` af. Voorheen werd PageView alleen op een volledige page-reload afgevuurd (via head.blade.php), waardoor wire:navigate-navigaties tussen pagina's nooit een PageView-hit naar Facebook of GA4 stuurden.
+
 ## v4.6.5 - 2026-05-08
 
 ### Fixed

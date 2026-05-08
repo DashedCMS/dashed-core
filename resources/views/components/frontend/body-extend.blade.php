@@ -92,11 +92,6 @@
 
 <script>
     (function () {
-        // Registreer Livewire-event listeners idempotent: als Livewire al
-        // geïnitialiseerd is (script staat na @livewireScripts in de layout)
-        // bind direct, anders wacht op livewire:init. Voorheen liep de
-        // callback altijd via addEventListener('livewire:init', ...) en miste
-        // 'm de boot wanneer Livewire al gestart was vóór dit script.
         const register = () => {
             const tracking = {
                 facebook: @json($facebookEnabled),
@@ -128,6 +123,20 @@
             }
         });
         };
+
+        // SPA-navigaties via wire:navigate herladen <head> niet, dus
+        // PageView (en GA4 page_view) opnieuw afvuren bij iedere
+        // Livewire-navigation. Initieel-load PageView blijft in head.blade.php.
+        const trackPageView = () => {
+            if (typeof fbq !== 'undefined') {
+                fbq('track', 'PageView');
+            }
+            if (typeof dataLayer !== 'undefined') {
+                dataLayer.push({ event: 'page_view', page_path: location.pathname });
+            }
+        };
+
+        document.addEventListener('livewire:navigated', trackPageView);
 
         if (window.Livewire) {
             register();
