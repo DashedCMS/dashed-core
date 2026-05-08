@@ -91,12 +91,18 @@
 @endif
 
 <script>
-    document.addEventListener('livewire:init', () => {
-        const tracking = {
-            facebook: @json($facebookEnabled),
-        };
+    (function () {
+        // Registreer Livewire-event listeners idempotent: als Livewire al
+        // geïnitialiseerd is (script staat na @livewireScripts in de layout)
+        // bind direct, anders wacht op livewire:init. Voorheen liep de
+        // callback altijd via addEventListener('livewire:init', ...) en miste
+        // 'm de boot wanneer Livewire al gestart was vóór dit script.
+        const register = () => {
+            const tracking = {
+                facebook: @json($facebookEnabled),
+            };
 
-        Livewire.on('formSubmitted', (event) => {
+            Livewire.on('formSubmitted', (event) => {
             const payload = event[0];
 
             if (tracking.facebook && typeof fbq !== 'undefined') {
@@ -121,7 +127,14 @@
                 }, 1000);
             }
         });
-    });
+        };
+
+        if (window.Livewire) {
+            register();
+        } else {
+            document.addEventListener('livewire:init', register);
+        }
+    })();
 </script>
 
 {{--@include('cookie-consent::index')--}}

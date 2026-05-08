@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.6.5 - 2026-05-08
+
+### Fixed
+- `body-extend.blade.php` registreert Livewire-event listeners (`formSubmitted`, `searchInitiated`) nu defensief: als `window.Livewire` al bestaat (Livewire al geïnitialiseerd voordat dit script-tag werd geparsed) bind direct, anders luistert 'm op `livewire:init`. Voorheen ging registratie altijd via `addEventListener('livewire:init', ...)` waardoor de callback nooit liep wanneer `@livewireScripts` vóór de body-extend in de layout stond — `livewire:init` was dan al gevuurd en alle Pixel-/dataLayer-event-bindingen werden gemist.
+
 ## v4.6.4 - 2026-05-08
 
 ### Fixed
