@@ -189,16 +189,6 @@ $ogSiteName = $siteName ?? config('app.name');
 {!! $slot !!}
 
 @if($facebookEnabled)
-    {{-- Facebook pixel altijd inline laden, niet via DeferredScriptStore.
-         De standaard FB-snippet definieert `fbq` synchroon als queueing
-         functie en laadt fbevents.js daarna async (`t.async=!0`), dus de
-         performance-impact is minimaal. Wrappen in window.load zou:
-           - `typeof fbq === 'undefined'` true maken voor alle Livewire-event
-             handlers die vóór load vuren (AddToCart, ViewContent, Purchase),
-             waardoor events stil verloren gaan;
-           - Facebook Pixel Helper / Events Manager geen PageView zien omdat
-             de pixel pas na window.load init't.
-         Daarom hier altijd inline. --}}
     <script>
         !function (f, b, e, v, n, t, s) {
             if (f.fbq) return;
