@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.6.4 - 2026-05-08
+
+### Fixed
+- Stub `resources/component-templates/master.blade.php` includeert nu standaard `<x-dashed-ecommerce-core::frontend.body-extend/>` (was uitgecommentarieerd). Zonder die regel waren de Livewire-listeners voor `productAddedToCart`, `viewProduct`, `checkoutSubmitted` en `orderPaid` niet geregistreerd op niet-checkout-pagina's, waardoor de Facebook Pixel (en TikTok / GA4 datalayer) AddToCart, ViewContent en Purchase events nooit vuurden buiten de checkout-flow. **Bestaande consumer-projecten moeten zelf hun lokale `resources/views/components/master.blade.php` bijwerken.**
+
 ## v4.6.3 - 2026-05-08
 
 ### Fixed

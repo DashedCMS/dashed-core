@@ -47,7 +47,7 @@
 <x-dashed-core::frontend.body-extend/>
 {{--<livewire:cart.cart-popup/>--}}
 {{--<x-cart.added-to-cart-popup />--}}
-{{--<x-dashed-ecommerce-core::frontend.body-extend/>--}}
+<x-dashed-ecommerce-core::frontend.body-extend/>
 
 
 {{--<div--}}
