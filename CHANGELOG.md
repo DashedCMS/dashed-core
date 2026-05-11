@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.7.1 - 2026-05-11
+
+### Fixed
+- `dashed:create-user` zet de role nu op `superadmin` in plaats van `admin`. De command is bedoeld voor de initiële bootstrap-gebruiker, die volledige rechten hoort te hebben.
+
 ## v4.7.0 - 2026-05-11
 
 ### Added
