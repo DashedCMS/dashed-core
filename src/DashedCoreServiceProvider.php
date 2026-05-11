@@ -104,6 +104,14 @@ class DashedCoreServiceProvider extends PackageServiceProvider
 
     public function bootingPackage()
     {
+        // Maak het laatst-gecaptured e-mailadres uit de sessie beschikbaar
+        // als $capturedEmail in elke view, zodat blades 'm direct kunnen
+        // gebruiken (voorvullen, personalisatie). Composer i.p.v. share
+        // omdat de sessie pas in de request-cyclus geladen wordt.
+        \Illuminate\Support\Facades\View::composer('*', function ($view) {
+            $view->with('capturedEmail', \Dashed\DashedCore\Classes\EmailCapture::current());
+        });
+
         FilamentAsset::register([
             Js::make(
                 'nestable-sorting',

@@ -2,6 +2,12 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.7.0 - 2026-05-11
+
+### Added
+- **Globale e-mail-captura via sessie.** Nieuwe `Dashed\DashedCore\Classes\EmailCapture`-class met `capture($email, $source)`, `current()`, `source()`, `capturedAt()` en `forget()`. Sla het laatste door de bezoeker ingevulde adres + bron + tijdstip op in de sessie zodat het cross-page beschikbaar is. Schrijft alleen geldige adressen (`FILTER_VALIDATE_EMAIL`) en slaat een no-op-write over bij hetzelfde adres.
+- **`capturedEmail()` global helper-functie** en **`$capturedEmail` blade-variabele** (via `View::composer('*')`) — toegankelijk in elke view voor voorvullen of personalisatie. Voorbeeld: `<input type="email" value="{{ $capturedEmail }}">`.
+
 ## v4.6.6 - 2026-05-08
 
 ### Added
