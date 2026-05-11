@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.7.2 - 2026-05-11
+
+### Fixed
+- **Test-mail-action op `EmailTemplateResource` vangt nu uitzonderingen op.** Vóór deze release bubbelde een SMTP/auth/DNS-fout naar de Filament-error-handler en zag de gebruiker geen duidelijke melding. Nu komt de exceptie in een rode `Notification` met `$e->getMessage()` als body (zelfde patroon als de bestaande Telegram-, AbandonedCart-, OrderHandledFlow- en PopupFollowUp-test-actions). De exceptie wordt nog steeds via `report()` doorgegeven aan de error-reporter zodat hij in de logs staat.
+
 ## v4.7.1 - 2026-05-11
 
 ### Fixed

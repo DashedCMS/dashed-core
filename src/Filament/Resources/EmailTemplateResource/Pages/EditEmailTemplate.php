@@ -48,18 +48,29 @@ class EditEmailTemplate extends EditRecord
                         $mailable = $mailableClass::makeForTest();
                     }
 
-                    if ($mailable) {
-                        Mail::to($data['recipient'])->send($mailable);
-                    } else {
-                        $context = $mailableClass ? $mailableClass::sampleData() : [];
-                        $renderer = app(EmailRenderer::class);
-                        $html = $renderer->render($record, $context);
-                        $subject = $renderer->renderSubject($record, $context) ?: $record->name;
+                    try {
+                        if ($mailable) {
+                            Mail::to($data['recipient'])->send($mailable);
+                        } else {
+                            $context = $mailableClass ? $mailableClass::sampleData() : [];
+                            $renderer = app(EmailRenderer::class);
+                            $html = $renderer->render($record, $context);
+                            $subject = $renderer->renderSubject($record, $context) ?: $record->name;
 
-                        Mail::html($html, function ($message) use ($data, $subject) {
-                            $message->to($data['recipient'])
-                                ->subject('[TEST] ' . $subject);
-                        });
+                            Mail::html($html, function ($message) use ($data, $subject) {
+                                $message->to($data['recipient'])
+                                    ->subject('[TEST] ' . $subject);
+                            });
+                        }
+                    } catch (Throwable $e) {
+                        report($e);
+                        Notification::make()
+                            ->title('Test mail mislukt')
+                            ->body($e->getMessage())
+                            ->danger()
+                            ->send();
+
+                        return;
                     }
 
                     Notification::make()
