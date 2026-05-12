@@ -120,6 +120,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         // Same again for the integrations registry: every provider package
         // calls cms()->registerIntegration(...) in bootingPackage().
         $this->app->singleton(\Dashed\DashedCore\Integrations\IntegrationRegistry::class);
+        $this->app->singleton(\Dashed\DashedCore\Integrations\IntegrationHealthRunner::class);
     }
 
     public function packageBooted()
