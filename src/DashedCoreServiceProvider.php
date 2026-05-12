@@ -64,6 +64,7 @@ use Dashed\DashedCore\Commands\GenerateFaviconsCommand;
 use Dashed\DashedCore\Livewire\Frontend\Account\Account;
 use Dashed\DashedCore\Commands\AggregateWebVitalsCommand;
 use Dashed\DashedCore\Commands\AuditSettingsCommand;
+use Dashed\DashedCore\Commands\ReplayWebhookCommand;
 use Dashed\DashedCore\Filament\Widgets\NotFoundPageStats;
 use Dashed\DashedCore\Mail\EmailBlocks\OrderSummaryBlock;
 use Dashed\DashedCore\Commands\DispatchSummaryMailsCommand;
@@ -1354,6 +1355,7 @@ MARKDOWN,
                 MigrateDatabaseToV4::class,
                 AggregateWebVitalsCommand::class,
                 AuditSettingsCommand::class,
+                ReplayWebhookCommand::class,
                 PruneWebVitalsCommand::class,
                 GenerateFaviconsCommand::class,
                 DispatchSummaryMailsCommand::class,
