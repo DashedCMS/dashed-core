@@ -116,6 +116,10 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         // providers register their extractors in bootingPackage(), so the
         // singleton must already be bound before any package boots.
         $this->app->singleton(\Dashed\DashedCore\Webhooks\WebhookEventIdResolver::class);
+
+        // Same again for the integrations registry: every provider package
+        // calls cms()->registerIntegration(...) in bootingPackage().
+        $this->app->singleton(\Dashed\DashedCore\Integrations\IntegrationRegistry::class);
     }
 
     public function packageBooted()

@@ -455,6 +455,44 @@ class CMSManager
     }
 
     /**
+     * Access the IntegrationsDashboard registry. Useful for filament pages
+     * and widgets that need to iterate all registered integrations.
+     */
+    public function integrationRegistry(): \Dashed\DashedCore\Integrations\IntegrationRegistry
+    {
+        return app(\Dashed\DashedCore\Integrations\IntegrationRegistry::class);
+    }
+
+    /**
+     * Register an admin integration card on the IntegrationsDashboard.
+     * Provider packages call this from `bootingPackage()`:
+     *
+     *     cms()->registerIntegration([
+     *         'slug' => 'mollie',
+     *         'label' => 'Mollie',
+     *         'icon' => 'heroicon-o-credit-card',
+     *         'category' => 'payment',
+     *         'settings_page' => MollieSettingsPage::class,
+     *         'health_check' => fn (?string $siteId) => IntegrationHealth::ok(),
+     *         'docs_url' => 'https://docs.example.test/mollie',
+     *         'package' => 'dashed-ecommerce-mollie',
+     *     ]);
+     */
+    public function registerIntegration(array $cfg): self
+    {
+        $cfg['category'] = $cfg['category'] ?? 'other';
+
+        if (! isset($cfg['permission']) && isset($cfg['settings_page'])) {
+            $cfg['permission'] = $this->getSettingsPagePermission($cfg['settings_page']);
+        }
+
+        $definition = \Dashed\DashedCore\Integrations\IntegrationDefinition::fromArray($cfg);
+        $this->integrationRegistry()->register($definition);
+
+        return $this;
+    }
+
+    /**
      * Explicitly register a Customsetting key, claiming type, default, and
      * owning package. Always overrides any prior auto entry. Call from a
      * service provider's bootingPackage()/packageBooted() to flip a key
