@@ -103,6 +103,15 @@ class DashedCoreServiceProvider extends PackageServiceProvider
 {
     public static string $name = 'dashed-core';
 
+    public function registeringPackage()
+    {
+        // Bind the SettingsRegistry as a singleton in the register() phase so
+        // that ANY bootingPackage() in other dashed-* providers (which run
+        // alphabetically — dashed-ai before dashed-core) sees the same shared
+        // instance when calling cms()->registerSetting().
+        $this->app->singleton(\Dashed\DashedCore\Settings\SettingsRegistry::class);
+    }
+
     public function bootingPackage()
     {
         // Maak het laatst-gecaptured e-mailadres uit de sessie beschikbaar
@@ -129,12 +138,37 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         cms()->registerNavigationGroup('Routes', 90);
         cms()->registerNavigationGroup('Overige', 100);
 
+        // C4 first-pass: explicit Customsetting registrations. Promotes well-known
+        // keys from auto-registered ("needs review") to explicit so the audit command
+        // and the Bundle 3 integrations-dashboard can attribute them correctly.
+        cms()->registerSetting(
+            key: 'site_logo',
+            type: 'string',
+            default: null,
+            package: 'dashed-core',
+            label: 'Site logo',
+            description: 'Pad naar het globale site-logo bestand (per-site).',
+        );
+        cms()->registerSetting(
+            key: 'defer_third_party_scripts',
+            type: 'bool',
+            default: true,
+            package: 'dashed-core',
+            label: 'Third-party scripts uitstellen',
+        );
+        cms()->registerSetting(
+            key: 'google_recaptcha_site_key',
+            type: 'string',
+            default: null,
+            package: 'dashed-core',
+            label: 'Google reCAPTCHA site key',
+        );
+
         if (file_exists(__DIR__.'/../routes/api.php')) {
             $this->loadRoutesFrom(__DIR__.'/../routes/api.php');
         }
 
         $this->app->singleton(EmailTemplateRegistry::class);
-        $this->app->singleton(\Dashed\DashedCore\Settings\SettingsRegistry::class);
         $this->app->singleton(EmailRenderer::class);
         $this->app->singleton(\Dashed\DashedCore\Notifications\Channels\TelegramChannel::class);
         $this->app->singleton(\Dashed\DashedCore\Notifications\AdminNotifier::class);
