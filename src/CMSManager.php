@@ -464,6 +464,29 @@ class CMSManager
     }
 
     /**
+     * Register a recommendation strategy. Lives in dashed-ecommerce-core so
+     * dashed-core stays lazily coupled — we use a FQN string + class_exists
+     * check so test stacks that don't have ecommerce-core installed don't
+     * blow up.
+     *
+     * @param  object  $strategy  Must implement
+     *   `Dashed\DashedEcommerceCore\Services\Recommendations\Strategies\RecommendationStrategy`.
+     * @param  array<int, object>|null  $placements  Optional RecommendationPlacement enum cases.
+     */
+    public function registerRecommendationStrategy(object $strategy, ?array $placements = null): self
+    {
+        $registryClass = 'Dashed\\DashedEcommerceCore\\Services\\Recommendations\\RecommendationRegistry';
+
+        if (! class_exists($registryClass)) {
+            return $this;
+        }
+
+        app($registryClass)->register($strategy, $placements);
+
+        return $this;
+    }
+
+    /**
      * Register an admin integration card on the IntegrationsDashboard.
      * Provider packages call this from `bootingPackage()`:
      *
