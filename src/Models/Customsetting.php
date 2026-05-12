@@ -81,6 +81,11 @@ class Customsetting extends Model
             return $default;
         }
 
+        // Registry touch: auto-register unknown keys with caller file:line for
+        // audit. Cheap (O(1) array check) and side-effect-free when the key is
+        // already known. Bundle 2's logContext() will read these entries.
+        static::touchRegistry($name, $default);
+
         // Site & locale normaliseren
         if (! $siteId) {
             $siteId = Sites::getActive();
@@ -246,5 +251,36 @@ class Customsetting extends Model
 
         $contextKey = static::contextKey($siteId, $locale);
         unset(static::$runtimeContextCache[$contextKey]);
+    }
+
+    /**
+     * Touch the SettingsRegistry on every get() so unknown keys auto-register
+     * with their caller file:line. No-op when the registry binding isn't yet
+     * available (very-early boot before service providers).
+     */
+    protected static function touchRegistry(string $name, mixed $default): void
+    {
+        if (! app()->bound(\Dashed\DashedCore\Settings\SettingsRegistry::class)) {
+            return;
+        }
+
+        $registry = app(\Dashed\DashedCore\Settings\SettingsRegistry::class);
+        if ($registry->get($name) !== null) {
+            return;
+        }
+
+        $caller = null;
+        $frames = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 6);
+        foreach ($frames as $frame) {
+            if (($frame['class'] ?? null) === static::class) {
+                continue;
+            }
+            if (isset($frame['file'], $frame['line'])) {
+                $caller = $frame['file'] . ':' . $frame['line'];
+                break;
+            }
+        }
+
+        $registry->touch($name, $default, $caller);
     }
 }
