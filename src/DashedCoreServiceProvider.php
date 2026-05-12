@@ -112,6 +112,18 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         $this->app->singleton(\Dashed\DashedCore\Settings\SettingsRegistry::class);
     }
 
+    public function packageBooted()
+    {
+        // Register the webhook-idempotency middleware alias so payment-gateway
+        // routes can opt-in via `->middleware('webhook.idempotency:mollie')`
+        // etc. The real handler implementation lands in Bundle 2 Task 10.
+        $router = $this->app->make(\Illuminate\Routing\Router::class);
+        $router->aliasMiddleware(
+            'webhook.idempotency',
+            \Dashed\DashedCore\Http\Middleware\EnsureWebhookIdempotency::class,
+        );
+    }
+
     public function bootingPackage()
     {
         // Maak het laatst-gecaptured e-mailadres uit de sessie beschikbaar
@@ -1314,6 +1326,7 @@ MARKDOWN,
                 //                'seo',
                 'activitylog',
                 'dashed-settings',
+                'webhooks',
             ])
             ->hasRoutes([
                 'frontend',
