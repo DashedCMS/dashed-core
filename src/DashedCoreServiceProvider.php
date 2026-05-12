@@ -63,6 +63,7 @@ use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Dashed\DashedCore\Commands\GenerateFaviconsCommand;
 use Dashed\DashedCore\Livewire\Frontend\Account\Account;
 use Dashed\DashedCore\Commands\AggregateWebVitalsCommand;
+use Dashed\DashedCore\Commands\AuditSettingsCommand;
 use Dashed\DashedCore\Filament\Widgets\NotFoundPageStats;
 use Dashed\DashedCore\Mail\EmailBlocks\OrderSummaryBlock;
 use Dashed\DashedCore\Commands\DispatchSummaryMailsCommand;
@@ -133,6 +134,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         }
 
         $this->app->singleton(EmailTemplateRegistry::class);
+        $this->app->singleton(\Dashed\DashedCore\Settings\SettingsRegistry::class);
         $this->app->singleton(EmailRenderer::class);
         $this->app->singleton(\Dashed\DashedCore\Notifications\Channels\TelegramChannel::class);
         $this->app->singleton(\Dashed\DashedCore\Notifications\AdminNotifier::class);
@@ -1277,6 +1279,7 @@ MARKDOWN,
                 'dashed-core',
                 //                'seo',
                 'activitylog',
+                'dashed-settings',
             ])
             ->hasRoutes([
                 'frontend',
@@ -1298,6 +1301,7 @@ MARKDOWN,
                 MigrateToV4::class,
                 MigrateDatabaseToV4::class,
                 AggregateWebVitalsCommand::class,
+                AuditSettingsCommand::class,
                 PruneWebVitalsCommand::class,
                 GenerateFaviconsCommand::class,
                 DispatchSummaryMailsCommand::class,
