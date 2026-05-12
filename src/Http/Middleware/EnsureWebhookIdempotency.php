@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 use Dashed\DashedCore\Models\WebhookLog;
 use Dashed\DashedCore\Webhooks\WebhookEventIdResolver;
+use Dashed\DashedCore\Webhooks\WebhookProviderDetector;
 
 /**
  * Webhook idempotency middleware.
@@ -34,11 +35,22 @@ class EnsureWebhookIdempotency
 {
     public function __construct(
         protected WebhookEventIdResolver $resolver,
+        protected WebhookProviderDetector $detector,
     ) {
     }
 
     public function handle(Request $request, Closure $next, string $provider = 'auto'): Response
     {
+        if ($provider === 'auto') {
+            $detected = $this->detector->detect($request);
+            if ($detected === null) {
+                // Cannot identify the provider — pass through unguarded
+                // rather than refuse the request.
+                return $next($request);
+            }
+            $provider = $detected;
+        }
+
         $eventId = $this->resolver->resolve($provider, $request);
 
         // If we cannot fingerprint the request at all (no extractor, no
