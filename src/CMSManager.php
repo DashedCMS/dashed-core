@@ -454,6 +454,33 @@ class CMSManager
         ]);
     }
 
+    /**
+     * Explicitly register a Customsetting key, claiming type, default, and
+     * owning package. Always overrides any prior auto entry. Call from a
+     * service provider's bootingPackage()/packageBooted() to flip a key
+     * from "auto-registered (needs review)" to "explicitly registered" in
+     * `dashed:settings:audit`.
+     */
+    public function registerSetting(
+        string $key,
+        string $type,
+        mixed $default,
+        string $package,
+        ?string $label,
+        ?string $description = null,
+    ): self {
+        app(\Dashed\DashedCore\Settings\SettingsRegistry::class)->register(
+            key: $key,
+            type: $type,
+            default: $default,
+            package: $package,
+            label: $label,
+            description: $description,
+        );
+
+        return $this;
+    }
+
     public function getSettingsPagePermission(string $pageClass): ?string
     {
         foreach (static::$builders['settingPages'] ?? [] as $page) {
