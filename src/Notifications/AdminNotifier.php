@@ -56,7 +56,24 @@ class AdminNotifier
             return;
         }
 
-        Mail::send($mailable);
+        // No explicit recipient — only send if the Mailable defines its own
+        // (via `->to()` / `->cc()` / `->bcc()` in its constructor or build).
+        // Otherwise skip: Symfony Mailer requires at least one To/Cc/Bcc
+        // header and would throw.
+        if ($this->mailableHasRecipients($mailable)) {
+            Mail::send($mailable);
+
+            return;
+        }
+
+        Log::warning('AdminNotifier mail skipped: no recipient configured', [
+            'mailable' => $mailable::class,
+        ]);
+    }
+
+    private function mailableHasRecipients(Mailable $mailable): bool
+    {
+        return ! empty($mailable->to) || ! empty($mailable->cc) || ! empty($mailable->bcc);
     }
 
     private function sendTelegram(Mailable $mailable): void

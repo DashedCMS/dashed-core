@@ -29,6 +29,9 @@ use Dashed\DashedCore\Policies\UserPolicy;
 use Dashed\DashedCore\Commands\MigrateToV4;
 use Dashed\DashedCore\Models\Customsetting;
 use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Facades\FilamentView;
+use Filament\Resources\Pages\EditRecord;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Console\Scheduling\Schedule;
 use Dashed\DashedCore\Mail\NotificationMail;
 use Dashed\DashedCore\Policies\ReviewPolicy;
@@ -55,7 +58,9 @@ use Dashed\DashedCore\Policies\NotFoundPagePolicy;
 use Dashed\DashedCore\Commands\MigrateDatabaseToV4;
 use Dashed\DashedCore\Livewire\Frontend\Auth\Login;
 use Dashed\DashedCore\Mail\EmailBlocks\ButtonBlock;
+use Dashed\DashedCore\Commands\AuditSettingsCommand;
 use Dashed\DashedCore\Commands\CreateVisitableModel;
+use Dashed\DashedCore\Commands\ReplayWebhookCommand;
 use Dashed\DashedCore\Mail\EmailBlocks\DividerBlock;
 use Dashed\DashedCore\Mail\EmailBlocks\HeadingBlock;
 use Dashed\DashedCore\Commands\PruneWebVitalsCommand;
@@ -63,9 +68,6 @@ use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Dashed\DashedCore\Commands\GenerateFaviconsCommand;
 use Dashed\DashedCore\Livewire\Frontend\Account\Account;
 use Dashed\DashedCore\Commands\AggregateWebVitalsCommand;
-use Dashed\DashedCore\Commands\AuditSettingsCommand;
-use Dashed\DashedCore\Commands\ReplayWebhookCommand;
-use Dashed\DashedCore\Filament\Widgets\IntegrationHealthWidget;
 use Dashed\DashedCore\Filament\Widgets\NotFoundPageStats;
 use Dashed\DashedCore\Mail\EmailBlocks\OrderSummaryBlock;
 use Dashed\DashedCore\Commands\DispatchSummaryMailsCommand;
@@ -81,6 +83,7 @@ use Dashed\DashedCore\Livewire\Infolists\SEO\SEOScoreInfoList;
 use Dashed\DashedCore\Performance\Images\ImagePriorityTracker;
 use Dashed\DashedCore\Performance\Scripts\DeferredScriptStore;
 use Dashed\DashedCore\Filament\Pages\NotificationSubscriptions;
+use Dashed\DashedCore\Filament\Widgets\IntegrationHealthWidget;
 use Dashed\DashedCore\Filament\Widgets\NotFoundPageGlobalStats;
 use Dashed\DashedCore\Filament\Pages\Settings\CacheSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\EmailSettingsPage;
@@ -100,6 +103,7 @@ use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonFailedJobsTable;
 use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonThroughputChart;
 use Dashed\DashedCore\Livewire\Frontend\Protection\PasswordProtection;
 use Dashed\DashedCore\Filament\Pages\Settings\NotFoundPageSettingsPage;
+use Dashed\DashedCore\Livewire\Admin\EditingPresenceBanner;
 
 class DashedCoreServiceProvider extends PackageServiceProvider
 {
@@ -152,6 +156,30 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                 __DIR__.'/../resources/js/nestable-sorting.js'
             ),
         ], 'dashed-core');
+
+        // Concurrent-edit presence banner: on every Filament EditRecord
+        // page, inject a Livewire component that heartbeats into the
+        // cache and shows who else is editing the same record.
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::PAGE_START,
+            function (array $scopes = []): string {
+                $pageClass = $scopes[0] ?? null;
+                if (! is_string($pageClass) || ! is_a($pageClass, EditRecord::class, true)) {
+                    return '';
+                }
+
+                $page = \Livewire\Livewire::current();
+                $record = is_object($page) && method_exists($page, 'getRecord') ? $page->getRecord() : null;
+                if (! $record || ! method_exists($record, 'getKey') || ! $record->getKey()) {
+                    return '';
+                }
+
+                return view('dashed-core::livewire.admin.editing-presence-banner-host', [
+                    'resourceKey' => $record::class,
+                    'recordKey' => (string) $record->getKey(),
+                ])->render();
+            },
+        );
 
         \Dashed\DashedCore\Notifications\NotificationChannels::register('mail', 'E-mail');
         \Dashed\DashedCore\Notifications\NotificationChannels::register('telegram', 'Telegram');
@@ -872,6 +900,7 @@ MARKDOWN,
         //        Livewire::component('infolists.seo', SEOScoreInfoList::class);
         Livewire::component('search.search-results', SearchResults::class);
         Livewire::component('protection.password-protection', PasswordProtection::class);
+        Livewire::component('dashed.dashed-core.livewire.admin.editing-presence-banner', EditingPresenceBanner::class);
 
         // Widgets
         Livewire::component('not-found-page-stats', NotFoundPageStats::class);
