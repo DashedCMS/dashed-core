@@ -58,6 +58,7 @@ class CMSManager
         'editorAttributes' => [],
         'ignorableKeysForTranslations' => [],
         'ignorableColumnsForTranslations' => [],
+        'ignorableColumnsForTranslationsPerModel' => [],
         'classes' => [],
         'richEditorPlugins' => [],
         'rolePermissions' => [],
@@ -76,6 +77,65 @@ class CMSManager
         static::$builders[$name] = array_merge(static::$builders[$name] ?? [], $blocks);
 
         return $this;
+    }
+
+    /**
+     * Register columns that should NOT be auto-translated for a specific
+     * model class. Stacks with the global `ignorableColumnsForTranslations`
+     * builder — use this when only one model should keep certain columns
+     * untranslated (e.g. Norsup dealer-module wil alleen het `name`-veld
+     * van de Dealer-modul niet vertalen, andere modellen wel).
+     *
+     * Usage:
+     *
+     *     cms()->ignoreTranslatableColumns(
+     *         \App\Models\Dealer::class,
+     *         ['name'],
+     *     );
+     *
+     * Or via the builder API:
+     *
+     *     cms()->builder('ignorableColumnsForTranslationsPerModel', [
+     *         \App\Models\Dealer::class => ['name'],
+     *     ]);
+     */
+    public function ignoreTranslatableColumns(string $modelClass, array $columns): self
+    {
+        $existing = static::$builders['ignorableColumnsForTranslationsPerModel'] ?? [];
+        $existing[$modelClass] = array_values(array_unique(array_merge(
+            $existing[$modelClass] ?? [],
+            $columns,
+        )));
+        static::$builders['ignorableColumnsForTranslationsPerModel'] = $existing;
+
+        return $this;
+    }
+
+    /**
+     * Resolve the full list of columns to ignore for a given model — the
+     * global list PLUS the per-model overrides registered via
+     * `ignoreTranslatableColumns()`.
+     *
+     * @return array<int,string>
+     */
+    public function ignorableColumnsForTranslations(?object $modelInstance = null): array
+    {
+        $global = static::$builders['ignorableColumnsForTranslations'] ?? [];
+
+        if ($modelInstance === null) {
+            return $global;
+        }
+
+        $perModel = static::$builders['ignorableColumnsForTranslationsPerModel'] ?? [];
+        $extra = [];
+
+        foreach ($perModel as $fqcn => $columns) {
+            if ($modelInstance instanceof $fqcn) {
+                $extra = array_merge($extra, $columns);
+            }
+        }
+
+        return array_values(array_unique(array_merge($global, $extra)));
     }
 
     protected static array $emailBlocks = [];
