@@ -27,6 +27,26 @@
                             <br><span style="font-size:13px; color:#6b7280;">{{ $option['name'] ?? '' }}: {{ $option['value'] ?? '' }}</span>
                         @endforeach
                     @endif
+                    @if(! empty($line->is_pre_order))
+                        @php
+                            $expectedShipDate = null;
+                            if (! empty($line->pre_order_restocked_date)) {
+                                try {
+                                    $expectedShipDate = \Illuminate\Support\Carbon::parse($line->pre_order_restocked_date)->translatedFormat('d F Y');
+                                } catch (\Throwable $e) {
+                                    $expectedShipDate = (string) $line->pre_order_restocked_date;
+                                }
+                            }
+                        @endphp
+                        <div style="margin-top:6px; display:inline-block; padding:4px 8px; background:#FEF3C7; color:#92400E; border-radius:4px; font-size:12px; font-weight:bold;">
+                            Pre-order
+                            @if($expectedShipDate)
+                                · verwachte verzenddatum: {{ $expectedShipDate }}
+                            @else
+                                · verzenddatum nog onbekend
+                            @endif
+                        </div>
+                    @endif
                     <div style="margin-top:6px;">
                         <span style="font-weight:bold;">{{ $line->quantity }}×</span>
                         <span style="float:right; font-weight:bold;">{{ CurrencyHelper::formatPrice($line->price) }}</span>

@@ -26,7 +26,7 @@ class IntegrationsDashboard extends Page
 
     protected static ?string $title = 'Integraties';
 
-    protected static string $slug = 'integrations';
+    protected static ?string $slug = 'integrations';
 
     protected string $view = 'dashed-core::pages.integrations-dashboard';
 
@@ -84,7 +84,7 @@ class IntegrationsDashboard extends Page
         return $out;
     }
 
-    public function refresh(string $slug): void
+    public function refreshIntegration(string $slug): void
     {
         app(IntegrationHealthRunner::class)->forget($slug);
         $this->dispatch('$refresh');

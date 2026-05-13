@@ -42,7 +42,7 @@
         @endif
 
         <x-filament::button
-            wire:click="refresh('{{ $definition->slug }}')"
+            wire:click="refreshIntegration('{{ $definition->slug }}')"
             icon="heroicon-o-arrow-path"
             color="gray"
             size="xs"
