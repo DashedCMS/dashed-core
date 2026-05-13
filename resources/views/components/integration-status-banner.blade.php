@@ -12,15 +12,15 @@
         'disabled' => 'Uitgeschakeld',
     ];
     $heading = $bannerHeadings[$status->value] ?? $status->label();
-    $bgTint = $status->bgTintHex();
-    $pillText = $status->pillTextHex();
     $borderHex = $status->borderHex();
+    $pillBg = $status->bgTintHex();
+    $pillText = $status->pillTextHex();
     $dotHex = $status->dotHex();
 @endphp
 
 <div
-    class="mb-4 flex items-start gap-3 rounded-xl p-4"
-    style="background-color: {{ $bgTint }}; color: {{ $pillText }}; border-left: 4px solid {{ $borderHex }};"
+    class="mb-4 flex items-start gap-3 rounded-xl bg-white p-4 ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 text-gray-950 dark:text-white"
+    style="border-left: 4px solid {{ $borderHex }};"
 >
     <span
         class="mt-1 inline-block size-2.5 shrink-0 rounded-full"
@@ -28,13 +28,19 @@
     ></span>
     <div class="flex-1">
         <p class="text-sm font-semibold">
-            Status: {{ $heading }}
+            Status:
+            <span
+                class="ms-1 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"
+                style="background-color: {{ $pillBg }}; color: {{ $pillText }}; border: 1px solid {{ $borderHex }};"
+            >
+                {{ $heading }}
+            </span>
         </p>
         @if($health->message)
-            <p class="mt-0.5 text-xs">{{ $health->message }}</p>
+            <p class="mt-1 text-xs text-gray-600 dark:text-gray-300">{{ $health->message }}</p>
         @endif
         @if($health->lastSuccessAt)
-            <p class="mt-0.5 text-xs opacity-80">Laatst geslaagd {{ $health->lastSuccessAt->diffForHumans() }}</p>
+            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Laatst geslaagd {{ $health->lastSuccessAt->diffForHumans() }}</p>
         @endif
     </div>
 </div>

@@ -6,14 +6,14 @@
 @php
     $status = $health->status;
     $borderHex = $status->borderHex();
-    $bgTint = $status->bgTintHex();
+    $pillBg = $status->bgTintHex();
     $pillText = $status->pillTextHex();
     $dotHex = $status->dotHex();
 @endphp
 
 <div
-    class="fi-section rounded-xl p-5 ring-1 ring-gray-950/5 dark:ring-white/10"
-    style="border-left: 4px solid {{ $borderHex }}; background-color: {{ $bgTint }};"
+    class="fi-section rounded-xl bg-white p-5 ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10"
+    style="border-left: 4px solid {{ $borderHex }};"
 >
     <div class="flex items-start justify-between gap-3">
         <div class="flex items-start gap-3">
@@ -43,8 +43,8 @@
         </div>
 
         <span
-            class="shrink-0 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ring-1"
-            style="background-color: {{ $bgTint }}; color: {{ $pillText }}; --tw-ring-color: {{ $borderHex }}; border: 1px solid {{ $borderHex }};"
+            class="shrink-0 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"
+            style="background-color: {{ $pillBg }}; color: {{ $pillText }}; border: 1px solid {{ $borderHex }};"
         >
             {{ $status->label() }}
         </span>
