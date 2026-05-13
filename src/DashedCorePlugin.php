@@ -72,6 +72,7 @@ class DashedCorePlugin implements Plugin
             ])
             ->widgets([
                 WelcomeWidget::class,
+                \Dashed\DashedCore\Filament\Widgets\IntegrationHealthWidget::class,
                 //                NotFoundPageStats::class,
                 //                AutomatedTranslationStats::class,
             ]);
