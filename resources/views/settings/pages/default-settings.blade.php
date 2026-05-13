@@ -1,5 +1,9 @@
 <x-filament::page>
 
+    @if(method_exists($this, 'renderIntegrationHealthBanner'))
+        {{ $this->renderIntegrationHealthBanner() }}
+    @endif
+
     <form wire:submit.prevent="submit" method="POST">
         {{ $this->form }}
 

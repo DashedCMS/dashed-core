@@ -65,6 +65,7 @@ use Dashed\DashedCore\Livewire\Frontend\Account\Account;
 use Dashed\DashedCore\Commands\AggregateWebVitalsCommand;
 use Dashed\DashedCore\Commands\AuditSettingsCommand;
 use Dashed\DashedCore\Commands\ReplayWebhookCommand;
+use Dashed\DashedCore\Filament\Widgets\IntegrationHealthWidget;
 use Dashed\DashedCore\Filament\Widgets\NotFoundPageStats;
 use Dashed\DashedCore\Mail\EmailBlocks\OrderSummaryBlock;
 use Dashed\DashedCore\Commands\DispatchSummaryMailsCommand;
@@ -875,6 +876,9 @@ MARKDOWN,
         // Widgets
         Livewire::component('not-found-page-stats', NotFoundPageStats::class);
         Livewire::component('not-found-page-global-stats', NotFoundPageGlobalStats::class);
+
+        // Admin overview
+        Livewire::component('dashed.dashed-core.filament.widgets.integration-health-widget', IntegrationHealthWidget::class);
 
         // Horizon widgets
         Livewire::component('dashed.dashed-core.filament.widgets.horizon.horizon-overview-stats', HorizonOverviewStats::class);

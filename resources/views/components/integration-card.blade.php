@@ -3,7 +3,7 @@
     'health',
 ])
 
-<div class="fi-section rounded-xl bg-white p-5 ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
+<div class="fi-section rounded-xl bg-white p-5 ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 {{ $health->status->borderClass() }}">
     <div class="flex items-start justify-between gap-3">
         <div class="flex items-start gap-3">
             <span
@@ -18,9 +18,10 @@
                     {{ $definition->label }}
                 </h3>
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    Status: <span class="font-medium">{{ $health->status->label() }}</span>
                     @if($health->lastSuccessAt)
-                        · laatst geslaagd {{ $health->lastSuccessAt->diffForHumans() }}
+                        Laatst geslaagd {{ $health->lastSuccessAt->diffForHumans() }}
+                    @else
+                        Nog niet getest
                     @endif
                 </p>
                 @if($health->message)
@@ -28,6 +29,10 @@
                 @endif
             </div>
         </div>
+
+        <span class="shrink-0 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium {{ $health->status->pillClasses() }}">
+            {{ $health->status->label() }}
+        </span>
     </div>
 
     <div class="mt-3 flex flex-wrap items-center gap-2">
