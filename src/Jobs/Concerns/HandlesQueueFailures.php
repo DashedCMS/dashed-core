@@ -4,9 +4,9 @@ namespace Dashed\DashedCore\Jobs\Concerns;
 
 use Throwable;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Dashed\DashedCore\Classes\Sites;
+use Illuminate\Support\Facades\Auth;
 use Dashed\DashedCore\Mail\JobFailedMail;
 use Dashed\DashedCore\Models\JobFailureLog;
 use Dashed\DashedCore\Notifications\AdminNotifier;
@@ -28,14 +28,18 @@ use Dashed\DashedCore\Notifications\AdminNotifier;
  */
 trait HandlesQueueFailures
 {
-    public int $tries = 3;
-
-    public int $timeout = 90;
-
-    /** @var array<int, int> */
-    public array $backoff = [60, 300, 900];
-
-    public int $maxExceptions = 2;
+    // Queue config (tries/timeout/backoff/maxExceptions) is intentionally
+    // NOT declared as trait properties — that caused PHP composition
+    // conflicts when consuming jobs declared the same properties with
+    // different defaults or untyped signatures. Set them in your job:
+    //
+    //     public int $tries = 3;
+    //     public int $timeout = 90;
+    //     public array $backoff = [60, 300, 900];
+    //     public int $maxExceptions = 2;
+    //
+    // If you leave them out you get Laravel's defaults (1 try, 60s
+    // timeout, no backoff).
 
     public bool $notifyOnFailure = true;
 
@@ -167,6 +171,7 @@ trait HandlesQueueFailures
         } catch (Throwable $logError) {
             // Don't let the dedup ledger sink the failure path; just notify.
             report($logError);
+
             return true;
         }
     }
@@ -188,6 +193,7 @@ trait HandlesQueueFailures
             if (is_object($active)) {
                 return $active->id ?? null;
             }
+
             return is_string($active) ? $active : null;
         } catch (Throwable) {
             return null;
@@ -198,6 +204,7 @@ trait HandlesQueueFailures
     {
         try {
             $id = Auth::id();
+
             return $id === null ? null : (int) $id;
         } catch (Throwable) {
             return null;
