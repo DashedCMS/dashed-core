@@ -14,6 +14,7 @@ use Filament\Infolists\Components\TextEntry;
 use LaraZeus\SpatieTranslatable\Actions\LocaleSwitcher;
 use Dashed\DashedTranslations\Classes\AutomatedTranslation;
 use Dashed\DashedMarketing\Filament\Actions\RequestSeoAuditAction;
+use Dashed\DashedMarketing\Filament\Actions\GenerateMetaForAllLocalesAction;
 use LaraZeus\SpatieTranslatable\Resources\Pages\EditRecord\Concerns\Translatable;
 
 trait HasEditableCMSActions
@@ -132,6 +133,10 @@ trait HasEditableCMSActions
 
         if (class_exists(RequestSeoAuditAction::class)) {
             $groupedActions[] = RequestSeoAuditAction::make();
+        }
+
+        if (class_exists(GenerateMetaForAllLocalesAction::class)) {
+            $groupedActions[] = GenerateMetaForAllLocalesAction::make();
         }
 
         $groupedActions[] = self::translateAction();
