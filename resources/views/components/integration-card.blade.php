@@ -3,11 +3,23 @@
     'health',
 ])
 
-<div class="fi-section rounded-xl bg-white p-5 ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 {{ $health->status->borderClass() }}">
+@php
+    $status = $health->status;
+    $borderHex = $status->borderHex();
+    $bgTint = $status->bgTintHex();
+    $pillText = $status->pillTextHex();
+    $dotHex = $status->dotHex();
+@endphp
+
+<div
+    class="fi-section rounded-xl p-5 ring-1 ring-gray-950/5 dark:ring-white/10"
+    style="border-left: 4px solid {{ $borderHex }}; background-color: {{ $bgTint }};"
+>
     <div class="flex items-start justify-between gap-3">
         <div class="flex items-start gap-3">
             <span
-                class="mt-1 inline-block size-2.5 rounded-full {{ $health->status->dotColor() }}"
+                class="mt-1 inline-block size-2.5 rounded-full"
+                style="background-color: {{ $dotHex }};"
                 @if($health->message) title="{{ $health->message }}" @endif
             ></span>
             <div>
@@ -25,13 +37,16 @@
                     @endif
                 </p>
                 @if($health->message)
-                    <p class="mt-1 text-xs text-rose-600 dark:text-rose-400">{{ $health->message }}</p>
+                    <p class="mt-1 text-xs" style="color: #be123c;">{{ $health->message }}</p>
                 @endif
             </div>
         </div>
 
-        <span class="shrink-0 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium {{ $health->status->pillClasses() }}">
-            {{ $health->status->label() }}
+        <span
+            class="shrink-0 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ring-1"
+            style="background-color: {{ $bgTint }}; color: {{ $pillText }}; --tw-ring-color: {{ $borderHex }}; border: 1px solid {{ $borderHex }};"
+        >
+            {{ $status->label() }}
         </span>
     </div>
 

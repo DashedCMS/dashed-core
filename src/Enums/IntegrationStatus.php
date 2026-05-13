@@ -23,6 +23,55 @@ enum IntegrationStatus: string
         };
     }
 
+    /**
+     * Hex colour for the status dot. Inline styles bypass Tailwind JIT —
+     * package blade views can't rely on arbitrary Tailwind classes being
+     * picked up by the host app's CSS build.
+     */
+    public function dotHex(): string
+    {
+        return match ($this) {
+            self::Connected => '#10b981',     // emerald-500
+            self::Misconfigured => '#f59e0b', // amber-500
+            self::Failing => '#f43f5e',       // rose-500
+            self::Disabled => '#a1a1aa',      // zinc-400
+        };
+    }
+
+    /**
+     * Hex colour for the 4px left card border + banner border.
+     */
+    public function borderHex(): string
+    {
+        return $this->dotHex();
+    }
+
+    /**
+     * Tinted background hex (10% opacity feel) for cards/banners.
+     */
+    public function bgTintHex(): string
+    {
+        return match ($this) {
+            self::Connected => '#ecfdf5',     // emerald-50
+            self::Misconfigured => '#fffbeb', // amber-50
+            self::Failing => '#fff1f2',       // rose-50
+            self::Disabled => '#f4f4f5',      // zinc-100
+        };
+    }
+
+    /**
+     * Text colour hex for the status pill.
+     */
+    public function pillTextHex(): string
+    {
+        return match ($this) {
+            self::Connected => '#047857',     // emerald-700
+            self::Misconfigured => '#b45309', // amber-700
+            self::Failing => '#be123c',       // rose-700
+            self::Disabled => '#3f3f46',      // zinc-700
+        };
+    }
+
     public function label(): string
     {
         return match ($this) {
