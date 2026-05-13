@@ -6,6 +6,7 @@ All notable changes to `Dashed core` will be documented in this file.
 
 ### Added
 - Webhook idempotency middleware + BaseJob trait + replay command. See docs/webhook-idempotency.md.
+- Integrations dashboard, last-edited column, admin stat widgets with drilldown. See docs/admin-overview.md.
 
 ## v4.7.2 - 2026-05-11
 
