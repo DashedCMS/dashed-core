@@ -7,8 +7,8 @@ use Throwable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Symfony\Component\HttpFoundation\Response;
 use Dashed\DashedCore\Models\WebhookLog;
+use Symfony\Component\HttpFoundation\Response;
 use Dashed\DashedCore\Webhooks\WebhookEventIdResolver;
 use Dashed\DashedCore\Webhooks\WebhookProviderDetector;
 
@@ -44,7 +44,7 @@ class EnsureWebhookIdempotency
         if ($provider === 'auto') {
             $detected = $this->detector->detect($request);
             if ($detected === null) {
-                // Cannot identify the provider — pass through unguarded
+                // Cannot identify the provider - pass through unguarded
                 // rather than refuse the request.
                 return $next($request);
             }
@@ -93,6 +93,7 @@ class EnsureWebhookIdempotency
             ], true)) {
                 $shortCircuit = true;
                 $log = $fresh;
+
                 return;
             }
 
@@ -114,6 +115,7 @@ class EnsureWebhookIdempotency
             $response = $next($request);
         } catch (Throwable $e) {
             $log?->markFailed($e->getMessage());
+
             throw $e;
         }
 

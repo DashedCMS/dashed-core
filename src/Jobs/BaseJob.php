@@ -12,7 +12,7 @@ use Dashed\DashedCore\Jobs\Concerns\HandlesQueueFailures;
 /**
  * Conventional starting point for new Dashed-CMS queue jobs. Composes the
  * standard Laravel queue trait stack plus `HandlesQueueFailures`. Existing
- * jobs DO NOT need to extend this — adopt by adding `use HandlesQueueFailures`
+ * jobs DO NOT need to extend this - adopt by adding `use HandlesQueueFailures`
  * next to whatever traits they already have.
  */
 abstract class BaseJob implements ShouldQueue

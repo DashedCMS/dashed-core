@@ -82,7 +82,7 @@ class CMSManager
     /**
      * Register columns that should NOT be auto-translated for a specific
      * model class. Stacks with the global `ignorableColumnsForTranslations`
-     * builder — use this when only one model should keep certain columns
+     * builder - use this when only one model should keep certain columns
      * untranslated (e.g. Norsup dealer-module wil alleen het `name`-veld
      * van de Dealer-modul niet vertalen, andere modellen wel).
      *
@@ -112,7 +112,7 @@ class CMSManager
     }
 
     /**
-     * Resolve the full list of columns to ignore for a given model — the
+     * Resolve the full list of columns to ignore for a given model - the
      * global list PLUS the per-model overrides registered via
      * `ignoreTranslatableColumns()`.
      *
@@ -525,7 +525,7 @@ class CMSManager
 
     /**
      * Register a recommendation strategy. Lives in dashed-ecommerce-core so
-     * dashed-core stays lazily coupled — we use a FQN string + class_exists
+     * dashed-core stays lazily coupled - we use a FQN string + class_exists
      * check so test stacks that don't have ecommerce-core installed don't
      * blow up.
      *

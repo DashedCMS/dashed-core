@@ -24,7 +24,7 @@ enum IntegrationStatus: string
     }
 
     /**
-     * Hex colour for the status dot. Inline styles bypass Tailwind JIT —
+     * Hex colour for the status dot. Inline styles bypass Tailwind JIT -
      * package blade views can't rely on arbitrary Tailwind classes being
      * picked up by the host app's CSS build.
      */

@@ -29,7 +29,7 @@ use Dashed\DashedCore\Notifications\AdminNotifier;
 trait HandlesQueueFailures
 {
     // Queue config (tries/timeout/backoff/maxExceptions) is intentionally
-    // NOT declared as trait properties — that caused PHP composition
+    // NOT declared as trait properties - that caused PHP composition
     // conflicts when consuming jobs declared the same properties with
     // different defaults or untyped signatures. Set them in your job:
     //
@@ -81,7 +81,7 @@ trait HandlesQueueFailures
      * Terminal-failure handler. Called by the queue worker after all retries
      * have been exhausted (or `maxExceptions` reached). Logs structured
      * context, upserts a dedup row, and notifies admins via the
-     * `AdminNotifier` registry — once per (job_class, trace_hash, day) by
+     * `AdminNotifier` registry - once per (job_class, trace_hash, day) by
      * default. Override `failed()` only if you need extra cleanup; call
      * `$this->reportFailure($e)` from your override to keep the default
      * notification + log behavior.
@@ -123,7 +123,7 @@ trait HandlesQueueFailures
         try {
             Log::channel('jobs')->error('Job failed: ' . static::class, $context);
         } catch (Throwable) {
-            // Channel may not exist on minimal installs — fall back to default.
+            // Channel may not exist on minimal installs - fall back to default.
             Log::error('Job failed: ' . static::class, $context);
         }
     }

@@ -15,6 +15,7 @@ class IntegrationRegistry
     public function register(IntegrationDefinition $definition): IntegrationDefinition
     {
         $this->definitions[$definition->slug] = $definition;
+
         return $definition;
     }
 

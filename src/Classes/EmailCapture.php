@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Session;
  * roept de betreffende code `EmailCapture::capture($email, $source)` aan.
  * Het adres + bron + tijdstip staat dan in de sessie en is via de
  * `captured_email()` helper of `$capturedEmail` blade-variabele
- * beschikbaar in alle views — handig om het veld bij volgend bezoek
+ * beschikbaar in alle views - handig om het veld bij volgend bezoek
  * voor te vullen of personalisatie te tonen.
  */
 class EmailCapture

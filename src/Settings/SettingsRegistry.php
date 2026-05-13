@@ -6,7 +6,7 @@ namespace Dashed\DashedCore\Settings;
  * In-memory registry of every Customsetting key the app knows about,
  * with type, owning package, default, and explicit/auto provenance.
  *
- * Bound as a singleton by DashedCoreServiceProvider. Never persisted —
+ * Bound as a singleton by DashedCoreServiceProvider. Never persisted -
  * the registry rebuilds on every boot. That's intentional: explicit
  * entries are seeded by service-provider register() calls; auto entries
  * are seeded by Customsetting::get() touches at request-time.
@@ -38,6 +38,7 @@ class SettingsRegistry
             explicit: true,
         );
         $this->settings[$key] = $entry;
+
         return $entry;
     }
 
@@ -64,6 +65,7 @@ class SettingsRegistry
             caller: $caller,
         );
         $this->settings[$key] = $entry;
+
         return $entry;
     }
 

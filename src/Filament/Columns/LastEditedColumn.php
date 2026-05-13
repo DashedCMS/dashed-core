@@ -2,8 +2,8 @@
 
 namespace Dashed\DashedCore\Filament\Columns;
 
-use Filament\Tables\Columns\Column;
 use Illuminate\Support\Str;
+use Filament\Tables\Columns\Column;
 
 /**
  * Filament table column that renders "who last edited this record, when"
@@ -63,6 +63,7 @@ class LastEditedColumn extends Column
         if (count($parts) === 1) {
             return Str::upper(Str::substr($parts[0], 0, 2));
         }
+
         return Str::upper(Str::substr($parts[0], 0, 1) . Str::substr(end($parts), 0, 1));
     }
 }

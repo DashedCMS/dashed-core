@@ -2,8 +2,6 @@
 
 namespace Dashed\DashedCore\Filament\Support;
 
-use Illuminate\Support\Collection;
-
 /**
  * Build a Filament resource list URL with pre-applied table filters.
  *

@@ -56,7 +56,7 @@ class AdminNotifier
             return;
         }
 
-        // No explicit recipient — only send if the Mailable defines its own
+        // No explicit recipient - only send if the Mailable defines its own
         // (via `->to()` / `->cc()` / `->bcc()` in its constructor or build).
         // Otherwise skip: Symfony Mailer requires at least one To/Cc/Bcc
         // header and would throw.

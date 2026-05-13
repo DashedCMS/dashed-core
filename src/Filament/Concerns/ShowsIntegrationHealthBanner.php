@@ -2,16 +2,15 @@
 
 namespace Dashed\DashedCore\Filament\Concerns;
 
-use Dashed\DashedCore\Enums\IntegrationStatus;
-use Dashed\DashedCore\Integrations\IntegrationDefinition;
-use Dashed\DashedCore\Integrations\IntegrationHealth;
-use Dashed\DashedCore\Integrations\IntegrationHealthRunner;
 use Illuminate\Contracts\View\View;
+use Dashed\DashedCore\Integrations\IntegrationHealth;
+use Dashed\DashedCore\Integrations\IntegrationDefinition;
+use Dashed\DashedCore\Integrations\IntegrationHealthRunner;
 
 /**
  * Adds an "are we connected?" banner to a Filament settings page that backs
  * a registered integration. The settings page is matched against the
- * IntegrationRegistry by class name — if the current page class matches an
+ * IntegrationRegistry by class name - if the current page class matches an
  * integration's `settings_page`, its health check runs and the result is
  * rendered above the form.
  *
@@ -24,7 +23,7 @@ trait ShowsIntegrationHealthBanner
     /**
      * Look up the integration registered against this settings page (by class
      * name) and render a status banner. Returns null when no integration is
-     * registered for this page — the view then renders nothing.
+     * registered for this page - the view then renders nothing.
      */
     public function renderIntegrationHealthBanner(): ?View
     {

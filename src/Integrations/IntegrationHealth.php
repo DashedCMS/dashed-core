@@ -44,7 +44,7 @@ final readonly class IntegrationHealth
     /**
      * Convenience: given a list of required Customsetting keys, return
      * Misconfigured if any are empty, Connected otherwise. The cheap default
-     * health check for most integrations — does NOT call any external API.
+     * health check for most integrations - does NOT call any external API.
      */
     public static function fromSettings(array $requiredKeys, ?string $siteId = null, string $missingMessage = 'Configuratie ontbreekt'): self
     {

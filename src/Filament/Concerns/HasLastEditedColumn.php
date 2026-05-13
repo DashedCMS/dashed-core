@@ -2,8 +2,8 @@
 
 namespace Dashed\DashedCore\Filament\Concerns;
 
-use Dashed\DashedCore\Filament\Columns\LastEditedColumn;
 use Illuminate\Database\Eloquent\Builder;
+use Dashed\DashedCore\Filament\Columns\LastEditedColumn;
 
 /**
  * Filament resource trait that wires up the LastEditedColumn for any

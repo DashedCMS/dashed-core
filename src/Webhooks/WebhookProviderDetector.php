@@ -2,8 +2,8 @@
 
 namespace Dashed\DashedCore\Webhooks;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 
 /**
  * Fingerprints inbound webhook requests to identify which payment provider

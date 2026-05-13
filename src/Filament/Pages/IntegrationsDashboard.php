@@ -2,8 +2,8 @@
 
 namespace Dashed\DashedCore\Filament\Pages;
 
-use BackedEnum;
 use UnitEnum;
+use BackedEnum;
 use Filament\Pages\Page;
 use Dashed\DashedCore\Integrations\IntegrationHealthRunner;
 
@@ -40,7 +40,7 @@ class IntegrationsDashboard extends Page
         $registry = cms()->integrationRegistry();
         $defs = $registry->all();
 
-        // No integrations registered yet — only super-admin sees the empty
+        // No integrations registered yet - only super-admin sees the empty
         // page so we don't surface a permission-less blank screen to other
         // roles.
         if ($defs === []) {

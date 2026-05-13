@@ -113,7 +113,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
     {
         // Bind the SettingsRegistry as a singleton in the register() phase so
         // that ANY bootingPackage() in other dashed-* providers (which run
-        // alphabetically — dashed-ai before dashed-core) sees the same shared
+        // alphabetically - dashed-ai before dashed-core) sees the same shared
         // instance when calling cms()->registerSetting().
         $this->app->singleton(\Dashed\DashedCore\Settings\SettingsRegistry::class);
 

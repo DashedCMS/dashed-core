@@ -50,6 +50,7 @@ class AuditSettingsCommand extends Command
 
         if ($this->option('strict') && count($auto) > 0) {
             $this->error('Strict mode: ' . count($auto) . ' auto-registered keys remain.');
+
             return 1;
         }
 
@@ -58,9 +59,16 @@ class AuditSettingsCommand extends Command
 
     protected function stringify(mixed $value): string
     {
-        if ($value === null) return 'null';
-        if (is_bool($value)) return $value ? 'true' : 'false';
-        if (is_scalar($value)) return (string) $value;
+        if ($value === null) {
+            return 'null';
+        }
+        if (is_bool($value)) {
+            return $value ? 'true' : 'false';
+        }
+        if (is_scalar($value)) {
+            return (string) $value;
+        }
+
         return json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
 
@@ -79,8 +87,14 @@ class AuditSettingsCommand extends Command
         $lines[] = '| Package | Key | Type | Default | Label |';
         $lines[] = '| --- | --- | --- | --- | --- |';
         foreach ($explicit as $s) {
-            $lines[] = sprintf('| %s | %s | %s | %s | %s |',
-                $s->package, $s->key, $s->type, $this->stringify($s->default), $s->label ?? '');
+            $lines[] = sprintf(
+                '| %s | %s | %s | %s | %s |',
+                $s->package,
+                $s->key,
+                $s->type,
+                $this->stringify($s->default),
+                $s->label ?? ''
+            );
         }
         $lines[] = '';
 
@@ -89,8 +103,12 @@ class AuditSettingsCommand extends Command
         $lines[] = '| Key | Default | Caller |';
         $lines[] = '| --- | --- | --- |';
         foreach ($auto as $s) {
-            $lines[] = sprintf('| %s | %s | %s |',
-                $s->key, $this->stringify($s->default), $s->caller ?? '(unknown)');
+            $lines[] = sprintf(
+                '| %s | %s | %s |',
+                $s->key,
+                $this->stringify($s->default),
+                $s->caller ?? '(unknown)'
+            );
         }
 
         file_put_contents($path, implode("\n", $lines) . "\n");

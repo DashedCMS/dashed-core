@@ -5,8 +5,8 @@ namespace Dashed\DashedCore\Integrations;
 use Throwable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
-use Dashed\DashedCore\Enums\IntegrationStatus;
 use Dashed\DashedCore\Models\Customsetting;
+use Dashed\DashedCore\Enums\IntegrationStatus;
 
 /**
  * Probes integration health checks with a 5-minute cache so the dashboard

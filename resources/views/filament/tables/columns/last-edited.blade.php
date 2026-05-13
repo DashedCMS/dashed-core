@@ -14,5 +14,5 @@
         </span>
     </div>
 @else
-    <span class="text-xs text-zinc-400">—</span>
+    <span class="text-xs text-zinc-400">-</span>
 @endif

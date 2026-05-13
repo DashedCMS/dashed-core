@@ -3,8 +3,8 @@
 namespace Dashed\DashedCore\Filament\Widgets;
 
 use Filament\Widgets\StatsOverviewWidget;
-use Filament\Widgets\StatsOverviewWidget\Stat;
 use Dashed\DashedCore\Enums\IntegrationStatus;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 use Dashed\DashedCore\Filament\Pages\IntegrationsDashboard;
 use Dashed\DashedCore\Integrations\IntegrationHealthRunner;
 
