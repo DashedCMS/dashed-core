@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## Unreleased
+
+### Added
+- Webhook idempotency middleware + BaseJob trait + replay command. See docs/webhook-idempotency.md.
+
 ## v4.7.2 - 2026-05-11
 
 ### Fixed
