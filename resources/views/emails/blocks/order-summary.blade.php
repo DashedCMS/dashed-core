@@ -30,11 +30,21 @@
                     @if(! empty($line->is_pre_order))
                         @php
                             $expectedShipDate = null;
-                            if (! empty($line->pre_order_restocked_date)) {
+                            $rawRestockedDate = $line->pre_order_restocked_date ?? null;
+
+                            // Older orders may have a NULL snapshot when the
+                            // product only had `expected_delivery_in_days` set
+                            // at order time. Fall back to the live product so
+                            // we never show "onbekend" if we can avoid it.
+                            if (empty($rawRestockedDate) && $line->product && method_exists($line->product, 'resolvePreOrderRestockedDate')) {
+                                $rawRestockedDate = $line->product->resolvePreOrderRestockedDate();
+                            }
+
+                            if (! empty($rawRestockedDate)) {
                                 try {
-                                    $expectedShipDate = \Illuminate\Support\Carbon::parse($line->pre_order_restocked_date)->translatedFormat('d F Y');
+                                    $expectedShipDate = \Illuminate\Support\Carbon::parse($rawRestockedDate)->translatedFormat('d F Y');
                                 } catch (\Throwable $e) {
-                                    $expectedShipDate = (string) $line->pre_order_restocked_date;
+                                    $expectedShipDate = (string) $rawRestockedDate;
                                 }
                             }
                         @endphp
