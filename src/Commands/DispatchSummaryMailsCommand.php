@@ -11,6 +11,7 @@ use Dashed\DashedCore\Mail\SummaryMail;
 use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedCore\Models\SummarySubscription;
 use Dashed\DashedCore\Services\Summary\DTOs\SummaryPeriod;
+use Dashed\DashedCore\Services\Summary\SummaryPeriodFactory;
 use Dashed\DashedCore\Services\Summary\Contracts\SummaryContributorInterface;
 
 /**
@@ -122,32 +123,9 @@ class DispatchSummaryMailsCommand extends Command
         return self::SUCCESS;
     }
 
-    /**
-     * Bouwt een SummaryPeriod voor de opgegeven frequency.
-     */
     protected function periodFor(string $frequency): ?SummaryPeriod
     {
-        return match ($frequency) {
-            'daily' => new SummaryPeriod(
-                Carbon::yesterday()->startOfDay(),
-                Carbon::yesterday()->endOfDay(),
-                'daily',
-                'Gisteren',
-            ),
-            'weekly' => new SummaryPeriod(
-                Carbon::now()->subDays(7)->startOfDay(),
-                Carbon::now()->subDay()->endOfDay(),
-                'weekly',
-                'Afgelopen 7 dagen',
-            ),
-            'monthly' => new SummaryPeriod(
-                Carbon::now()->subMonthNoOverflow()->startOfMonth(),
-                Carbon::now()->subMonthNoOverflow()->endOfMonth(),
-                'monthly',
-                Carbon::now()->subMonthNoOverflow()->translatedFormat('F Y'),
-            ),
-            default => null,
-        };
+        return SummaryPeriodFactory::make($frequency);
     }
 
     /**

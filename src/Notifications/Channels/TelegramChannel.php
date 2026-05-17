@@ -22,6 +22,16 @@ class TelegramChannel
 
     public function send(TelegramSummary $summary): void
     {
+        $this->sendRaw($summary->toMarkdown());
+    }
+
+    /**
+     * Stuurt voorbereide MarkdownV2-tekst direct naar Telegram. Splitst
+     * automatisch op het 4096-char limiet (op lege regels indien
+     * mogelijk) zodat lange gecombineerde berichten niet verloren gaan.
+     */
+    public function sendRaw(string $markdown): void
+    {
         if (! $this->isConfigured()) {
             return;
         }
@@ -29,17 +39,54 @@ class TelegramChannel
         $token = (string) Customsetting::get('telegram_bot_token');
         $chatId = (string) Customsetting::get('telegram_chat_id');
 
-        $response = Http::timeout(self::TIMEOUT_SECONDS)
-            ->retry(2, 250, throw: false)
-            ->asJson()
-            ->post(self::API_BASE . "/bot{$token}/sendMessage", [
-                'chat_id' => $chatId,
-                'text' => $summary->toMarkdown(),
-                'parse_mode' => 'MarkdownV2',
-                'disable_web_page_preview' => true,
-            ]);
+        foreach ($this->chunkForTelegram($markdown) as $chunk) {
+            $response = Http::timeout(self::TIMEOUT_SECONDS)
+                ->retry(2, 250, throw: false)
+                ->asJson()
+                ->post(self::API_BASE . "/bot{$token}/sendMessage", [
+                    'chat_id' => $chatId,
+                    'text' => $chunk,
+                    'parse_mode' => 'MarkdownV2',
+                    'disable_web_page_preview' => true,
+                ]);
 
-        $this->guardResponse($response);
+            $this->guardResponse($response);
+        }
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function chunkForTelegram(string $markdown): array
+    {
+        $limit = 4000; // 4096 hard limit met buffer voor markdown overhead
+        if (mb_strlen($markdown) <= $limit) {
+            return [$markdown];
+        }
+
+        $chunks = [];
+        $remaining = $markdown;
+
+        while (mb_strlen($remaining) > $limit) {
+            $slice = mb_substr($remaining, 0, $limit);
+            // Probeer op dubbele newline te splitsen, anders enkele newline.
+            $split = mb_strrpos($slice, "\n\n");
+            if ($split === false || $split < (int) ($limit * 0.5)) {
+                $split = mb_strrpos($slice, "\n");
+            }
+            if ($split === false || $split === 0) {
+                $split = $limit;
+            }
+
+            $chunks[] = rtrim(mb_substr($remaining, 0, $split));
+            $remaining = ltrim(mb_substr($remaining, $split));
+        }
+
+        if ($remaining !== '') {
+            $chunks[] = $remaining;
+        }
+
+        return $chunks;
     }
 
     public function sendTestMessage(): void
