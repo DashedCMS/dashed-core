@@ -6,18 +6,23 @@ use UnitEnum;
 use BackedEnum;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
+use Filament\Actions\BulkAction;
 use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
 use Illuminate\Support\HtmlString;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Builder;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
+use Dashed\DashedCore\Classes\Locales;
+use Filament\Notifications\Notification;
 use Filament\Forms\Components\Placeholder;
 use Dashed\DashedCore\Models\EmailTemplate;
 use Dashed\DashedCore\Mail\EmailBlocks\EmailBlock;
+use Dashed\DashedTranslations\Classes\AutomatedTranslation;
 use LaraZeus\SpatieTranslatable\Resources\Concerns\Translatable;
 use Dashed\DashedCore\Filament\Resources\EmailTemplateResource\Pages\EditEmailTemplate;
 use Dashed\DashedCore\Filament\Resources\EmailTemplateResource\Pages\ListEmailTemplates;
@@ -163,6 +168,42 @@ class EmailTemplateResource extends Resource
             ])
             ->recordActions([
                 EditAction::make()->button(),
+            ])
+            ->toolbarActions([
+                BulkAction::make('translate_templates')
+                    ->label('Vertaal met DeepL')
+                    ->icon('heroicon-o-language')
+                    ->disabled(fn () => ! AutomatedTranslation::automatedTranslationsEnabled())
+                    ->tooltip(fn () => ! AutomatedTranslation::automatedTranslationsEnabled()
+                        ? 'DeepL is niet geconfigureerd'
+                        : null)
+                    ->schema([
+                        Select::make('from_locale')
+                            ->label('Van locale')
+                            ->options(Locales::getLocalesArray())
+                            ->required(),
+                        Select::make('to_locales')
+                            ->label('Naar locales')
+                            ->multiple()
+                            ->options(Locales::getLocalesArray())
+                            ->required(),
+                    ])
+                    ->action(function (array $data, $records): void {
+                        foreach ($records as $record) {
+                            AutomatedTranslation::translateModel(
+                                $record,
+                                $data['from_locale'],
+                                $data['to_locales'],
+                            );
+                        }
+
+                        Notification::make()
+                            ->warning()
+                            ->title('Vertaling gestart')
+                            ->body(count($records) . ' template(s) worden op de achtergrond vertaald met DeepL. Variabelen blijven onveranderd.')
+                            ->send();
+                    })
+                    ->deselectRecordsAfterCompletion(),
             ]);
     }
 
