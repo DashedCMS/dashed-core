@@ -934,6 +934,9 @@ MARKDOWN,
             //            $schedule->command(SeoScan::class)->daily();
             $schedule->command(AggregateWebVitalsCommand::class)->dailyAt('03:00');
             $schedule->command(PruneWebVitalsCommand::class)->dailyAt('03:15');
+            $schedule->command(\Dashed\DashedCore\Commands\CheckIntegrationsHealth::class)
+                ->hourly()
+                ->withoutOverlapping();
         });
 
         if (! $this->app->environment('production')) {
@@ -1405,6 +1408,7 @@ MARKDOWN,
                 PruneWebVitalsCommand::class,
                 GenerateFaviconsCommand::class,
                 DispatchSummaryMailsCommand::class,
+                \Dashed\DashedCore\Commands\CheckIntegrationsHealth::class,
             ]);
 
     }
