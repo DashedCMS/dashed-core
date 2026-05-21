@@ -3,6 +3,7 @@
 namespace Dashed\DashedCore;
 
 use Livewire\Livewire;
+use Filament\Tables\Table;
 use Filament\Support\Assets\Js;
 use Dashed\DashedCore\Models\Role;
 use Dashed\DashedCore\Models\User;
@@ -142,6 +143,13 @@ class DashedCoreServiceProvider extends PackageServiceProvider
 
     public function bootingPackage()
     {
+        // Filament-tafels: filters worden meteen toegepast bij het wijzigen,
+        // geen losse "Toepassen"-knop meer. Geldt CMS-breed voor alle
+        // resources tenzij een resource zelf deferFilters(true) zet.
+        Table::configureUsing(function (Table $table): void {
+            $table->deferFilters(false);
+        });
+
         // Maak het laatst-gecaptured e-mailadres uit de sessie beschikbaar
         // als $capturedEmail in elke view, zodat blades 'm direct kunnen
         // gebruiken (voorvullen, personalisatie). Composer i.p.v. share
