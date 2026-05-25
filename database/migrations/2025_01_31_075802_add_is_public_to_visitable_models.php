@@ -12,12 +12,20 @@ return new class () extends Migration {
     {
         foreach (cms()->builder('routeModels') as $routeModel) {
             $class = new $routeModel['class']();
-            Schema::table($class->getTable(), function (Blueprint $table) use ($class) {
-                if (! Schema::hasColumn($class->getTable(), 'public')) {
-                    $table->boolean('public')
-                        ->default(1)
-                        ->after('end_date');
-                }
+            $tableName = $class->getTable();
+
+            if (! Schema::hasTable($tableName)) {
+                continue;
+            }
+
+            if (Schema::hasColumn($tableName, 'public')) {
+                continue;
+            }
+
+            Schema::table($tableName, function (Blueprint $table) {
+                $table->boolean('public')
+                    ->default(1)
+                    ->after('end_date');
             });
         }
     }
