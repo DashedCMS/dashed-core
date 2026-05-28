@@ -22,7 +22,21 @@ class IntegrationHealthWidget extends StatsOverviewWidget
 
     public static function canView(): bool
     {
-        return IntegrationsDashboard::canAccess();
+        if (! IntegrationsDashboard::canAccess()) {
+            return false;
+        }
+
+        // Als de IntegrationsDashboard-route niet in het actieve panel zit
+        // (bv. custom panel-provider zonder DashedCorePlugin) wijst de CTA
+        // van deze widget naar een niet-bestaande route. Verberg 'm dan
+        // helemaal in plaats van een halve dood-spoor te tonen.
+        try {
+            IntegrationsDashboard::getUrl();
+        } catch (\Throwable) {
+            return false;
+        }
+
+        return true;
     }
 
     protected function getStats(): array
