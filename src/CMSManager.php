@@ -68,8 +68,19 @@ class CMSManager
         'active' => false,
     ];
 
+    /**
+     * Snapshot of the pristine $builders registry, captured the first time
+     * builder() runs (while the array still holds its declared defaults).
+     * Used by resetBuilders() to restore a clean state between tests.
+     */
+    protected static ?array $pristineBuilders = null;
+
     public function builder(string $name, null|string|array $blocks = null): self|array|string
     {
+        if (static::$pristineBuilders === null) {
+            static::$pristineBuilders = static::$builders;
+        }
+
         if (! $blocks) {
             return static::$builders[$name] ?? [];
         }
@@ -77,6 +88,22 @@ class CMSManager
         static::$builders[$name] = array_merge(static::$builders[$name] ?? [], $blocks);
 
         return $this;
+    }
+
+    /**
+     * Reset the static builder registry to its declared defaults.
+     *
+     * Intended for test suites only: Testbench re-boots the service
+     * providers for every test, and each boot re-registers blocks via
+     * builder(), which would otherwise accumulate in this process-static
+     * array until memory is exhausted. Calling this between tests keeps
+     * the registry bounded. Has no effect on production behaviour.
+     */
+    public static function resetBuilders(): void
+    {
+        if (static::$pristineBuilders !== null) {
+            static::$builders = static::$pristineBuilders;
+        }
     }
 
     /**
