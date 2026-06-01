@@ -11,6 +11,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 use Dashed\DashedCore\Traits\HasDynamicRelation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthentication;
 use Filament\Auth\MultiFactor\Email\Contracts\HasEmailAuthentication;
@@ -23,6 +24,8 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasAppAut
     use LogsActivity;
     use Notifiable;
 
+    protected static $factory = \Dashed\DashedCore\Database\Factories\UserFactory::class;
+
     protected static $logFillable = true;
 
     /**
@@ -30,6 +33,9 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasAppAut
      *
      * @var array
      */
+    protected $fillable = [
+        'price_group_id',
+    ];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -86,6 +92,11 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasAppAut
         } else {
             return $this->email;
         }
+    }
+
+    public function priceGroup(): BelongsTo
+    {
+        return $this->belongsTo(\Dashed\DashedEcommerceCore\Models\PriceGroup::class, 'price_group_id');
     }
 
     public function roles(): BelongsToMany
