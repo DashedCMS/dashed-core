@@ -33,9 +33,6 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasAppAut
      *
      * @var array
      */
-    protected $fillable = [
-        'price_group_id',
-    ];
 
     /**
      * The attributes that should be hidden for arrays.
