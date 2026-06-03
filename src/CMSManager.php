@@ -454,7 +454,20 @@ class CMSManager
     {
         $plugins = [
             SpatieTranslatablePlugin::make()
-                ->defaultLocales(array_keys(Locales::getLocalesArray())),
+                ->defaultLocales((function () {
+                    // Keep the configured (alphabetical) locale order, but lead
+                    // with the application's main locale (e.g. en) so every
+                    // translatable admin editor defaults to it instead of
+                    // whichever locale sorts first.
+                    $locales = array_keys(Locales::getLocalesArray());
+                    $mainLocale = config('app.locale');
+
+                    if ($mainLocale && in_array($mainLocale, $locales, true)) {
+                        $locales = array_merge([$mainLocale], array_values(array_diff($locales, [$mainLocale])));
+                    }
+
+                    return $locales;
+                })()),
         ];
 
         foreach (cms()->builder('plugins') as $plugin) {

@@ -21,13 +21,21 @@ class CopyEmailTemplateLocaleAction
                 Select::make('from_locale')
                     ->label('Van locale')
                     ->options(Locales::getLocalesArray())
-                    ->default(fn ($livewire) => $livewire->activeLocale ?? null)
+                    ->default(fn ($livewire) => self::defaultFromLocale($livewire))
                     ->required(),
                 Select::make('to_locales')
                     ->label('Naar locales')
                     ->multiple()
                     ->options(Locales::getLocalesArray())
-                    ->default(fn ($livewire) => array_keys(Locales::getLocalesArrayWithoutCurrent($livewire->activeLocale ?? null)))
+                    ->default(function ($livewire) {
+                        $from = self::defaultFromLocale($livewire);
+
+                        return collect(Locales::getLocalesArray())
+                            ->keys()
+                            ->reject(fn ($locale) => $locale === $from)
+                            ->values()
+                            ->all();
+                    })
                     ->required(),
             ])
             ->action(function (array $data, EmailTemplate $record) {
@@ -45,6 +53,17 @@ class CopyEmailTemplateLocaleAction
                     ->body('Vertalingen gekopieerd naar ' . implode(', ', $data['to_locales']))
                     ->send();
             });
+    }
+
+    protected static function defaultFromLocale($livewire): ?string
+    {
+        $record = (is_object($livewire) && method_exists($livewire, 'getRecord')) ? $livewire->getRecord() : null;
+
+        if ($record instanceof EmailTemplate) {
+            return $record->getFallbackLocale() ?? ($livewire->activeLocale ?? null);
+        }
+
+        return $livewire->activeLocale ?? null;
     }
 
     public static function copy(EmailTemplate $record, string $fromLocale, array $toLocales): void
