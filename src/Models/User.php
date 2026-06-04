@@ -5,13 +5,14 @@ namespace Dashed\DashedCore\Models;
 use Filament\Panel;
 use Spatie\Activitylog\LogOptions;
 use Filament\Models\Contracts\HasAvatar;
+use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\FilamentUser;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Dashed\DashedCore\Traits\HasDynamicRelation;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthentication;
 use Filament\Auth\MultiFactor\Email\Contracts\HasEmailAuthentication;
@@ -19,6 +20,7 @@ use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthenticationRecovery;
 
 class User extends Authenticatable implements FilamentUser, HasAvatar, HasAppAuthentication, HasAppAuthenticationRecovery, HasEmailAuthentication
 {
+    use HasApiTokens;
     use HasDynamicRelation;
     use HasFactory;
     use LogsActivity;
