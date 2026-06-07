@@ -2,9 +2,9 @@
 
 namespace Dashed\DashedCore\Database\Factories;
 
+use Illuminate\Support\Str;
 use Dashed\DashedCore\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
 class UserFactory extends Factory
 {

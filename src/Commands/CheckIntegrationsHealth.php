@@ -10,11 +10,11 @@ use Dashed\DashedCore\Classes\Sites;
 use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedCore\Enums\IntegrationStatus;
 use Dashed\DashedCore\Notifications\AdminNotifier;
-use Dashed\DashedCore\Mail\IntegrationStatusChangedMail;
-use Dashed\DashedCore\Integrations\IntegrationRegistry;
-use Dashed\DashedCore\Integrations\IntegrationHealthRunner;
-use Dashed\DashedCore\Integrations\IntegrationDefinition;
 use Dashed\DashedCore\Integrations\IntegrationHealth;
+use Dashed\DashedCore\Integrations\IntegrationRegistry;
+use Dashed\DashedCore\Mail\IntegrationStatusChangedMail;
+use Dashed\DashedCore\Integrations\IntegrationDefinition;
+use Dashed\DashedCore\Integrations\IntegrationHealthRunner;
 
 /**
  * Polt elke geregistreerde koppeling per site en mailt de admins zodra
