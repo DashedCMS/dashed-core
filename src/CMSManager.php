@@ -62,6 +62,7 @@ class CMSManager
         'classes' => [],
         'richEditorPlugins' => [],
         'rolePermissions' => [],
+        'dashboardWidgets' => [],
     ];
 
     protected static $builderBlocksActivated = [
@@ -104,6 +105,17 @@ class CMSManager
         if (static::$pristineBuilders !== null) {
             static::$builders = static::$pristineBuilders;
         }
+    }
+
+    /**
+     * Clear a single builder slot to an empty array.
+     *
+     * Intended for test suites: call in a beforeEach to prevent builder
+     * registrations from leaking between tests within the same process.
+     */
+    public function clearBuilder(string $name): void
+    {
+        static::$builders[$name] = [];
     }
 
     /**
