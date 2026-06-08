@@ -85,6 +85,7 @@ use Dashed\DashedCore\Livewire\Infolists\SEO\SEOScoreInfoList;
 use Dashed\DashedCore\Performance\Images\ImagePriorityTracker;
 use Dashed\DashedCore\Performance\Scripts\DeferredScriptStore;
 use Dashed\DashedCore\Filament\Pages\NotificationSubscriptions;
+use Dashed\DashedCore\Filament\Widgets\DashboardGrid;
 use Dashed\DashedCore\Filament\Widgets\IntegrationHealthWidget;
 use Dashed\DashedCore\Filament\Widgets\NotFoundPageGlobalStats;
 use Dashed\DashedCore\Filament\Pages\Settings\CacheSettingsPage;
@@ -942,6 +943,7 @@ MARKDOWN,
         Livewire::component('not-found-page-global-stats', NotFoundPageGlobalStats::class);
 
         // Admin overview
+        Livewire::component('dashed.dashed-core.filament.widgets.dashboard-grid', DashboardGrid::class);
         Livewire::component('dashed.dashed-core.filament.widgets.integration-health-widget', IntegrationHealthWidget::class);
 
         // Horizon widgets
