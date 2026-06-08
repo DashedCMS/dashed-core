@@ -18,6 +18,9 @@ class DashboardWidgetRegistry
             if (isset($config['permission']) && is_callable($config['permission']) && ! $config['permission']()) {
                 continue;
             }
+            if (! $this->widgetIsViewable($class)) {
+                continue;
+            }
             $items[(string) $id] = [
                 'id' => (string) $id,
                 'class' => $class,
@@ -31,6 +34,9 @@ class DashboardWidgetRegistry
         //    geregistreerd zijn. Best-effort: faalt stil als het panel niet beschikbaar is.
         foreach ($this->discoveredWidgetClasses() as $class) {
             if (! class_exists($class)) {
+                continue;
+            }
+            if (! $this->widgetIsViewable($class)) {
                 continue;
             }
             // Sla over als deze klasse al expliciet geregistreerd is.
@@ -57,6 +63,15 @@ class DashboardWidgetRegistry
     public function get(string $id): ?array
     {
         return $this->all()[$id] ?? null;
+    }
+
+    protected function widgetIsViewable(string $class): bool
+    {
+        if (! method_exists($class, 'canView')) {
+            return true;
+        }
+
+        return rescue(fn () => (bool) $class::canView(), true, false);
     }
 
     /** @return array<int, class-string> */
