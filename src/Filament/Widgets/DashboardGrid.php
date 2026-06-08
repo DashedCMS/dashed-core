@@ -51,6 +51,7 @@ class DashboardGrid extends Widget
                 $item['visible'] = ! $item['visible'];
             }
         }
+        unset($item);
         $this->persist();
     }
 
@@ -62,6 +63,7 @@ class DashboardGrid extends Widget
                 $item['width'] = DashboardLayout::clampWidth($width);
             }
         }
+        unset($item);
         $this->persist();
     }
 

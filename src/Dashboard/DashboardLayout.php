@@ -74,7 +74,7 @@ class DashboardLayout
 
     public function reset(string $siteId): void
     {
-        Customsetting::set(self::SETTING_KEY, null, $siteId);
+        Customsetting::reset(self::SETTING_KEY, $siteId);
     }
 
     public static function clampWidth(mixed $width): int|string
