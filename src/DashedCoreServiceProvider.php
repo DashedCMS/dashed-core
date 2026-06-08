@@ -262,6 +262,29 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         // worden door dump-tools en de Filament-pagina niet faalt.
         cms()->builder('summaryContributors', []);
 
+        // Registreer de bestaande dashed-core dashboard-widgets in de widget-registry.
+        // Andere packages voegen hun eigen widgets toe via cms()->builder('dashboardWidgets', [...]).
+        cms()->builder('dashboardWidgets', [
+            'welcome' => [
+                'widget' => \Dashed\DashedCore\Filament\Widgets\WelcomeWidget::class,
+                'label' => 'Welkom',
+                'width' => 'full',
+                'sort' => 0,
+            ],
+            'integration-health' => [
+                'widget' => \Dashed\DashedCore\Filament\Widgets\IntegrationHealthWidget::class,
+                'label' => 'Koppelingen-status',
+                'width' => 2,
+                'sort' => 20,
+            ],
+            'horizon-overview' => [
+                'widget' => \Dashed\DashedCore\Filament\Widgets\Horizon\HorizonOverviewStats::class,
+                'label' => 'Wachtrij (Horizon)',
+                'width' => 2,
+                'sort' => 30,
+            ],
+        ]);
+
         // Scheduler voor de samenvatting-mails (elke 15 minuten).
         $this->app->booted(function () {
             $schedule = app(\Illuminate\Console\Scheduling\Schedule::class);
