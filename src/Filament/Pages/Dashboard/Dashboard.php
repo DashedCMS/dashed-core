@@ -16,6 +16,16 @@ class Dashboard extends BaseDashboard
 
     protected static ?int $navigationSort = -2;
 
+    public function getWidgets(): array
+    {
+        return [\Dashed\DashedCore\Filament\Widgets\DashboardGrid::class];
+    }
+
+    public function getColumns(): int|array
+    {
+        return 1;
+    }
+
     public function getTitle(): string|Htmlable
     {
         return 'Dashboard van ' . Customsetting::get('site_name', null, 'DashedCMS');

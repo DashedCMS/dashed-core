@@ -163,6 +163,10 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                 'nestable-sorting',
                 __DIR__.'/../resources/js/nestable-sorting.js'
             ),
+            Js::make(
+                'dashboard-grid-sorting',
+                __DIR__.'/../resources/js/dashboard-grid-sorting.js'
+            ),
         ], 'dashed-core');
 
         // Concurrent-edit presence banner: on every Filament EditRecord
