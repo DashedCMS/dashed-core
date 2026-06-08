@@ -188,6 +188,41 @@ class NotificationSettingsPage extends Page implements HasSchemas
         $telegramConfigured = fn () => app(TelegramChannel::class)->isConfigured();
 
         return [
+            Action::make('testAppNotification')
+                ->label('Testnotificatie naar mijn app')
+                ->icon('heroicon-o-device-phone-mobile')
+                ->color('gray')
+                ->visible(fn (): bool => class_exists(\Dashed\DashedMobileApi\Support\NotificationCenter::class))
+                ->action(function (): void {
+                    $tokens = \Dashed\DashedMobileApi\Models\DeviceToken::query()
+                        ->where('user_id', auth()->id())
+                        ->pluck('token')
+                        ->all();
+
+                    if (! $tokens) {
+                        Notification::make()
+                            ->title('Geen app-toestel gekoppeld')
+                            ->body('Log eerst in op de mobiele app om je toestel te registreren.')
+                            ->warning()
+                            ->send();
+
+                        return;
+                    }
+
+                    app(\Dashed\DashedMobileApi\Support\NotificationCenter::class)->push()
+                        ->title('Testnotificatie')
+                        ->body('Dit is een testmelding vanuit de CMS. 🎉')
+                        ->sound('default')
+                        ->route('/settings')
+                        ->toTokens($tokens)
+                        ->send();
+
+                    Notification::make()
+                        ->title('Testnotificatie verstuurd naar je app')
+                        ->success()
+                        ->send();
+                }),
+
             Action::make('sendTestMessage')
                 ->label('Stuur testmelding')
                 ->icon('heroicon-o-paper-airplane')
