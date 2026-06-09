@@ -13,7 +13,7 @@ class ApplyContentStudioImage
     {
         $context = $event->operation->context ?? [];
 
-        if (($context['handler'] ?? null) !== 'content_studio_image') {
+        if (($context['handler'] ?? null) !== ContentStudioImagePatcher::HANDLER) {
             return;
         }
 

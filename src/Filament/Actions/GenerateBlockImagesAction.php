@@ -7,6 +7,7 @@ use Filament\Notifications\Notification;
 use Dashed\DashedAi\Facades\Ai;
 use Dashed\DashedFiles\Models\AiImageOperation;
 use Dashed\DashedFiles\Services\AiImageOperations;
+use Dashed\DashedCore\Classes\ContentStudio\ContentStudioImagePatcher;
 use Dashed\DashedCore\Classes\ContentStudio\ContentStudioImageScanner;
 
 class GenerateBlockImagesAction
@@ -47,7 +48,7 @@ class GenerateBlockImagesAction
                         type: AiImageOperation::TYPE_GENERATE,
                         params: ['prompt' => $item['prompt'], 'ratio' => '1:1'],
                         context: [
-                            'handler' => 'content_studio_image',
+                            'handler' => ContentStudioImagePatcher::HANDLER,
                             'custom_block_id' => $customBlockId,
                             'locale' => $locale,
                             'block_key' => $item['block_key'],

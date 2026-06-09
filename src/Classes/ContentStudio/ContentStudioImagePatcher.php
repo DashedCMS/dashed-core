@@ -4,12 +4,16 @@ namespace Dashed\DashedCore\Classes\ContentStudio;
 
 class ContentStudioImagePatcher
 {
+    public const HANDLER = 'content_studio_image';
+
     /**
      * @param  array<int|string, array>  $blocks
      * @return array<int|string, array>
      */
     public function patch(array $blocks, int|string $blockKey, string $field, string $expectedPrompt, int $mediaId): array
     {
+        // $blockKey may arrive as a numeric string when round-tripped through the JSON
+        // context column; PHP canonicalizes numeric string array keys, so int and "int" both match.
         if (! array_key_exists($blockKey, $blocks)) {
             return $blocks;
         }
