@@ -140,6 +140,13 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             'webhook.idempotency',
             \Dashed\DashedCore\Http\Middleware\EnsureWebhookIdempotency::class,
         );
+
+        // Content Studio: schrijf gegenereerde AI-beelden terug in de
+        // pagina-blokken zodra dashed-files de generatie heeft afgerond.
+        \Illuminate\Support\Facades\Event::listen(
+            \Dashed\DashedFiles\Events\AiImageOperationCompleted::class,
+            \Dashed\DashedCore\Listeners\ApplyContentStudioImage::class,
+        );
     }
 
     public function bootingPackage()
