@@ -13,6 +13,7 @@ use Dashed\DashedCore\Models\SummarySubscription;
 use Dashed\DashedCore\Services\Summary\DTOs\SummaryPeriod;
 use Dashed\DashedCore\Services\Summary\SummaryPeriodFactory;
 use Dashed\DashedCore\Services\Summary\SummaryContributorRegistry;
+use Dashed\DashedCore\Services\Summary\AiBriefingSummaryContributor;
 use Dashed\DashedCore\Services\Summary\Contracts\SummaryContributorInterface;
 
 /**
@@ -83,7 +84,11 @@ class DispatchSummaryMailsCommand extends Command
                 }
 
                 if ($section !== null) {
-                    $sections[] = $section;
+                    if ($key === AiBriefingSummaryContributor::key()) {
+                        array_unshift($sections, $section);
+                    } else {
+                        $sections[] = $section;
+                    }
                 }
 
                 $processed[] = [

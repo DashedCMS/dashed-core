@@ -270,6 +270,10 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         // worden door dump-tools en de Filament-pagina niet faalt.
         cms()->builder('summaryContributors', []);
 
+        cms()->builder('summaryContributors', [
+            \Dashed\DashedCore\Services\Summary\AiBriefingSummaryContributor::class,
+        ]);
+
         // Registreer de bestaande dashed-core dashboard-widgets in de widget-registry.
         // Andere packages voegen hun eigen widgets toe via cms()->builder('dashboardWidgets', [...]).
         cms()->builder('dashboardWidgets', [
