@@ -51,7 +51,7 @@ class BlockCatalog
 
             $catalog[] = [
                 'type' => $type,
-                'label' => (string) ($block->getLabel() ?: $type),
+                'label' => $this->safeLabel($block, $type),
                 'fields' => array_values($fields),
             ];
         }
@@ -102,7 +102,7 @@ class BlockCatalog
             // 1. Repeater: beschrijf het zelf en recurse in de child-schema.
             if ($component instanceof Repeater) {
                 $name = $component->getName();
-                $label = (string) ($component->getLabel() ?: $name);
+                $label = $this->safeLabel($component, $name);
                 $fields[] = new FieldDescriptor(
                     $name,
                     'repeater',
@@ -163,7 +163,7 @@ class BlockCatalog
         }
 
         $name = $component->getName();
-        $label = method_exists($component, 'getLabel') ? (string) ($component->getLabel() ?: $name) : $name;
+        $label = $this->safeLabel($component, $name);
 
         return match (true) {
             $component instanceof RichEditor => new FieldDescriptor($name, 'rich', $label),
@@ -174,6 +174,17 @@ class BlockCatalog
             $this->isImageField($component) => new FieldDescriptor($name, 'image', $label),
             default => null,
         };
+    }
+
+    private function safeLabel(object $component, string $fallback): string
+    {
+        try {
+            $label = method_exists($component, 'getLabel') ? $component->getLabel() : null;
+        } catch (\Throwable) {
+            $label = null;
+        }
+
+        return (string) ($label ?: $fallback);
     }
 
     private function selectOptions(Select $component): ?array
