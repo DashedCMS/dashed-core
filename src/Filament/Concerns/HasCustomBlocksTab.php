@@ -4,8 +4,10 @@ namespace Dashed\DashedCore\Filament\Concerns;
 
 use Filament\Pages\Page;
 use Dashed\DashedCore\Classes\Locales;
+use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Infolists\Components\TextEntry;
+use Dashed\DashedCore\Filament\Actions\GenerateContentWithAiAction;
 
 trait HasCustomBlocksTab
 {
@@ -28,7 +30,13 @@ trait HasCustomBlocksTab
             return [];
         }
 
+        $primaryBlocksName = is_array($blocks) ? ($blocks[0] ?? null) : $blocks;
+
         return [
+            Actions::make([
+                GenerateContentWithAiAction::make($primaryBlocksName),
+            ])->visible((bool) $primaryBlocksName)->columnSpanFull(),
+
             Fieldset::make('customBlocks')
                 ->label('Maatwerk blokken')
                 ->schema(array_merge($schema, [
