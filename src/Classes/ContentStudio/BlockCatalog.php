@@ -4,6 +4,7 @@ namespace Dashed\DashedCore\Classes\ContentStudio;
 
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\RichEditor;
@@ -11,6 +12,11 @@ use Filament\Forms\Components\Builder\Block;
 
 class BlockCatalog
 {
+    /**
+     * Veiligheidslimiet tegen pathologisch diepe component-bomen.
+     */
+    private const MAX_DEPTH = 6;
+
     public function for(string $blocksName): array
     {
         return $this->fromBlocks(cms()->builder($blocksName) ?: []);
@@ -70,20 +76,84 @@ class BlockCatalog
     }
 
     /**
+     * Loopt platte lijst child-componenten af en bouwt FieldDescriptors. Per
+     * component, in deze volgorde:
+     *   1. Repeater  -> één descriptor met geneste velden in `of`.
+     *   2. Herkend leaf-veld -> één descriptor.
+     *   3. Layout-wrapper (Grid/Section/Fieldset/...) met child-componenten ->
+     *      platgeslagen: de binnenste velden komen op de plek van de wrapper.
+     *   4. Anders -> overgeslagen.
+     *
      * @param array<int, mixed> $components
      * @return array<int, FieldDescriptor>
      */
-    private function describeComponents(array $components): array
+    private function describeComponents(array $components, int $depth = 0): array
     {
+        if ($depth > self::MAX_DEPTH) {
+            return [];
+        }
+
         $fields = [];
         foreach ($components as $component) {
+            if (! is_object($component)) {
+                continue;
+            }
+
+            // 1. Repeater: beschrijf het zelf en recurse in de child-schema.
+            if ($component instanceof Repeater) {
+                $name = $component->getName();
+                $label = (string) ($component->getLabel() ?: $name);
+                $fields[] = new FieldDescriptor(
+                    $name,
+                    'repeater',
+                    $label,
+                    of: $this->describeComponents($this->safeChildComponents($component), $depth + 1),
+                );
+
+                continue;
+            }
+
+            // 2. Herkend leaf-veld.
             $descriptor = $this->describe($component);
             if ($descriptor !== null) {
                 $fields[] = $descriptor;
+
+                continue;
             }
+
+            // 3. Layout-wrapper: platslaan als er child-componenten zijn.
+            $children = $this->safeChildComponents($component);
+            if ($children !== []) {
+                foreach ($this->describeComponents($children, $depth + 1) as $childField) {
+                    $fields[] = $childField;
+                }
+            }
+
+            // 4. Anders: overslaan.
         }
 
         return $fields;
+    }
+
+    /**
+     * Haalt de directe child-componenten op; geeft een lege array terug als de
+     * component dit niet ondersteunt of erop gooit (bv. niet-gekoppelde state).
+     *
+     * @return array<int, mixed>
+     */
+    private function safeChildComponents(mixed $component): array
+    {
+        if (! is_object($component) || ! method_exists($component, 'getDefaultChildComponents')) {
+            return [];
+        }
+
+        try {
+            $children = $component->getDefaultChildComponents();
+
+            return is_array($children) ? $children : [];
+        } catch (\Throwable) {
+            return [];
+        }
     }
 
     private function describe(mixed $component): ?FieldDescriptor
