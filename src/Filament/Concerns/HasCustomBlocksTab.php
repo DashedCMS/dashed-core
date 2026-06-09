@@ -7,6 +7,7 @@ use Dashed\DashedCore\Classes\Locales;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Infolists\Components\TextEntry;
+use Dashed\DashedCore\Filament\Actions\GenerateBlockImagesAction;
 use Dashed\DashedCore\Filament\Actions\GenerateContentWithAiAction;
 
 trait HasCustomBlocksTab
@@ -35,6 +36,7 @@ trait HasCustomBlocksTab
         return [
             Actions::make([
                 GenerateContentWithAiAction::make($primaryBlocksName),
+                GenerateBlockImagesAction::make(),
             ])->visible((bool) $primaryBlocksName)->columnSpanFull(),
 
             Fieldset::make('customBlocks')
