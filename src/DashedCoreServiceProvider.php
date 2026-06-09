@@ -1411,6 +1411,7 @@ MARKDOWN,
                 'activitylog',
                 'dashed-settings',
                 'webhooks',
+                'dashed-content-studio',
             ])
             ->hasRoutes([
                 'frontend',
