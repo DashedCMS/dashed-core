@@ -12,6 +12,7 @@ use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedCore\Models\SummarySubscription;
 use Dashed\DashedCore\Services\Summary\DTOs\SummaryPeriod;
 use Dashed\DashedCore\Services\Summary\SummaryPeriodFactory;
+use Dashed\DashedCore\Services\Summary\SummaryContributorRegistry;
 use Dashed\DashedCore\Services\Summary\Contracts\SummaryContributorInterface;
 
 /**
@@ -170,28 +171,6 @@ class DispatchSummaryMailsCommand extends Command
      */
     protected function resolveContributorRegistry(): array
     {
-        $registered = function_exists('cms') ? (cms()->builder('summaryContributors', null) ?? []) : [];
-        if (! is_array($registered)) {
-            return [];
-        }
-
-        $map = [];
-        foreach ($registered as $class) {
-            if (! is_string($class) || ! class_exists($class)) {
-                continue;
-            }
-            if (! is_subclass_of($class, SummaryContributorInterface::class)) {
-                continue;
-            }
-
-            try {
-                /** @var class-string<SummaryContributorInterface> $class */
-                $map[$class::key()] = $class;
-            } catch (Throwable $e) {
-                report($e);
-            }
-        }
-
-        return $map;
+        return SummaryContributorRegistry::map();
     }
 }
