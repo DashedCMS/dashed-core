@@ -35,8 +35,38 @@ class AdminNotifier
             $this->sendMail($mailable, $to);
         }
 
+        // App-push spiegelt Telegram: overal waar een Telegram-melding zou gaan,
+        // gaat ook een app-notificatie uit (ook als de Telegram-bot niet is
+        // ingesteld). Zo kun je in de app exact dezelfde meldingen aanzetten.
         if ($this->channelAllowed('telegram', $allowedChannels)) {
             $this->sendTelegram($mailable);
+            $this->sendApp($mailable);
+        }
+    }
+
+    /**
+     * Spiegel de melding naar de mobiele app (push), zodat je in de app exact
+     * dezelfde meldingen kunt aanzetten als op Telegram. Alleen actief als de
+     * mobiele-api geïnstalleerd is en de mailable in de catalogus staat.
+     */
+    private function sendApp(Mailable $mailable): void
+    {
+        if (! $mailable instanceof SendsToTelegram) {
+            return;
+        }
+
+        $catalog = '\\Dashed\\DashedMobileApi\\Support\\AdminNotificationCatalog';
+        if (! class_exists($catalog)) {
+            return;
+        }
+
+        try {
+            $catalog::push($mailable, $mailable->telegramSummary());
+        } catch (Throwable $e) {
+            Log::warning('AdminNotifier app push failed', [
+                'mailable' => $mailable::class,
+                'error' => $e->getMessage(),
+            ]);
         }
     }
 
