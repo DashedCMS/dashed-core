@@ -72,4 +72,15 @@ class VisualEditorController extends Controller
 
         return response()->json(['status' => 'ok']);
     }
+
+    public function toggle(Request $request, VisualEditor $editor): \Illuminate\Http\RedirectResponse
+    {
+        if (! $editor->isAdmin()) {
+            abort(403);
+        }
+
+        $request->session()->put(VisualEditor::SESSION_FLAG, $request->boolean('enable'));
+
+        return redirect()->back();
+    }
 }

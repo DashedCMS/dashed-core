@@ -55,6 +55,10 @@ Route::post('dashed-visual-editor/save', [\Dashed\DashedCore\Http\Controllers\Vi
     ->middleware('web')
     ->name('dashed.visual-editor.save');
 
+Route::post('dashed-visual-editor/toggle', [\Dashed\DashedCore\Http\Controllers\VisualEditorController::class, 'toggle'])
+    ->middleware('web')
+    ->name('dashed.visual-editor.toggle');
+
 Route::get('/oauth/google', [GoogleOAuthController::class, 'redirect'])
     ->name('google.oauth.redirect');
 Route::get('/oauth/google/callback', [GoogleOAuthController::class, 'callback'])
