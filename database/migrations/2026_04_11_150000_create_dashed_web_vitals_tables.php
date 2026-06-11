@@ -9,7 +9,7 @@ return new class () extends Migration {
     {
         Schema::create('dashed__web_vitals', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('site_id')->nullable();
+            $table->string('site_id', 64)->nullable();
             $table->string('metric', 10);
             $table->double('value');
             $table->string('rating', 20)->nullable();
@@ -23,7 +23,7 @@ return new class () extends Migration {
 
         Schema::create('dashed__web_vitals_daily', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('site_id')->nullable();
+            $table->string('site_id', 64)->nullable();
             $table->date('date');
             $table->string('metric', 10);
             $table->string('url_pattern', 500);
