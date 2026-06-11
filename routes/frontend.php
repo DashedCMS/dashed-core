@@ -52,10 +52,6 @@ if (config('dashed-core.default_auth_pages_enabled', true)) {
     );
 }
 
-Route::post('dashed-visual-editor/save', [\Dashed\DashedCore\Http\Controllers\VisualEditorController::class, 'save'])
-    ->middleware('web')
-    ->name('dashed.visual-editor.save');
-
 Route::post('dashed-visual-editor/toggle', [\Dashed\DashedCore\Http\Controllers\VisualEditorController::class, 'toggle'])
     ->middleware('web')
     ->name('dashed.visual-editor.toggle');
