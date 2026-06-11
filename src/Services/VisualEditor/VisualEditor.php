@@ -2,8 +2,8 @@
 
 namespace Dashed\DashedCore\Services\VisualEditor;
 
-use Filament\Facades\Filament;
 use Throwable;
+use Filament\Facades\Filament;
 
 class VisualEditor
 {

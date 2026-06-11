@@ -20,12 +20,12 @@ class VisualEditorController extends Controller
 
         $data = $request->validate([
             'model_type' => ['required', 'string'],
-            'model_id' => ['required'],
+            'model_id' => ['required', 'integer'],
             'locale' => ['required', 'string'],
-            'changes' => ['required', 'array'],
+            'changes' => ['required', 'array', 'max:200'],
             'changes.*.block' => ['required', 'integer'],
             'changes.*.field' => ['required', 'string'],
-            'changes.*.value' => ['present', 'string'],
+            'changes.*.value' => ['present', 'string', 'max:50000'],
             'changes.*.fieldtype' => ['required', 'in:text,rich'],
         ]);
 
