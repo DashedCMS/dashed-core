@@ -1,4 +1,5 @@
 @if($content)
+    @php($dashedEditorActive = isset($model) && app(\Dashed\DashedCore\Services\VisualEditor\VisualEditor::class)->isActive())
     @foreach($content as $block)
         @if($block['type'] == 'globalBlock')
             @php($globalBlockContent = \Dashed\DashedCore\Models\GlobalBlock::find($block['data']['globalBlock']) ?? [])
@@ -6,7 +7,6 @@
                 <x-dashed-core::content-blocks :content="$globalBlockContent->content" {{ $attributes->merge() }}/>
             @endif
         @else
-            @php($dashedEditorActive = isset($model) && app(\Dashed\DashedCore\Services\VisualEditor\VisualEditor::class)->isActive())
             @if ($dashedEditorActive)
                 @php(app(\Dashed\DashedCore\Services\VisualEditor\EditContextStack::class)->push($model::class, $model->id, app()->getLocale(), $loop->index))
                 <x-dynamic-component :component="'blocks.' . $block['type']" :type="$block['type']"
