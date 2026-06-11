@@ -128,6 +128,11 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         // calls cms()->registerIntegration(...) in bootingPackage().
         $this->app->singleton(\Dashed\DashedCore\Integrations\IntegrationRegistry::class);
         $this->app->singleton(\Dashed\DashedCore\Integrations\IntegrationHealthRunner::class);
+
+        // The visual editor's edit-context stack is request-scoped state shared
+        // between the content-blocks render loop and the <x-dashed-core::editable>
+        // component, so it must be a singleton per request.
+        $this->app->singleton(\Dashed\DashedCore\Services\VisualEditor\EditContextStack::class);
     }
 
     public function packageBooted()
