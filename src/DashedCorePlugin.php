@@ -11,6 +11,7 @@ use Dashed\DashedCore\Filament\Resources\ExportResource;
 use Dashed\DashedCore\Filament\Resources\RedirectResource;
 use Dashed\DashedCore\Filament\Pages\IntegrationsDashboard;
 use Dashed\DashedCore\Filament\Pages\Settings\SettingsPage;
+use Dashed\DashedCore\Filament\Pages\VisualEditorBlockPage;
 use Dashed\DashedCore\Filament\Resources\GlobalBlockResource;
 use Dashed\DashedCore\Filament\Pages\Settings\SEOSettingsPage;
 use Dashed\DashedCore\Filament\Resources\NotFoundPageResource;
@@ -69,6 +70,7 @@ class DashedCorePlugin implements Plugin
                 NotificationSubscriptions::class,
                 WebVitalsPage::class,
                 DocumentationOverviewPage::class,
+                VisualEditorBlockPage::class,
             ])
             ->widgets([
                 WelcomeWidget::class,
