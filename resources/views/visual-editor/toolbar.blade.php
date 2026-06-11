@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="{{ asset('vendor/dashed-core/visual-editor.css') }}">
-<div data-dashed-visual-editor-toolbar data-ve-save-url="{{ route('dashed.visual-editor.save') }}" class="dashed-ve-toolbar">
+<div data-dashed-visual-editor-toolbar class="dashed-ve-toolbar">
     @if ($active)
-        <button type="button" data-ve-save>Opslaan</button>
+        <span class="dashed-ve-hint">Klik een blok om te bewerken</span>
         <form method="POST" action="{{ route('dashed.visual-editor.toggle') }}" style="display:inline">
             @csrf
             <input type="hidden" name="enable" value="0">
@@ -18,8 +18,7 @@
 <script>
     window.dashedVisualEditor = {
         active: @json($active),
-        saveUrl: @json(route('dashed.visual-editor.save')),
-        csrf: @json(csrf_token()),
+        blockEditorUrl: @json(route('filament.dashed.pages.visual-editor.block')),
         locale: @json(app()->getLocale()),
     };
 </script>
