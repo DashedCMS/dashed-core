@@ -5,6 +5,7 @@ namespace Dashed\DashedCore\Performance\WebVitals;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
+use Dashed\DashedCore\Classes\Sites;
 use Illuminate\Support\Facades\Validator;
 
 class VitalsController extends Controller
@@ -23,7 +24,6 @@ class VitalsController extends Controller
             'rating' => 'nullable|string|in:good,needs-improvement,poor',
             'url' => 'required|string|max:500',
             'device' => 'required|string|in:mobile,desktop',
-            'site' => 'nullable|integer',
         ]);
 
         if ($validator->fails()) {
@@ -37,7 +37,8 @@ class VitalsController extends Controller
         }
 
         StoreVitalsJob::dispatch([
-            'site_id' => $data['site'] ?? null,
+            // Server-side bepaald i.p.v. een ongevalideerde client-waarde.
+            'site_id' => (string) Sites::getActive(),
             'metric' => $data['name'],
             'value' => (float) $data['value'],
             'rating' => $data['rating'] ?? null,

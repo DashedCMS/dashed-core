@@ -8,6 +8,8 @@ use Livewire\Component;
 use Illuminate\Support\Str;
 use Dashed\DashedCore\Models\User;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Validation\ValidationException;
 use Filament\Notifications\Notification;
 use Dashed\DashedCore\Classes\AccountHelper;
 use Dashed\DashedCore\Mail\PasswordResetMail;
@@ -26,6 +28,15 @@ class ForgotPassword extends Component
 
     public function submit()
     {
+        // Rate limiting tegen mail-bombing en account-enumeratie via timing.
+        $throttleKey = 'password-reset:' . strtolower((string) $this->email) . '|' . request()->ip();
+        if (RateLimiter::tooManyAttempts($throttleKey, 3)) {
+            throw ValidationException::withMessages([
+                'email' => ['Te veel pogingen, probeer het later opnieuw.'],
+            ]);
+        }
+        RateLimiter::hit($throttleKey, 60);
+
         $this->validate([
             'email' => [
                 'required',

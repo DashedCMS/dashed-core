@@ -5,6 +5,8 @@ namespace Dashed\DashedCore\Livewire\Frontend\Auth;
 use Livewire\Component;
 use Dashed\DashedCore\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Validation\ValidationException;
 use Dashed\DashedCore\Classes\AccountHelper;
 use Dashed\DashedTranslations\Models\Translation;
 use Dashed\DashedEcommerceCore\Classes\ShoppingCart;
@@ -32,8 +34,25 @@ class Login extends Component
         }
     }
 
+    private function ensureNotRateLimited(string $action, string $field): void
+    {
+        $throttleKey = $action . '|' . request()->ip();
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+
+            throw ValidationException::withMessages([
+                $field => ['Te veel pogingen, probeer het over ' . $seconds . ' seconden opnieuw.'],
+            ]);
+        }
+
+        RateLimiter::hit($throttleKey, 60);
+    }
+
     public function login()
     {
+        $this->ensureNotRateLimited('login:' . strtolower((string) $this->loginEmail), 'loginEmail');
+
         $this->validate(
             [
                 'loginEmail' => [
@@ -76,6 +95,8 @@ class Login extends Component
 
     public function register()
     {
+        $this->ensureNotRateLimited('register:' . strtolower((string) $this->registerEmail), 'registerEmail');
+
         $this->validate(
             [
                 'registerEmail' => [
