@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Dashed\DashedCore\Middleware\AdminMiddleware;
 use Dashed\DashedCore\Middleware\AuthMiddleware;
 use Dashed\DashedCore\Middleware\GuestMiddleware;
 use Dashed\DashedTranslations\Models\Translation;
@@ -60,8 +61,10 @@ Route::post('dashed-visual-editor/toggle', [\Dashed\DashedCore\Http\Controllers\
     ->name('dashed.visual-editor.toggle');
 
 Route::get('/oauth/google', [GoogleOAuthController::class, 'redirect'])
+    ->middleware(['web', AdminMiddleware::class])
     ->name('google.oauth.redirect');
 Route::get('/oauth/google/callback', [GoogleOAuthController::class, 'callback'])
+    ->middleware(['web', AdminMiddleware::class])
     ->name('google.oauth.callback');
 
 Route::fallback([FrontendController::class, 'index'])

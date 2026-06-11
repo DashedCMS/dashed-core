@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore\Controllers\OAuth;
 
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Google\Client as GoogleClient;
 use App\Http\Controllers\Controller;
@@ -25,11 +26,24 @@ class GoogleOAuthController extends Controller
         $client->setAccessType('offline');
         $client->setPrompt('consent'); // belangrijk voor refresh_token
 
+        // CSRF-bescherming: random state meesturen en in de sessie bewaren.
+        $state = Str::random(40);
+        session()->put('google_oauth_state', $state);
+        $client->setState($state);
+
         return redirect()->away($client->createAuthUrl());
     }
 
     public function callback(Request $request): RedirectResponse
     {
+        // Verifieer de state tegen de sessie om OAuth-CSRF / code-injectie te blokkeren.
+        $expectedState = session()->pull('google_oauth_state');
+        $state = $request->string('state')->toString();
+
+        if (! $expectedState || ! hash_equals($expectedState, $state)) {
+            return redirect('/')->with('error', 'Ongeldige OAuth state.');
+        }
+
         $code = $request->string('code')->toString();
 
         if (! $code) {

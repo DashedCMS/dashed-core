@@ -80,11 +80,24 @@ class UserResource extends Resource
                             ->label('Rol')
                             ->required()
                             ->reactive()
-                            ->options([
-                                'customer' => 'Customer',
-                                'admin' => 'Admin',
-                                'superadmin' => 'Superadmin',
-                            ]),
+                            // Alleen wie zelf admin/superadmin is mag die rollen toekennen.
+                            // De options-closure wordt server-side hergebruikt voor validatie,
+                            // dus een gespoofde waarde (bijv. 'superadmin') wordt geweigerd.
+                            ->options(function () {
+                                $currentRole = auth()->user()?->role;
+
+                                $options = ['customer' => 'Customer'];
+
+                                if (in_array($currentRole, ['admin', 'superadmin'], true)) {
+                                    $options['admin'] = 'Admin';
+                                }
+
+                                if ($currentRole === 'superadmin') {
+                                    $options['superadmin'] = 'Superadmin';
+                                }
+
+                                return $options;
+                            }),
 
                         Select::make('roles')
                             ->label('Rollen')

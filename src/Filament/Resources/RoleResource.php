@@ -39,6 +39,14 @@ class RoleResource extends Resource
 
     protected static ?int $navigationSort = 101;
 
+    // Rollen bepalen de permissiesets van het hele systeem. Alleen superadmins
+    // mogen ze beheren; anders kan een gebruiker met enkel `edit_role` zichzelf
+    // alle rechten toekennen (privilege-escalatie).
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->role === 'superadmin';
+    }
+
     public static function form(Schema $schema): Schema
     {
         $allPermissions = cms()->getRolePermissions();

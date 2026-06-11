@@ -34,6 +34,13 @@ class ResetPassword extends Component
         if (! $this->user) {
             abort(404);
         }
+
+        // Dezelfde TTL als de geplande opschoon-taak (1 uur), maar nu ook afgedwongen
+        // bij het inwisselen zodat een token niet langer geldig is dan bedoeld.
+        if (! $this->user->password_reset_requested
+            || \Illuminate\Support\Carbon::parse($this->user->password_reset_requested)->lt(\Illuminate\Support\Carbon::now()->subHour())) {
+            abort(404);
+        }
     }
 
     public function submit()
