@@ -50,6 +50,8 @@ class NotificationSubscriptions extends Page implements HasSchemas
 
     public function mount(): void
     {
+        $this->seedMissingSubscriptions();
+
         $defaults = [];
 
         foreach ($this->resolveContributors() as $key => $class) {
@@ -57,6 +59,56 @@ class NotificationSubscriptions extends Page implements HasSchemas
         }
 
         $this->form->fill($defaults);
+    }
+
+    /**
+     * Materialiseert ontbrekende subscriptions vanuit de default-frequentie
+     * zodra een admin deze pagina opent. Hierdoor staat wat de gebruiker ziet
+     * ook echt aan en pikt de dispatcher het op. Bestaande keuzes (inclusief
+     * 'off') blijven ongemoeid: er worden uitsluitend ontbrekende rijen
+     * aangemaakt.
+     */
+    protected function seedMissingSubscriptions(): void
+    {
+        $userId = (int) auth()->id();
+        if ($userId <= 0) {
+            return;
+        }
+
+        foreach ($this->resolveContributors() as $key => $class) {
+            $default = $this->resolveDefaultFrequency($key, $class);
+            $allowed = array_merge(['off'], array_values($class::availableFrequencies()));
+            if (! in_array($default, $allowed, true)) {
+                $default = 'off';
+            }
+
+            SummarySubscription::query()->firstOrCreate(
+                [
+                    'user_id' => $userId,
+                    'contributor_key' => $key,
+                ],
+                [
+                    'frequency' => $default,
+                    // Leeg next_send_at zodat de scheduler direct inplant.
+                    'next_send_at' => null,
+                ],
+            );
+        }
+    }
+
+    /**
+     * De geconfigureerde default-frequentie voor een contributor: eerst de
+     * globaal ingestelde summary_default_{key}, anders de class-default.
+     */
+    protected function resolveDefaultFrequency(string $key, string $class): string
+    {
+        $default = Customsetting::get("summary_default_{$key}");
+        if (is_string($default) && $default !== '') {
+            return $default;
+        }
+
+        /** @var class-string<SummaryContributorInterface> $class */
+        return $class::defaultFrequency();
     }
 
     public function form(Schema $schema): Schema
