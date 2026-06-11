@@ -6,7 +6,13 @@
                 <x-dashed-core::content-blocks :content="$globalBlockContent->content" {{ $attributes->merge() }}/>
             @endif
         @else
-            @if(config('dashed-core.blocks.disable_caching') || in_array($block['type'], array_merge(config('dashed-core.blocks.caching_disabled', []), cms()->builder('blockDisabledForCache'))) || !isset($model))
+            @php($dashedEditorActive = isset($model) && app(\Dashed\DashedCore\Services\VisualEditor\VisualEditor::class)->isActive())
+            @if ($dashedEditorActive)
+                @php(app(\Dashed\DashedCore\Services\VisualEditor\EditContextStack::class)->push($model::class, $model->id, app()->getLocale(), $loop->index))
+                <x-dynamic-component :component="'blocks.' . $block['type']" :type="$block['type']"
+                                     :data="$block['data']" {{ $attributes->merge() }}/>
+                @php(app(\Dashed\DashedCore\Services\VisualEditor\EditContextStack::class)->pop())
+            @elseif(config('dashed-core.blocks.disable_caching') || in_array($block['type'], array_merge(config('dashed-core.blocks.caching_disabled', []), cms()->builder('blockDisabledForCache'))) || !isset($model))
                 <x-dynamic-component :component="'blocks.' . $block['type']" :type="$block['type']"
                                      :data="$block['data']" {{ $attributes->merge() }}/>
             @else
