@@ -1,0 +1,8 @@
+.dashed-ve-toolbar {
+    position: fixed; bottom: 1rem; right: 1rem; z-index: 99999;
+    background: #111; color: #fff; padding: .5rem .75rem; border-radius: .5rem;
+    display: flex; gap: .5rem; align-items: center; font: 14px/1.2 sans-serif;
+}
+.dashed-ve-toolbar button { cursor: pointer; border: 0; border-radius: .25rem; padding: .35rem .6rem; }
+.dashed-ve-editable { outline: 1px dashed rgba(0,120,255,.6); outline-offset: 2px; }
+.dashed-ve-editable:focus { outline: 2px solid rgba(0,120,255,.9); }
