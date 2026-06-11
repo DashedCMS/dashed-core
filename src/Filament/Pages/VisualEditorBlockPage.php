@@ -32,8 +32,17 @@ class VisualEditorBlockPage extends Page implements HasSchemas
 
     public array $data = [];
 
-    public function mount(string $model_type = '', int|string $model_id = 0, string $locale = '', int $block = 0): void
-    {
+    public function mount(
+        ?string $model_type = null,
+        int|string|null $model_id = null,
+        ?string $locale = null,
+        int|string|null $block = null,
+    ): void {
+        $model_type = $model_type ?? (string) request()->query('model_type', '');
+        $model_id = $model_id ?? request()->query('model_id', 0);
+        $locale = $locale ?? (string) request()->query('locale', '');
+        $block = (int) ($block ?? request()->query('block', 0));
+
         if (! app(VisualEditor::class)->isAdmin()) {
             abort(403);
         }
