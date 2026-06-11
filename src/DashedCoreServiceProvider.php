@@ -152,6 +152,13 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             \Dashed\DashedFiles\Events\AiImageOperationCompleted::class,
             \Dashed\DashedCore\Listeners\ApplyContentStudioImage::class,
         );
+
+        // Visual editor: injecteer voor admins de in-context bewerk-toolbar op
+        // de frontend (mirror van InjectChatWidget).
+        $this->app->booted(function () {
+            $this->app->make(\Illuminate\Contracts\Http\Kernel::class)
+                ->appendMiddlewareToGroup('web', \Dashed\DashedCore\Http\Middleware\InjectVisualEditorToolbar::class);
+        });
     }
 
     public function bootingPackage()
