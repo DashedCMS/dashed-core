@@ -8,10 +8,15 @@
             @endif
         @else
             @if ($dashedEditorActive)
-                @php(app(\Dashed\DashedCore\Services\VisualEditor\EditContextStack::class)->push($model::class, $model->id, app()->getLocale(), $loop->index))
-                <x-dynamic-component :component="'blocks.' . $block['type']" :type="$block['type']"
-                                     :data="$block['data']" {{ $attributes->merge() }}/>
-                @php(app(\Dashed\DashedCore\Services\VisualEditor\EditContextStack::class)->pop())
+                <div data-dashed-block
+                     data-block="{{ $loop->index }}"
+                     data-block-type="{{ $block['type'] }}"
+                     data-model-type="{{ $model::class }}"
+                     data-model-id="{{ $model->id }}"
+                     data-locale="{{ app()->getLocale() }}">
+                    <x-dynamic-component :component="'blocks.' . $block['type']" :type="$block['type']"
+                                         :data="$block['data']" {{ $attributes->merge() }}/>
+                </div>
             @elseif(config('dashed-core.blocks.disable_caching') || in_array($block['type'], array_merge(config('dashed-core.blocks.caching_disabled', []), cms()->builder('blockDisabledForCache'))) || !isset($model))
                 <x-dynamic-component :component="'blocks.' . $block['type']" :type="$block['type']"
                                      :data="$block['data']" {{ $attributes->merge() }}/>
