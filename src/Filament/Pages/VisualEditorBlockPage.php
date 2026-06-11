@@ -85,7 +85,10 @@ class VisualEditorBlockPage extends Page implements HasSchemas
             abort(404);
         }
 
-        $blocks[$this->block]['data'] = $this->form->getState();
+        $blocks[$this->block]['data'] = array_replace(
+            is_array($blocks[$this->block]['data'] ?? null) ? $blocks[$this->block]['data'] : [],
+            $this->form->getState()
+        );
         $model->customBlocks->setTranslation('blocks', $this->locale, $blocks)->save();
 
         if (method_exists($model, 'clearContentBlockCache')) {

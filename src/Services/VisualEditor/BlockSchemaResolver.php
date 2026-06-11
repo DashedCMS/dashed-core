@@ -2,42 +2,22 @@
 
 namespace Dashed\DashedCore\Services\VisualEditor;
 
+use Illuminate\Support\Str;
 use Filament\Forms\Components\Builder\Block;
 
 class BlockSchemaResolver
 {
-    /**
-     * Builder-registry-namen die blok-schema's bevatten. 'blocks' is de
-     * canonieke set; de overige namen komen overeen met de namen die de
-     * resources aan customBlocksTab(...) doorgeven (pageBlocks, productBlocks,
-     * articleBlocks, ...). Vul aan als er nieuwe resources met een eigen
-     * blokken-registry bijkomen.
-     *
-     * @var array<int, string>
-     */
-    protected array $builderNames = [
-        'blocks',
-        'pageBlocks',
-        'productBlocks',
-        'productGroupBlocks',
-        'productFilterBlocks',
-        'productExtraOptionBlocks',
-        'productFaqBlocks',
-        'productTabBlocks',
-        'productCategoryBlocks',
-        'articleBlocks',
-        'articleAuthorBlocks',
-        'articleCategoryBlocks',
-        'vacancyBlocks',
-        'vacancyCategoryBlocks',
-        'menuItemBlocks',
-        'formBlocks',
-        'formFieldBlocks',
-    ];
-
     public function resolve(string $type): ?Block
     {
-        foreach ($this->builderNames as $name) {
+        // 'blocks' is de canonieke set; per-resource registry's volgen de
+        // conventie 'xxxBlocks' (pageBlocks, productBlocks, ...). We scannen
+        // elke geregistreerde builder-key die aan die conventie voldoet, zodat
+        // nieuwe resources met een eigen blokken-registry automatisch werken.
+        foreach (cms()->builderKeys() as $name) {
+            if ($name !== 'blocks' && ! Str::endsWith($name, 'Blocks')) {
+                continue;
+            }
+
             foreach ((array) (cms()->builder($name) ?? []) as $block) {
                 if ($block instanceof Block && $block->getName() === $type) {
                     return $block;
@@ -55,6 +35,6 @@ class BlockSchemaResolver
     {
         $block = $this->resolve($type);
 
-        return $block ? $block->getDefaultChildComponents() : [];
+        return $block ? $block->getClone()->getDefaultChildComponents() : [];
     }
 }

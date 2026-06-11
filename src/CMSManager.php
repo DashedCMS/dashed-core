@@ -92,6 +92,16 @@ class CMSManager
     }
 
     /**
+     * Geef alle geregistreerde builder-registry-keys terug.
+     *
+     * @return array<int, string>
+     */
+    public function builderKeys(): array
+    {
+        return array_keys(static::$builders);
+    }
+
+    /**
      * Reset the static builder registry to its declared defaults.
      *
      * Intended for test suites only: Testbench re-boots the service
