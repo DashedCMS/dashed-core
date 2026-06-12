@@ -29,6 +29,50 @@ class EditEmailTemplate extends EditRecord
             LocaleSwitcher::make(),
             CopyEmailTemplateLocaleAction::make(),
             TranslateEmailTemplateAction::make(),
+            Action::make('resetToDefault')
+                ->label('Herstel naar standaard')
+                ->icon('heroicon-o-arrow-path')
+                ->color('gray')
+                ->requiresConfirmation()
+                ->modalHeading('Template herstellen naar standaard')
+                ->modalDescription('Dit overschrijft het onderwerp en de blokken van de huidige taal met de standaardinhoud van deze mail. Eigen aanpassingen in deze taal gaan verloren.')
+                ->modalSubmitActionLabel('Herstellen')
+                ->visible(function (): bool {
+                    $mailableClass = cms()->emailTemplateRegistry()->find($this->getRecord()->mailable_key);
+
+                    return $mailableClass !== null
+                        && (method_exists($mailableClass, 'defaultBlocks') || method_exists($mailableClass, 'defaultSubject'));
+                })
+                ->action(function (): void {
+                    $record = $this->getRecord();
+                    $mailableClass = cms()->emailTemplateRegistry()->find($record->mailable_key);
+
+                    if (! $mailableClass) {
+                        Notification::make()
+                            ->title('Geen standaardinhoud beschikbaar voor deze mail')
+                            ->warning()
+                            ->send();
+
+                        return;
+                    }
+
+                    $locale = $this->activeLocale ?: app()->getLocale();
+
+                    if (method_exists($mailableClass, 'defaultSubject')) {
+                        $record->setTranslation('subject', $locale, $mailableClass::defaultSubject());
+                    }
+                    if (method_exists($mailableClass, 'defaultBlocks')) {
+                        $record->setTranslation('blocks', $locale, $mailableClass::defaultBlocks());
+                    }
+                    $record->save();
+
+                    $this->fillForm();
+
+                    Notification::make()
+                        ->title('Template hersteld naar standaard (' . $locale . ')')
+                        ->success()
+                        ->send();
+                }),
             Action::make('sendTest')
                 ->label('Test mail sturen')
                 ->icon('heroicon-o-paper-airplane')
