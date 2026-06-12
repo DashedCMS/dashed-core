@@ -52,10 +52,6 @@ if (config('dashed-core.default_auth_pages_enabled', true)) {
     );
 }
 
-Route::post('dashed-visual-editor/toggle', [\Dashed\DashedCore\Http\Controllers\VisualEditorController::class, 'toggle'])
-    ->middleware('web')
-    ->name('dashed.visual-editor.toggle');
-
 Route::get('/oauth/google', [GoogleOAuthController::class, 'redirect'])
     ->middleware(['web', AdminMiddleware::class])
     ->name('google.oauth.redirect');
