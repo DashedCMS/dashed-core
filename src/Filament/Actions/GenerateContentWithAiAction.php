@@ -17,7 +17,7 @@ class GenerateContentWithAiAction
         return Action::make('generateContentWithAi')
             ->label('Genereer met AI')
             ->icon('heroicon-o-sparkles')
-            ->visible(fn () => Ai::hasProvider())
+            ->visible(fn () => class_exists(Ai::class) && Ai::hasProvider())
             ->schema([
                 Textarea::make('brief')
                     ->label('Beschrijf de pagina')

@@ -17,7 +17,7 @@ class GenerateBlockImagesAction
         return Action::make('generateBlockImages')
             ->label('Genereer beelden')
             ->icon('heroicon-o-photo')
-            ->visible(fn () => Ai::hasProvider())
+            ->visible(fn () => class_exists(Ai::class) && Ai::hasProvider())
             ->requiresConfirmation()
             ->modalDescription('Genereer AI-beelden voor de beeld-velden die door de Content Studio zijn voorbereid. Sla de pagina eerst op.')
             ->action(function ($livewire, $record) {

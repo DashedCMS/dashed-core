@@ -33,11 +33,19 @@ trait HasCustomBlocksTab
 
         $primaryBlocksName = is_array($blocks) ? ($blocks[0] ?? null) : $blocks;
 
+        // De AI-acties leunen op het optionele dashed-ai pakket. Op sites zonder
+        // dashed-ai bestaat de Ai-facade niet, dus registreren we ze daar niet.
+        $aiAvailable = class_exists(\Dashed\DashedAi\Facades\Ai::class);
+        $blockActions = [];
+        if ($aiAvailable) {
+            $blockActions[] = GenerateContentWithAiAction::make($primaryBlocksName);
+            $blockActions[] = GenerateBlockImagesAction::make();
+        }
+
         return [
-            Actions::make([
-                GenerateContentWithAiAction::make($primaryBlocksName),
-                GenerateBlockImagesAction::make(),
-            ])->visible((bool) $primaryBlocksName)->columnSpanFull(),
+            Actions::make($blockActions)
+                ->visible((bool) $primaryBlocksName && $aiAvailable)
+                ->columnSpanFull(),
 
             Fieldset::make('customBlocks')
                 ->label('Maatwerk blokken')

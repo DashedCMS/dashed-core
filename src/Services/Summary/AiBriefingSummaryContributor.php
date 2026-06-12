@@ -37,7 +37,7 @@ class AiBriefingSummaryContributor implements SummaryContributorInterface
 
     public static function contribute(SummaryPeriod $period): ?SummarySection
     {
-        if (! Ai::hasProvider()) {
+        if (! class_exists(Ai::class) || ! Ai::hasProvider()) {
             return null;
         }
 
