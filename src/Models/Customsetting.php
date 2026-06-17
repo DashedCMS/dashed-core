@@ -138,7 +138,7 @@ class Customsetting extends Model
         return $value;
     }
 
-    public static function set(string $name, null|array|string $value, ?string $siteId = null, ?string $locale = null)
+    public static function set(string $name, null|array|string|bool|int|float $value, ?string $siteId = null, ?string $locale = null)
     {
         if (! $siteId) {
             $siteId = Sites::getSites()[0]['id'];
@@ -146,6 +146,11 @@ class Customsetting extends Model
 
         if ($locale && is_array($locale)) {
             $locale = $locale['id'] ?? null;
+        }
+
+        // Booleans worden als '1'/'0' opgeslagen zodat (bool) bij het uitlezen klopt.
+        if (is_bool($value)) {
+            $value = $value ? '1' : '0';
         }
 
         $valueField = is_array($value) ? 'json' : 'value';
