@@ -29,6 +29,7 @@
         "guava/filament-icon-picker": "^3.0",
         "lara-zeus/spatie-translatable": "^1.0",
         "laravel/horizon": "^5.29",
+        "laravel/sanctum": "^4.3",
         "mallardduck/blade-lucide-icons": "^1.23",
         "psr/simple-cache": "^3.0",
         "pxlrbt/filament-excel": "^3.0",
