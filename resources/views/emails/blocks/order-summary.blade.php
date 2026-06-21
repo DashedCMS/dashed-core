@@ -27,6 +27,13 @@
                             <br><span style="font-size:13px; color:#6b7280;">{{ $option['name'] ?? '' }}: {{ $option['value'] ?? '' }}</span>
                         @endforeach
                     @endif
+                    @if(!empty($line->hidden_options) && is_array($line->hidden_options))
+                        @foreach($line->hidden_options as $key => $value)
+                            @if(! str($value)->contains('base64'))
+                                <br><span style="font-size:13px; color:#6b7280;">{{ $key }}: {{ $value }}</span>
+                            @endif
+                        @endforeach
+                    @endif
                     @if(! empty($line->is_pre_order))
                         @php
                             $expectedShipDate = null;
