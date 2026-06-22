@@ -15,7 +15,6 @@ use Dashed\DashedCore\Filament\Resources\GlobalBlockResource;
 use Dashed\DashedCore\Filament\Pages\Settings\SEOSettingsPage;
 use Dashed\DashedCore\Filament\Resources\NotFoundPageResource;
 use Dashed\DashedCore\Filament\Pages\NotificationSubscriptions;
-use Dashed\DashedCore\Filament\Pages\Performance\WebVitalsPage;
 use Dashed\DashedCore\Filament\Resources\EmailTemplateResource;
 use Dashed\DashedCore\Filament\Pages\Settings\CacheSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\EmailSettingsPage;
@@ -67,7 +66,6 @@ class DashedCorePlugin implements Plugin
                 EmailSettingsPage::class,
                 NotificationSettingsPage::class,
                 NotificationSubscriptions::class,
-                WebVitalsPage::class,
                 DocumentationOverviewPage::class,
             ])
             ->widgets([

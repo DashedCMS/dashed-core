@@ -64,12 +64,10 @@ use Dashed\DashedCore\Commands\CreateVisitableModel;
 use Dashed\DashedCore\Commands\ReplayWebhookCommand;
 use Dashed\DashedCore\Mail\EmailBlocks\DividerBlock;
 use Dashed\DashedCore\Mail\EmailBlocks\HeadingBlock;
-use Dashed\DashedCore\Commands\PruneWebVitalsCommand;
 use Dashed\DashedCore\Filament\Widgets\DashboardGrid;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Dashed\DashedCore\Commands\GenerateFaviconsCommand;
 use Dashed\DashedCore\Livewire\Frontend\Account\Account;
-use Dashed\DashedCore\Commands\AggregateWebVitalsCommand;
 use Dashed\DashedCore\Filament\Widgets\NotFoundPageStats;
 use Dashed\DashedCore\Mail\EmailBlocks\OrderSummaryBlock;
 use Dashed\DashedCore\Commands\DispatchSummaryMailsCommand;
@@ -542,34 +540,6 @@ MARKDOWN,
         );
 
         cms()->registerSettingsDocs(
-            page: \Dashed\DashedCore\Filament\Pages\Performance\WebVitalsPage::class,
-            title: 'Web Vitals',
-            intro: 'Real-time performance dashboard met de Core Web Vitals (LCP, CLS, INP, FCP, TTFB) van echte bezoekers van de website. Helpt om performance regressies te zien en optimalisaties te valideren.',
-            sections: [
-                [
-                    'heading' => 'Wat zie je hier?',
-                    'body' => <<<MARKDOWN
-Het dashboard verzamelt metingen van echte bezoekers en groepeert ze per metric:
-
-- **Tijdsbereik selectie** voor 7, 30 of 90 dagen rolling window.
-- **Tabellen per metric** (LCP, CLS, INP, FCP en TTFB) met daarin URL pattern, device type, p75 percentiel waarde, aantal samples en een status badge.
-- **Kleurcodering** met groen voor goed, oranje voor kan beter en rood voor slecht.
-MARKDOWN,
-                ],
-                [
-                    'heading' => 'Wat kun je hier doen?',
-                    'body' => 'Schakel tussen 7, 30 en 90 dagen om korte trends van structurele problemen te onderscheiden. Bekijk per metric welke pagina patronen onder de maat presteren. Vergelijk mobiel en desktop om te zien of een probleem alleen op trage verbindingen optreedt. Controleer na een release of je optimalisatie ook echt effect heeft in de praktijk.',
-                ],
-            ],
-            tips: [
-                'De data wordt een keer per nacht gebundeld. Je ziet geen live meting maar de afgeronde cijfers van de afgelopen volledige dag of dagen.',
-                'LCP en CLS zijn de belangrijkste metrics voor SEO en gebruikerservaring.',
-                'Focus op pagina\'s met veel samples. Een slechte score op een pagina met drie bezoekers zegt minder dan een middelmatige score op de homepage.',
-                'Toegang tot dit dashboard is gelimiteerd tot @dashed e-mailadressen.',
-            ],
-        );
-
-        cms()->registerSettingsDocs(
             page: \Dashed\DashedCore\Filament\Pages\Settings\AccountSettingsPage::class,
             title: 'Account instellingen',
             intro: 'Hier koppel je de frontend pagina\'s die met klantaccounts te maken hebben en bepaal je hoe CMS-gebruikers extra moeten inloggen via tweestapsverificatie (MFA).',
@@ -972,8 +942,6 @@ MARKDOWN,
             $schedule->command(CleanupOldNotFoundPageOccurrences::class)->daily();
             $schedule->command(SyncGoogleReviews::class)->twiceDaily();
             //            $schedule->command(SeoScan::class)->daily();
-            $schedule->command(AggregateWebVitalsCommand::class)->dailyAt('03:00');
-            $schedule->command(PruneWebVitalsCommand::class)->dailyAt('03:15');
             $schedule->command(\Dashed\DashedCore\Commands\CheckIntegrationsHealth::class)
                 ->hourly()
                 ->withoutOverlapping();
@@ -1443,10 +1411,8 @@ MARKDOWN,
                 ReplaceEditorStringsInFiles::class,
                 MigrateToV4::class,
                 MigrateDatabaseToV4::class,
-                AggregateWebVitalsCommand::class,
                 AuditSettingsCommand::class,
                 ReplayWebhookCommand::class,
-                PruneWebVitalsCommand::class,
                 GenerateFaviconsCommand::class,
                 DispatchSummaryMailsCommand::class,
                 \Dashed\DashedCore\Commands\CheckIntegrationsHealth::class,
