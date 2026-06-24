@@ -994,6 +994,16 @@ MARKDOWN,
             //            HtmlIdPlugin::make(),
         ]);
 
+        cms()->registerContentQualityCheck(
+            new \Dashed\DashedCore\ContentQuality\Checks\MissingMetaFieldCheck('title', 'missing_meta_title', 'Meta-titel ontbreekt')
+        );
+        cms()->registerContentQualityCheck(
+            new \Dashed\DashedCore\ContentQuality\Checks\MissingMetaFieldCheck('description', 'missing_meta_description', 'Meta-omschrijving ontbreekt')
+        );
+        cms()->registerContentQualityCheck(
+            new \Dashed\DashedCore\ContentQuality\Checks\MissingMetaFieldCheck('image', 'missing_meta_image', 'Meta-afbeelding ontbreekt')
+        );
+
     }
 
     public static function builderBlocks()
