@@ -205,8 +205,16 @@ class ContentQualityDashboard extends Page
             ->send();
     }
 
-    public function aiAvailable(): bool
+    public function aiAvailable(?string $checkKey = null): bool
     {
+        if ($checkKey === 'missing_alt') {
+            return (bool) Ai::default(AiCapability::Vision);
+        }
+
+        if (in_array($checkKey, ['missing_meta_title', 'missing_meta_description', 'missing_meta_image'], true)) {
+            return (bool) Ai::default(AiCapability::Json);
+        }
+
         return (bool) Ai::default(AiCapability::Json) || (bool) Ai::default(AiCapability::Vision);
     }
 }

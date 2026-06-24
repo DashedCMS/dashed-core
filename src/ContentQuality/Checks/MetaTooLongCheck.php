@@ -75,7 +75,7 @@ class MetaTooLongCheck implements ContentQualityCheck
 
     public function resolutions(): array
     {
-        return ['inline', 'link'];
+        return ['link'];
     }
 
     protected function displayName($model): string

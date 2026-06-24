@@ -30,7 +30,7 @@
     </div>
 
     @if($selectedCheck)
-        @if($this->aiAvailable() && in_array('bulk_ai', $this->cards[$selectedCheck]['resolutions'] ?? []) && ($this->cards[$selectedCheck]['count'] ?? 0) > 0)
+        @if($this->aiAvailable($selectedCheck) && in_array('bulk_ai', $this->cards[$selectedCheck]['resolutions'] ?? []) && ($this->cards[$selectedCheck]['count'] ?? 0) > 0)
             <div class="mb-3">
                 <x-filament::button wire:click="bulkAiFix" icon="heroicon-o-sparkles" wire:loading.attr="disabled">
                     Bulk: AI voor alle {{ $this->cards[$selectedCheck]['count'] }}
@@ -54,7 +54,7 @@
                                 Inline
                             </button>
                         @endif
-                        @if($this->aiAvailable() && in_array('ai', $this->cards[$selectedCheck]['resolutions'] ?? []))
+                        @if($this->aiAvailable($selectedCheck) && in_array('ai', $this->cards[$selectedCheck]['resolutions'] ?? []))
                             <button type="button" class="text-sm font-medium text-primary-600 hover:underline"
                                 wire:click="aiFix('{{ $issue->checkKey }}', {{ $issue->mediaId ? $issue->mediaId : 'null' }}, {{ $issue->modelClass ? "'".addslashes($issue->modelClass)."'" : 'null' }}, {{ $issue->modelId ? "'".$issue->modelId."'" : 'null' }})"
                                 wire:loading.attr="disabled">
