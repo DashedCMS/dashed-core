@@ -87,7 +87,7 @@ class ContentQualityDashboard extends Page
         $issue = $this->issues->first(
             fn ($i) => $i->modelClass === $modelClass && (string) $i->modelId === (string) $modelId
         );
-        foreach (($issue->missingLocales ?? []) as $locale) {
+        foreach (($issue?->missingLocales ?? []) as $locale) {
             $this->inlineValues[$locale] = '';
         }
     }
@@ -141,6 +141,10 @@ class ContentQualityDashboard extends Page
             return;
         }
 
+        if (! $modelClass) {
+            return;
+        }
+
         $model = $modelClass::find($modelId);
         if (! $model) {
             return;
@@ -150,7 +154,7 @@ class ContentQualityDashboard extends Page
         $issue = $this->issues->first(
             fn ($i) => $i->modelClass === $modelClass && (string) $i->modelId === (string) $modelId
         );
-        $missing = $issue->missingLocales ?? [];
+        $missing = $issue?->missingLocales ?? [];
 
         $generated = app(MetaFieldGenerator::class)->generate($model, $field, $missing);
         if ($generated === []) {
