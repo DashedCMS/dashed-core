@@ -575,6 +575,27 @@ class CMSManager
         return app(\Dashed\DashedCore\Integrations\IntegrationRegistry::class);
     }
 
+    public function contentQualityRegistry(): \Dashed\DashedCore\ContentQuality\ContentQualityRegistry
+    {
+        return app(\Dashed\DashedCore\ContentQuality\ContentQualityRegistry::class);
+    }
+
+    public function registerContentQualityCheck(\Dashed\DashedCore\ContentQuality\Contracts\ContentQualityCheck $check): self
+    {
+        $this->contentQualityRegistry()->registerCheck($check);
+
+        return $this;
+    }
+
+    public function registerContentQualityModel(string $modelClass, string $resourceClass, string $label): self
+    {
+        $this->contentQualityRegistry()->registerModel(
+            new \Dashed\DashedCore\ContentQuality\RegisteredModel($modelClass, $resourceClass, $label)
+        );
+
+        return $this;
+    }
+
     /**
      * Register a recommendation strategy. Lives in dashed-ecommerce-core so
      * dashed-core stays lazily coupled - we use a FQN string + class_exists

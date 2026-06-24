@@ -126,6 +126,10 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         // calls cms()->registerIntegration(...) in bootingPackage().
         $this->app->singleton(\Dashed\DashedCore\Integrations\IntegrationRegistry::class);
         $this->app->singleton(\Dashed\DashedCore\Integrations\IntegrationHealthRunner::class);
+
+        // Content-quality registry: package SPs call cms()->registerContentQualityCheck(...)
+        // and cms()->registerContentQualityModel(...) in bootingPackage().
+        $this->app->singleton(\Dashed\DashedCore\ContentQuality\ContentQualityRegistry::class);
     }
 
     public function packageBooted()
