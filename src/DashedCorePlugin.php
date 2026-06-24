@@ -9,6 +9,7 @@ use Dashed\DashedCore\Filament\Resources\RoleResource;
 use Dashed\DashedCore\Filament\Resources\UserResource;
 use Dashed\DashedCore\Filament\Resources\ExportResource;
 use Dashed\DashedCore\Filament\Resources\RedirectResource;
+use Dashed\DashedCore\Filament\Pages\ContentQualityDashboard;
 use Dashed\DashedCore\Filament\Pages\IntegrationsDashboard;
 use Dashed\DashedCore\Filament\Pages\Settings\SettingsPage;
 use Dashed\DashedCore\Filament\Resources\GlobalBlockResource;
@@ -58,6 +59,7 @@ class DashedCorePlugin implements Plugin
                 CacheSettingsPage::class,
                 HorizonDashboardPage::class,
                 IntegrationsDashboard::class,
+                ContentQualityDashboard::class,
                 AccountSettingsPage::class,
                 SearchSettingsPage::class,
                 ReviewSettingsPage::class,
