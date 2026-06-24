@@ -30,6 +30,13 @@
     </div>
 
     @if($selectedCheck)
+        @if($this->aiAvailable() && in_array('bulk_ai', $this->cards[$selectedCheck]['resolutions'] ?? []) && ($this->cards[$selectedCheck]['count'] ?? 0) > 0)
+            <div class="mb-3">
+                <x-filament::button wire:click="bulkAiFix" icon="heroicon-o-sparkles" wire:loading.attr="disabled">
+                    Bulk: AI voor alle {{ $this->cards[$selectedCheck]['count'] }}
+                </x-filament::button>
+            </div>
+        @endif
         <div class="fi-section rounded-xl bg-white ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
             @forelse($this->issues as $issue)
                 <div

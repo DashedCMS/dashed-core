@@ -12,6 +12,7 @@ use Dashed\DashedAi\Jobs\CreateAltTextForMediaItem;
 use Dashed\DashedCore\Classes\Sites;
 use Dashed\DashedCore\Models\Metadata;
 use Dashed\DashedCore\ContentQuality\ContentQualityScanner;
+use Dashed\DashedCore\ContentQuality\Jobs\GenerateMetaFieldForModel;
 use Dashed\DashedCore\ContentQuality\MetaFieldGenerator;
 use RalphJSmit\Filament\MediaLibrary\Models\MediaLibraryItem;
 
@@ -168,6 +169,40 @@ class ContentQualityDashboard extends Page
         $model->metadata()->save($metadata);
 
         app(ContentQualityScanner::class)->rescan(Sites::getActive());
+    }
+
+    public function bulkAiFix(): void
+    {
+        if (! $this->selectedCheck) {
+            return;
+        }
+
+        $field = $this->fieldForCheck($this->selectedCheck);
+
+        foreach ($this->issues as $issue) {
+            if ($issue->mediaId) {
+                $item = MediaLibraryItem::withoutGlobalScopes()->find($issue->mediaId);
+                if ($item) {
+                    CreateAltTextForMediaItem::dispatch($item);
+                }
+
+                continue;
+            }
+
+            if ($issue->modelClass) {
+                GenerateMetaFieldForModel::dispatch(
+                    $issue->modelClass,
+                    $issue->modelId,
+                    $field,
+                    $issue->missingLocales,
+                );
+            }
+        }
+
+        \Filament\Notifications\Notification::make()
+            ->title('AI-taken gestart. De resultaten verschijnen zodra de wachtrij ze heeft verwerkt.')
+            ->success()
+            ->send();
     }
 
     public function aiAvailable(): bool
