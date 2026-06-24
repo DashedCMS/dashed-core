@@ -86,7 +86,7 @@ class ContentQualityDashboard extends Page
 
         // Seed one input per missing locale for the targeted meta field.
         $issue = $this->issues->first(
-            fn ($i) => $i->modelClass === $modelClass && (string) $i->modelId === (string) $modelId
+            fn ($i) => $i->modelClass === $modelClass && (string) $i->modelId === (string) $modelId && $i->checkKey === $checkKey
         );
         foreach (($issue?->missingLocales ?? []) as $locale) {
             $this->inlineValues[$locale] = '';
@@ -116,7 +116,7 @@ class ContentQualityDashboard extends Page
             }
         }
 
-        app(ContentQualityScanner::class)->rescan(Sites::getActive());
+        $this->rescan();
         $this->inlineTarget = [];
         $this->inlineValues = [];
     }
@@ -153,7 +153,7 @@ class ContentQualityDashboard extends Page
 
         $field = $this->fieldForCheck($checkKey);
         $issue = $this->issues->first(
-            fn ($i) => $i->modelClass === $modelClass && (string) $i->modelId === (string) $modelId
+            fn ($i) => $i->modelClass === $modelClass && (string) $i->modelId === (string) $modelId && $i->checkKey === $checkKey
         );
         $missing = $issue?->missingLocales ?? [];
 
@@ -168,7 +168,7 @@ class ContentQualityDashboard extends Page
         }
         $model->metadata()->save($metadata);
 
-        app(ContentQualityScanner::class)->rescan(Sites::getActive());
+        $this->rescan();
     }
 
     public function bulkAiFix(): void

@@ -37,6 +37,11 @@
                 </x-filament::button>
             </div>
         @endif
+        @php($shown = $this->issues->count())
+        @php($total = $this->cards[$selectedCheck]['count'] ?? $shown)
+        @if($shown < $total)
+            <p class="text-xs text-gray-500">Toont de eerste {{ $shown }} van {{ $total }}. Verfijn of los deze eerst op om de rest te zien.</p>
+        @endif
         <div class="fi-section rounded-xl bg-white ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
             @forelse($this->issues as $issue)
                 <div
