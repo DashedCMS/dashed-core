@@ -1003,6 +1003,7 @@ MARKDOWN,
         cms()->registerContentQualityCheck(
             new \Dashed\DashedCore\ContentQuality\Checks\MissingMetaFieldCheck('image', 'missing_meta_image', 'Meta-afbeelding ontbreekt')
         );
+        cms()->registerContentQualityCheck(new \Dashed\DashedCore\ContentQuality\Checks\AccidentalNoindexCheck());
 
     }
 
