@@ -47,6 +47,13 @@
                                 Inline
                             </button>
                         @endif
+                        @if($this->aiAvailable() && in_array('ai', $this->cards[$selectedCheck]['resolutions'] ?? []))
+                            <button type="button" class="text-sm font-medium text-primary-600 hover:underline"
+                                wire:click="aiFix('{{ $issue->checkKey }}', {{ $issue->mediaId ? $issue->mediaId : 'null' }}, {{ $issue->modelClass ? "'".addslashes($issue->modelClass)."'" : 'null' }}, {{ $issue->modelId ? "'".$issue->modelId."'" : 'null' }})"
+                                wire:loading.attr="disabled">
+                                Fix met AI
+                            </button>
+                        @endif
                         @if($issue->editUrl)
                             <a href="{{ $issue->editUrl }}" class="text-sm text-primary-600 hover:underline">Bewerk</a>
                         @endif

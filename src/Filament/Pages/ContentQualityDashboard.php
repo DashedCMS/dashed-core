@@ -6,9 +6,13 @@ use UnitEnum;
 use BackedEnum;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
+use Dashed\DashedAi\Facades\Ai;
+use Dashed\DashedAi\Enums\AiCapability;
+use Dashed\DashedAi\Jobs\CreateAltTextForMediaItem;
 use Dashed\DashedCore\Classes\Sites;
 use Dashed\DashedCore\Models\Metadata;
 use Dashed\DashedCore\ContentQuality\ContentQualityScanner;
+use Dashed\DashedCore\ContentQuality\MetaFieldGenerator;
 use RalphJSmit\Filament\MediaLibrary\Models\MediaLibraryItem;
 
 class ContentQualityDashboard extends Page
@@ -124,5 +128,46 @@ class ContentQualityDashboard extends Page
             'missing_meta_image' => 'image',
             default => 'title',
         };
+    }
+
+    public function aiFix(string $checkKey, ?int $mediaId, ?string $modelClass, int|string|null $modelId): void
+    {
+        if ($mediaId) {
+            $item = MediaLibraryItem::withoutGlobalScopes()->find($mediaId);
+            if ($item) {
+                CreateAltTextForMediaItem::dispatch($item);
+            }
+
+            return;
+        }
+
+        $model = $modelClass::find($modelId);
+        if (! $model) {
+            return;
+        }
+
+        $field = $this->fieldForCheck($checkKey);
+        $issue = $this->issues->first(
+            fn ($i) => $i->modelClass === $modelClass && (string) $i->modelId === (string) $modelId
+        );
+        $missing = $issue->missingLocales ?? [];
+
+        $generated = app(MetaFieldGenerator::class)->generate($model, $field, $missing);
+        if ($generated === []) {
+            return;
+        }
+
+        $metadata = $model->metadata ?: $model->metadata()->make();
+        foreach ($generated as $locale => $value) {
+            $metadata->setTranslation($field, $locale, $value);
+        }
+        $model->metadata()->save($metadata);
+
+        app(ContentQualityScanner::class)->rescan(Sites::getActive());
+    }
+
+    public function aiAvailable(): bool
+    {
+        return (bool) Ai::default(AiCapability::Json) || (bool) Ai::default(AiCapability::Vision);
     }
 }
