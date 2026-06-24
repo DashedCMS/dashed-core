@@ -8,6 +8,11 @@ All notable changes to `Dashed core` will be documented in this file.
 - Webhook idempotency middleware + BaseJob trait + replay command. See docs/webhook-idempotency.md.
 - Integrations dashboard, last-edited column, admin stat widgets with drilldown. See docs/admin-overview.md.
 
+## v4.23.1 - 2026-06-24
+
+### Fixed
+- **Google Analytics (gtag.js) wordt nu direct ingeladen in plaats van uitgesteld.** Met `defer_third_party_scripts` (standaard aan) werd de `gtag('js')`/`gtag('config', ...)`-aanroep in de `DeferredScriptStore` gestopt en pas in een `window.addEventListener('load', ...)` in de footer uitgevoerd. Daardoor faalde de Google-tagverificatie en gingen vroege pageviews verloren. De GA-snippet wordt nu altijd in de standaard directe vorm uitgevoerd, exact zoals Google voorschrijft.
+
 ## v4.7.2 - 2026-05-11
 
 ### Fixed

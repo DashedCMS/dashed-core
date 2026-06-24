@@ -38,25 +38,14 @@ $ogSiteName = $siteName ?? config('app.name');
     @endif
 
     @if($gaId)
-        @if(config('dashed-core.performance.defer_third_party_scripts'))
-            <script async src="https://www.googletagmanager.com/gtag/js?id={{ $gaId }}"></script>
-            @php
-                app(\Dashed\DashedCore\Performance\Scripts\DeferredScriptStore::class)->add('ga-config',
-                    "window.dataLayer = window.dataLayer || [];\n" .
-                    "function gtag(){dataLayer.push(arguments);}\n" .
-                    "gtag('js', new Date());\n" .
-                    "gtag('config', '" . $gaId . "');"
-                );
-            @endphp
-        @else
-            <script async src="https://www.googletagmanager.com/gtag/js?id={{ $gaId }}"></script>
-            <script>
-                window.dataLayer = window.dataLayer || [];
-                function gtag() { dataLayer.push(arguments); }
-                gtag('js', new Date());
-                gtag('config', '{{ $gaId }}');
-            </script>
-        @endif
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id={{ $gaId }}"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '{{ $gaId }}');
+        </script>
     @endif
 @endif
 
