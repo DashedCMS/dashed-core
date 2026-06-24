@@ -7,7 +7,9 @@ use BackedEnum;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
 use Dashed\DashedCore\Classes\Sites;
+use Dashed\DashedCore\Models\Metadata;
 use Dashed\DashedCore\ContentQuality\ContentQualityScanner;
+use RalphJSmit\Filament\MediaLibrary\Models\MediaLibraryItem;
 
 class ContentQualityDashboard extends Page
 {
@@ -26,6 +28,10 @@ class ContentQualityDashboard extends Page
     protected string $view = 'dashed-core::pages.content-quality-dashboard';
 
     public ?string $selectedCheck = null;
+
+    public array $inlineTarget = [];
+
+    public array $inlineValues = [];
 
     public static function canAccess(): bool
     {
@@ -55,5 +61,68 @@ class ContentQualityDashboard extends Page
     {
         app(ContentQualityScanner::class)->rescan(Sites::getActive());
         $this->dispatch('$refresh');
+    }
+
+    public function editInline(string $checkKey, ?int $mediaId, ?string $modelClass, int|string|null $modelId): void
+    {
+        $this->inlineTarget = [
+            'checkKey' => $checkKey,
+            'mediaId' => $mediaId,
+            'modelClass' => $modelClass,
+            'modelId' => $modelId,
+        ];
+        $this->inlineValues = [];
+
+        if ($mediaId) {
+            $this->inlineValues = ['alt' => ''];
+
+            return;
+        }
+
+        // Seed one input per missing locale for the targeted meta field.
+        $issue = $this->issues->first(
+            fn ($i) => $i->modelClass === $modelClass && (string) $i->modelId === (string) $modelId
+        );
+        foreach (($issue->missingLocales ?? []) as $locale) {
+            $this->inlineValues[$locale] = '';
+        }
+    }
+
+    public function saveInline(): void
+    {
+        $target = $this->inlineTarget;
+
+        if ($target['mediaId'] ?? null) {
+            $item = MediaLibraryItem::withoutGlobalScopes()->find($target['mediaId']);
+            if ($item) {
+                $item->alt_text = trim((string) ($this->inlineValues['alt'] ?? ''));
+                $item->save();
+            }
+        } else {
+            $modelClass = $target['modelClass'];
+            $model = $modelClass::find($target['modelId']);
+            if ($model) {
+                $metadata = $model->metadata ?: $model->metadata()->make();
+                $field = $this->fieldForCheck($target['checkKey']);
+                foreach ($this->inlineValues as $locale => $value) {
+                    $metadata->setTranslation($field, $locale, trim((string) $value));
+                }
+                $model->metadata()->save($metadata);
+            }
+        }
+
+        app(ContentQualityScanner::class)->rescan(Sites::getActive());
+        $this->inlineTarget = [];
+        $this->inlineValues = [];
+    }
+
+    protected function fieldForCheck(string $checkKey): string
+    {
+        return match ($checkKey) {
+            'missing_meta_title' => 'title',
+            'missing_meta_description' => 'description',
+            'missing_meta_image' => 'image',
+            default => 'title',
+        };
     }
 }

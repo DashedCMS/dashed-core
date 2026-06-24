@@ -41,12 +41,27 @@
                         <div class="text-xs text-gray-500">{{ $issue->subtitle }}</div>
                     </div>
                     <div class="flex items-center gap-2">
-                        {{-- Inline/AI/bulk actions are wired in Tasks 8-10 --}}
+                        @if(in_array('inline', $this->cards[$selectedCheck]['resolutions'] ?? []))
+                            <button type="button" class="text-sm text-primary-600 hover:underline"
+                                wire:click="editInline('{{ $issue->checkKey }}', {{ $issue->mediaId ? $issue->mediaId : 'null' }}, {{ $issue->modelClass ? "'".addslashes($issue->modelClass)."'" : 'null' }}, {{ $issue->modelId ? "'".$issue->modelId."'" : 'null' }})">
+                                Inline
+                            </button>
+                        @endif
                         @if($issue->editUrl)
                             <a href="{{ $issue->editUrl }}" class="text-sm text-primary-600 hover:underline">Bewerk</a>
                         @endif
                     </div>
                 </div>
+                @if($inlineTarget && ($inlineTarget['mediaId'] ?? null) == ($issue->mediaId ?? null) && (string) ($inlineTarget['modelId'] ?? '') === (string) ($issue->modelId ?? '') && ($inlineTarget['checkKey'] ?? '') === $issue->checkKey)
+                    <div class="bg-gray-50 p-3 dark:bg-white/5" wire:key="inline-{{ $issue->checkKey }}-{{ $issue->mediaId ?? $issue->modelId }}">
+                        @foreach($inlineValues as $localeKey => $val)
+                            <label class="mb-2 block text-xs uppercase text-gray-500">{{ strtoupper($localeKey) }}</label>
+                            <input type="text" wire:model="inlineValues.{{ $localeKey }}"
+                                class="mb-2 w-full rounded border-gray-300 text-sm dark:bg-gray-800" />
+                        @endforeach
+                        <x-filament::button size="sm" wire:click="saveInline">Opslaan</x-filament::button>
+                    </div>
+                @endif
             @empty
                 <p class="p-4 text-sm text-gray-500">Geen problemen gevonden voor deze check.</p>
             @endforelse
