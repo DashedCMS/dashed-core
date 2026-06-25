@@ -356,8 +356,19 @@ class CMSManager
 
         if ($query) {
             foreach (static::builder('routeModels') as $model) {
-                $queryResults = $model['class']::search($query)->get();
-                $results[$model['class']] = array_merge($model, [
+                $class = $model['class'];
+
+                $usesIndex = in_array(
+                    \Dashed\DashedCore\Models\Concerns\HasSearchIndex::class,
+                    class_uses_recursive($class),
+                    true
+                );
+
+                $queryResults = $usesIndex
+                    ? $class::searchIndexed($query)->get()
+                    : $class::search($query)->get();
+
+                $results[$class] = array_merge($model, [
                     'results' => $queryResults,
                     'count' => $queryResults->count(),
                     'hasResults' => $queryResults->count() > 0,
