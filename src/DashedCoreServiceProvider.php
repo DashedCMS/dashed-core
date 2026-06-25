@@ -92,6 +92,7 @@ use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
 use Dashed\DashedCore\Classes\RichEditorPlugins\MediaEmbedPlugin;
 use Dashed\DashedCore\Classes\RichEditorPlugins\VideoEmbedPlugin;
 use Dashed\DashedCore\Commands\CleanupOldNotFoundPageOccurrences;
+use Dashed\DashedCore\Commands\RebuildSearchIndexCommand;
 use Dashed\DashedCore\Filament\Pages\Settings\ExportSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\ReviewSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\SearchSettingsPage;
@@ -1432,6 +1433,7 @@ MARKDOWN,
                 GenerateFaviconsCommand::class,
                 DispatchSummaryMailsCommand::class,
                 \Dashed\DashedCore\Commands\CheckIntegrationsHealth::class,
+                RebuildSearchIndexCommand::class,
             ]);
 
     }
