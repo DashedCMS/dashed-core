@@ -3,6 +3,7 @@
 namespace Dashed\DashedCore\Models\Concerns;
 
 use Dashed\DashedCore\Search\SearchIndexer;
+use Illuminate\Support\Facades\DB;
 
 trait HasSearchIndex
 {
@@ -105,5 +106,71 @@ trait HasSearchIndex
         $value = preg_replace('/\s+/u', ' ', $value);
 
         return trim(mb_strtolower($value));
+    }
+
+    public function scopeSearchIndexed($query, ?string $term, ?string $locale = null)
+    {
+        $term = trim((string) $term);
+
+        if ($term === '') {
+            // Lege zoekterm levert geen resultaten (i.t.t. scopeSearch die alles teruggeeft).
+            return $query->whereRaw('1 = 0');
+        }
+
+        $locale = $locale ?: app()->getLocale();
+        $needle = mb_strtolower($term);
+        $morph = $this->getMorphClass();
+        $table = $this->getTable();
+        $keyName = $this->getKeyName();
+        $driver = $query->getConnection()->getDriverName();
+
+        $index = DB::table(SearchIndexer::TABLE)
+            ->where('searchable_type', $morph)
+            ->where('locale', $locale);
+
+        if ($driver === 'mysql' && mb_strlen($needle) >= 3) {
+            $boolean = $this->buildFulltextBoolean($needle);
+
+            $index->select('searchable_id')
+                ->selectRaw(
+                    'MATCH(search_text) AGAINST (? IN BOOLEAN MODE) + (CASE WHEN keywords LIKE ? THEN 1000 ELSE 0 END) as search_relevance',
+                    [$boolean, '%'.$needle.'%']
+                )
+                ->where(function ($q) use ($boolean, $needle) {
+                    $q->whereRaw('MATCH(search_text) AGAINST (? IN BOOLEAN MODE)', [$boolean])
+                        ->orWhere('keywords', 'LIKE', '%'.$needle.'%');
+                });
+        } else {
+            $index->select('searchable_id')
+                ->selectRaw(
+                    '(CASE WHEN keywords LIKE ? THEN 1000 WHEN search_text LIKE ? THEN 1 ELSE 0 END) as search_relevance',
+                    ['%'.$needle.'%', '%'.$needle.'%']
+                )
+                ->where(function ($q) use ($needle) {
+                    $q->where('search_text', 'LIKE', '%'.$needle.'%')
+                        ->orWhere('keywords', 'LIKE', '%'.$needle.'%');
+                });
+        }
+
+        return $query
+            ->joinSub($index, 'search_idx', function ($join) use ($table, $keyName) {
+                $join->on($table.'.'.$keyName, '=', 'search_idx.searchable_id');
+            })
+            ->addSelect($table.'.*')
+            ->addSelect('search_idx.search_relevance')
+            ->orderByDesc('search_idx.search_relevance');
+    }
+
+    /**
+     * Zet de zoekterm om naar een BOOLEAN MODE expressie met prefix-matching,
+     * zodat "fie" ook "fiets" vindt. Niet-alfanumerieke tekens worden scheiding.
+     */
+    protected function buildFulltextBoolean(string $needle): string
+    {
+        $words = preg_split('/[^\p{L}\p{N}]+/u', $needle, -1, PREG_SPLIT_NO_EMPTY) ?: [];
+
+        $words = array_map(fn ($word) => '+'.$word.'*', $words);
+
+        return implode(' ', $words);
     }
 }
