@@ -8,11 +8,11 @@ use Livewire\Component;
 use Illuminate\Support\Str;
 use Dashed\DashedCore\Models\User;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Validation\ValidationException;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\RateLimiter;
 use Dashed\DashedCore\Classes\AccountHelper;
 use Dashed\DashedCore\Mail\PasswordResetMail;
+use Illuminate\Validation\ValidationException;
 use Dashed\DashedTranslations\Models\Translation;
 
 class ForgotPassword extends Component

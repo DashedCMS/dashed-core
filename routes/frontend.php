@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Dashed\DashedCore\Middleware\AdminMiddleware;
 use Dashed\DashedCore\Middleware\AuthMiddleware;
+use Dashed\DashedCore\Middleware\AdminMiddleware;
 use Dashed\DashedCore\Middleware\GuestMiddleware;
 use Dashed\DashedTranslations\Models\Translation;
 use Dashed\DashedCore\Middleware\FrontendMiddleware;

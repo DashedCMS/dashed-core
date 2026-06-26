@@ -4,6 +4,7 @@ namespace Dashed\DashedCore\Classes;
 
 use Dashed\DashedCore\Models\Review;
 use Dashed\DashedCore\Models\Customsetting;
+use Dashed\DashedPages\Models\Page;
 
 class Reviews
 {
@@ -22,7 +23,7 @@ class Reviews
     {
         $pageId = Customsetting::get('review_overview_page_id');
         if ($pageId) {
-            $page = Review::find($pageId);
+            $page = Page::find($pageId);
             if ($page) {
                 return $page->getUrl() ?? '#';
             }

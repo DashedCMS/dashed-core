@@ -8,7 +8,9 @@ class DashboardLayout
 {
     public const SETTING_KEY = 'dashboard_widget_layout';
 
-    public function __construct(private DashboardWidgetRegistry $registry) {}
+    public function __construct(private DashboardWidgetRegistry $registry)
+    {
+    }
 
     /** @return array<int, array{id:string,class:string,label:string,visible:bool,width:int|string}> */
     public function resolved(string $siteId): array

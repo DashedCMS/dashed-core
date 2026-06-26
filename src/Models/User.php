@@ -3,9 +3,9 @@
 namespace Dashed\DashedCore\Models;
 
 use Filament\Panel;
+use Laravel\Sanctum\HasApiTokens;
 use Spatie\Activitylog\LogOptions;
 use Filament\Models\Contracts\HasAvatar;
-use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\FilamentUser;
 use Spatie\Activitylog\Traits\LogsActivity;
