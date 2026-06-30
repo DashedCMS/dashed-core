@@ -3,7 +3,7 @@
     use Dashed\DashedEcommerceCore\Classes\SKUs;
 
     $products = method_exists($order, 'orderProducts')
-        ? $order->orderProducts()->whereNotIn('sku', SKUs::hideOnConfirmationEmail())->get()
+        ? $order->orderProducts()->where(function ($q) { $q->whereNull('sku')->orWhereNotIn('sku', SKUs::hideOnConfirmationEmail()); })->get()
         : collect();
     $shippingProduct = $order->orderProducts()->where('sku', 'shipping_costs')->first();
     $paymentProduct = $order->orderProducts()->where('sku', 'payment_costs')->first();
@@ -14,7 +14,7 @@
             <tr>
                 <td width="80" valign="top" style="padding:12px 8px 12px 0; border-bottom:1px dashed #D8D8D8;">
                     @php
-                        $img = optional(optional($line->product)->firstImage) ? mediaHelper()->getSingleMedia($line->product->firstImage, 'small') : null;
+                        $img = ($line->product && $line->product->firstImage) ? mediaHelper()->getSingleMedia($line->product->firstImage, 'small') : null;
                     @endphp
                     @if($img)
                         <img src="{{ $img->url }}" width="80" style="display:block; width:80px; max-width:80px; height:auto;">
