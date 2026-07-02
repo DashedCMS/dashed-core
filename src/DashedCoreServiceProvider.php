@@ -91,6 +91,7 @@ use Dashed\DashedCore\Filament\Pages\Settings\EmailSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
 use Dashed\DashedCore\Classes\RichEditorPlugins\MediaEmbedPlugin;
 use Dashed\DashedCore\Classes\RichEditorPlugins\VideoEmbedPlugin;
+use Dashed\DashedCore\Commands\CleanupExpiredRedirects;
 use Dashed\DashedCore\Commands\CleanupOldNotFoundPageOccurrences;
 use Dashed\DashedCore\Commands\RebuildSearchIndexCommand;
 use Dashed\DashedCore\Filament\Pages\Settings\ExportSettingsPage;
@@ -945,6 +946,7 @@ MARKDOWN,
             $schedule->command(InvalidatePasswordResetTokens::class)->everyFifteenMinutes();
             $schedule->command(CleanupOldExports::class)->daily();
             $schedule->command(CleanupOldNotFoundPageOccurrences::class)->daily();
+            $schedule->command(CleanupExpiredRedirects::class)->daily();
             $schedule->command(SyncGoogleReviews::class)->twiceDaily();
             //            $schedule->command(SeoScan::class)->daily();
             $schedule->command(\Dashed\DashedCore\Commands\CheckIntegrationsHealth::class)
@@ -1421,6 +1423,7 @@ MARKDOWN,
                 InvalidatePasswordResetTokens::class,
                 CleanupOldExports::class,
                 CleanupOldNotFoundPageOccurrences::class,
+                CleanupExpiredRedirects::class,
                 CreateSitemap::class,
                 CreateVisitableModel::class,
                 SyncGoogleReviews::class,
