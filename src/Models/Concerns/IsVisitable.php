@@ -33,6 +33,9 @@ trait IsVisitable
     use SoftDeletes;
     use HasCustomBlocks;
 
+    /** Request-scoped memo of the overview Page per using-class (FPM-safe; see plan risk note for Octane). */
+    protected static array $overviewPageCache = [];
+
     public static function bootIsVisitable()
     {
         static::saving(function ($model) {
@@ -306,7 +309,14 @@ trait IsVisitable
 
     public static function getOverviewPage(): ?Page
     {
-        return Page::publicShowable()->find(Customsetting::get(str(class_basename(self::class))->snake()->lower() . '_overview_page_id', Sites::getActive()));
+        $cacheKey = static::class;
+        if (array_key_exists($cacheKey, static::$overviewPageCache)) {
+            return static::$overviewPageCache[$cacheKey];
+        }
+
+        return static::$overviewPageCache[$cacheKey] = Page::publicShowable()->find(
+            Customsetting::get(str(class_basename(static::class))->snake()->lower() . '_overview_page_id', Sites::getActive())
+        );
     }
 
     public function getUrl($activeLocale = null, bool $native = true)
