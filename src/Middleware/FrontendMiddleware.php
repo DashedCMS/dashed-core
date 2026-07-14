@@ -29,77 +29,98 @@ class FrontendMiddleware
 
         $siteId = Sites::getActive();
 
-        // ---- SETTINGS DIRECT, ZONDER EXTRA CACHE-LAAG ----
+        // ---- SITE-STATIC SHARED DATA (GECACHET PER SITE) ----
+        //
+        // Alle waarden hier zijn puur afgeleid van Customsettings en de
+        // media-bibliotheek — ze hangen NIET af van de huidige URL, de
+        // ingelogde gebruiker, of de locale. Ze zijn daarom veilig te cachen
+        // per site met een dag-TTL als vangnet.
+        //
+        // Cache-invalidatie: Fase-3 CacheInvalidator purgt deze sleutel
+        // automatisch bij elke Customsetting-wijziging. De dag-TTL hieronder
+        // is alleen het vangnet als de invalidator nog niet actief is.
+        //
+        // Wat NIET in de cache zit (blijft live):
+        //   - $schema: gebruikt $request->url() (request-dependent)
+        //   - seo()->metaData('robots'): gebruikt app()->isLocal() (ok statisch, maar seo() is request-scoped)
+        //   - $reviewSchemas: heeft eigen cache (schema:reviews:site:…:v1)
+        $siteShared = Cache::remember(
+            "frontend:site:{$siteId}:shared:v1",
+            now()->addDay(),
+            function () use ($siteId) {
+                $webmasterTags = [
+                    'google' => Customsetting::get('webmaster_tag_google', $siteId),
+                    'bing' => Customsetting::get('webmaster_tag_bing', $siteId),
+                    'alexa' => Customsetting::get('webmaster_tag_alexa', $siteId),
+                    'pinterest' => Customsetting::get('webmaster_tag_pinterest', $siteId),
+                    'yandex' => Customsetting::get('webmaster_tag_yandex', $siteId),
+                    'norton' => Customsetting::get('webmaster_tag_norton', $siteId),
+                ];
 
-        $webmasterTags = [
-            'google' => Customsetting::get('webmaster_tag_google', $siteId),
-            'bing' => Customsetting::get('webmaster_tag_bing', $siteId),
-            'alexa' => Customsetting::get('webmaster_tag_alexa', $siteId),
-            'pinterest' => Customsetting::get('webmaster_tag_pinterest', $siteId),
-            'yandex' => Customsetting::get('webmaster_tag_yandex', $siteId),
-            'norton' => Customsetting::get('webmaster_tag_norton', $siteId),
-        ];
+                $siteName = Customsetting::get('site_name', $siteId, 'Website');
+                $defaultMetaImageId = Customsetting::get('default_meta_data_image', $siteId, '');
+                $defaultMetaImageUrl = '';
+                if ($defaultMetaImageId) {
+                    $defaultMedia = mediaHelper()->getSingleMedia($defaultMetaImageId, 'original');
+                    $defaultMetaImageUrl = $defaultMedia->url ?? '';
+                }
 
-        $siteName = Customsetting::get('site_name', $siteId, 'Website');
-        $defaultMetaImageId = Customsetting::get('default_meta_data_image', $siteId, '');
+                $logo = Customsetting::get('site_logo', $siteId, '');
+                $favicon = Customsetting::get('site_favicon', $siteId, '');
 
-        $logo = Customsetting::get('site_logo', $siteId, '');
-        $favicon = Customsetting::get('site_favicon', $siteId, '');
+                $company = [
+                    'street' => Customsetting::get('company_street', $siteId),
+                    'street_number' => Customsetting::get('company_street_number', $siteId),
+                    'postal_code' => Customsetting::get('company_postal_code', $siteId),
+                    'city' => Customsetting::get('company_city', $siteId),
+                    'country' => Customsetting::get('company_country', $siteId),
+                    'email' => Customsetting::get('site_to_email', $siteId),
+                    'phone' => Customsetting::get('company_phone_number', $siteId),
+                ];
 
-        $companyStreet = Customsetting::get('company_street', $siteId);
-        $companyStreetNumber = Customsetting::get('company_street_number', $siteId);
-        $companyPostalCode = Customsetting::get('company_postal_code', $siteId);
-        $companyCity = Customsetting::get('company_city', $siteId);
-        $companyCountry = Customsetting::get('company_country', $siteId);
+                $googleMaps = [
+                    'synced' => (bool) Customsetting::get('google_maps_reviews_synced', $siteId, false),
+                    'rating' => Customsetting::get('google_maps_rating', $siteId),
+                    'review_count' => Customsetting::get('google_maps_review_count', $siteId),
+                ];
 
-        $siteEmail = Customsetting::get('site_to_email', $siteId);
-        $companyPhone = Customsetting::get('company_phone_number', $siteId);
+                $trackingSettings = [
+                    'google_tagmanager_id' => Customsetting::get('google_tagmanager_id', $siteId),
+                    'trigger_tiktok_events' => (bool) Customsetting::get('trigger_tiktok_events', $siteId, false),
+                    'facebook_pixel_conversion_id' => Customsetting::get('facebook_pixel_conversion_id', $siteId),
+                    'facebook_pixel_site_id' => Customsetting::get('facebook_pixel_site_id', $siteId),
+                    'trigger_facebook_events' => (bool) Customsetting::get('trigger_facebook_events', $siteId, false),
+                    'google_merchant_center_id' => Customsetting::get('google_merchant_center_id', $siteId),
+                    'enable_google_merchant_center_review_survey' => (bool) Customsetting::get('enable_google_merchant_center_review_survey', $siteId, false),
+                    'enable_google_merchant_center_review_badge' => (bool) Customsetting::get('enable_google_merchant_center_review_badge', $siteId, false),
+                    'google_analytics_id' => Customsetting::get('google_analytics_id', $siteId),
+                ];
 
-        $googleMapsSynced = Customsetting::get('google_maps_reviews_synced', $siteId, false);
-        $googleMapsRating = Customsetting::get('google_maps_rating', $siteId);
-        $googleMapsReviewCount = Customsetting::get('google_maps_review_count', $siteId);
+                return [
+                    'siteName' => $siteName,
+                    'logo' => $logo,
+                    'favicon' => $favicon,
+                    'company' => $company,
+                    'googleMaps' => $googleMaps,
+                    'webmasterTags' => $webmasterTags,
+                    'trackingSettings' => $trackingSettings,
+                    'extraBodyScripts' => Customsetting::get('extra_body_scripts', $siteId, ''),
+                    'extraHeadScripts' => Customsetting::get('extra_scripts', $siteId, ''),
+                    'defaultMetaImageUrl' => $defaultMetaImageUrl,
+                ];
+            }
+        );
 
-        // Tracking / marketing settings
-        $googleTagmanagerId = Customsetting::get('google_tagmanager_id', $siteId);
-        $triggerTikTokEvents = Customsetting::get('trigger_tiktok_events', $siteId, false);
-        $facebookPixelConversionId = Customsetting::get('facebook_pixel_conversion_id', $siteId);
-        $facebookPixelSiteId = Customsetting::get('facebook_pixel_site_id', $siteId);
-        $triggerFacebookEvents = Customsetting::get('trigger_facebook_events', $siteId, false);
-        $googleMerchantCenterId = Customsetting::get('google_merchant_center_id', $siteId);
-        $enableGoogleMerchantReviewSurvey = Customsetting::get('enable_google_merchant_center_review_survey', $siteId, false);
-        $enableGoogleMerchantReviewBadge = Customsetting::get('enable_google_merchant_center_review_badge', $siteId, false);
-        $googleAnalyticsId = Customsetting::get('google_analytics_id', $siteId);
-
-        $extraBodyScripts = Customsetting::get('extra_body_scripts', $siteId, '');
-        $extraHeadScripts = Customsetting::get('extra_scripts', $siteId, '');
-
-        $trackingSettings = [
-            'google_tagmanager_id' => $googleTagmanagerId,
-            'trigger_tiktok_events' => (bool)$triggerTikTokEvents,
-            'facebook_pixel_conversion_id' => $facebookPixelConversionId,
-            'facebook_pixel_site_id' => $facebookPixelSiteId,
-            'trigger_facebook_events' => (bool)$triggerFacebookEvents,
-            'google_merchant_center_id' => $googleMerchantCenterId,
-            'enable_google_merchant_center_review_survey' => (bool)$enableGoogleMerchantReviewSurvey,
-            'enable_google_merchant_center_review_badge' => (bool)$enableGoogleMerchantReviewBadge,
-            'google_analytics_id' => $googleAnalyticsId,
-        ];
-
-        $company = [
-            'street' => $companyStreet,
-            'street_number' => $companyStreetNumber,
-            'postal_code' => $companyPostalCode,
-            'city' => $companyCity,
-            'country' => $companyCountry,
-            'email' => $siteEmail,
-            'phone' => $companyPhone,
-        ];
-
-        $googleMaps = [
-            'synced' => (bool)$googleMapsSynced,
-            'rating' => $googleMapsRating,
-            'review_count' => $googleMapsReviewCount,
-        ];
+        // Destructure cached struct into local variables (same names as before).
+        $siteName = $siteShared['siteName'];
+        $logo = $siteShared['logo'];
+        $favicon = $siteShared['favicon'];
+        $company = $siteShared['company'];
+        $googleMaps = $siteShared['googleMaps'];
+        $webmasterTags = $siteShared['webmasterTags'];
+        $trackingSettings = $siteShared['trackingSettings'];
+        $extraBodyScripts = $siteShared['extraBodyScripts'];
+        $extraHeadScripts = $siteShared['extraHeadScripts'];
 
         // ---- SEO META ----
 
@@ -107,9 +128,8 @@ class FrontendMiddleware
         seo()->metaData('robots', app()->isLocal() ? 'noindex, nofollow' : 'index, follow');
         seo()->metaData('metaTitle', $siteName);
 
-        if (! seo()->metaData('metaImage') && $defaultMetaImageId) {
-            $defaultMedia = mediaHelper()->getSingleMedia($defaultMetaImageId, 'original');
-            seo()->metaData('metaImage', $defaultMedia->url ?? '');
+        if (! seo()->metaData('metaImage') && $siteShared['defaultMetaImageUrl']) {
+            seo()->metaData('metaImage', $siteShared['defaultMetaImageUrl']);
         }
 
         // ---- ORGANIZATION SCHEMA ----
