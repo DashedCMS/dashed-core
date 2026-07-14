@@ -268,7 +268,7 @@ trait IsVisitable
 
     public function breadcrumbs(): array
     {
-        $siteId = is_array($this->site_ids) ? ($this->site_ids[0] ?? 'main') : 'main';
+        $siteId = Sites::getActive() ?: 'main';
         $locale = app()->getLocale();
         $key = implode(':', [
             'breadcrumbs',
