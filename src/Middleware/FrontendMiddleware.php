@@ -32,21 +32,20 @@ class FrontendMiddleware
         // ---- SITE-STATIC SHARED DATA (GECACHET PER SITE) ----
         //
         // Alle waarden hier zijn puur afgeleid van Customsettings en de
-        // media-bibliotheek — ze hangen NIET af van de huidige URL, de
+        // media-bibliotheek, ze hangen NIET af van de huidige URL, de
         // ingelogde gebruiker, of de locale. Ze zijn daarom veilig te cachen
-        // per site met een dag-TTL als vangnet.
+        // per site.
         //
-        // Cache-invalidatie: Fase-3 CacheInvalidator purgt deze sleutel
-        // automatisch bij elke Customsetting-wijziging. De dag-TTL hieronder
-        // is alleen het vangnet als de invalidator nog niet actief is.
+        // TTL: 5-minuten fallback TTL matching de spec vangnet, te vervangen
+        // door event-driven purge in Fase 3's CacheInvalidator.
         //
         // Wat NIET in de cache zit (blijft live):
         //   - $schema: gebruikt $request->url() (request-dependent)
         //   - seo()->metaData('robots'): gebruikt app()->isLocal() (ok statisch, maar seo() is request-scoped)
-        //   - $reviewSchemas: heeft eigen cache (schema:reviews:site:…:v1)
+        //   - $reviewSchemas: heeft eigen cache (schema:reviews:site:{siteId}:v1)
         $siteShared = Cache::remember(
             "frontend:site:{$siteId}:shared:v1",
-            now()->addDay(),
+            now()->addSeconds(300),
             function () use ($siteId) {
                 $webmasterTags = [
                     'google' => Customsetting::get('webmaster_tag_google', $siteId),
