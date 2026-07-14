@@ -77,6 +77,7 @@ class GeneralSettingsPage extends Page
             $formData["extra_scripts_{$site['id']}"] = Customsetting::get('extra_scripts', $site['id']);
             $formData["extra_body_scripts_{$site['id']}"] = Customsetting::get('extra_body_scripts', $site['id']);
             $formData["admin_bar_enabled_{$site['id']}"] = Customsetting::get('admin_bar_enabled', $site['id'], default: true);
+            $formData["cache_profile_{$site['id']}"] = Customsetting::get('cache_profile', $site['id'], 'mixed');
             //            $formData["site_theme_{$site['id']}"] = Customsetting::get('site_theme', $site['id'], 'dashed');
         }
 
@@ -262,6 +263,20 @@ class GeneralSettingsPage extends Page
                         'default' => 1,
                         'lg' => 2,
                     ]),
+                Select::make("cache_profile_{$site['id']}")
+                    ->label('Cache-profiel')
+                    ->options([
+                        'b2c'   => 'B2C (agressief cachen)',
+                        'b2b'   => 'B2B (per-klant, minimaal cachen)',
+                        'mixed' => 'Gemengd (edge voor anoniem, bypass bij login)',
+                        'off'   => 'Uit',
+                    ])
+                    ->default('mixed')
+                    ->helperText('Bepaalt hoe agressief deze site gecachet wordt in latere fases. Nu nog niet actief op response-niveau.')
+                    ->columnSpan([
+                        'default' => 1,
+                        'lg' => 2,
+                    ]),
 //                Select::make("site_theme_{$site['id']}")
 //                    ->label('Selecteer het frontend thema voor deze website')
 //                    ->required()
@@ -319,6 +334,7 @@ class GeneralSettingsPage extends Page
             Customsetting::set('extra_scripts', $this->form->getState()["extra_scripts_{$site['id']}"], $site['id']);
             Customsetting::set('extra_body_scripts', $this->form->getState()["extra_body_scripts_{$site['id']}"], $site['id']);
             Customsetting::set('admin_bar_enabled', $this->form->getState()["admin_bar_enabled_{$site['id']}"], $site['id']);
+            Customsetting::set('cache_profile', $this->form->getState()["cache_profile_{$site['id']}"], $site['id']);
             //            Customsetting::set('site_theme', $this->form->getState()["site_theme_{$site['id']}"], $site['id']);
         }
 
