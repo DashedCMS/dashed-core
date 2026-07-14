@@ -1,7 +1,20 @@
 @if($content)
+    @php
+        // Preload all referenced global blocks in one query to avoid N+1.
+        $globalBlockIds = collect($content)
+            ->where('type', 'globalBlock')
+            ->pluck('data.globalBlock')
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+        $preloadedGlobalBlocks = $globalBlockIds
+            ? \Dashed\DashedCore\Models\GlobalBlock::whereIn('id', $globalBlockIds)->get()->keyBy('id')
+            : collect();
+    @endphp
     @foreach($content as $block)
         @if($block['type'] == 'globalBlock')
-            @php($globalBlockContent = \Dashed\DashedCore\Models\GlobalBlock::find($block['data']['globalBlock']) ?? [])
+            @php($globalBlockContent = $preloadedGlobalBlocks->get($block['data']['globalBlock'] ?? null))
             @if($globalBlockContent)
                 <x-dashed-core::content-blocks :content="$globalBlockContent->content" {{ $attributes->merge() }}/>
             @endif
