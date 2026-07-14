@@ -19,6 +19,7 @@ use Dashed\DashedCore\Models\Customsetting;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Dashed\DashedCore\Jobs\SyncModelUrlHistoryJob;
+use Dashed\DashedCore\Classes\FragmentCache;
 use Dashed\DashedCore\Jobs\ClearContentBlocksCache;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -80,7 +81,11 @@ trait IsVisitable
                     }
                 }
             }
+
+            FragmentCache::flushTag('breadcrumbs');
         });
+
+        static::deleted(fn () => FragmentCache::flushTag('breadcrumbs'));
     }
 
     public function getActivitylogOptions(): LogOptions
@@ -262,6 +267,22 @@ trait IsVisitable
     }
 
     public function breadcrumbs(): array
+    {
+        $siteId = is_array($this->site_ids) ? ($this->site_ids[0] ?? 'main') : 'main';
+        $locale = app()->getLocale();
+        $key = implode(':', [
+            'breadcrumbs',
+            static::class,
+            (string) $this->id,
+            (string) ($this->updated_at?->timestamp ?? 0),
+            $locale,
+            $siteId,
+        ]);
+
+        return FragmentCache::remember($key, ['breadcrumbs', 'site:' . $siteId], 3600, fn () => $this->breadcrumbsUncached());
+    }
+
+    protected function breadcrumbsUncached(): array
     {
         $breadcrumbs = [];
         $model = $this;
