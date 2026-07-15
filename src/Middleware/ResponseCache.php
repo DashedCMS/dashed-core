@@ -32,12 +32,16 @@ class ResponseCache
     {
         $decision = CacheDecision::for($request);
 
+        // Fix 2: compute once to avoid repeated Customsetting lookups on the hot path.
+        $edgeConfigured = CacheProfile::forSite()->edgeEnabled()
+            && CloudflareConfig::for()->configured();
+
         // ---- BYPASS -------------------------------------------------------
         if (! $decision->shouldCache()) {
             /** @var Response $response */
             $response = $next($request);
             $response->headers->set('X-Dashed-Cache', 'BYPASS ' . $decision->reason());
-            $this->applyEdgeHeaders($response, $decision);
+            $this->applyEdgeHeaders($response, $decision, false, $edgeConfigured);
 
             return $response;
         }
@@ -56,7 +60,8 @@ class ResponseCache
             $hitResponse = response($html, 200)
                 ->header('Content-Type', 'text/html; charset=UTF-8')
                 ->header('X-Dashed-Cache', 'HIT');
-            $this->applyEdgeHeaders($hitResponse, $decision);
+            // HIT: stored body was anonymous - always safe for the edge.
+            $this->applyEdgeHeaders($hitResponse, $decision, true, $edgeConfigured);
 
             return $hitResponse;
         }
@@ -65,7 +70,10 @@ class ResponseCache
         /** @var Response $response */
         $response = $next($request);
 
-        if ($this->isSafeToStore($response)) {
+        // Fix 1: compute once, reuse for both the Redis write and the edge gate.
+        $safeToStore = $this->isSafeToStore($response);
+
+        if ($safeToStore) {
             $html = $response->getContent();
 
             if (FragmentCache::supportsTags()) {
@@ -76,7 +84,8 @@ class ResponseCache
         }
 
         $response->headers->set('X-Dashed-Cache', 'MISS');
-        $this->applyEdgeHeaders($response, $decision);
+        // Fix 1: only allow public edge header when the response was actually safe to store.
+        $this->applyEdgeHeaders($response, $decision, $safeToStore, $edgeConfigured);
 
         return $response;
     }
@@ -85,27 +94,33 @@ class ResponseCache
      * Apply edge Cache-Control headers to the outgoing response.
      *
      * Rules:
-     * - If the request is cacheable (shouldCache()), the site profile enables edge
-     *   caching, and Cloudflare credentials are configured: set
+     * - $eligibleForEdge must be true (callers derive this from shouldCache() AND,
+     *   on the MISS path, isSafeToStore()), the site profile enables edge caching,
+     *   and Cloudflare credentials are configured: set
      *   `Cache-Control: public, s-maxage={ttl}, max-age=0`
      *   so that Cloudflare caches the response at the edge while browsers
      *   always revalidate (max-age=0 prevents browser caches from reusing a
      *   stale copy for a later logged-in visitor).
-     * - In all other cases (BYPASS, edge disabled, CF not configured): set
-     *   `Cache-Control: private, no-store` so shared caches never cache the
-     *   response.
+     * - In all other cases (BYPASS, edge disabled, CF not configured, or response
+     *   failed isSafeToStore): set `Cache-Control: private, no-store` so shared
+     *   caches never cache the response.
      *
-     * SAFETY GUARANTEE: `public` is ONLY set when $decision->shouldCache() is
-     * true, which already excludes identified/logged-in/price-group/never-cache
-     * requests. BYPASS responses always receive `private, no-store`.
+     * SAFETY GUARANTEE: `public` is ONLY set when $eligibleForEdge is true.
+     * On the HIT path this is always true (stored body was anonymous).
+     * On the MISS path this requires isSafeToStore() to pass - ensuring we never
+     * tell Cloudflare to cache a response the origin refused to store.
+     * BYPASS responses always receive `private, no-store`.
+     *
+     * @param bool $eligibleForEdge  HIT: shouldCache(); MISS: shouldCache() && safeToStore; BYPASS: false
+     * @param bool $edgeConfigured   Pre-computed: edgeEnabled() && CF configured (computed once in handle())
      */
-    private function applyEdgeHeaders(Response $response, CacheDecision $decision): void
-    {
-        if (
-            $decision->shouldCache()
-            && CacheProfile::forSite()->edgeEnabled()
-            && CloudflareConfig::for()->configured()
-        ) {
+    private function applyEdgeHeaders(
+        Response $response,
+        CacheDecision $decision,
+        bool $eligibleForEdge,
+        bool $edgeConfigured,
+    ): void {
+        if ($eligibleForEdge && $edgeConfigured) {
             $response->headers->set(
                 'Cache-Control',
                 'public, s-maxage=' . $decision->ttl() . ', max-age=0',
