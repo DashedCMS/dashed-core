@@ -3,10 +3,10 @@
 namespace Dashed\DashedCore\Listeners;
 
 use Illuminate\Support\Facades\Log;
-use Illuminate\Mail\Events\MessageSent;
-use Illuminate\Database\Eloquent\Model;
-use Dashed\DashedCore\Models\SentEmail;
 use Symfony\Component\Mime\Address;
+use Dashed\DashedCore\Models\SentEmail;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Mail\Events\MessageSent;
 
 /**
  * Logt elke door de CMS verzonden mail centraal in dashed__sent_emails.

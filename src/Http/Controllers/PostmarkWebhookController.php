@@ -4,8 +4,8 @@
 
 namespace Dashed\DashedCore\Http\Controllers;
 
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Dashed\DashedCore\Mail\PostmarkEventHandler;
 

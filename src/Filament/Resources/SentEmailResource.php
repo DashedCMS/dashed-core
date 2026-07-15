@@ -6,11 +6,11 @@ use UnitEnum;
 use BackedEnum;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Dashed\DashedCore\Models\SentEmail;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
-use Dashed\DashedCore\Models\SentEmail;
-use Dashed\DashedCore\Filament\Resources\SentEmailResource\Pages\ListSentEmails;
 use Dashed\DashedCore\Filament\Resources\SentEmailResource\Pages\ViewSentEmail;
+use Dashed\DashedCore\Filament\Resources\SentEmailResource\Pages\ListSentEmails;
 
 class SentEmailResource extends Resource
 {
