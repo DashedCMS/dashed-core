@@ -9,6 +9,7 @@ use Dashed\DashedCore\Classes\Locales;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Dashed\DashedCore\Classes\Caching\CacheInvalidator;
 
 class Customsetting extends Model
 {
@@ -61,6 +62,14 @@ class Customsetting extends Model
 
             // Runtime cache voor deze request leegmaken
             static::$runtimeContextCache = [];
+
+            // Purge frontend shared-settings block and full site response-cache
+            // so stale logo/webmaster-tags/site-name are never served after a
+            // Customsetting change (closes the Fase-1 staleness gap).
+            if (class_exists(CacheInvalidator::class)) {
+                CacheInvalidator::flushFrontendShared();
+                CacheInvalidator::flushSite();
+            }
         });
     }
 
