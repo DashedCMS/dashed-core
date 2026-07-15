@@ -156,6 +156,11 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             \Illuminate\Mail\Events\MessageSent::class,
             \Dashed\DashedCore\Listeners\LogSentEmail::class,
         );
+
+        \Illuminate\Support\Facades\Event::listen(
+            \Illuminate\Mail\Events\MessageSending::class,
+            \Dashed\DashedCore\Listeners\EnablePostmarkTracking::class,
+        );
     }
 
     public function bootingPackage()
