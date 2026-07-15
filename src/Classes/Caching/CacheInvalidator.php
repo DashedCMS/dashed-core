@@ -37,7 +37,7 @@ class CacheInvalidator
     /**
      * Purge ALL response-cache entries across every site.
      *
-     * Use sparingly — e.g. global template change or full rebuild.
+     * Use sparingly - e.g. global template change or full rebuild.
      */
     public static function flushAll(): void
     {
@@ -47,7 +47,7 @@ class CacheInvalidator
     /**
      * Purge the response-cache for the site that owns the given model.
      *
-     * v1: grofmazig — purge the whole site. The model's site_ids/site_id is
+     * v1: grofmazig - purge the whole site. The model's site_ids/site_id is
      * read when available; otherwise falls back to the active site.
      */
     public static function forModel(mixed $model): void
