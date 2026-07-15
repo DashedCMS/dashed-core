@@ -17,11 +17,11 @@ class LogSentEmail
 {
     public function handle(MessageSent $event): void
     {
-        if (! config('dashed-core.sent_emails.enabled', true)) {
-            return;
-        }
-
         try {
+            if (! config('dashed-core.sent_emails.enabled', true)) {
+                return;
+            }
+
             $message = $event->message;
 
             $to = $this->addresses($message->getTo());
@@ -68,7 +68,7 @@ class LogSentEmail
     }
 
     /** @return array<int, array{filename: ?string, mime: string, size: int}> */
-    protected function attachments($message): array
+    protected function attachments(\Symfony\Component\Mime\Email $message): array
     {
         $result = [];
 
