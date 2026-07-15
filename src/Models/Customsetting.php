@@ -64,11 +64,14 @@ class Customsetting extends Model
             static::$runtimeContextCache = [];
 
             // Purge frontend shared-settings block and full site response-cache
-            // so stale logo/webmaster-tags/site-name are never served after a
-            // Customsetting change (closes the Fase-1 staleness gap).
+            // for every site, so stale logo/webmaster-tags/site-name are never
+            // served after a Customsetting change (closes the Fase-1 staleness
+            // gap; multi-site: secondary sites are now purged too).
             if (class_exists(CacheInvalidator::class)) {
-                CacheInvalidator::flushFrontendShared();
-                CacheInvalidator::flushSite();
+                foreach (Sites::getSites() as $site) {
+                    CacheInvalidator::flushFrontendShared($site['id']);
+                    CacheInvalidator::flushSite($site['id']);
+                }
             }
         });
     }
