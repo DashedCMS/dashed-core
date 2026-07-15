@@ -9,11 +9,18 @@ use Dashed\DashedCore\Middleware\FrontendMiddleware;
 use Dashed\DashedCore\Controllers\Frontend\AuthController;
 use Dashed\LaravelLocalization\Facades\LaravelLocalization;
 use Dashed\DashedCore\Controllers\Frontend\AccountController;
+use Dashed\DashedCore\Controllers\Frontend\CsrfTokenController;
 use Dashed\DashedCore\Controllers\Frontend\FrontendController;
 use Dashed\DashedCore\Controllers\OAuth\GoogleOAuthController;
 use Dashed\DashedCore\Middleware\AddLivewireReferrerToFlareMiddleware;
 use Dashed\LaravelLocalization\Middleware\LaravelLocalizationViewPath;
 use Dashed\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter;
+
+// Uncached CSRF token endpoint - always excluded from response cache (dashed/* prefix).
+// Returns a fresh session token so JS on cache hits can patch Livewire + the XSRF-TOKEN cookie.
+Route::get('/dashed/csrf-token', CsrfTokenController::class)
+    ->middleware(['web'])
+    ->name('dashed.frontend.csrf-token');
 
 if (config('dashed-core.default_auth_pages_enabled', true)) {
 
