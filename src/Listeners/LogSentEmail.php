@@ -4,6 +4,7 @@ namespace Dashed\DashedCore\Listeners;
 
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Mime\Address;
+use Dashed\DashedCore\Classes\Sites;
 use Dashed\DashedCore\Models\SentEmail;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Mail\Events\MessageSent;
@@ -103,9 +104,9 @@ class LogSentEmail
     protected function currentSiteId(): ?int
     {
         try {
-            $id = config('dashed-core.site_id');
+            $value = Sites::getActive();
 
-            return $id !== null ? (int) $id : null;
+            return ($value !== null && $value !== '') ? (int) $value : null;
         } catch (\Throwable) {
             return null;
         }

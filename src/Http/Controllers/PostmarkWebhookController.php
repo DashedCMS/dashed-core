@@ -7,6 +7,7 @@ namespace Dashed\DashedCore\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Log;
 use Dashed\DashedCore\Mail\PostmarkEventHandler;
 
 class PostmarkWebhookController extends Controller
@@ -19,7 +20,11 @@ class PostmarkWebhookController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-        $handler->handle($request->all());
+        try {
+            $handler->handle($request->all());
+        } catch (\Throwable $e) {
+            Log::error('Postmark webhook verwerking mislukt: ' . $e->getMessage());
+        }
 
         return response()->json(['message' => 'ok'], 200);
     }

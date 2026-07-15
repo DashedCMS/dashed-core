@@ -52,6 +52,15 @@ class SentEmailResource extends Resource
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()
+                    ->color(fn ($record) => match ($record->status) {
+                        SentEmail::STATUS_DELIVERED => 'success',
+                        SentEmail::STATUS_BOUNCED => 'danger',
+                        SentEmail::STATUS_COMPLAINED => 'danger',
+                        SentEmail::STATUS_FAILED => 'danger',
+                        SentEmail::STATUS_QUEUED => 'warning',
+                        SentEmail::STATUS_SENT => 'gray',
+                        default => 'gray',
+                    })
                     ->sortable(),
             ])
             ->filters([

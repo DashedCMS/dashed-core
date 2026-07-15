@@ -34,3 +34,16 @@ logs ouder dan `retention_days`.
 Open-tracking gebruikt een onzichtbare tracking-pixel; link-tracking herschrijft
 links. Zet `DASHED_SENT_EMAILS_TRACK=false` om alleen aflever-/bounce-status te
 loggen zonder open/click-tracking.
+
+Het logboek bewaart de volledige mail-inhoud (HTML + tekst) en alle
+ontvanger-adressen standaard 90 dagen, inclusief wachtwoord-reset-links en
+order-gegevens. De dagelijkse prune via `dashed:prune-sent-emails` is de primaire
+AVG-maatregel. Gevoelige stromen kunnen desgewenst worden uitgesloten via de
+feature-flag `DASHED_SENT_EMAILS_ENABLED=false` per omgeving.
+
+## Beveiliging
+
+Als `POSTMARK_WEBHOOK_SECRET` leeg blijft, accepteert het webhook-endpoint
+ongeauthenticeerd requests (fail-open). Zet daarom altijd een secret in productie.
+De blast-radius is beperkt (alleen aflever-metadata op rijen die op een
+ondoorzichtige Postmark MessageID matchen), maar laat het niet leeg.
