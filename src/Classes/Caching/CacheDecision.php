@@ -8,7 +8,22 @@ use Illuminate\Http\Request;
 
 class CacheDecision
 {
-    private const NEVER_CACHE_PREFIXES = ['checkout', 'cart', 'account', 'api', 'livewire', 'dashed'];
+    private const NEVER_CACHE_PREFIXES = [
+        'checkout',
+        'cart',
+        'account',
+        'api',
+        'livewire',
+        'dashed',
+        'return-status',    // return-status/{hash} - order return page (hash-guarded, not auth)
+        'proforma',         // proforma/{orderHash} - proforma checkout (hash-guarded)
+        'pay',              // pay/order/{orderHash}/remainder - remainder payment (hash-guarded)
+        'recover-order',    // recover-order/{order} - abandoned cart recovery
+        'restore-cart',     // restore-cart - cart restore
+        'download-invoice', // download-invoice/{orderHash} - invoice PDF (hash-guarded)
+        'download-packing-slip', // download-packing-slip/{orderHash} - packing slip PDF (hash-guarded)
+        'ecommerce',        // ecommerce/orders/exchange - payment provider callback
+    ];
 
     private function __construct(
         private readonly bool $shouldCache,
@@ -55,14 +70,14 @@ class CacheDecision
             return $deny('has querystring');
         }
 
-        // 6. Logged-in users (when profile says bypass)
-        if ($profile->bypassWhenLoggedIn() && auth()->check()) {
-            return $deny('logged in');
-        }
-
-        // 7. Identified cookie (tracking cookie set for known visitors)
+        // 6. Identified cookie (tracking cookie set for known visitors)
         if ($request->cookies->has('dashed_identified')) {
             return $deny('identified cookie');
+        }
+
+        // 7. Logged-in users (when profile says bypass)
+        if ($profile->bypassWhenLoggedIn() && auth()->check()) {
+            return $deny('logged in');
         }
 
         // 8. Price group / custom pricing
