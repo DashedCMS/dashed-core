@@ -19,6 +19,8 @@ return [
         ],
     ],
 
+    'response_cache_enabled' => env('RESPONSE_CACHE_ENABLED', false),
+
     'site_theme' => env('SITE_THEME', 'dashed'),
     'site_id' => env('DASHED_SITE_ID'),
 
