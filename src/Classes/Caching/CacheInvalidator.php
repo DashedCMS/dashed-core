@@ -2,8 +2,10 @@
 
 namespace Dashed\DashedCore\Classes\Caching;
 
+use Dashed\DashedCore\Classes\CacheProfile;
 use Dashed\DashedCore\Classes\FragmentCache;
 use Dashed\DashedCore\Classes\Sites;
+use Dashed\DashedCore\Jobs\PurgeCloudflareJob;
 use Illuminate\Support\Facades\Cache;
 
 class CacheInvalidator
@@ -19,6 +21,10 @@ class CacheInvalidator
         $siteId = $siteId ?? Sites::getActive();
 
         FragmentCache::flushTag('response:site:' . $siteId);
+
+        if (CacheProfile::forSite($siteId)->edgeEnabled() && CloudflareConfig::for($siteId)->configured()) {
+            PurgeCloudflareJob::dispatch($siteId);
+        }
     }
 
     /**
