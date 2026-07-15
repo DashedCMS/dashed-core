@@ -14,12 +14,17 @@ class ResponseCache
     /**
      * Cookie names that the framework always sets and are NOT "identity" cookies.
      * If a response sets *only* these, it is safe to cache.
+     * NOTE: uses config('session.cookie') at runtime so we match the actual session
+     * cookie name (e.g. "dashed_cms_session"), not the Laravel default "laravel_session".
      */
-    private const FRAMEWORK_COOKIE_NAMES = [
-        'laravel_session',
-        'XSRF-TOKEN',
-        'laravel_token',
-    ];
+    private function frameworkCookieNames(): array
+    {
+        return [
+            config('session.cookie', 'laravel_session'),
+            'XSRF-TOKEN',
+            'laravel_token',
+        ];
+    }
 
     public function handle(Request $request, Closure $next): Response
     {
@@ -91,10 +96,13 @@ class ResponseCache
      * Only store a response when:
      * - Status code is exactly 200
      * - It is not a redirect
+     * - Content-Type is text/html (JSON, XML, binary responses are not cached)
      * - The response does not set any identity Set-Cookie headers beyond the
-     *   standard framework session/XSRF cookies. If it sets "dashed_identified",
-     *   a cart-token cookie, or any other application cookie we do NOT store —
-     *   the visitor is being identified and should not be served cached content.
+     *   standard framework session/XSRF cookies
+     * - Laravel's cookie queue (AddQueuedCookiesToResponse runs AFTER this
+     *   middleware on the outbound path) does not contain any non-framework
+     *   cookies. This closes the timing gap where a cart-token queued via
+     *   Cookie::queue() would not yet appear in Set-Cookie headers.
      */
     private function isSafeToStore(Response $response): bool
     {
@@ -106,16 +114,26 @@ class ResponseCache
             return false;
         }
 
-        // Inspect Set-Cookie headers for identity cookies.
-        $setCookieHeaders = $response->headers->all('set-cookie');
+        // Only cache HTML responses — not JSON, binary, etc.
+        $contentType = (string) $response->headers->get('Content-Type', '');
+        if (! str_contains($contentType, 'text/html')) {
+            return false;
+        }
 
-        foreach ($setCookieHeaders as $cookieHeader) {
-            // Extract the cookie name (everything before the first = sign)
-            $cookieName = strtok($cookieHeader, '=');
-            $cookieName = trim($cookieName ?? '');
+        $allowed = $this->frameworkCookieNames();
 
-            if (! in_array($cookieName, self::FRAMEWORK_COOKIE_NAMES, true)) {
-                // An application-level cookie is being set — conservative bypass
+        // Check Set-Cookie headers already flushed onto the response.
+        foreach ($response->headers->all('set-cookie') as $cookieHeader) {
+            $cookieName = trim((string) strtok($cookieHeader, '='));
+            if (! in_array($cookieName, $allowed, true)) {
+                return false;
+            }
+        }
+
+        // Check Laravel's cookie queue (cookies not yet flushed to the response
+        // because AddQueuedCookiesToResponse is OUTER and runs after us).
+        foreach (app('cookie')->getQueuedCookies() as $cookie) {
+            if (! in_array($cookie->getName(), $allowed, true)) {
                 return false;
             }
         }
