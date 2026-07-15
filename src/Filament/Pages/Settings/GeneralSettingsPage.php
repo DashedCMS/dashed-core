@@ -78,6 +78,8 @@ class GeneralSettingsPage extends Page
             $formData["extra_body_scripts_{$site['id']}"] = Customsetting::get('extra_body_scripts', $site['id']);
             $formData["admin_bar_enabled_{$site['id']}"] = Customsetting::get('admin_bar_enabled', $site['id'], default: true);
             $formData["cache_profile_{$site['id']}"] = Customsetting::get('cache_profile', $site['id'], 'mixed');
+            $formData["cloudflare_zone_id_{$site['id']}"] = Customsetting::get('cloudflare_zone_id', $site['id']);
+            $formData["cloudflare_api_token_{$site['id']}"] = Customsetting::get('cloudflare_api_token', $site['id']);
             //            $formData["site_theme_{$site['id']}"] = Customsetting::get('site_theme', $site['id'], 'dashed');
         }
 
@@ -277,6 +279,21 @@ class GeneralSettingsPage extends Page
                         'default' => 1,
                         'lg' => 2,
                     ]),
+                TextInput::make("cloudflare_zone_id_{$site['id']}")
+                    ->label('Cloudflare zone ID')
+                    ->helperText('Alleen nodig voor edge (Cloudflare) caching. Te vinden in het Cloudflare-dashboard van de site.')
+                    ->columnSpan([
+                        'default' => 1,
+                        'lg' => 2,
+                    ]),
+                TextInput::make("cloudflare_api_token_{$site['id']}")
+                    ->label('Cloudflare API token')
+                    ->password()
+                    ->helperText('Alleen nodig voor edge (Cloudflare) caching. Maak een token aan via Cloudflare met Cache Purge-rechten.')
+                    ->columnSpan([
+                        'default' => 1,
+                        'lg' => 2,
+                    ]),
 //                Select::make("site_theme_{$site['id']}")
 //                    ->label('Selecteer het frontend thema voor deze website')
 //                    ->required()
@@ -335,6 +352,8 @@ class GeneralSettingsPage extends Page
             Customsetting::set('extra_body_scripts', $this->form->getState()["extra_body_scripts_{$site['id']}"], $site['id']);
             Customsetting::set('admin_bar_enabled', $this->form->getState()["admin_bar_enabled_{$site['id']}"], $site['id']);
             Customsetting::set('cache_profile', $this->form->getState()["cache_profile_{$site['id']}"], $site['id']);
+            Customsetting::set('cloudflare_zone_id', $this->form->getState()["cloudflare_zone_id_{$site['id']}"], $site['id']);
+            Customsetting::set('cloudflare_api_token', $this->form->getState()["cloudflare_api_token_{$site['id']}"], $site['id']);
             //            Customsetting::set('site_theme', $this->form->getState()["site_theme_{$site['id']}"], $site['id']);
         }
 
