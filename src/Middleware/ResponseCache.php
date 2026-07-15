@@ -6,8 +6,10 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpFoundation\Response;
+use Dashed\DashedCore\Classes\CacheProfile;
 use Dashed\DashedCore\Classes\FragmentCache;
 use Dashed\DashedCore\Classes\Caching\CacheDecision;
+use Dashed\DashedCore\Classes\Caching\CloudflareConfig;
 
 class ResponseCache
 {
@@ -35,6 +37,7 @@ class ResponseCache
             /** @var Response $response */
             $response = $next($request);
             $response->headers->set('X-Dashed-Cache', 'BYPASS ' . $decision->reason());
+            $this->applyEdgeHeaders($response, $decision);
 
             return $response;
         }
@@ -50,9 +53,12 @@ class ResponseCache
         if ($storedHtml !== null) {
             $html = $this->injectCacheHitMeta($storedHtml);
 
-            return response($html, 200)
+            $hitResponse = response($html, 200)
                 ->header('Content-Type', 'text/html; charset=UTF-8')
                 ->header('X-Dashed-Cache', 'HIT');
+            $this->applyEdgeHeaders($hitResponse, $decision);
+
+            return $hitResponse;
         }
 
         // ---- CACHE MISS ---------------------------------------------------
@@ -70,8 +76,45 @@ class ResponseCache
         }
 
         $response->headers->set('X-Dashed-Cache', 'MISS');
+        $this->applyEdgeHeaders($response, $decision);
 
         return $response;
+    }
+
+    /**
+     * Apply edge Cache-Control headers to the outgoing response.
+     *
+     * Rules:
+     * - If the request is cacheable (shouldCache()), the site profile enables edge
+     *   caching, and Cloudflare credentials are configured: set
+     *   `Cache-Control: public, s-maxage={ttl}, max-age=0`
+     *   so that Cloudflare caches the response at the edge while browsers
+     *   always revalidate (max-age=0 prevents browser caches from reusing a
+     *   stale copy for a later logged-in visitor).
+     * - In all other cases (BYPASS, edge disabled, CF not configured): set
+     *   `Cache-Control: private, no-store` so shared caches never cache the
+     *   response.
+     *
+     * SAFETY GUARANTEE: `public` is ONLY set when $decision->shouldCache() is
+     * true, which already excludes identified/logged-in/price-group/never-cache
+     * requests. BYPASS responses always receive `private, no-store`.
+     */
+    private function applyEdgeHeaders(Response $response, CacheDecision $decision): void
+    {
+        if (
+            $decision->shouldCache()
+            && CacheProfile::forSite()->edgeEnabled()
+            && CloudflareConfig::for()->configured()
+        ) {
+            $response->headers->set(
+                'Cache-Control',
+                'public, s-maxage=' . $decision->ttl() . ', max-age=0',
+            );
+
+            return;
+        }
+
+        $response->headers->set('Cache-Control', 'private, no-store');
     }
 
     /**
