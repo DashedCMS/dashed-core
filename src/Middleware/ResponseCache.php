@@ -114,7 +114,7 @@ class ResponseCache
             return false;
         }
 
-        // Only cache HTML responses — not JSON, binary, etc.
+        // Only cache HTML responses - not JSON, binary, etc.
         $contentType = (string) $response->headers->get('Content-Type', '');
         if (! str_contains($contentType, 'text/html')) {
             return false;
