@@ -56,6 +56,24 @@ class ViewSentEmail extends ViewRecord
                     TextEntry::make('bounce_reason')
                         ->label('Bounce-reden')
                         ->placeholder('-'),
+                    TextEntry::make('attachments')
+                        ->label('Bijlagen')
+                        ->placeholder('-')
+                        ->formatStateUsing(function ($state): ?string {
+                            if (empty($state)) {
+                                return null;
+                            }
+
+                            return implode(', ', array_map(
+                                fn (array $item) => sprintf(
+                                    '%s (%s, %s KB)',
+                                    $item['filename'] ?? 'onbekend',
+                                    $item['mime'],
+                                    round($item['size'] / 1024)
+                                ),
+                                $state
+                            ));
+                        }),
                 ])
                 ->columns(2),
             Section::make('Preview')
