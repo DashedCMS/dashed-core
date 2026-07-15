@@ -6,6 +6,7 @@ use Dashed\DashedCore\Middleware\AdminMiddleware;
 use Dashed\DashedCore\Middleware\GuestMiddleware;
 use Dashed\DashedTranslations\Models\Translation;
 use Dashed\DashedCore\Middleware\FrontendMiddleware;
+use Dashed\DashedCore\Middleware\ResponseCache;
 use Dashed\DashedCore\Controllers\Frontend\AuthController;
 use Dashed\LaravelLocalization\Facades\LaravelLocalization;
 use Dashed\DashedCore\Controllers\Frontend\AccountController;
@@ -67,6 +68,6 @@ Route::get('/oauth/google/callback', [GoogleOAuthController::class, 'callback'])
     ->name('google.oauth.callback');
 
 Route::fallback([FrontendController::class, 'index'])
-    ->middleware(array_merge(['web', FrontendMiddleware::class, AddLivewireReferrerToFlareMiddleware::class, \Dashed\DashedCore\Middleware\LocaleSessionRedirect::class, LaravelLocalizationRedirectFilter::class, LaravelLocalizationViewPath::class], cms()->builder('frontendMiddlewares')))
+    ->middleware(array_merge(['web', ResponseCache::class, FrontendMiddleware::class, AddLivewireReferrerToFlareMiddleware::class, \Dashed\DashedCore\Middleware\LocaleSessionRedirect::class, LaravelLocalizationRedirectFilter::class, LaravelLocalizationViewPath::class], cms()->builder('frontendMiddlewares')))
     ->name('dashed.frontend.general.index')
     ->where('slug', '.*');
