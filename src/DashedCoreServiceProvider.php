@@ -66,8 +66,10 @@ use Dashed\DashedCore\Mail\EmailBlocks\DividerBlock;
 use Dashed\DashedCore\Mail\EmailBlocks\HeadingBlock;
 use Dashed\DashedCore\Filament\Widgets\DashboardGrid;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Dashed\DashedCore\Commands\CleanupExpiredRedirects;
 use Dashed\DashedCore\Commands\GenerateFaviconsCommand;
 use Dashed\DashedCore\Livewire\Frontend\Account\Account;
+use Dashed\DashedCore\Commands\RebuildSearchIndexCommand;
 use Dashed\DashedCore\Filament\Widgets\NotFoundPageStats;
 use Dashed\DashedCore\Mail\EmailBlocks\OrderSummaryBlock;
 use Dashed\DashedCore\Commands\DispatchSummaryMailsCommand;
@@ -91,9 +93,7 @@ use Dashed\DashedCore\Filament\Pages\Settings\EmailSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
 use Dashed\DashedCore\Classes\RichEditorPlugins\MediaEmbedPlugin;
 use Dashed\DashedCore\Classes\RichEditorPlugins\VideoEmbedPlugin;
-use Dashed\DashedCore\Commands\CleanupExpiredRedirects;
 use Dashed\DashedCore\Commands\CleanupOldNotFoundPageOccurrences;
-use Dashed\DashedCore\Commands\RebuildSearchIndexCommand;
 use Dashed\DashedCore\Filament\Pages\Settings\ExportSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\ReviewSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\SearchSettingsPage;
@@ -150,6 +150,11 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         \Illuminate\Support\Facades\Event::listen(
             \Dashed\DashedFiles\Events\AiImageOperationCompleted::class,
             \Dashed\DashedCore\Listeners\ApplyContentStudioImage::class,
+        );
+
+        \Illuminate\Support\Facades\Event::listen(
+            \Illuminate\Mail\Events\MessageSent::class,
+            \Dashed\DashedCore\Listeners\LogSentEmail::class,
         );
     }
 
