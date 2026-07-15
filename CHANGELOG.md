@@ -8,6 +8,11 @@ All notable changes to `Dashed core` will be documented in this file.
 - Webhook idempotency middleware + BaseJob trait + replay command. See docs/webhook-idempotency.md.
 - Integrations dashboard, last-edited column, admin stat widgets with drilldown. See docs/admin-overview.md.
 
+## v4.30.1 - 2026-07-15
+
+### Fixed
+- **Content-builder record kan niet meer onopslaanbaar worden op een niet-ingevulde taal.** Wanneer de `content` van een model voor een taal nog nooit was ingevuld, gaf Spatie `""` (of een fallback-structuur) terug. De Filament Builder rende dat als blokken zonder hun verplichte `type`-sleutel, waardoor opslaan op die taal faalde met `"type field is required"` — en omdat de taalwisselaar eerst opslaat, kon je ook niet meer van taal wisselen. `getFilamentBuilderBlock()` normaliseert de builder-state nu naar een lege lijst wanneer die geen goed gevormde lijst van getypeerde blokken is. Raakte o.a. auteurspagina's (`dashed-articles`) waarvan de vertaling alleen `name`/`slug` had gevuld.
+
 ## v4.23.1 - 2026-06-24
 
 ### Fixed

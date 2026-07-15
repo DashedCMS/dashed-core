@@ -340,6 +340,22 @@ class CMSManager
                             ->columnSpanFull(),
                     ]),
             ], $blocks))
+            ->formatStateUsing(function ($state) {
+                // A locale that has never been filled comes back from Spatie as
+                // "" (or a fallback structure), which the Builder renders as
+                // blocks missing their required `type` key — making the whole
+                // record impossible to save on that locale (and, because the
+                // locale switcher saves first, impossible to switch away from).
+                // Normalise anything that is not a well-formed list of typed
+                // blocks to an empty builder so the record stays saveable.
+                if (! is_array($state)) {
+                    return [];
+                }
+
+                return collect($state)
+                    ->filter(fn ($block) => is_array($block) && ! empty($block['type']))
+                    ->all();
+            })
             ->collapsible(true)
             ->blockIcons()
             ->blockNumbers()
