@@ -47,6 +47,9 @@ class CacheInvalidator
      */
     public static function flushAll(): void
     {
+        // NB: this purges the origin Redis response-cache only, NOT the Cloudflare edge.
+        // If you wire a global-purge action to flushAll(), also purge Cloudflare per
+        // edge-enabled site (dispatch PurgeCloudflareJob), or the edge stays stale.
         FragmentCache::flushTag('response');
     }
 
