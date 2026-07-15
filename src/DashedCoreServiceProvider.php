@@ -957,6 +957,7 @@ MARKDOWN,
             $schedule->command(CleanupOldExports::class)->daily();
             $schedule->command(CleanupOldNotFoundPageOccurrences::class)->daily();
             $schedule->command(CleanupExpiredRedirects::class)->daily();
+            $schedule->command(\Dashed\DashedCore\Commands\PruneSentEmailsCommand::class)->daily();
             $schedule->command(SyncGoogleReviews::class)->twiceDaily();
             //            $schedule->command(SeoScan::class)->daily();
             $schedule->command(\Dashed\DashedCore\Commands\CheckIntegrationsHealth::class)
@@ -1447,6 +1448,7 @@ MARKDOWN,
                 DispatchSummaryMailsCommand::class,
                 \Dashed\DashedCore\Commands\CheckIntegrationsHealth::class,
                 RebuildSearchIndexCommand::class,
+                \Dashed\DashedCore\Commands\PruneSentEmailsCommand::class,
             ]);
 
     }
