@@ -162,7 +162,7 @@
             ->get();
     @endphp
     @foreach($activePopups as $activePopup)
-        <livewire:dashed-popups.popup :popupId="(string) $activePopup->id" :key="'popup-'.$activePopup->id"/>
+        <livewire:dashed-popups.popup :popupId="(string) $activePopup->id" :key="'popup-'.$activePopup->id" :lazy="\Dashed\DashedCore\Classes\Caching\Cacheables::holeLazy()"/>
     @endforeach
 @endif
 
