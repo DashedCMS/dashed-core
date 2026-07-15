@@ -4,6 +4,13 @@ return [
     'show_default_user_resource' => true,
     'default_auth_pages_enabled' => true,
 
+    'sent_emails' => [
+        'enabled' => env('DASHED_SENT_EMAILS_ENABLED', true),
+        'retention_days' => (int) env('DASHED_SENT_EMAILS_RETENTION_DAYS', 90),
+        'track_opens_clicks' => env('DASHED_SENT_EMAILS_TRACK', true),
+        'postmark_webhook_secret' => env('POSTMARK_WEBHOOK_SECRET'),
+    ],
+
     'blocks' => [
         'disable_caching' => env('DISABLE_BLOCK_CACHING', false),
         'caching_disabled' => [
