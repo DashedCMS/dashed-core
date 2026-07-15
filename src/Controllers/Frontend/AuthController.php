@@ -11,6 +11,7 @@ use Dashed\DashedTranslations\Models\Translation;
 use Dashed\DashedCore\Livewire\Frontend\Auth\Login;
 use Dashed\DashedCore\Livewire\Frontend\Auth\ResetPassword;
 use Dashed\DashedCore\Livewire\Frontend\Auth\ForgotPassword;
+use Dashed\DashedCore\Classes\Caching\IdentifiedVisitor;
 
 class AuthController extends Controller
 {
@@ -41,6 +42,7 @@ class AuthController extends Controller
         }
 
         Auth::logout();
+        IdentifiedVisitor::unmark();
 
         return redirect(AccountHelper::getLoginUrl())->with('success', Translation::get('succesfully-logged-out', 'login', 'You are logged out!'));
     }

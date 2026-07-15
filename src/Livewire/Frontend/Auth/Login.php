@@ -10,6 +10,7 @@ use Dashed\DashedCore\Classes\AccountHelper;
 use Illuminate\Validation\ValidationException;
 use Dashed\DashedTranslations\Models\Translation;
 use Dashed\DashedEcommerceCore\Classes\ShoppingCart;
+use Dashed\DashedCore\Classes\Caching\IdentifiedVisitor;
 
 class Login extends Component
 {
@@ -85,6 +86,7 @@ class Login extends Component
         }
 
         auth()->login($user, $this->loginRememberMe);
+        IdentifiedVisitor::mark();
 
         if (ShoppingCart::cartItemsCount() > 0) {
             return redirect(ShoppingCart::getCartUrl())->with('success', Translation::get('succesfully-logged-in', 'login', 'You are logged in!'));
@@ -131,6 +133,7 @@ class Login extends Component
         $user->save();
 
         auth()->login($user, $this->registerRememberMe);
+        IdentifiedVisitor::mark();
 
         return redirect(AccountHelper::getAccountUrl())->with('success', Translation::get('succesfully-logged-in', 'login', 'You are logged in!'));
     }

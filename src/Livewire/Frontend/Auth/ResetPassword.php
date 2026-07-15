@@ -7,6 +7,7 @@ use Dashed\DashedCore\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Dashed\DashedCore\Classes\AccountHelper;
 use Dashed\DashedTranslations\Models\Translation;
+use Dashed\DashedCore\Classes\Caching\IdentifiedVisitor;
 
 class ResetPassword extends Component
 {
@@ -60,6 +61,7 @@ class ResetPassword extends Component
         $this->user->save();
 
         auth()->login($this->user);
+        IdentifiedVisitor::mark();
 
         return redirect(AccountHelper::getAccountUrl())->with('success', Translation::get('reset-password-post-success', 'login', 'Your password has been reset!'));
     }
