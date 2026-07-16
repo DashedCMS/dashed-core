@@ -59,21 +59,7 @@ class ViewSentEmail extends ViewRecord
                     TextEntry::make('attachments')
                         ->label('Bijlagen')
                         ->placeholder('-')
-                        ->formatStateUsing(function ($state): ?string {
-                            if (empty($state)) {
-                                return null;
-                            }
-
-                            return implode(', ', array_map(
-                                fn (array $item) => sprintf(
-                                    '%s (%s, %s KB)',
-                                    $item['filename'] ?? 'onbekend',
-                                    $item['mime'],
-                                    round($item['size'] / 1024)
-                                ),
-                                $state
-                            ));
-                        }),
+                        ->formatStateUsing(fn ($state): ?string => self::formatAttachmentState($state)),
                 ])
                 ->columns(2),
             Section::make('Preview')
@@ -82,5 +68,42 @@ class ViewSentEmail extends ViewRecord
                         ->view('dashed-core::filament.sent-email-preview'),
                 ]),
         ]);
+    }
+
+    /**
+     * Formatteert de bijlage-state naar een leesbare regel. Filament kan deze
+     * formatter per bijlage aanroepen (dan is $state een enkele bijlage) of met
+     * de volledige lijst. Beide vormen worden ondersteund, plus lege waarden.
+     */
+    public static function formatAttachmentState($state): ?string
+    {
+        if (empty($state)) {
+            return null;
+        }
+
+        // Enkele bijlage: een associatieve array (geen numerieke lijst).
+        if (is_array($state) && ! array_is_list($state)) {
+            return self::formatAttachmentItem($state);
+        }
+
+        // Lijst van bijlagen.
+        if (is_array($state)) {
+            return implode(', ', array_map(
+                fn ($item) => is_array($item) ? self::formatAttachmentItem($item) : (string) $item,
+                $state
+            ));
+        }
+
+        return (string) $state;
+    }
+
+    protected static function formatAttachmentItem(array $item): string
+    {
+        return sprintf(
+            '%s (%s, %s KB)',
+            $item['filename'] ?? 'onbekend',
+            $item['mime'] ?? '',
+            round(((int) ($item['size'] ?? 0)) / 1024)
+        );
     }
 }

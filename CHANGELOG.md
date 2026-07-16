@@ -8,6 +8,11 @@ All notable changes to `Dashed core` will be documented in this file.
 - Webhook idempotency middleware + BaseJob trait + replay command. See docs/webhook-idempotency.md.
 - Integrations dashboard, last-edited column, admin stat widgets with drilldown. See docs/admin-overview.md.
 
+## v4.31.1 - 2026-07-16
+
+### Fixed
+- **Detailpagina van een verzonden mail met bijlagen gaf een TypeError** (`Argument #1 ($item) must be of type array, string given`). Filament roept de bijlagen-formatter per bijlage aan, dus de state is dan een enkele bijlage in plaats van de volledige lijst; de formatter ging er ten onrechte van uit dat het altijd een lijst was. De weergave ondersteunt nu zowel een enkele bijlage als een lijst, plus lege waarden, via `ViewSentEmail::formatAttachmentState()` met regressietests.
+
 ## v4.31.0 - 2026-07-16
 
 ### Added
