@@ -8,6 +8,11 @@ All notable changes to `Dashed core` will be documented in this file.
 - Webhook idempotency middleware + BaseJob trait + replay command. See docs/webhook-idempotency.md.
 - Integrations dashboard, last-edited column, admin stat widgets with drilldown. See docs/admin-overview.md.
 
+## v4.31.0 - 2026-07-16
+
+### Added
+- **Centraal verzonden-mail-logboek.** Elke door de CMS verzonden mail wordt gelogd in `dashed__sent_emails` (onderwerp, afzender, ontvangers, volledige HTML- en tekst-inhoud, bijlage-metadata, gekoppeld bron-model) via een `MessageSent`-listener, zonder dat mailables aangepast hoeven te worden. Aflever-, bounce-, spam-, open- en click-status komt binnen via een beveiligd Postmark-webhook-endpoint (`POST /dashed/webhooks/postmark`). Zichtbaar onder "Verzonden mails" in het admin-panel met een gesandboxte HTML-preview en status-tijdlijn. Open/click-tracking is per site in te stellen; een dagelijkse `dashed:prune-sent-emails` ruimt logs ouder dan de bewaartermijn (standaard 90 dagen) op. Zie `docs/sent-email-log.md`.
+
 ## v4.30.1 - 2026-07-15
 
 ### Fixed
