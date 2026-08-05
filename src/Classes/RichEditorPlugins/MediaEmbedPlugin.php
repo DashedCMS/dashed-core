@@ -101,13 +101,13 @@ class MediaEmbedPlugin implements RichContentPlugin
 
                     // 1) update (als selectie op node staat)
                     $component->runCommands(
-                        [EditorCommand::make('updateMediaEmbed', arguments: [[$payload]])],
+                        [EditorCommand::make('updateMediaEmbed', arguments: [$payload])],
                         editorSelection: $arguments['editorSelection'] ?? null,
                     );
 
                     // 2) fallback insert
                     $component->runCommands(
-                        [EditorCommand::make('setMediaEmbed', arguments: [[$payload]])],
+                        [EditorCommand::make('setMediaEmbed', arguments: [$payload])],
                         editorSelection: $arguments['editorSelection'] ?? null,
                     );
                 }),

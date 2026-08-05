@@ -8,6 +8,11 @@ All notable changes to `Dashed core` will be documented in this file.
 - Webhook idempotency middleware + BaseJob trait + replay command. See docs/webhook-idempotency.md.
 - Integrations dashboard, last-edited column, admin stat widgets with drilldown. See docs/admin-overview.md.
 
+## v4.31.3 - 2026-08-05
+
+### Fixed
+- **Ingevoegde afbeelding bleef onzichtbaar in de rich editor.** De payload werd als `arguments: [[$payload]]` aan `EditorCommand` meegegeven, één niveau te diep. `runEditorCommands()` spreidt `arguments` uit over de JS-functieparameters, dus `setMediaEmbed()` kreeg `[{...}]` binnen in plaats van `{...}`. Het spreiden van die array naar een object leverde `{"0": {...}}` op, ProseMirror negeerde die onbekende attribuutnaam en maakte de node aan met **alle defaults** — dus `src: null`, wat als `src=""` rendert: een onzichtbare afbeelding. Het commando gaf ondertussen gewoon `true` terug. De payload wordt nu als `arguments: [$payload]` doorgegeven. De inline-varianten in `VideoEmbedPlugin` en `HtmlIdPlugin` hadden dit probleem niet, omdat daar de binnenste haken de payload zelf zijn.
+
 ## v4.31.2 - 2026-08-05
 
 ### Fixed
