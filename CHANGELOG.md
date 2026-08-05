@@ -8,6 +8,11 @@ All notable changes to `Dashed core` will be documented in this file.
 - Webhook idempotency middleware + BaseJob trait + replay command. See docs/webhook-idempotency.md.
 - Integrations dashboard, last-edited column, admin stat widgets with drilldown. See docs/admin-overview.md.
 
+## v4.31.2 - 2026-08-05
+
+### Fixed
+- **Afbeelding toevoegen in de rich editor deed niets.** De `mountUsing()` van de `mediaEmbed`-actie riep `$action->fillForm()` aan, maar dat vervángt alleen de `mountUsing`-callback in plaats van hem uit te voeren — de callback stond op dat moment al te draaien, dus het formulier werd nooit gevuld. Daardoor bestond `mountedActions.0.data` niet en faalde de `$wire.$entangle('mountedActions.0.data.mediaId')` van de MediaPicker met *"Livewire property cannot be found on component"*. De picker toonde de selectie wel, maar die bereikte de server nooit. `mountUsing()` vult nu de meegegeven `Schema` direct met `$schema->fill()`, net als in `HtmlIdPlugin`.
+
 ## v4.31.1 - 2026-07-16
 
 ### Fixed

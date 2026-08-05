@@ -3,6 +3,7 @@
 namespace Dashed\DashedCore\Classes\RichEditorPlugins;
 
 use Filament\Actions\Action;
+use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Filament\Forms\Components\Select;
@@ -49,7 +50,7 @@ class MediaEmbedPlugin implements RichContentPlugin
                 ->modalHeading('Afbeelding toevoegen / bewerken')
                 ->modalWidth(Width::Large)
                 ->schema($this->imageFormSchema())
-                ->mountUsing(function (Action $action, array $arguments) {
+                ->mountUsing(function (?Schema $schema, array $arguments): void {
                     $defaults = [
                         'mediaId' => null,
                         'src' => '',
@@ -69,7 +70,7 @@ class MediaEmbedPlugin implements RichContentPlugin
                         $defaults['src'] = $defaults['src'] ?: ($this->resolveMediaUrl((string)$defaults['mediaId']) ?? '');
                     }
 
-                    $action->fillForm($defaults);
+                    $schema?->fill($defaults);
                 })
                 ->action(function (array $arguments, array $data, RichEditor $component): void {
                     $mediaId = $data['mediaId'] ?? null;
