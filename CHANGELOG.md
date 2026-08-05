@@ -8,6 +8,12 @@ All notable changes to `Dashed core` will be documented in this file.
 - Webhook idempotency middleware + BaseJob trait + replay command. See docs/webhook-idempotency.md.
 - Integrations dashboard, last-edited column, admin stat widgets with drilldown. See docs/admin-overview.md.
 
+## v4.31.4 - 2026-08-05
+
+### Fixed
+- **Een blok verslepen maakte de pagina definitief onbewerkbaar** (`Builder::{closure:...getDefaultChildSchemas():949}(): Argument #1 ($itemData) must be of type array, int given`). `getFilamentBuilderBlock()` normaliseerde de state via `formatStateUsing()`, maar Filament implementeert dat als `afterStateHydrated()` — en dat *wijst toe* aan één enkele closure-property, dus het verving stilletjes `Builder::setUp()`'s eigen `hydrateItems()`-hook. Die hook is precies wat items van UUID-keys voorziet, dus de items hielden de kale `0/1/2`-keys die `removeUUIDKeys()` bij elke save wegschrijft. `Builder::getReorderAction()` past de nieuwe volgorde toe met `[...array_flip($arguments['items']), ...$component->getRawState()]`, en array spread behoudt alleen *string*-keys: bij numerieke keys worden beide arrays achter elkaar geplakt en hernummerd, waardoor de integers uit `array_flip()` als state-entries achterbleven. De volgende render gooide daarop, voorgoed. Reorderen werkte hierdoor sowieso nooit — de volgorde veranderde niet, alleen de state raakte stuk. `formatStateUsing()` is verwijderd zodat `hydrateItems()` weer werkt.
+- **Een `content`-kolom die voor een locale geen bloklijst bevat, maakte het record onbewerkbaar.** De normalisatie hiervoor zat in `formatStateUsing()` en kwam nooit aan bod: `hydrateState()` bouwt de child-schema's van de items *voordat* het de hydration-hooks afvuurt. De guard zit nu in `ContentBuilder::getRawState()`, het vroegste gedeelde leespunt. Omdat hydration en de add/clone/delete/reorder-acties allemaal read-modify-write op de raw state doen, herstelt zo'n record zichzelf bij de eerstvolgende save. Blokken met een `type` die deze builder niet kent blijven bewust staan, zodat een blok verborgen kan zijn (bijvoorbeeld een ontbrekende Blade-view op deze site) zonder dat de inhoud ervan wordt weggegooid.
+
 ## v4.31.3 - 2026-08-05
 
 ### Fixed
