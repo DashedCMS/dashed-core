@@ -4,7 +4,6 @@ namespace Dashed\DashedCore\Filament\Resources\EmailTemplateResource\Pages;
 
 use Dashed\DashedCore\Classes\Locales;
 use Filament\Resources\Pages\ListRecords;
-use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedCore\Models\EmailTemplate;
 use LaraZeus\SpatieTranslatable\Actions\LocaleSwitcher;
 use Dashed\DashedCore\Filament\Resources\EmailTemplateResource;
@@ -34,13 +33,16 @@ class ListEmailTemplates extends ListRecords
         $mainLocale = config('app.locale') ?: (config('app.fallback_locale') ?: 'en');
 
         foreach (cms()->emailTemplateRegistry()->all() as $mailableClass) {
+            // from_name en from_email worden bewust NIET voorgevuld: leeg
+            // betekent "gebruik site_name / site_from_email uit de algemene
+            // instellingen" (zie HasEmailTemplate::templateFrom()). Zou je ze
+            // hier met de op dat moment geldende instellingen vullen, dan
+            // bevriest de afzender en heeft een latere wijziging in de
+            // algemene instellingen geen effect meer.
             $template = EmailTemplate::firstOrCreate(
                 ['mailable_key' => $mailableClass::emailTemplateKey()],
                 [
                     'name' => $mailableClass::emailTemplateName(),
-                    'from_email' => method_exists($mailableClass, 'defaultFromEmail')
-                        ? $mailableClass::defaultFromEmail()
-                        : Customsetting::get('site_from_email'),
                     'is_active' => true,
                 ]
             );
@@ -58,10 +60,6 @@ class ListEmailTemplates extends ListRecords
                 if (method_exists($mailableClass, 'defaultSubject')) {
                     $template->setTranslations('subject', [$mainLocale => $mailableClass::defaultSubject()]);
                 }
-
-                $template->setTranslations('from_name', [$mainLocale => method_exists($mailableClass, 'defaultFromName')
-                    ? $mailableClass::defaultFromName()
-                    : Customsetting::get('site_name')]);
 
                 if (method_exists($mailableClass, 'defaultBlocks')) {
                     $template->setTranslations('blocks', [$mainLocale => $mailableClass::defaultBlocks()]);
