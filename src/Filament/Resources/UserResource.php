@@ -53,6 +53,49 @@ class UserResource extends Resource
         ];
     }
 
+    /**
+     * Mag deze rol een back-office account aanmaken?
+     *
+     * Zo'n account krijgt de superadmin-rol, dus alleen een superadmin mag dit.
+     * Zou een gewone admin het ook mogen, dan kon die zichzelf via een tweede
+     * account opwaarderen.
+     */
+    public static function canAssignBackOfficeRole(?string $currentRole): bool
+    {
+        return $currentRole === 'superadmin';
+    }
+
+    /**
+     * Rollen die de ingelogde gebruiker mag toekennen.
+     *
+     * "Admin" slaat superadmin op: dat is de rol die via Gate::before overal
+     * toegang krijgt. Een gebruiker met de oude 'admin'-rol haalt zijn rechten
+     * uit gekoppelde roles en kan zonder die koppeling niets, dus die rol wordt
+     * niet meer uitgedeeld.
+     *
+     * Alleen een superadmin mag de rol toekennen. Zou een gewone admin dat ook
+     * mogen, dan kon die zichzelf via een tweede account opwaarderen.
+     *
+     * @return array<string, string>
+     */
+    public static function roleOptions(?string $currentRole, ?string $recordRole = null): array
+    {
+        $options = ['customer' => 'Customer'];
+
+        if (static::canAssignBackOfficeRole($currentRole)) {
+            $options['superadmin'] = 'Admin';
+        }
+
+        // Bestaande gebruikers met de oude rol moeten bewerkbaar blijven. Zonder
+        // deze optie staat er een waarde in het verplichte veld die niet in de
+        // lijst voorkomt, en dan faalt het opslaan op de validatie.
+        if ($recordRole === 'admin') {
+            $options['admin'] = 'Admin (oude rol, rechten via rollen)';
+        }
+
+        return $options;
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -80,24 +123,9 @@ class UserResource extends Resource
                             ->label('Rol')
                             ->required()
                             ->reactive()
-                            // Alleen wie zelf admin/superadmin is mag die rollen toekennen.
                             // De options-closure wordt server-side hergebruikt voor validatie,
-                            // dus een gespoofde waarde (bijv. 'superadmin') wordt geweigerd.
-                            ->options(function () {
-                                $currentRole = auth()->user()?->role;
-
-                                $options = ['customer' => 'Customer'];
-
-                                if (in_array($currentRole, ['admin', 'superadmin'], true)) {
-                                    $options['admin'] = 'Admin';
-                                }
-
-                                if ($currentRole === 'superadmin') {
-                                    $options['superadmin'] = 'Superadmin';
-                                }
-
-                                return $options;
-                            }),
+                            // dus een gespoofde waarde wordt geweigerd.
+                            ->options(fn ($record) => static::roleOptions(auth()->user()?->role, $record?->role)),
 
                         Select::make('roles')
                             ->label('Rollen')

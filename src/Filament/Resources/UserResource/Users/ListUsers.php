@@ -22,6 +22,9 @@ class ListUsers extends ListRecords
             Action::make('createAdminUser')
                 ->label('Admin user aanmaken')
                 ->button()
+                // Deze knop deelt de superadmin-rol uit, dus alleen een
+                // superadmin mag hem zien.
+                ->visible(fn () => UserResource::canAssignBackOfficeRole(auth()->user()?->role))
                 ->schema([
                     TextInput::make('first_name')
                         ->required()
@@ -43,7 +46,9 @@ class ListUsers extends ListRecords
                         'last_name' => $data['last_name'],
                         'email' => $data['email'],
                         'password' => bcrypt($data['password']),
-                        'role' => 'admin',
+                        // Superadmin en niet admin: de admin-rol haalt zijn rechten
+                        // uit gekoppelde roles en kan zonder die koppeling niets.
+                        'role' => 'superadmin',
                     ]);
 
                     try {
