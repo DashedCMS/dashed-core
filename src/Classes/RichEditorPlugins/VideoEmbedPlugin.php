@@ -118,8 +118,8 @@ class VideoEmbedPlugin implements RichContentPlugin
                     Select::make('widthUnit')
                         ->label(__('Eenheid'))
                         ->options([
-                            '%' => __('%'),
-                            'px' => __('px'),
+                            '%' => '%',
+                            'px' => 'px',
                         ])
                         ->default('%'),
                 ])

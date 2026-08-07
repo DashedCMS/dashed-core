@@ -1271,8 +1271,8 @@ MARKDOWN,
                         ->label(__('Max breedte'))
                         ->default('%')
                         ->options([
-                            'px' => __('px'),
-                            '%' => __('%'),
+                            'px' => 'px',
+                            '%' => '%',
                         ]),
                     Select::make('align')
                         ->label(__('Uitlijning'))
