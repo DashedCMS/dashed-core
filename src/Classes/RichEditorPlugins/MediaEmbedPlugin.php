@@ -137,7 +137,7 @@ class MediaEmbedPlugin implements RichContentPlugin
 
                     Select::make('widthUnit')
                         ->label(__('Eenheid'))
-                        ->options(['%' => __('%'), 'px' => __('px')])
+                        ->options(['%' => '%', 'px' => 'px'])
                         ->default('%')
                         ->reactive(),
 
@@ -148,7 +148,7 @@ class MediaEmbedPlugin implements RichContentPlugin
                                 ->label(__('Breedte'))
                                 ->numeric()
                                 ->minValue(1)
-                                ->suffix(fn ($get) => $get('widthUnit') === 'px' ? __('px') : __('%'))
+                                ->suffix(fn ($get) => $get('widthUnit') === 'px' ? 'px' : '%')
                                 ->default(fn ($get) => $get('widthUnit') === '%' ? '100' : null)
                                 ->required(fn ($get) => $get('widthUnit') === '%')
                                 ->columnSpan(fn ($get) => ($get('widthUnit') === '%') ? 2 : 1)
@@ -159,7 +159,7 @@ class MediaEmbedPlugin implements RichContentPlugin
                                 ->label(__('Hoogte'))
                                 ->numeric()
                                 ->minValue(1)
-                                ->suffix(__('px'))
+                                ->suffix('px')
                                 ->visible(fn ($get) => $get('widthUnit') === 'px')
                                 ->reactive(),
                         ]),

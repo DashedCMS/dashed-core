@@ -22,9 +22,10 @@ class NestableSortingAction
         string $orderColumn = 'order',
         ?Closure $labelResolver = null,
         string $name = 'sorteren',
-        string $emptyLabel = 'Er zijn nog geen items om te sorteren.',
+        ?string $emptyLabel = null,
         ?string $successMessage = null,
     ): Action {
+        $emptyLabel ??= __('Er zijn nog geen items om te sorteren.');
         $successMessage ??= __('Volgorde opgeslagen');
         $loadTree = function () use ($query, $parentColumn, $labelColumn, $orderColumn, $labelResolver): array {
             $items = (clone $query)->orderBy($orderColumn)->get();
