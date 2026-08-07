@@ -61,15 +61,15 @@ class SEOSettingsPage extends Page
                 TextEntry::make("Meta data voor {$site['name']}")
                     ->state('Dit is de standaard voor meta data.'),
                 TextInput::make("default_meta_data_twitter_site_{$site['id']}")
-                    ->label('Twitter site')
+                    ->label(__('Twitter site'))
                     ->maxLength(255)
-                    ->helperText('Bijv: @dashed.dev'),
+                    ->helperText(__('Bijv: @dashed.dev')),
                 TextInput::make("default_meta_data_twitter_creator_{$site['id']}")
-                    ->label('Twitter creator')
+                    ->label(__('Twitter creator'))
                     ->maxLength(255)
-                    ->helperText('Bijv: @dashed.dev'),
+                    ->helperText(__('Bijv: @dashed.dev')),
                 mediaHelper()->field("default_meta_data_image_{$site['id']}", 'Meta image', false, false, true)
-                    ->helperText('Dit is de placeholder meta afbeelding die gebruikt wordt als er geen meta afbeelding is opgegeven.'),
+                    ->helperText(__('Dit is de placeholder meta afbeelding die gebruikt wordt als er geen meta afbeelding is opgegeven.')),
             ];
 
             $tabs[] = Tab::make($site['id'])
@@ -111,7 +111,7 @@ class SEOSettingsPage extends Page
         }
 
         Notification::make()
-            ->title('De SEO instellingen zijn opgeslagen')
+            ->title(__('De SEO instellingen zijn opgeslagen'))
             ->success()
             ->send();
     }

@@ -26,7 +26,7 @@ class TableBlock extends EmailBlock
 
     public static function label(): string
     {
-        return 'Tabel';
+        return __('Tabel');
     }
 
     public static function filamentBlock(): Block
@@ -36,12 +36,12 @@ class TableBlock extends EmailBlock
             ->icon('heroicon-o-table-cells')
             ->schema([
                 TagsInput::make('headers')
-                    ->label('Kolom-titels')
+                    ->label(__('Kolom-titels'))
                     ->required(),
                 Repeater::make('rows')
-                    ->label('Rijen')
+                    ->label(__('Rijen'))
                     ->schema([
-                        TagsInput::make('cells')->label('Cellen'),
+                        TagsInput::make('cells')->label(__('Cellen')),
                     ])
                     ->minItems(1)
                     ->defaultItems(1),

@@ -55,37 +55,37 @@ class AccountSettingsPage extends Page implements HasSchemas
         foreach ($sites as $site) {
             $newSchema = [
                 Select::make("account_page_id_{$site['id']}")
-                    ->label('Account pagina')
+                    ->label(__('Account pagina'))
                     ->searchable()
                     ->preload()
                     ->options(PageModel::thisSite($site['id'])->pluck('name', 'id')),
                 Select::make("login_page_id_{$site['id']}")
-                    ->label('Login pagina')
+                    ->label(__('Login pagina'))
                     ->searchable()
                     ->preload()
                     ->options(PageModel::thisSite($site['id'])->pluck('name', 'id')),
                 Select::make("forgot_password_page_id_{$site['id']}")
-                    ->label('Wachtwoord vergeten pagina')
+                    ->label(__('Wachtwoord vergeten pagina'))
                     ->searchable()
                     ->preload()
                     ->options(PageModel::thisSite($site['id'])->pluck('name', 'id')),
                 Select::make("reset_password_page_id_{$site['id']}")
-                    ->label('Reset wachtwoord pagina')
+                    ->label(__('Reset wachtwoord pagina'))
                     ->searchable()
                     ->preload()
                     ->options(PageModel::thisSite($site['id'])->pluck('name', 'id')),
                 Select::make("password_protection_page_id_{$site['id']}")
-                    ->label('Wachtwoord bescherming pagina')
+                    ->label(__('Wachtwoord bescherming pagina'))
                     ->searchable()
                     ->preload()
                     ->options(PageModel::thisSite($site['id'])->pluck('name', 'id')),
                 Toggle::make("force_mfa_{$site['id']}")
-                    ->label('Forceer multi factor authenticatie bij het CMS')
-                ->helperText('Als je deze optie activeert, activeer dan hieronder minimaal 1 methode.'),
+                    ->label(__('Forceer multi factor authenticatie bij het CMS'))
+                ->helperText(__('Als je deze optie activeert, activeer dan hieronder minimaal 1 methode.')),
                 Toggle::make("mfa_app_enabled_{$site['id']}")
-                    ->label('Multi factor authenticatie via een app'),
+                    ->label(__('Multi factor authenticatie via een app')),
                 Toggle::make("mfa_email_enabled_{$site['id']}")
-                    ->label('Multi factor authenticatie via email'),
+                    ->label(__('Multi factor authenticatie via email')),
             ];
 
             $tabs[] = Tab::make($site['id'])
@@ -119,7 +119,7 @@ class AccountSettingsPage extends Page implements HasSchemas
         }
 
         Notification::make()
-            ->title('De account instellingen zijn opgeslagen')
+            ->title(__('De account instellingen zijn opgeslagen'))
             ->success()
             ->send();
 

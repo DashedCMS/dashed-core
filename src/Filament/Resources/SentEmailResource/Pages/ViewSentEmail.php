@@ -21,48 +21,48 @@ class ViewSentEmail extends ViewRecord
     public function infolist(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('Details')
+            Section::make(__('Details'))
                 ->schema([
                     TextEntry::make('to_email')
-                        ->label('Ontvanger'),
+                        ->label(__('Ontvanger')),
                     TextEntry::make('subject')
-                        ->label('Onderwerp'),
+                        ->label(__('Onderwerp')),
                     TextEntry::make('status')
-                        ->label('Status')
+                        ->label(__('Status'))
                         ->badge(),
                     TextEntry::make('created_at')
-                        ->label('Verzonden')
+                        ->label(__('Verzonden'))
                         ->dateTime(),
                     TextEntry::make('delivered_at')
-                        ->label('Afgeleverd')
+                        ->label(__('Afgeleverd'))
                         ->dateTime()
-                        ->placeholder('-'),
+                        ->placeholder(__('-')),
                     TextEntry::make('opened_at')
-                        ->label('Geopend')
+                        ->label(__('Geopend'))
                         ->dateTime()
-                        ->placeholder('-'),
+                        ->placeholder(__('-')),
                     TextEntry::make('open_count')
-                        ->label('Aantal opens'),
+                        ->label(__('Aantal opens')),
                     TextEntry::make('clicked_at')
-                        ->label('Geklikt')
+                        ->label(__('Geklikt'))
                         ->dateTime()
-                        ->placeholder('-'),
+                        ->placeholder(__('-')),
                     TextEntry::make('click_count')
-                        ->label('Aantal clicks'),
+                        ->label(__('Aantal clicks')),
                     TextEntry::make('bounced_at')
-                        ->label('Gebounced')
+                        ->label(__('Gebounced'))
                         ->dateTime()
-                        ->placeholder('-'),
+                        ->placeholder(__('-')),
                     TextEntry::make('bounce_reason')
-                        ->label('Bounce-reden')
-                        ->placeholder('-'),
+                        ->label(__('Bounce-reden'))
+                        ->placeholder(__('-')),
                     TextEntry::make('attachments')
-                        ->label('Bijlagen')
-                        ->placeholder('-')
+                        ->label(__('Bijlagen'))
+                        ->placeholder(__('-'))
                         ->formatStateUsing(fn ($state): ?string => self::formatAttachmentState($state)),
                 ])
                 ->columns(2),
-            Section::make('Preview')
+            Section::make(__('Preview'))
                 ->schema([
                     ViewEntry::make('html_body')
                         ->view('dashed-core::filament.sent-email-preview'),

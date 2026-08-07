@@ -47,8 +47,8 @@ trait HasCustomBlocksTab
                 ->visible((bool) $primaryBlocksName && $aiAvailable)
                 ->columnSpanFull(),
 
-            Fieldset::make('customBlocks')
-                ->label('Maatwerk blokken')
+            Fieldset::make()
+                ->label(__('Maatwerk blokken'))
                 ->schema(array_merge($schema, [
                     TextEntry::make('savefirst')
                         ->state('Andere talen invullen werkt alleen op de bewerk pagina, sla deze eerst op')

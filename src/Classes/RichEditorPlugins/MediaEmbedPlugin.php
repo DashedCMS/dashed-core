@@ -38,7 +38,7 @@ class MediaEmbedPlugin implements RichContentPlugin
         return [
             RichEditorTool::make('mediaEmbed')
                 ->action()
-                ->label('Afbeelding')
+                ->label(__('Afbeelding'))
                 ->icon(Heroicon::Photo),
         ];
     }
@@ -47,7 +47,7 @@ class MediaEmbedPlugin implements RichContentPlugin
     {
         return [
             Action::make('mediaEmbed')
-                ->modalHeading('Afbeelding toevoegen / bewerken')
+                ->modalHeading(__('Afbeelding toevoegen / bewerken'))
                 ->modalWidth(Width::Large)
                 ->schema($this->imageFormSchema())
                 ->mountUsing(function (?Schema $schema, array $arguments): void {
@@ -136,8 +136,8 @@ class MediaEmbedPlugin implements RichContentPlugin
 //                        ->reactive(),
 
                     Select::make('widthUnit')
-                        ->label('Eenheid')
-                        ->options(['%' => '%', 'px' => 'px'])
+                        ->label(__('Eenheid'))
+                        ->options(['%' => __('%'), 'px' => __('px')])
                         ->default('%')
                         ->reactive(),
 
@@ -145,21 +145,21 @@ class MediaEmbedPlugin implements RichContentPlugin
                         ->columns(2)
                         ->schema([
                             TextInput::make('width')
-                                ->label('Breedte')
+                                ->label(__('Breedte'))
                                 ->numeric()
                                 ->minValue(1)
-                                ->suffix(fn ($get) => $get('widthUnit') === 'px' ? 'px' : '%')
+                                ->suffix(fn ($get) => $get('widthUnit') === 'px' ? __('px') : __('%'))
                                 ->default(fn ($get) => $get('widthUnit') === '%' ? '100' : null)
                                 ->required(fn ($get) => $get('widthUnit') === '%')
                                 ->columnSpan(fn ($get) => ($get('widthUnit') === '%') ? 2 : 1)
-                                ->helperText(fn ($get) => $get('widthUnit') === '%' ? 'Alleen breedte in % wordt gebruikt.' : null)
+                                ->helperText(fn ($get) => $get('widthUnit') === '%' ? __('Alleen breedte in % wordt gebruikt.') : null)
                                 ->reactive(),
 
                             TextInput::make('height')
-                                ->label('Hoogte')
+                                ->label(__('Hoogte'))
                                 ->numeric()
                                 ->minValue(1)
-                                ->suffix('px')
+                                ->suffix(__('px'))
                                 ->visible(fn ($get) => $get('widthUnit') === 'px')
                                 ->reactive(),
                         ]),

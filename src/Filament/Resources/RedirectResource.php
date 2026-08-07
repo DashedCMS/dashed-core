@@ -43,27 +43,27 @@ class RedirectResource extends Resource
         return $schema
             ->schema(
                 [
-                    Section::make('content')->columnSpanFull()
+                    Section::make(__('content'))->columnSpanFull()
                         ->schema(
                             array_merge([
                                 Forms\Components\TextInput::make('from')
                                     ->required()
-                                    ->label('Vanaf welke URL moet er een redirect komen?')
-                                    ->helperText('Bijv: /dit-is-een-oude-url'),
+                                    ->label(__('Vanaf welke URL moet er een redirect komen?'))
+                                    ->helperText(__('Bijv: /dit-is-een-oude-url')),
                                 Forms\Components\TextInput::make('to')
                                     ->required()
-                                    ->label('Naar welke URL moet deze redirect verwijzen?')
-                                    ->helperText('Bijv: /dit-is-een-nieuwe-url of https://dashed.com/wij-programmeren-kei-goed'),
+                                    ->label(__('Naar welke URL moet deze redirect verwijzen?'))
+                                    ->helperText(__('Bijv: /dit-is-een-nieuwe-url of https://dashed.com/wij-programmeren-kei-goed')),
                                 Forms\Components\Select::make('sort')
                                     ->required()
-                                    ->label('Type redirect')
+                                    ->label(__('Type redirect'))
                                     ->default('301')
                                     ->options([
-                                        '301' => 'Permanente redirect',
-                                        '302' => 'Tijdelijke redirect',
+                                        '301' => __('Permanente redirect'),
+                                        '302' => __('Tijdelijke redirect'),
                                     ]),
                                 Forms\Components\DatePicker::make('delete_redirect_after')
-                                    ->label('Verwijder redirect na een datum')
+                                    ->label(__('Verwijder redirect na een datum'))
                                     ->default(now()->addMonths(3)),
                             ])
                         ),]
@@ -75,22 +75,22 @@ class RedirectResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('id')
-                    ->label('ID')
+                    ->label(__('ID'))
                     ->sortable(),
                 TextColumn::make('from')
                     ->url(fn ($record) => url($record->from))
                     ->openUrlInNewTab()
-                    ->label('Oude URL')
+                    ->label(__('Oude URL'))
                     ->searchable(),
                 TextColumn::make('to')
                     ->url(fn ($record) => $record->to)
                     ->openUrlInNewTab()
-                    ->label('Nieuwe URL')
+                    ->label(__('Nieuwe URL'))
                     ->searchable(),
                 TextColumn::make('sort')
-                    ->label('Soort redirect'),
+                    ->label(__('Soort redirect')),
                 TextColumn::make('delete_redirect_after')
-                    ->label('Delete redirect na')
+                    ->label(__('Delete redirect na'))
                     ->sortable()
                     ->getStateUsing(fn ($record) => $record->delete_redirect_after ? $record->delete_redirect_after->format('d-m-Y') : 'Niet verwijderen'),
             ])

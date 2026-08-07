@@ -41,18 +41,18 @@ class SentEmailResource extends Resource
             ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('created_at')
-                    ->label('Tijd')
+                    ->label(__('Tijd'))
                     ->dateTime('d-m-Y H:i')
                     ->sortable(),
                 TextColumn::make('to_email')
-                    ->label('Ontvanger')
+                    ->label(__('Ontvanger'))
                     ->searchable(),
                 TextColumn::make('subject')
-                    ->label('Onderwerp')
+                    ->label(__('Onderwerp'))
                     ->searchable()
                     ->limit(50),
                 TextColumn::make('status')
-                    ->label('Status')
+                    ->label(__('Status'))
                     ->badge()
                     ->color(fn ($record) => match ($record->status) {
                         SentEmail::STATUS_DELIVERED => 'success',
@@ -67,14 +67,14 @@ class SentEmailResource extends Resource
             ])
             ->filters([
                 SelectFilter::make('status')
-                    ->label('Status')
+                    ->label(__('Status'))
                     ->options([
-                        SentEmail::STATUS_QUEUED => 'In wachtrij',
-                        SentEmail::STATUS_SENT => 'Verzonden',
-                        SentEmail::STATUS_DELIVERED => 'Afgeleverd',
-                        SentEmail::STATUS_BOUNCED => 'Gebounced',
-                        SentEmail::STATUS_COMPLAINED => 'Spam-klacht',
-                        SentEmail::STATUS_FAILED => 'Mislukt',
+                        SentEmail::STATUS_QUEUED => __('In wachtrij'),
+                        SentEmail::STATUS_SENT => __('Verzonden'),
+                        SentEmail::STATUS_DELIVERED => __('Afgeleverd'),
+                        SentEmail::STATUS_BOUNCED => __('Gebounced'),
+                        SentEmail::STATUS_COMPLAINED => __('Spam-klacht'),
+                        SentEmail::STATUS_FAILED => __('Mislukt'),
                     ]),
             ]);
     }

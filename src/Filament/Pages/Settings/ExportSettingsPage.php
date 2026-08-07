@@ -36,8 +36,8 @@ class ExportSettingsPage extends Page implements HasSchemas
     {
         return $schema->schema([
             TextInput::make('exports_retention_days')
-                ->label('Bewaartermijn (dagen)')
-                ->helperText('Exports ouder dan dit aantal dagen worden automatisch verwijderd. Standaard: 365 dagen (1 jaar).')
+                ->label(__('Bewaartermijn (dagen)'))
+                ->helperText(__('Exports ouder dan dit aantal dagen worden automatisch verwijderd. Standaard: 365 dagen (1 jaar).'))
                 ->numeric()
                 ->minValue(1)
                 ->maxValue(3650)
@@ -54,7 +54,7 @@ class ExportSettingsPage extends Page implements HasSchemas
         }
 
         Notification::make()
-            ->title('Export instellingen opgeslagen')
+            ->title(__('Export instellingen opgeslagen'))
             ->success()
             ->send();
 

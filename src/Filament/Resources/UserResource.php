@@ -100,27 +100,27 @@ class UserResource extends Resource
     {
         return $schema
             ->schema([
-                Section::make('Gebruiker')->columnSpanFull()
+                Section::make(__('Gebruiker'))->columnSpanFull()
                     ->schema([
                         TextInput::make('first_name')
-                            ->label('Voornaam')
+                            ->label(__('Voornaam'))
                             ->required()
                             ->maxLength(255),
 
                         TextInput::make('last_name')
-                            ->label('Achternaam')
+                            ->label(__('Achternaam'))
                             ->required()
                             ->maxLength(255),
 
                         TextInput::make('email')
-                            ->label('Email')
+                            ->label(__('Email'))
                             ->unique('users', 'email', fn ($record) => $record)
                             ->required()
                             ->email()
                             ->maxLength(255),
 
                         Select::make('role')
-                            ->label('Rol')
+                            ->label(__('Rol'))
                             ->required()
                             ->reactive()
                             // De options-closure wordt server-side hergebruikt voor validatie,
@@ -128,26 +128,26 @@ class UserResource extends Resource
                             ->options(fn ($record) => static::roleOptions(auth()->user()?->role, $record?->role)),
 
                         Select::make('roles')
-                            ->label('Rollen')
+                            ->label(__('Rollen'))
                             ->multiple()
                             ->relationship('roles', 'name')
                             ->preload()
                             ->visible(fn (Get $get) => $get('role') === 'admin')
-                            ->helperText('Wijs rollen toe om te bepalen tot welke onderdelen deze gebruiker toegang heeft.'),
+                            ->helperText(__('Wijs rollen toe om te bepalen tot welke onderdelen deze gebruiker toegang heeft.')),
 
                         TextInput::make('password')
-                            ->label('Wachtwoord')
+                            ->label(__('Wachtwoord'))
                             ->nullable()
                             ->password()
                             ->confirmed()
                             ->minLength(6)
                             ->maxLength(255)
                             ->required(fn ($livewire) => $livewire instanceof CreateUser)
-                            ->helperText('Het wachtwoord wordt alleen aangepast als je iets invult')
+                            ->helperText(__('Het wachtwoord wordt alleen aangepast als je iets invult'))
                             ->reactive(),
 
                         TextInput::make('password_confirmation')
-                            ->label('Wachtwoord herhalen')
+                            ->label(__('Wachtwoord herhalen'))
                             ->required(fn (Get $get) => $get('password'))
                             ->password()
                             ->minLength(6)
@@ -156,99 +156,99 @@ class UserResource extends Resource
                     ])
                     ->columns(2),
 
-                Section::make('Contact')->columnSpanFull()
+                Section::make(__('Contact'))->columnSpanFull()
                     ->schema([
                         TextInput::make('phone_number')
-                            ->label('Telefoonnummer')
+                            ->label(__('Telefoonnummer'))
                             ->tel()
                             ->maxLength(32),
 
                         TextInput::make('date_of_birth')
-                            ->label('Geboortedatum')
+                            ->label(__('Geboortedatum'))
                             ->type('date'),
 
                         Select::make('gender')
-                            ->label('Geslacht')
+                            ->label(__('Geslacht'))
                             ->options([
-                                'm' => 'Man',
-                                'f' => 'Vrouw',
+                                'm' => __('Man'),
+                                'f' => __('Vrouw'),
                             ])
                             ->nullable(),
 
                         Select::make('marketing')
-                            ->label('Nieuwsbrief')
+                            ->label(__('Nieuwsbrief'))
                             ->options([
-                                0 => 'Nee',
-                                1 => 'Ja',
+                                0 => __('Nee'),
+                                1 => __('Ja'),
                             ])
                             ->default(0),
                     ])
                     ->columns(2),
 
-                Section::make('Verzendadres')->columnSpanFull()
+                Section::make(__('Verzendadres'))->columnSpanFull()
                     ->schema([
                         TextInput::make('street')
-                            ->label('Straat')
+                            ->label(__('Straat'))
                             ->maxLength(255),
 
                         TextInput::make('house_nr')
-                            ->label('Huisnummer')
+                            ->label(__('Huisnummer'))
                             ->maxLength(50),
 
                         TextInput::make('zip_code')
-                            ->label('Postcode')
+                            ->label(__('Postcode'))
                             ->maxLength(50),
 
                         TextInput::make('city')
-                            ->label('Stad')
+                            ->label(__('Stad'))
                             ->maxLength(255),
 
                         TextInput::make('country')
-                            ->label('Land')
+                            ->label(__('Land'))
                             ->maxLength(255),
                     ])
                     ->columns(2),
 
-                Section::make('Bedrijf')->columnSpanFull()
+                Section::make(__('Bedrijf'))->columnSpanFull()
                     ->schema([
                         Toggle::make('is_company')
-                            ->label('Bestelt als bedrijf')
+                            ->label(__('Bestelt als bedrijf'))
                             ->default(0)
                             ->columnSpanFull()
                             ->reactive(),
 
                         TextInput::make('company')
-                            ->label('Bedrijfsnaam')
+                            ->label(__('Bedrijfsnaam'))
                             ->maxLength(255)
                             ->visible(fn (Get $get) => (bool) $get('is_company')),
 
                         TextInput::make('tax_id')
-                            ->label('BTW ID')
+                            ->label(__('BTW ID'))
                             ->maxLength(255)
                             ->visible(fn (Get $get) => (bool) $get('is_company')),
                     ])
                     ->columns(2),
 
-                Section::make('Factuuradres')->columnSpanFull()
+                Section::make(__('Factuuradres'))->columnSpanFull()
                     ->schema([
                         TextInput::make('invoice_street')
-                            ->label('Straat')
+                            ->label(__('Straat'))
                             ->maxLength(255),
 
                         TextInput::make('invoice_house_nr')
-                            ->label('Huisnummer')
+                            ->label(__('Huisnummer'))
                             ->maxLength(50),
 
                         TextInput::make('invoice_zip_code')
-                            ->label('Postcode')
+                            ->label(__('Postcode'))
                             ->maxLength(50),
 
                         TextInput::make('invoice_city')
-                            ->label('Stad')
+                            ->label(__('Stad'))
                             ->maxLength(255),
 
                         TextInput::make('invoice_country')
-                            ->label('Land')
+                            ->label(__('Land'))
                             ->maxLength(255),
                     ])
                     ->columns(2),
@@ -260,15 +260,15 @@ class UserResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->label('Naam')
+                    ->label(__('Naam'))
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('email')
-                    ->label('Email')
+                    ->label(__('Email'))
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('role')
-                    ->label('Rol'),
+                    ->label(__('Rol')),
             ])
             ->filters([
                 //

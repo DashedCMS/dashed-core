@@ -56,21 +56,21 @@ class NotificationSettingsPage extends Page implements HasSchemas
     public function form(Schema $schema): Schema
     {
         $sections = [
-            Section::make('Telegram')
-                ->description('Stuur admin-notificaties (nieuwe orders, formulier inzendingen, lage voorraad, etc.) als beknopte berichten naar een Telegram chat. Mail blijft altijd verstuurd worden, Telegram is een aanvullend kanaal.')
+            Section::make(__('Telegram'))
+                ->description(__('Stuur admin-notificaties (nieuwe orders, formulier inzendingen, lage voorraad, etc.) als beknopte berichten naar een Telegram chat. Mail blijft altijd verstuurd worden, Telegram is een aanvullend kanaal.'))
                 ->schema([
                     Toggle::make('telegram_enabled')
-                        ->label('Telegram kanaal actief')
-                        ->helperText('Zet uit om alle Telegram berichten te pauzeren zonder de instellingen te wissen.'),
+                        ->label(__('Telegram kanaal actief'))
+                        ->helperText(__('Zet uit om alle Telegram berichten te pauzeren zonder de instellingen te wissen.')),
                     TextInput::make('telegram_bot_token')
-                        ->label('Bot token')
+                        ->label(__('Bot token'))
                         ->password()
                         ->revealable()
-                        ->helperText('Maak een bot via @BotFather op Telegram en kopieer het token. Format: 123456:ABC-DEF...')
+                        ->helperText(__('Maak een bot via @BotFather op Telegram en kopieer het token. Format: 123456:ABC-DEF...'))
                         ->nullable(),
                     TextInput::make('telegram_chat_id')
-                        ->label('Chat ID')
-                        ->helperText('Voeg de bot toe aan een (groeps)chat. Gebruik @userinfobot of stuur /start in de groep en haal het chat_id uit de getUpdates response. Voor groepen begint het meestal met -100.')
+                        ->label(__('Chat ID'))
+                        ->helperText(__('Voeg de bot toe aan een (groeps)chat. Gebruik @userinfobot of stuur /start in de groep en haal het chat_id uit de getUpdates response. Voor groepen begint het meestal met -100.'))
                         ->nullable(),
                 ]),
         ];
@@ -83,12 +83,12 @@ class NotificationSettingsPage extends Page implements HasSchemas
                 ->options($this->summaryFrequencyOptions($available))
                 ->default($class::defaultFrequency())
                 ->required()
-                ->helperText($class::description() . ' Wijzigingen gelden alleen voor nieuwe gebruikers, bestaande voorkeuren blijven staan.');
+                ->helperText(__(':omschrijving Wijzigingen gelden alleen voor nieuwe gebruikers, bestaande voorkeuren blijven staan.', ['omschrijving' => $class::description()]));
         }
 
         if (! empty($summaryFields)) {
-            $sections[] = Section::make('Samenvattings-defaults')
-                ->description('Standaardfrequenties voor nieuwe admin-gebruikers. Bestaande gebruikers zien hun eigen voorkeuren via "Mijn samenvattings".')
+            $sections[] = Section::make(__('Samenvattings-defaults'))
+                ->description(__('Standaardfrequenties voor nieuwe admin-gebruikers. Bestaande gebruikers zien hun eigen voorkeuren via "Mijn samenvattings".'))
                 ->schema($summaryFields);
         }
 
@@ -118,7 +118,7 @@ class NotificationSettingsPage extends Page implements HasSchemas
         }
 
         Notification::make()
-            ->title('Notificatie instellingen opgeslagen')
+            ->title(__('Notificatie instellingen opgeslagen'))
             ->success()
             ->send();
 
@@ -189,7 +189,7 @@ class NotificationSettingsPage extends Page implements HasSchemas
 
         return [
             Action::make('testAppNotification')
-                ->label('Testnotificatie naar mijn app')
+                ->label(__('Testnotificatie naar mijn app'))
                 ->icon('heroicon-o-device-phone-mobile')
                 ->color('gray')
                 ->visible(fn (): bool => class_exists(\Dashed\DashedMobileApi\Support\NotificationCenter::class))
@@ -201,8 +201,8 @@ class NotificationSettingsPage extends Page implements HasSchemas
 
                     if (! $tokens) {
                         Notification::make()
-                            ->title('Geen app-toestel gekoppeld')
-                            ->body('Log eerst in op de mobiele app om je toestel te registreren.')
+                            ->title(__('Geen app-toestel gekoppeld'))
+                            ->body(__('Log eerst in op de mobiele app om je toestel te registreren.'))
                             ->warning()
                             ->send();
 
@@ -210,21 +210,21 @@ class NotificationSettingsPage extends Page implements HasSchemas
                     }
 
                     app(\Dashed\DashedMobileApi\Support\NotificationCenter::class)->push()
-                        ->title('Testnotificatie')
-                        ->body('Dit is een testmelding vanuit de CMS. 🎉')
+                        ->title(__('Testnotificatie'))
+                        ->body(__('Dit is een testmelding vanuit de CMS. 🎉'))
                         ->sound('default')
                         ->route('/settings')
                         ->toTokens($tokens)
                         ->send();
 
                     Notification::make()
-                        ->title('Testnotificatie verstuurd naar je app')
+                        ->title(__('Testnotificatie verstuurd naar je app'))
                         ->success()
                         ->send();
                 }),
 
             Action::make('sendTestMessage')
-                ->label('Stuur testmelding')
+                ->label(__('Stuur testmelding'))
                 ->icon('heroicon-o-paper-airplane')
                 ->color('primary')
                 ->visible($telegramConfigured)
@@ -233,13 +233,13 @@ class NotificationSettingsPage extends Page implements HasSchemas
                         app(TelegramChannel::class)->sendTestMessage();
 
                         Notification::make()
-                            ->title('Testmelding verstuurd')
-                            ->body('Check je Telegram chat.')
+                            ->title(__('Testmelding verstuurd'))
+                            ->body(__('Check je Telegram chat.'))
                             ->success()
                             ->send();
                     } catch (Throwable $e) {
                         Notification::make()
-                            ->title('Testmelding mislukt')
+                            ->title(__('Testmelding mislukt'))
                             ->body($e->getMessage())
                             ->danger()
                             ->send();
@@ -248,16 +248,16 @@ class NotificationSettingsPage extends Page implements HasSchemas
 
             ActionGroup::make([
                 Action::make('testSummaryDaily')
-                    ->label('Dagelijks')
+                    ->label(__('Dagelijks'))
                     ->action(fn () => $this->dispatchSummaryTest('daily')),
                 Action::make('testSummaryWeekly')
-                    ->label('Wekelijks')
+                    ->label(__('Wekelijks'))
                     ->action(fn () => $this->dispatchSummaryTest('weekly')),
                 Action::make('testSummaryMonthly')
-                    ->label('Maandelijks')
+                    ->label(__('Maandelijks'))
                     ->action(fn () => $this->dispatchSummaryTest('monthly')),
             ])
-                ->label('Stuur test-samenvatting')
+                ->label(__('Stuur test-samenvatting'))
                 ->icon('heroicon-o-document-chart-bar')
                 ->color('gray')
                 ->button()
@@ -276,8 +276,8 @@ class NotificationSettingsPage extends Page implements HasSchemas
         $period = SummaryPeriodFactory::make($frequency);
         if ($period === null) {
             Notification::make()
-                ->title('Onbekende periode')
-                ->body('Frequentie "' . $frequency . '" wordt niet ondersteund.')
+                ->title(__('Onbekende periode'))
+                ->body(__('Frequentie ":frequentie" wordt niet ondersteund.', ['frequentie' => $frequency]))
                 ->danger()
                 ->send();
 
@@ -287,8 +287,8 @@ class NotificationSettingsPage extends Page implements HasSchemas
         $contributors = $this->resolveSummaryContributors();
         if ($contributors === []) {
             Notification::make()
-                ->title('Geen contributors')
-                ->body('Er zijn geen samenvattings-modules geregistreerd.')
+                ->title(__('Geen contributors'))
+                ->body(__('Er zijn geen samenvattings-modules geregistreerd.'))
                 ->warning()
                 ->send();
 
@@ -349,7 +349,7 @@ class NotificationSettingsPage extends Page implements HasSchemas
         } catch (Throwable $e) {
             report($e);
             Notification::make()
-                ->title('Telegram-verzending mislukt')
+                ->title(__('Telegram-verzending mislukt'))
                 ->body($e->getMessage())
                 ->danger()
                 ->send();
@@ -359,13 +359,12 @@ class NotificationSettingsPage extends Page implements HasSchemas
 
         if ($failed !== []) {
             Notification::make()
-                ->title('Test deels mislukt')
-                ->body(sprintf(
-                    'Bericht verstuurd met %d module(s) (%d zonder data). Mislukt: %s',
-                    $withData,
-                    $withoutData,
-                    implode(', ', $failed),
-                ))
+                ->title(__('Test deels mislukt'))
+                ->body(__('Bericht verstuurd met :metData module(s) (:zonderData zonder data). Mislukt: :mislukt', [
+                    'metData' => $withData,
+                    'zonderData' => $withoutData,
+                    'mislukt' => implode(', ', $failed),
+                ]))
                 ->warning()
                 ->send();
 
@@ -373,13 +372,12 @@ class NotificationSettingsPage extends Page implements HasSchemas
         }
 
         Notification::make()
-            ->title('Test-samenvatting verstuurd')
-            ->body(sprintf(
-                '%d module(s) gebundeld in één Telegram-bericht (%d zonder data) voor: %s',
-                $withData,
-                $withoutData,
-                $period->label,
-            ))
+            ->title(__('Test-samenvatting verstuurd'))
+            ->body(__(':metData module(s) gebundeld in één Telegram-bericht (:zonderData zonder data) voor: :periode', [
+                'metData' => $withData,
+                'zonderData' => $withoutData,
+                'periode' => $period->label,
+            ]))
             ->success()
             ->send();
     }

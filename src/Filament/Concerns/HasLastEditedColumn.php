@@ -29,10 +29,10 @@ use Dashed\DashedCore\Filament\Columns\LastEditedColumn;
  */
 trait HasLastEditedColumn
 {
-    public static function lastEditedColumn(string $label = 'Laatst bewerkt'): LastEditedColumn
+    public static function lastEditedColumn(?string $label = null): LastEditedColumn
     {
         return LastEditedColumn::make('latest_activity')
-            ->label($label)
+            ->label($label ?? __('Laatst bewerkt'))
             ->toggleable();
     }
 

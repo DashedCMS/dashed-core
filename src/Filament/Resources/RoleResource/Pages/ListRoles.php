@@ -17,12 +17,12 @@ class ListRoles extends ListRecords
     {
         return [
             Action::make('createFullAccessRole')
-                ->label('Nieuwe rol met alle permissies')
+                ->label(__('Nieuwe rol met alle permissies'))
                 ->icon('heroicon-o-shield-check')
                 ->color('gray')
                 ->form([
                     TextInput::make('name')
-                        ->label('Naam')
+                        ->label(__('Naam'))
                         ->required()
                         ->maxLength(255),
                 ])

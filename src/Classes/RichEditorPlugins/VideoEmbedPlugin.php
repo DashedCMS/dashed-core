@@ -36,7 +36,7 @@ class VideoEmbedPlugin implements RichContentPlugin
         return [
             RichEditorTool::make('insertExternalVideo')
                 ->action()
-                ->label('Video')
+                ->label(__('Video'))
                 ->icon(Heroicon::Play),
         ];
     }
@@ -45,7 +45,7 @@ class VideoEmbedPlugin implements RichContentPlugin
     {
         return [
             Action::make('insertExternalVideo')
-                ->modalHeading('Video insluiten')
+                ->modalHeading(__('Video insluiten'))
                 ->modalWidth(Width::Large)
                 ->schema($this->videoFormSchema())
                 ->action(function (array $arguments, array $data, RichEditor $component): void {
@@ -61,7 +61,7 @@ class VideoEmbedPlugin implements RichContentPlugin
                 }),
 
             Action::make('editExternalVideo')
-                ->modalHeading('Video bewerken')
+                ->modalHeading(__('Video bewerken'))
                 ->modalWidth(Width::Large)
                 ->schema($this->videoFormSchema())
                 ->action(function (array $arguments, array $data, RichEditor $component): void {
@@ -82,29 +82,29 @@ class VideoEmbedPlugin implements RichContentPlugin
     {
         return [
             Select::make('type')
-                ->label('Type video')
+                ->label(__('Type video'))
                 ->options([
-                    'youtube' => 'YouTube',
-                    'vimeo' => 'Vimeo',
-                    'mp4' => 'MP4 / WebM',
-                    'auto' => 'Automatisch detecteren',
+                    'youtube' => __('YouTube'),
+                    'vimeo' => __('Vimeo'),
+                    'mp4' => __('MP4 / WebM'),
+                    'auto' => __('Automatisch detecteren'),
                 ])
                 ->default('youtube')
                 ->reactive(),
 
             TextInput::make('src')
-                ->label('Video URL')
+                ->label(__('Video URL'))
                 ->required()
                 ->rule('url')
                 ->reactive(),
 
             Select::make('ratio')
-                ->label('Beeldverhouding')
+                ->label(__('Beeldverhouding'))
                 ->options([
-                    '16:9' => '16:9 (breed)',
-                    '1:1' => '1:1 (vierkant)',
-                    '9:16' => '9:16 (story)',
-                    '4:3' => '4:3 (klassiek)',
+                    '16:9' => __('16:9 (breed)'),
+                    '1:1' => __('1:1 (vierkant)'),
+                    '9:16' => __('9:16 (story)'),
+                    '4:3' => __('4:3 (klassiek)'),
                 ])
                 ->default('16:9'),
 
@@ -113,13 +113,13 @@ class VideoEmbedPlugin implements RichContentPlugin
                     TextInput::make('maxWidth')
                         ->numeric()
                         ->default(100)
-                        ->label('Breedte'),
+                        ->label(__('Breedte')),
 
                     Select::make('widthUnit')
-                        ->label('Eenheid')
+                        ->label(__('Eenheid'))
                         ->options([
-                            '%' => '%',
-                            'px' => 'px',
+                            '%' => __('%'),
+                            'px' => __('px'),
                         ])
                         ->default('%'),
                 ])

@@ -43,63 +43,63 @@ class HorizonDashboardPage extends Page
     {
         return [
             Action::make('queueRestart')
-                ->label('Queue herstarten')
+                ->label(__('Queue herstarten'))
                 ->color('success')
                 ->icon('heroicon-o-arrow-path')
                 ->action(function () {
                     Artisan::call('queue:restart');
 
                     Notification::make()
-                        ->title('Queue restart signaal verstuurd')
-                        ->body('Workers stoppen na hun huidige job.')
+                        ->title(__('Queue restart signaal verstuurd'))
+                        ->body(__('Workers stoppen na hun huidige job.'))
                         ->success()
                         ->send();
                 }),
 
             Action::make('horizonTerminate')
-                ->label('Horizon stoppen')
+                ->label(__('Horizon stoppen'))
                 ->color('danger')
                 ->icon('heroicon-o-stop')
                 ->requiresConfirmation()
-                ->modalHeading('Horizon stoppen')
-                ->modalDescription('Weet je het zeker? Horizon stopt volledig en moet handmatig herstart worden.')
+                ->modalHeading(__('Horizon stoppen'))
+                ->modalDescription(__('Weet je het zeker? Horizon stopt volledig en moet handmatig herstart worden.'))
                 ->action(function () {
                     $this->sendSignalToMasters(SIGTERM);
 
                     Notification::make()
-                        ->title('Horizon wordt gestopt')
+                        ->title(__('Horizon wordt gestopt'))
                         ->warning()
                         ->send();
                 }),
 
             Action::make('pauseAll')
-                ->label('Alles pauzeren')
+                ->label(__('Alles pauzeren'))
                 ->color('warning')
                 ->icon('heroicon-o-pause')
                 ->action(function () {
                     $this->sendSignalToMasters(SIGUSR2);
 
                     Notification::make()
-                        ->title('Alle supervisors gepauzeerd')
+                        ->title(__('Alle supervisors gepauzeerd'))
                         ->warning()
                         ->send();
                 }),
 
             Action::make('resumeAll')
-                ->label('Alles hervatten')
+                ->label(__('Alles hervatten'))
                 ->color('success')
                 ->icon('heroicon-o-play')
                 ->action(function () {
                     $this->sendSignalToMasters(SIGCONT);
 
                     Notification::make()
-                        ->title('Alle supervisors hervat')
+                        ->title(__('Alle supervisors hervat'))
                         ->success()
                         ->send();
                 }),
 
             ActionGroup::make($this->getQueuePauseActions())
-                ->label('Queue beheer')
+                ->label(__('Queue beheer'))
                 ->icon('heroicon-o-adjustments-horizontal')
                 ->color('gray'),
         ];
@@ -136,7 +136,7 @@ class HorizonDashboardPage extends Page
         if (empty($supervisors)) {
             return [
                 Action::make('noSupervisors')
-                    ->label('Geen actieve supervisors')
+                    ->label(__('Geen actieve supervisors'))
                     ->disabled(),
             ];
         }
@@ -149,25 +149,25 @@ class HorizonDashboardPage extends Page
 
             if ($isPaused) {
                 $actions[] = Action::make('resume_'.str_replace([' ', ':'], '_', $name))
-                    ->label("Hervatten: {$name}")
+                    ->label(__('Hervatten: :naam', ['naam' => $name]))
                     ->icon('heroicon-o-play')
                     ->action(function () use ($name) {
                         $this->sendSignalToSupervisor($name, SIGCONT);
 
                         Notification::make()
-                            ->title("Supervisor {$name} hervat")
+                            ->title(__('Supervisor :naam hervat', ['naam' => $name]))
                             ->success()
                             ->send();
                     });
             } else {
                 $actions[] = Action::make('pause_'.str_replace([' ', ':'], '_', $name))
-                    ->label("Pauzeren: {$name}")
+                    ->label(__('Pauzeren: :naam', ['naam' => $name]))
                     ->icon('heroicon-o-pause')
                     ->action(function () use ($name) {
                         $this->sendSignalToSupervisor($name, SIGUSR2);
 
                         Notification::make()
-                            ->title("Supervisor {$name} gepauzeerd")
+                            ->title(__('Supervisor :naam gepauzeerd', ['naam' => $name]))
                             ->warning()
                             ->send();
                     });

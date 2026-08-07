@@ -15,7 +15,7 @@ class ButtonBlock extends EmailBlock
 
     public static function label(): string
     {
-        return 'Knop';
+        return __('Knop');
     }
 
     public static function filamentBlock(): Block
@@ -24,8 +24,8 @@ class ButtonBlock extends EmailBlock
             ->label(self::label())
             ->icon('heroicon-o-cursor-arrow-rays')
             ->schema([
-                TextInput::make('label')->label('Label')->required(),
-                TextInput::make('url')->label('URL')->required(),
+                TextInput::make('label')->label(__('Label'))->required(),
+                TextInput::make('url')->label(__('URL'))->required(),
                 ColorPicker::make('background')->default('#111827'),
                 ColorPicker::make('color')->default('#ffffff'),
             ]);

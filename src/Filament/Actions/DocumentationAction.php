@@ -21,12 +21,12 @@ class DocumentationAction extends Action
     {
         parent::setUp();
 
-        $this->label('Uitleg')
+        $this->label(__('Uitleg'))
             ->icon('heroicon-o-question-mark-circle')
             ->color('gray')
-            ->modalHeading(fn () => $this->resolveDoc()['title'] ?? 'Uitleg')
+            ->modalHeading(fn () => $this->resolveDoc()['title'] ?? __('Uitleg'))
             ->modalSubmitAction(false)
-            ->modalCancelActionLabel('Sluiten')
+            ->modalCancelActionLabel(__('Sluiten'))
             ->modalWidth('2xl')
             ->modalContent(fn (): View => view('dashed-core::docs.modal', [
                 'doc' => $this->resolveDoc(),

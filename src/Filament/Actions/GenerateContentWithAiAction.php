@@ -15,20 +15,20 @@ class GenerateContentWithAiAction
     public static function make(string $blocksName): Action
     {
         return Action::make('generateContentWithAi')
-            ->label('Genereer met AI')
+            ->label(__('Genereer met AI'))
             ->icon('heroicon-o-sparkles')
             ->visible(fn () => class_exists(Ai::class) && Ai::hasProvider())
             ->schema([
                 Textarea::make('brief')
-                    ->label('Beschrijf de pagina')
-                    ->placeholder("Bijv. landingspagina voor de zomeractie met USP's en 3 reviews")
+                    ->label(__('Beschrijf de pagina'))
+                    ->placeholder(__("Bijv. landingspagina voor de zomeractie met USP's en 3 reviews"))
                     ->required()
                     ->rows(4),
                 Radio::make('mode')
-                    ->label('Toepassen')
+                    ->label(__('Toepassen'))
                     ->options([
-                        'append' => 'Toevoegen aan bestaande blokken',
-                        'replace' => 'Bestaande blokken vervangen',
+                        'append' => __('Toevoegen aan bestaande blokken'),
+                        'replace' => __('Bestaande blokken vervangen'),
                     ])
                     ->default('append')
                     ->required(),
@@ -44,8 +44,8 @@ class GenerateContentWithAiAction
 
                 if ($blocks === []) {
                     Notification::make()
-                        ->title('Geen bruikbaar resultaat')
-                        ->body('De AI gaf geen geldige blokken terug. Pas de beschrijving aan en probeer opnieuw.')
+                        ->title(__('Geen bruikbaar resultaat'))
+                        ->body(__('De AI gaf geen geldige blokken terug. Pas de beschrijving aan en probeer opnieuw.'))
                         ->warning()
                         ->send();
 
@@ -59,8 +59,8 @@ class GenerateContentWithAiAction
                 $set('customBlocks', array_merge($existing, $blocks));
 
                 Notification::make()
-                    ->title(count($blocks) . ' blok(ken) gegenereerd')
-                    ->body('Controleer en pas ze aan in de editor, en sla daarna op.')
+                    ->title(__(':aantal blok(ken) gegenereerd', ['aantal' => count($blocks)]))
+                    ->body(__('Controleer en pas ze aan in de editor, en sla daarna op.'))
                     ->success()
                     ->send();
             });

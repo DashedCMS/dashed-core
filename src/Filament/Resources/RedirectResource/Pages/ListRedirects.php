@@ -23,20 +23,20 @@ class ListRedirects extends ListRecords
         return [
             CreateAction::make(),
             Action::make('bulkUpload')
-                ->label('Bulk upload')
+                ->label(__('Bulk upload'))
                 ->schema([
                     FileUpload::make('file')
-                        ->label('Upload CSV file')
+                        ->label(__('Upload CSV file'))
                         ->required()
                         ->disk('dashed')
                         ->directory('redirects/bulk-uploads')
                         ->acceptedFileTypes(['text/csv', 'application/csv'])
-                        ->helperText('Upload een CSV bestand met "from,to,sort" kolommen. De eerste kolom wordt niet ingeladen. sort mag zijn: 301 of 302.'),
+                        ->helperText(__('Upload een CSV bestand met "from,to,sort" kolommen. De eerste kolom wordt niet ingeladen. sort mag zijn: 301 of 302.')),
                     DatePicker::make('date')
-                        ->label('Datum')
+                        ->label(__('Datum'))
                         ->required()
                         ->minDate(now())
-                        ->helperText('Tot wanneer moeten de redirects actief zijn?')
+                        ->helperText(__('Tot wanneer moeten de redirects actief zijn?'))
                         ->default(now()->addMonths(3)),
                 ])
                 ->action(function (array $data) {
@@ -61,7 +61,7 @@ class ListRedirects extends ListRecords
                     Storage::disk('dashed')->delete($data['file']);
 
                     Notification::make()
-                        ->body("De redirects (' . $totalEntries . ') zijn geimporteerd.")
+                        ->body(__('De redirects (:aantal) zijn geimporteerd.', ['aantal' => $totalEntries]))
                         ->success()
                         ->send();
                 }),

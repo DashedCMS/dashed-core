@@ -14,7 +14,7 @@ class OrderSummaryBlock extends EmailBlock
 
     public static function label(): string
     {
-        return 'Order overzicht';
+        return __('Order overzicht');
     }
 
     public static function filamentBlock(): Block
@@ -23,7 +23,7 @@ class OrderSummaryBlock extends EmailBlock
             ->label(self::label())
             ->icon('heroicon-o-shopping-bag')
             ->schema([
-                Toggle::make('show_totals')->label('Totalen tonen')->default(true),
+                Toggle::make('show_totals')->label(__('Totalen tonen'))->default(true),
             ]);
     }
 

@@ -57,10 +57,10 @@ class GlobalBlockResource extends Resource
     {
         return $schema
             ->schema([
-                Section::make('Content')
+                Section::make(__('Content'))
                     ->schema(array_merge([
                         TextInput::make('name')
-                            ->label('Name')
+                            ->label(__('Name'))
                             ->required()
                             ->maxLength(255)
                             ->reactive()
@@ -78,7 +78,7 @@ class GlobalBlockResource extends Resource
         return $table
             ->columns(array_merge([
                 TextColumn::make('name')
-                    ->label('Naam')
+                    ->label(__('Naam'))
                     ->sortable()
                     ->searchable(),
             ]))

@@ -216,7 +216,7 @@ class Dashboard extends BaseDashboard
                 Section::make()
                     ->schema([
                         DatePicker::make('startDate')
-                            ->label('Start datum')
+                            ->label(__('Start datum'))
                             ->default(self::getStartData()['startDate'])
                             ->reactive()
                             ->maxDate(fn (callable $get) => $get('endDate') ?: now())
@@ -224,7 +224,7 @@ class Dashboard extends BaseDashboard
                                 $this->updateData();
                             }),
                         DatePicker::make('endDate')
-                            ->label('Eind datum')
+                            ->label(__('Eind datum'))
                             ->minDate(fn (callable $get) => $get('startDate'))
                             ->default(self::getStartData()['endDate'])
                             ->reactive()
@@ -232,7 +232,7 @@ class Dashboard extends BaseDashboard
                                 $this->updateData();
                             }),
                         Select::make('period')
-                            ->label('Periode')
+                            ->label(__('Periode'))
                             ->reactive()
                             ->options(self::getPeriodOptions())
                             ->afterStateUpdated(function (callable $get, callable $set, $state) {
@@ -244,15 +244,15 @@ class Dashboard extends BaseDashboard
                             })
                             ->default(self::getStartData()['period']),
                         Select::make('steps')
-                            ->label('Stappen')
+                            ->label(__('Stappen'))
                             ->reactive()
                             ->options([
-                                'per_hour' => 'Per uur',
-                                'per_day' => 'Per dag',
-                                'per_week' => 'Per week',
-                                'per_month' => 'Per maand',
-                                'per_quarter' => 'Per kwartaal',
-                                'per_year' => 'Per jaar',
+                                'per_hour' => __('Per uur'),
+                                'per_day' => __('Per dag'),
+                                'per_week' => __('Per week'),
+                                'per_month' => __('Per maand'),
+                                'per_quarter' => __('Per kwartaal'),
+                                'per_year' => __('Per jaar'),
                             ])
                             ->default(self::getStartData()['steps'])
                             ->afterStateUpdated(function () {

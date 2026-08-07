@@ -43,13 +43,13 @@ class CreateUser extends CreateRecord
             AdminNotifier::send(new NewAdminAccountMail($this->record, $this->plaintextPassword), $this->record->email);
 
             Notification::make()
-                ->title('Inloggegevens verstuurd naar ' . $this->record->email)
+                ->title(__('Inloggegevens verstuurd naar :email', ['email' => $this->record->email]))
                 ->success()
                 ->send();
         } catch (\Throwable $e) {
             report($e);
             Notification::make()
-                ->title('Account aangemaakt, maar mail kon niet verstuurd worden')
+                ->title(__('Account aangemaakt, maar mail kon niet verstuurd worden'))
                 ->body($e->getMessage())
                 ->warning()
                 ->send();

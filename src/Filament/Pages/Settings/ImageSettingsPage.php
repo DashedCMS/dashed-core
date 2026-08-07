@@ -73,12 +73,12 @@ class ImageSettingsPage extends Page
 
         return $schema->schema([
             Toggle::make('image_force_lazy_load')
-                ->label('Force lazy load')
-                ->helperText('Forceer lazy load voor alle afbeeldingen op de website.')
+                ->label(__('Force lazy load'))
+                ->helperText(__('Forceer lazy load voor alle afbeeldingen op de website.'))
                 ->default(false),
             Toggle::make('image_show_sizes')
-                ->label('Toon afbeelding formaten in de image tags')
-                ->helperText('Dit kan de website vertragen')
+                ->label(__('Toon afbeelding formaten in de image tags'))
+                ->helperText(__('Dit kan de website vertragen'))
                 ->default(false),
         ])
             ->statePath('data');
@@ -95,7 +95,7 @@ class ImageSettingsPage extends Page
         }
 
         Notification::make()
-            ->title('De afbeelding instellingen zijn opgeslagen')
+            ->title(__('De afbeelding instellingen zijn opgeslagen'))
             ->success()
             ->send();
     }

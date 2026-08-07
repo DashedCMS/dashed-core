@@ -46,21 +46,21 @@ class ExportResource extends Resource
             ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('id')
-                    ->label('ID')
+                    ->label(__('ID'))
                     ->sortable(),
                 TextColumn::make('label')
-                    ->label('Export')
+                    ->label(__('Export'))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('type')
-                    ->label('Type')
+                    ->label(__('Type'))
                     ->badge()
                     ->sortable(),
                 TextColumn::make('user.name')
-                    ->label('Gebruiker')
+                    ->label(__('Gebruiker'))
                     ->sortable(),
                 TextColumn::make('parameters')
-                    ->label('Parameters')
+                    ->label(__('Parameters'))
                     ->state(function (Export $record) {
                         $parameters = $record->parameters;
 
@@ -86,41 +86,41 @@ class ExportResource extends Resource
                     })
                     ->wrap(),
                 TextColumn::make('file_size')
-                    ->label('Grootte')
+                    ->label(__('Grootte'))
                     ->formatStateUsing(fn ($state) => $state ? static::formatBytes((int) $state) : '-')
                     ->sortable(),
                 TextColumn::make('status')
-                    ->label('Status')
+                    ->label(__('Status'))
                     ->badge()
                     ->color(fn ($record) => $record->status_color)
                     ->formatStateUsing(fn ($record) => $record->status_label)
                     ->sortable(),
                 TextColumn::make('created_at')
-                    ->label('Aangemaakt op')
+                    ->label(__('Aangemaakt op'))
                     ->dateTime('d-m-Y H:i')
                     ->sortable(),
                 TextColumn::make('completed_at')
-                    ->label('Voltooid op')
+                    ->label(__('Voltooid op'))
                     ->dateTime('d-m-Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 SelectFilter::make('type')
-                    ->label('Type')
+                    ->label(__('Type'))
                     ->options(fn () => Export::query()->distinct()->pluck('type', 'type')->all()),
                 SelectFilter::make('status')
-                    ->label('Status')
+                    ->label(__('Status'))
                     ->options([
-                        Export::STATUS_QUEUED => 'In wachtrij',
-                        Export::STATUS_PROCESSING => 'Bezig...',
-                        Export::STATUS_COMPLETED => 'Voltooid',
-                        Export::STATUS_FAILED => 'Mislukt',
+                        Export::STATUS_QUEUED => __('In wachtrij'),
+                        Export::STATUS_PROCESSING => __('Bezig...'),
+                        Export::STATUS_COMPLETED => __('Voltooid'),
+                        Export::STATUS_FAILED => __('Mislukt'),
                     ]),
             ])
             ->recordActions([
                 Action::make('download')
-                    ->label('Download')
+                    ->label(__('Download'))
                     ->icon('heroicon-o-arrow-down-tray')
                     ->color('primary')
                     ->button()
@@ -132,15 +132,15 @@ class ExportResource extends Resource
                         );
                     }),
                 Action::make('viewError')
-                    ->label('Bekijk fout')
+                    ->label(__('Bekijk fout'))
                     ->icon('heroicon-o-exclamation-triangle')
                     ->color('danger')
                     ->button()
                     ->visible(fn (Export $record) => $record->status === Export::STATUS_FAILED && $record->error_message)
-                    ->modalHeading('Foutmelding')
+                    ->modalHeading(__('Foutmelding'))
                     ->modalContent(fn (Export $record) => view('dashed-core::exports.error-modal', ['message' => $record->error_message]))
                     ->modalSubmitAction(false)
-                    ->modalCancelActionLabel('Sluiten'),
+                    ->modalCancelActionLabel(__('Sluiten')),
                 DeleteAction::make(),
             ])
             ->toolbarActions([

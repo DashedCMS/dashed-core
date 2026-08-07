@@ -40,7 +40,7 @@ class HorizonFailedJobsTable extends Widget
         Artisan::call('queue:retry', ['id' => [$id]]);
 
         Notification::make()
-            ->title('Job wordt opnieuw geprobeerd')
+            ->title(__('Job wordt opnieuw geprobeerd'))
             ->success()
             ->send();
     }
@@ -53,7 +53,7 @@ class HorizonFailedJobsTable extends Widget
         );
 
         Notification::make()
-            ->title('Failed job verwijderd')
+            ->title(__('Failed job verwijderd'))
             ->success()
             ->send();
     }
@@ -71,7 +71,7 @@ class HorizonFailedJobsTable extends Widget
         }
 
         Notification::make()
-            ->title('Alle failed jobs worden opnieuw geprobeerd')
+            ->title(__('Alle failed jobs worden opnieuw geprobeerd'))
             ->success()
             ->send();
     }
@@ -81,7 +81,7 @@ class HorizonFailedJobsTable extends Widget
         Artisan::call('queue:flush');
 
         Notification::make()
-            ->title('Alle failed jobs verwijderd')
+            ->title(__('Alle failed jobs verwijderd'))
             ->success()
             ->send();
     }

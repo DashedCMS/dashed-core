@@ -97,51 +97,51 @@ class GeneralSettingsPage extends Page
                 TextEntry::make("Winkelgegevens voor {$site['name']}")
                     ->state('Deze informatie zal de klant gebruiken om contact op te nemen.'),
                 TextInput::make("site_name_{$site['id']}")
-                    ->label('Site naam')
+                    ->label(__('Site naam'))
                     ->required()
                     ->maxLength(255),
                 TextInput::make("site_to_email_{$site['id']}")
-                    ->label('Contact email')
+                    ->label(__('Contact email'))
                     ->required()
                     ->type('email')
                     ->email()
-                    ->helperText('We gebruiken dit adres om belangrijke informatie naartoe te sturen.')
+                    ->helperText(__('We gebruiken dit adres om belangrijke informatie naartoe te sturen.'))
                     ->maxLength(60)
                     ->email(),
                 TextInput::make("site_from_email_{$site['id']}")
-                    ->label('E-mailadres afzender')
+                    ->label(__('E-mailadres afzender'))
                     ->required()
                     ->type('email')
                     ->email()
-                    ->helperText('Je klanten zien dit adres als je hun een e-mail stuurt.')
+                    ->helperText(__('Je klanten zien dit adres als je hun een e-mail stuurt.'))
                     ->email()
                     ->maxLength(60),
                 TextInput::make("company_kvk_{$site['id']}")
-                    ->label('KVK van het bedrijf')
+                    ->label(__('KVK van het bedrijf'))
                     ->maxLength(255),
                 TextInput::make("company_btw_{$site['id']}")
-                    ->label('BTW ID van het bedrijf')
+                    ->label(__('BTW ID van het bedrijf'))
                     ->maxLength(255),
                 TextInput::make("company_phone_number_{$site['id']}")
-                    ->label('Telefoon')
+                    ->label(__('Telefoon'))
                     ->maxLength(255),
                 TextInput::make("company_bank_number_{$site['id']}")
-                    ->label('Bank nummer')
+                    ->label(__('Bank nummer'))
                     ->maxLength(255),
                 TextInput::make("company_street_{$site['id']}")
-                    ->label('Straat')
+                    ->label(__('Straat'))
                     ->maxLength(255),
                 TextInput::make("company_street_number_{$site['id']}")
-                    ->label('Straatnummer')
+                    ->label(__('Straatnummer'))
                     ->maxLength(255),
                 TextInput::make("company_city_{$site['id']}")
-                    ->label('Stad')
+                    ->label(__('Stad'))
                     ->maxLength(255),
                 TextInput::make("company_postal_code_{$site['id']}")
-                    ->label('Postcode')
+                    ->label(__('Postcode'))
                     ->maxLength(255),
                 TextInput::make("company_country_{$site['id']}")
-                    ->label('Land/regio')
+                    ->label(__('Land/regio'))
                     ->maxLength(255),
             ];
 
@@ -190,106 +190,106 @@ class GeneralSettingsPage extends Page
                         'lg' => 2,
                     ]),
                 TextInput::make("google_analytics_id_{$site['id']}")
-                    ->label('Google Analytics ID')
+                    ->label(__('Google Analytics ID'))
                     ->maxLength(255),
                 TextInput::make("google_tagmanager_id_{$site['id']}")
-                    ->label('Google Tagmanager ID')
+                    ->label(__('Google Tagmanager ID'))
                     ->maxLength(255),
                 TextInput::make("google_maps_places_key_{$site['id']}")
-                    ->label('Google Maps Places key')
-                    ->helperText('Deze key is nodig om de Google Maps Reviews te syncen')
+                    ->label(__('Google Maps Places key'))
+                    ->helperText(__('Deze key is nodig om de Google Maps Reviews te syncen'))
                     ->hintActions([
                         Action::make('retrieveKey')
-                            ->label('Verkrijg een key')
+                            ->label(__('Verkrijg een key'))
                             ->url('https://developers.google.com/maps/documentation/places/web-service/get-api-key')
                             ->openUrlInNewTab(),
                     ])
                     ->maxLength(255),
                 TextInput::make("google_maps_places_id_{$site['id']}")
-                    ->label('Google Maps Places ID')
+                    ->label(__('Google Maps Places ID'))
                     ->hintActions([
                         Action::make('retrieveId')
-                            ->label('Zoek Google Place ID')
+                            ->label(__('Zoek Google Place ID'))
                             ->url('https://developers.google.com/maps/documentation/javascript/examples/places-placeid-finder')
                             ->openUrlInNewTab(),
                     ])
                     ->maxLength(255),
                 TextInput::make("facebook_pixel_conversion_id_{$site['id']}")
-                    ->label('Facebook Pixel Conversion ID')
+                    ->label(__('Facebook Pixel Conversion ID'))
                     ->maxLength(255),
                 TextInput::make("facebook_pixel_site_id_{$site['id']}")
-                    ->label('Facebook Pixel site ID')
+                    ->label(__('Facebook Pixel site ID'))
                     ->maxLength(255),
                 Toggle::make("trigger_facebook_events_{$site['id']}")
-                    ->label('Trigger Facebook events'),
+                    ->label(__('Trigger Facebook events')),
                 Toggle::make("trigger_tiktok_events_{$site['id']}")
-                    ->label('Trigger TikTok events'),
+                    ->label(__('Trigger TikTok events')),
                 TextInput::make("webmaster_tag_google_{$site['id']}")
-                    ->label('Webmaster tag Google')
+                    ->label(__('Webmaster tag Google'))
                     ->maxLength(255),
                 TextInput::make("webmaster_tag_bing_{$site['id']}")
-                    ->label('Webmaster tag Bing')
+                    ->label(__('Webmaster tag Bing'))
                     ->maxLength(255),
                 TextInput::make("webmaster_tag_alexa_{$site['id']}")
-                    ->label('Webmaster tag Alexa')
+                    ->label(__('Webmaster tag Alexa'))
                     ->maxLength(255),
                 TextInput::make("webmaster_tag_pinterest_{$site['id']}")
-                    ->label('Webmaster tag Pinterest')
+                    ->label(__('Webmaster tag Pinterest'))
                     ->maxLength(255),
                 TextInput::make("webmaster_tag_yandex_{$site['id']}")
-                    ->label('Webmaster tag Yandex')
+                    ->label(__('Webmaster tag Yandex'))
                     ->maxLength(255),
                 TextInput::make("webmaster_tag_norton_{$site['id']}")
-                    ->label('Webmaster tag Norton')
+                    ->label(__('Webmaster tag Norton'))
                     ->maxLength(255),
                 Textarea::make("extra_scripts_{$site['id']}")
-                    ->label('Laad extra scripts in op alle pagina`s')
-                    ->helperText('Bovenin de head tag van de website')
+                    ->label(__('Laad extra scripts in op alle pagina`s'))
+                    ->helperText(__('Bovenin de head tag van de website'))
                     ->rows(10)
                     ->columnSpan([
                         'default' => 1,
                         'lg' => 2,
                     ]),
                 Textarea::make("extra_body_scripts_{$site['id']}")
-                    ->label('Laad extra scripts in op alle pagina`s')
-                    ->helperText('Bovenin de body tag van de website')
+                    ->label(__('Laad extra scripts in op alle pagina`s'))
+                    ->helperText(__('Bovenin de body tag van de website'))
                     ->rows(10)
                     ->columnSpan([
                         'default' => 1,
                         'lg' => 2,
                     ]),
                 Toggle::make("admin_bar_enabled_{$site['id']}")
-                    ->label('Admin-balk inschakelen')
-                    ->helperText('Toon een balk bovenaan de website voor admins met een directe link naar de bewerkpagina van het huidige model.')
+                    ->label(__('Admin-balk inschakelen'))
+                    ->helperText(__('Toon een balk bovenaan de website voor admins met een directe link naar de bewerkpagina van het huidige model.'))
                     ->columnSpan([
                         'default' => 1,
                         'lg' => 2,
                     ]),
                 Select::make("cache_profile_{$site['id']}")
-                    ->label('Cache-profiel')
+                    ->label(__('Cache-profiel'))
                     ->options([
-                        'b2c' => 'B2C (agressief cachen)',
-                        'b2b' => 'B2B (per-klant, minimaal cachen)',
-                        'mixed' => 'Gemengd (edge voor anoniem, bypass bij login)',
-                        'off' => 'Uit',
+                        'b2c' => __('B2C (agressief cachen)'),
+                        'b2b' => __('B2B (per-klant, minimaal cachen)'),
+                        'mixed' => __('Gemengd (edge voor anoniem, bypass bij login)'),
+                        'off' => __('Uit'),
                     ])
                     ->default('mixed')
-                    ->helperText('Bepaalt hoe agressief deze site gecachet wordt in latere fases. Nu nog niet actief op response-niveau.')
+                    ->helperText(__('Bepaalt hoe agressief deze site gecachet wordt in latere fases. Nu nog niet actief op response-niveau.'))
                     ->columnSpan([
                         'default' => 1,
                         'lg' => 2,
                     ]),
                 TextInput::make("cloudflare_zone_id_{$site['id']}")
-                    ->label('Cloudflare zone ID')
-                    ->helperText('Alleen nodig voor edge (Cloudflare) caching. Te vinden in het Cloudflare-dashboard van de site.')
+                    ->label(__('Cloudflare zone ID'))
+                    ->helperText(__('Alleen nodig voor edge (Cloudflare) caching. Te vinden in het Cloudflare-dashboard van de site.'))
                     ->columnSpan([
                         'default' => 1,
                         'lg' => 2,
                     ]),
                 TextInput::make("cloudflare_api_token_{$site['id']}")
-                    ->label('Cloudflare API token')
+                    ->label(__('Cloudflare API token'))
                     ->password()
-                    ->helperText('Alleen nodig voor edge (Cloudflare) caching. Maak een token aan via Cloudflare met Cache Purge-rechten.')
+                    ->helperText(__('Alleen nodig voor edge (Cloudflare) caching. Maak een token aan via Cloudflare met Cache Purge-rechten.'))
                     ->columnSpan([
                         'default' => 1,
                         'lg' => 2,
@@ -362,7 +362,7 @@ class GeneralSettingsPage extends Page
         }
 
         Notification::make()
-            ->title('De algemene instellingen zijn opgeslagen')
+            ->title(__('De algemene instellingen zijn opgeslagen'))
             ->success()
             ->send();
     }

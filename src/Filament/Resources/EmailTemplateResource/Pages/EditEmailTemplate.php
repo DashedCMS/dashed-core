@@ -30,13 +30,13 @@ class EditEmailTemplate extends EditRecord
             CopyEmailTemplateLocaleAction::make(),
             TranslateEmailTemplateAction::make(),
             Action::make('resetToDefault')
-                ->label('Herstel naar standaard')
+                ->label(__('Herstel naar standaard'))
                 ->icon('heroicon-o-arrow-path')
                 ->color('gray')
                 ->requiresConfirmation()
-                ->modalHeading('Template herstellen naar standaard')
-                ->modalDescription('Dit overschrijft het onderwerp en de blokken van de huidige taal met de standaardinhoud van deze mail. Eigen aanpassingen in deze taal gaan verloren.')
-                ->modalSubmitActionLabel('Herstellen')
+                ->modalHeading(__('Template herstellen naar standaard'))
+                ->modalDescription(__('Dit overschrijft het onderwerp en de blokken van de huidige taal met de standaardinhoud van deze mail. Eigen aanpassingen in deze taal gaan verloren.'))
+                ->modalSubmitActionLabel(__('Herstellen'))
                 ->visible(function (): bool {
                     $mailableClass = cms()->emailTemplateRegistry()->find($this->getRecord()->mailable_key);
 
@@ -49,7 +49,7 @@ class EditEmailTemplate extends EditRecord
 
                     if (! $mailableClass) {
                         Notification::make()
-                            ->title('Geen standaardinhoud beschikbaar voor deze mail')
+                            ->title(__('Geen standaardinhoud beschikbaar voor deze mail'))
                             ->warning()
                             ->send();
 
@@ -69,16 +69,16 @@ class EditEmailTemplate extends EditRecord
                     $this->fillForm();
 
                     Notification::make()
-                        ->title('Template hersteld naar standaard (' . $locale . ')')
+                        ->title(__('Template hersteld naar standaard (:locale)', ['locale' => $locale]))
                         ->success()
                         ->send();
                 }),
             Action::make('sendTest')
-                ->label('Test mail sturen')
+                ->label(__('Test mail sturen'))
                 ->icon('heroicon-o-paper-airplane')
                 ->form([
                     TextInput::make('recipient')
-                        ->label('Ontvanger')
+                        ->label(__('Ontvanger'))
                         ->email()
                         ->required()
                         ->default(auth()->user()?->email),
@@ -109,7 +109,7 @@ class EditEmailTemplate extends EditRecord
                     } catch (Throwable $e) {
                         report($e);
                         Notification::make()
-                            ->title('Test mail mislukt')
+                            ->title(__('Test mail mislukt'))
                             ->body($e->getMessage())
                             ->danger()
                             ->send();
@@ -118,13 +118,13 @@ class EditEmailTemplate extends EditRecord
                     }
 
                     Notification::make()
-                        ->title('Test mail verzonden naar ' . $data['recipient'])
+                        ->title(__('Test mail verzonden naar :ontvanger', ['ontvanger' => $data['recipient']]))
                         ->success()
                         ->send();
                 }),
 
             Action::make('sendTestTelegram')
-                ->label('Test Telegram sturen')
+                ->label(__('Test Telegram sturen'))
                 ->icon('heroicon-o-paper-airplane')
                 ->color('info')
                 ->visible(function (): bool {
@@ -140,17 +140,17 @@ class EditEmailTemplate extends EditRecord
                         && method_exists($mailableClass, 'makeForTest');
                 })
                 ->requiresConfirmation()
-                ->modalHeading('Test Telegram melding sturen')
-                ->modalDescription('Stuurt een sample melding voor deze mail naar de geconfigureerde Telegram chat.')
-                ->modalSubmitActionLabel('Versturen')
+                ->modalHeading(__('Test Telegram melding sturen'))
+                ->modalDescription(__('Stuurt een sample melding voor deze mail naar de geconfigureerde Telegram chat.'))
+                ->modalSubmitActionLabel(__('Versturen'))
                 ->action(function (): void {
                     $record = $this->getRecord();
                     $mailableClass = cms()->emailTemplateRegistry()->find($record->mailable_key);
 
                     if (! $mailableClass || ! method_exists($mailableClass, 'makeForTest')) {
                         Notification::make()
-                            ->title('Geen testdata beschikbaar')
-                            ->body('Deze mailable heeft geen makeForTest() methode.')
+                            ->title(__('Geen testdata beschikbaar'))
+                            ->body(__('Deze mailable heeft geen makeForTest() methode.'))
                             ->warning()
                             ->send();
 
@@ -161,8 +161,8 @@ class EditEmailTemplate extends EditRecord
 
                     if (! $mailable instanceof SendsToTelegram) {
                         Notification::make()
-                            ->title('Geen Telegram support')
-                            ->body('Deze mailable implementeert SendsToTelegram niet.')
+                            ->title(__('Geen Telegram support'))
+                            ->body(__('Deze mailable implementeert SendsToTelegram niet.'))
                             ->warning()
                             ->send();
 
@@ -173,13 +173,13 @@ class EditEmailTemplate extends EditRecord
                         app(TelegramChannel::class)->send($mailable->telegramSummary());
 
                         Notification::make()
-                            ->title('Test Telegram verstuurd')
-                            ->body('Check je Telegram chat.')
+                            ->title(__('Test Telegram verstuurd'))
+                            ->body(__('Check je Telegram chat.'))
                             ->success()
                             ->send();
                     } catch (Throwable $e) {
                         Notification::make()
-                            ->title('Test Telegram mislukt')
+                            ->title(__('Test Telegram mislukt'))
                             ->body($e->getMessage())
                             ->danger()
                             ->send();

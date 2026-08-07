@@ -26,7 +26,7 @@ class HorizonOverviewStats extends StatsOverviewWidget
         $maxRuntime = round($maxRuntimeMs / 1000, 2);
 
         $failedStat = Stat::make('Failed jobs', $failed)
-            ->description('Mislukte jobs');
+            ->description(__('Mislukte jobs'));
 
         if ($failed > 0) {
             $failedStat = $failedStat->color('danger');
@@ -34,11 +34,11 @@ class HorizonOverviewStats extends StatsOverviewWidget
 
         return [
             Stat::make('Jobs in Queue', $pending)
-                ->description('Wachtende jobs (alle queues)'),
+                ->description(__('Wachtende jobs (alle queues)')),
             Stat::make('Jobs/minuut', $throughput)
-                ->description('Verwerkte jobs per minuut'),
+                ->description(__('Verwerkte jobs per minuut')),
             Stat::make('Langste runtime', $maxRuntime.'s')
-                ->description($longestQueue ? "Queue: {$longestQueue}" : 'Geen actieve queues'),
+                ->description($longestQueue ? __('Queue: :naam', ['naam' => $longestQueue]) : __('Geen actieve queues')),
             $failedStat,
         ];
     }

@@ -48,18 +48,18 @@ class NotFoundPageResource extends Resource
     {
         return $schema
             ->schema([
-                Section::make('Informatie')->columnSpanFull()
+                Section::make(__('Informatie'))->columnSpanFull()
                     ->schema([
                         Forms\Components\TextInput::make('link')
-                            ->label('Link'),
+                            ->label(__('Link')),
                         Forms\Components\TextInput::make('last_occurrence')
-                            ->label('Laatst voorgekomen op'),
+                            ->label(__('Laatst voorgekomen op')),
                         Forms\Components\TextInput::make('total_occurrences')
-                            ->label('Totaal aantal keer voorgekomen'),
+                            ->label(__('Totaal aantal keer voorgekomen')),
                         Forms\Components\TextInput::make('site')
-                            ->label('Site'),
+                            ->label(__('Site')),
                         Forms\Components\TextInput::make('locale')
-                            ->label('Taal'),
+                            ->label(__('Taal')),
                     ])
                     ->columns(2),
             ]);
@@ -80,20 +80,20 @@ class NotFoundPageResource extends Resource
                 TextColumn::make('link')
                     ->url(fn ($record) => url($record->link))
                     ->openUrlInNewTab()
-                    ->label('Link')
+                    ->label(__('Link'))
                     ->limit(30)
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('last_occurrence')
                     ->dateTime()
-                    ->label('Laatst voorgekomen op')
+                    ->label(__('Laatst voorgekomen op'))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('total_occurrences')
-                    ->label('Aantal keer voorgekomen')
+                    ->label(__('Aantal keer voorgekomen'))
                     ->sortable(),
                 IconColumn::make('hasRedirect')
-                    ->label('Heeft een redirect')
+                    ->label(__('Heeft een redirect'))
                     ->trueIcon('heroicon-o-check-circle')
                     ->falseIcon('heroicon-o-x-circle'),
             ])
@@ -105,7 +105,7 @@ class NotFoundPageResource extends Resource
                 \Filament\Actions\ViewAction::make()
                     ->button(),
                 \Filament\Actions\Action::make('createRedirect')
-                    ->label('Maak redirect aan')
+                    ->label(__('Maak redirect aan'))
                     ->button()
                     ->schema([
                         linkHelper()->field(required: true),
@@ -116,19 +116,19 @@ class NotFoundPageResource extends Resource
                         //                            ->helperText(fn(Forms\Get $get) => !$get('to') ? 'Vul een URL in' : (UrlHelper::checkUrlResponseCode(url($get('to'))) == 200 ? 'Deze URL is bereikbaar' : 'Deze URL is niet bereikbaar')),
                         Forms\Components\Select::make('sort')
                             ->required()
-                            ->label('Type redirect')
+                            ->label(__('Type redirect'))
                             ->default('301')
                             ->options([
-                                '301' => 'Permanente redirect',
-                                '302' => 'Tijdelijke redirect',
+                                '301' => __('Permanente redirect'),
+                                '302' => __('Tijdelijke redirect'),
                             ]),
                         Forms\Components\DatePicker::make('delete_redirect_after')
-                            ->label('Verwijder redirect na een datum')
+                            ->label(__('Verwijder redirect na een datum'))
                             ->default(now()->addMonths(3))
                             ->reactive()
                             ->hintAction(
                                 Action::make('emptyDate')
-                                    ->label('Leeg datum')
+                                    ->label(__('Leeg datum'))
                                     ->icon('heroicon-o-clock')
                                     ->action(function (Forms\Set $set) {
                                         $set('delete_redirect_after', null);
@@ -144,7 +144,7 @@ class NotFoundPageResource extends Resource
                         ]);
 
                         Notification::make()
-                            ->title('Redirect aangemaakt')
+                            ->title(__('Redirect aangemaakt'))
                             ->success()
                             ->send();
                     }),

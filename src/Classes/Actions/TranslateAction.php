@@ -15,7 +15,7 @@ class TranslateAction
     {
         return Action::make('translate')
             ->icon('heroicon-o-language')
-            ->label('Vertaal')
+            ->label(__('Vertaal'))
             ->accessSelectedRecords()
             ->deselectRecordsAfterCompletion()
             ->schema([
@@ -25,7 +25,7 @@ class TranslateAction
                     ->searchable()
                     ->default(fn ($livewire) => collect(Locales::getLocalesArrayWithoutCurrent($livewire->activeLocale))->keys()->toArray())
                     ->required()
-                    ->label('Naar talen')
+                    ->label(__('Naar talen'))
                     ->multiple(),
             ])
             ->action(function (Collection $records, array $data, $livewire) {
@@ -34,7 +34,7 @@ class TranslateAction
                 }
 
                 Notification::make()
-                    ->title('Items worden vertaald, dit kan even duren.')
+                    ->title(__('Items worden vertaald, dit kan even duren.'))
                     ->warning()
                     ->send();
             });

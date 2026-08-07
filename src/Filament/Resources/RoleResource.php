@@ -60,17 +60,17 @@ class RoleResource extends Resource
             ->map(function (array $permissions, string $group) {
                 $fieldKey = 'permissions_' . md5($group);
 
-                return Section::make("Permissies voor {$group}")
+                return Section::make(__('Permissies voor :groep', ['groep' => $group]))
                     ->headerActions([
                         Action::make('selectGroup_' . md5($group))
-                            ->label('Alles aanzetten')
+                            ->label(__('Alles aanzetten'))
                             ->icon('heroicon-o-check-circle')
                             ->color('success')
                             ->action(function (Set $set) use ($fieldKey, $permissions) {
                                 $set($fieldKey, array_keys($permissions));
                             }),
                         Action::make('deselectGroup_' . md5($group))
-                            ->label('Alles uitzetten')
+                            ->label(__('Alles uitzetten'))
                             ->icon('heroicon-o-x-circle')
                             ->color('danger')
                             ->action(function (Set $set) use ($fieldKey) {
@@ -92,20 +92,20 @@ class RoleResource extends Resource
             ->toArray();
 
         return $schema->schema([
-            Section::make('Rol')
+            Section::make(__('Rol'))
                 ->schema([
                     TextInput::make('name')
-                        ->label('Naam')
+                        ->label(__('Naam'))
                         ->required()
                         ->unique(ignoreRecord: true)
                         ->maxLength(255),
                 ])
                 ->columnSpanFull(),
 
-            Section::make('Gebruikers')
+            Section::make(__('Gebruikers'))
                 ->schema([
                     Select::make('users')
-                        ->label('Gekoppelde gebruikers')
+                        ->label(__('Gekoppelde gebruikers'))
                         ->multiple()
                         ->options(User::orderBy('first_name')->get()->mapWithKeys(fn ($u) => [$u->id => $u->name . ' (' . $u->email . ')']))
                         ->searchable()
@@ -113,10 +113,10 @@ class RoleResource extends Resource
                 ])
                 ->columnSpanFull(),
 
-            Section::make('Permissies')
+            Section::make(__('Permissies'))
                 ->headerActions([
                     Action::make('selectAll')
-                        ->label('Alles aanzetten')
+                        ->label(__('Alles aanzetten'))
                         ->icon('heroicon-o-check-circle')
                         ->color('success')
                         ->action(function (Set $set) use ($allPermissions) {
@@ -125,7 +125,7 @@ class RoleResource extends Resource
                             }
                         }),
                     Action::make('deselectAll')
-                        ->label('Alles uitzetten')
+                        ->label(__('Alles uitzetten'))
                         ->icon('heroicon-o-x-circle')
                         ->color('danger')
                         ->action(function (Set $set) use ($allPermissions) {
@@ -144,16 +144,16 @@ class RoleResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->label('Naam')
+                    ->label(__('Naam'))
                     ->searchable(),
 
                 TextColumn::make('users_count')
-                    ->label('Gebruikers')
+                    ->label(__('Gebruikers'))
                     ->counts('users')
                     ->badge(),
 
                 TextColumn::make('created_at')
-                    ->label('Aangemaakt')
+                    ->label(__('Aangemaakt'))
                     ->dateTime('d-m-Y')
                     ->sortable(),
             ])

@@ -12,7 +12,7 @@ class SetPublicAction
     {
         return Action::make('setPublic')
             ->icon('heroicon-o-eye')
-            ->label('Zet naar openbaar')
+            ->label(__('Zet naar openbaar'))
             ->accessSelectedRecords()
             ->deselectRecordsAfterCompletion()
             ->action(function (Collection $records) {
@@ -22,7 +22,7 @@ class SetPublicAction
                 }
 
                 Notification::make()
-                    ->title('De geselecteerde items zijn nu openbaar.')
+                    ->title(__('De geselecteerde items zijn nu openbaar.'))
                     ->success()
                     ->send();
             });

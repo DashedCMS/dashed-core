@@ -81,14 +81,14 @@ trait HasEditableCMSActions
 
                 if (count($viewActions)) {
                     $actions[] = ActionGroup::make($viewActions)
-                        ->label('Bekijk')
+                        ->label(__('Bekijk'))
                         ->icon('heroicon-o-eye')
                         ->button();
                 }
             } else {
                 $actions[] = Action::make('view')
                     ->button()
-                    ->label('Bekijk')
+                    ->label(__('Bekijk'))
                     ->icon('heroicon-o-eye')
                     ->url($this->record->getUrl($this->activeLocale))
                     ->openUrlInNewTab();
@@ -99,7 +99,7 @@ trait HasEditableCMSActions
 
         if (method_exists($this->record, 'getUrl')) {
             $groupedActions[] = Action::make('insertTemplateBlock')
-                ->label('Template blok invoegen')
+                ->label(__('Template blok invoegen'))
                 ->visible(GlobalBlock::count() > 0)
                 ->schema([
                     Select::make('templateBlock')
@@ -107,8 +107,8 @@ trait HasEditableCMSActions
                         ->required()
                         ->preload()
                         ->searchable()
-                        ->label('Template blok')
-                        ->helperText('Let op: dit refreshed de pagina, sla dus eerst op!'),
+                        ->label(__('Template blok'))
+                        ->helperText(__('Let op: dit refreshed de pagina, sla dus eerst op!')),
                 ])
                 ->action(function (array $data) {
                     $globalBlock = GlobalBlock::find($data['templateBlock']);
@@ -116,7 +116,7 @@ trait HasEditableCMSActions
                     $this->record->save();
 
                     Notification::make()
-                        ->title('Template blok is toegevoegd')
+                        ->title(__('Template blok is toegevoegd'))
                         ->success()
                         ->send();
 
@@ -143,7 +143,7 @@ trait HasEditableCMSActions
         $groupedActions[] = self::copyAction();
 
         $actions[] = ActionGroup::make($groupedActions)
-            ->label('Acties')
+            ->label(__('Acties'))
             ->icon('heroicon-o-ellipsis-vertical')
             ->button();
 
@@ -169,13 +169,13 @@ trait HasEditableCMSActions
             }
 
             return ActionGroup::make($viewActions)
-                ->label('Bekijk')
+                ->label(__('Bekijk'))
                 ->icon('heroicon-o-eye')
                 ->button();
         } else {
             return Action::make('view')
                 ->button()
-                ->label('Bekijk')
+                ->label(__('Bekijk'))
                 ->icon('heroicon-o-eye')
                 ->url($this->record->getUrl($this->activeLocale))
                 ->openUrlInNewTab();
@@ -186,7 +186,7 @@ trait HasEditableCMSActions
     {
         return Action::make('translate')
             ->icon('heroicon-m-language')
-            ->label('Vertaal')
+            ->label(__('Vertaal'))
             ->visible(AutomatedTranslation::automatedTranslationsEnabled())
             ->schema([
                 Select::make('to_locales')
@@ -195,14 +195,14 @@ trait HasEditableCMSActions
                     ->searchable()
                     ->default(fn ($livewire) => collect(Locales::getLocalesArrayWithoutCurrent($livewire->activeLocale))->keys()->toArray())
                     ->required()
-                    ->label('Naar talen')
+                    ->label(__('Naar talen'))
                     ->multiple(),
             ])
             ->action(function (array $data) {
                 AutomatedTranslation::translateModel($this->record, $this->activeLocale, $data['to_locales']);
 
                 Notification::make()
-                    ->title('Item wordt vertaald, dit kan even duren. Sla de pagina niet op tot de vertalingen klaar zijn.')
+                    ->title(__('Item wordt vertaald, dit kan even duren. Sla de pagina niet op tot de vertalingen klaar zijn.'))
                     ->warning()
                     ->send();
 
@@ -214,7 +214,7 @@ trait HasEditableCMSActions
     {
         return Action::make('copy')
             ->icon('heroicon-o-document-duplicate')
-            ->label('Kopiëren')
+            ->label(__('Kopiëren'))
             ->visible(count(Locales::getLocalesArray()) > 1)
             ->schema([
                 TextEntry::make('description')
@@ -225,7 +225,7 @@ trait HasEditableCMSActions
                     ->searchable()
                     ->default(fn ($livewire) => collect(Locales::getLocalesArrayWithoutCurrent($livewire->activeLocale))->keys()->toArray())
                     ->required()
-                    ->label('Naar talen')
+                    ->label(__('Naar talen'))
                     ->multiple(),
             ])
             ->action(function (array $data) {
@@ -271,7 +271,7 @@ trait HasEditableCMSActions
                 }
 
                 Notification::make()
-                    ->title('Item is gekopieerd naar andere talen')
+                    ->title(__('Item is gekopieerd naar andere talen'))
                     ->success()
                     ->send();
 

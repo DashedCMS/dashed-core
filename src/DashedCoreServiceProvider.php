@@ -1027,118 +1027,118 @@ MARKDOWN,
     {
         $defaultBlocks = [
             Block::make('header')
-                ->label('Header')
+                ->label(__('Header'))
                 ->schema([
                     AppServiceProvider::getDefaultBlockFields(),
                     TextInput::make('toptitle')
-                        ->label('Top title'),
+                        ->label(__('Top title')),
                     TextInput::make('title')
-                        ->label('Titel')
+                        ->label(__('Titel'))
                         ->required(),
                     cms()->editorField('subtitle', 'Sub titel'),
                     AppServiceProvider::getButtonRepeater('buttons', 'Buttons'),
                     mediaHelper()->field('image', 'Afbeelding'),
                 ]),
             Block::make('header-2')
-                ->label('Header 2')
+                ->label(__('Header 2'))
                 ->schema([
                     AppServiceProvider::getDefaultBlockFields(),
                     TextInput::make('title')
-                        ->label('Titel')
+                        ->label(__('Titel'))
                         ->required(),
                     cms()->editorField('subtitle', 'Sub titel'),
                     AppServiceProvider::getButtonRepeater('buttons', 'Buttons'),
                     mediaHelper()->field('image', 'Afbeelding'),
                 ]),
             Block::make('header-3')
-                ->label('Header 3')
+                ->label(__('Header 3'))
                 ->schema([
                     AppServiceProvider::getDefaultBlockFields(),
                     TextInput::make('title')
-                        ->label('Titel')
+                        ->label(__('Titel'))
                         ->required(),
                     cms()->editorField('subtitle')
-                        ->label('Sub titel'),
+                        ->label(__('Sub titel')),
                     AppServiceProvider::getButtonRepeater('buttons', 'Buttons'),
                     mediaHelper()->field('image', 'Afbeelding'),
                     Repeater::make('usps')
-                        ->label('USPs')
+                        ->label(__('USPs'))
                         ->schema([
                             TextInput::make('title')
-                                ->label('Titel')
+                                ->label(__('Titel'))
                                 ->required(),
                             cms()->editorField('subtitle')
-                                ->label('Subtitel')
+                                ->label(__('Subtitel'))
                                 ->required(),
                             TextInput::make('icon')
-                                ->label('Icoon')
-                                ->helperText('Lucide icons: https://lucide.dev/icons/, just paste the svg code here')
+                                ->label(__('Icoon'))
+                                ->helperText(__('Lucide icons: https://lucide.dev/icons/, just paste the svg code here'))
                                 ->required(),
                         ]),
                 ]),
             Block::make('header-4')
-                ->label('Header 4')
+                ->label(__('Header 4'))
                 ->schema([
                     self::getDefaultBlockFields(),
                     TextInput::make('title')
-                        ->label('Titel')
+                        ->label(__('Titel'))
                         ->required(),
                     cms()->editorField('subtitle')
-                        ->label('Subtitel'),
+                        ->label(__('Subtitel')),
                     self::getButtonRepeater('buttons', 'Buttons'),
                     mediaHelper()->field('image', 'Achtergrond afbeelding', isImage: true),
                     mediaHelper()->field('image-2', 'Afbeelding 2', isImage: true),
                     mediaHelper()->field('image-3', 'Afbeelding 3', isImage: true),
                     mediaHelper()->field('image-4', 'Afbeelding 4', isImage: true),
                     Repeater::make('usps')
-                        ->label('USPs')
+                        ->label(__('USPs'))
                         ->schema([
                             TextInput::make('title')
-                                ->label('Titel')
+                                ->label(__('Titel'))
                                 ->required(),
                             linkHelper()->field('url', true, 'URL'),
                             TextInput::make('icon')
-                                ->label('Icoon')
-                                ->helperText('Lucide icons: https://lucide.dev/icons/, just paste the svg code here')
+                                ->label(__('Icoon'))
+                                ->helperText(__('Lucide icons: https://lucide.dev/icons/, just paste the svg code here'))
                                 ->required(),
                         ]),
                 ]),
             Block::make('spacer')
-                ->label('Spacer')
+                ->label(__('Spacer'))
                 ->schema([]),
             Block::make('small-spacer')
-                ->label('Kleine spacer')
+                ->label(__('Kleine spacer'))
                 ->schema([]),
             Block::make('content-with-image')
-                ->label('Content with image')
+                ->label(__('Content with image'))
                 ->schema([
                     AppServiceProvider::getDefaultBlockFields(),
                     TextInput::make('title')
-                        ->label('Titel')
+                        ->label(__('Titel'))
                         ->required(),
                     TextInput::make('subtitle')
-                        ->label('Subtitel'),
+                        ->label(__('Subtitel')),
                     Toggle::make('image-left')
-                        ->label('Afbeelding links'),
+                        ->label(__('Afbeelding links')),
                     cms()->editorField('content', 'Content'),
                     mediaHelper()->field('image', 'Afbeelding', isImage: true, required: true),
                     AppServiceProvider::getButtonRepeater('buttons', 'Buttons'),
                 ]),
             Block::make('content')
-                ->label('Content')
+                ->label(__('Content'))
                 ->schema([
                     AppServiceProvider::getDefaultBlockFields(),
                     Toggle::make('full-width')
-                        ->label('Volledige breedte'),
+                        ->label(__('Volledige breedte')),
                     cms()->editorField('content', 'Content')
                         ->required(),
                 ]),
             Block::make('contact-form')
-                ->label('Contact form')
+                ->label(__('Contact form'))
                 ->schema([
                     AppServiceProvider::getDefaultBlockFields(),
                     TextInput::make('title')
-                        ->label('Titel')
+                        ->label(__('Titel'))
                         ->required(),
                     cms()->editorField('content', 'Content'),
                     Toggle::make('show_side_info')
@@ -1147,48 +1147,48 @@ MARKDOWN,
                     mediaHelper()->field('image', 'Afbeelding', isImage: true, required: true),
                 ]),
             Block::make('usps-with-icon')
-                ->label('USPs met iconen')
+                ->label(__('USPs met iconen'))
                 ->schema([
                     AppServiceProvider::getDefaultBlockFields(),
                     Repeater::make('usps')
-                        ->label('USPs')
+                        ->label(__('USPs'))
                         ->schema([
                             TextInput::make('title')
-                                ->label('Titel')
+                                ->label(__('Titel'))
                                 ->required(),
                             cms()->editorField('subtitle', 'Subtitel')
                                 ->required(),
                             IconPicker::make('icon')
-                                ->label('Icoon')
+                                ->label(__('Icoon'))
                                 ->required(),
                         ]),
                 ]),
             Block::make('image-blocks-with-info')
-                ->label('Afbeelding blokken met info')
+                ->label(__('Afbeelding blokken met info'))
                 ->schema([
                     AppServiceProvider::getDefaultBlockFields(),
                     Repeater::make('blocks')
-                        ->label('Blokken')
+                        ->label(__('Blokken'))
                         ->schema([
                             TextInput::make('title')
-                                ->label('Titel')
+                                ->label(__('Titel'))
                                 ->required(),
                             TextInput::make('subtitle')
-                                ->label('Subtitel')
+                                ->label(__('Subtitel'))
                                 ->required(),
                             mediaHelper()->field('image', 'Afbeelding', isImage: true, required: true),
                             AppServiceProvider::getButtonRepeater('buttons', 'Buttons'),
                         ]),
                 ]),
             Block::make('logo-cloud')
-                ->label('Logo cloud')
+                ->label(__('Logo cloud'))
                 ->schema([
                     AppServiceProvider::getDefaultBlockFields(),
                     TextInput::make('title')
-                        ->label('Titel')
+                        ->label(__('Titel'))
                         ->required(),
                     Repeater::make('logos')
-                        ->label('Logos')
+                        ->label(__('Logos'))
                         ->minItems(0)
                         ->maxItems(100)
                         ->schema([
@@ -1197,153 +1197,153 @@ MARKDOWN,
                         ]),
                 ]),
             Block::make('team')
-                ->label('Team')
+                ->label(__('Team'))
                 ->schema([
                     AppServiceProvider::getDefaultBlockFields(),
                     TextInput::make('title')
-                        ->label('Titel')
+                        ->label(__('Titel'))
                         ->required(),
                     cms()->editorField('subtitle', 'Subtitel'),
 
                     Repeater::make('team')
-                        ->label('Team')
+                        ->label(__('Team'))
                         ->required()
                         ->minItems(1)
                         ->cloneable()
                         ->schema([
                             TextInput::make('name')
-                                ->label('Naam')
+                                ->label(__('Naam'))
                                 ->required(),
                             TextInput::make('function')
                                 ->required()
-                                ->label('Functie'),
+                                ->label(__('Functie')),
                             mediaHelper()->field('image', 'Afbeelding', required: true, isImage: true),
                             mediaHelper()->field('image-2', 'Afbeelding 2', required: true, isImage: true),
                         ]),
                 ]),
             Block::make('faq')
-                ->label('FAQ')
+                ->label(__('FAQ'))
                 ->schema([
                     AppServiceProvider::getDefaultBlockFields(),
                     TextInput::make('title')
-                        ->label('Titel'),
+                        ->label(__('Titel')),
                     TextInput::make('subtitle')
-                        ->label('Subtitel'),
+                        ->label(__('Subtitel')),
                     TextInput::make('columns')
                         ->numeric()
-                        ->label('Aantal kolommen'),
+                        ->label(__('Aantal kolommen')),
                     Repeater::make('faqs')
-                        ->label('FAQs')
+                        ->label(__('FAQs'))
                         ->schema([
                             TextInput::make('title')
-                                ->label('Titel')
+                                ->label(__('Titel'))
                                 ->required(),
                             cms()->editorField('content', 'Content')
                                 ->required(),
                         ]),
                 ]),
             Block::make('maps-embed')
-                ->label('Maps embed')
+                ->label(__('Maps embed'))
                 ->schema([
                     AppServiceProvider::getDefaultBlockFields(),
                 ]),
             Block::make('html')
-                ->label('HTML')
+                ->label(__('HTML'))
                 ->schema([
                     AppServiceProvider::getDefaultBlockFields(),
                     Textarea::make('html')
-                        ->label('HTML')
+                        ->label(__('HTML'))
                         ->required()
                         ->rows(5),
                 ]),
             Block::make('media')
-                ->label('Afbeelding / video')
+                ->label(__('Afbeelding / video'))
                 ->schema([
                     AppServiceProvider::getDefaultBlockFields(),
                     mediaHelper()->field('media', 'Afbeelding / video', isImage: true, required: true),
                     TextInput::make('max_width_number')
-                        ->label('Max breedte')
+                        ->label(__('Max breedte'))
                         ->default(100)
                         ->integer()
                         ->minValue(0)
                         ->maxValue(10000),
                     Select::make('max_width_type')
-                        ->label('Max breedte')
+                        ->label(__('Max breedte'))
                         ->default('%')
                         ->options([
-                            'px' => 'px',
-                            '%' => '%',
+                            'px' => __('px'),
+                            '%' => __('%'),
                         ]),
                     Select::make('align')
-                        ->label('Uitlijning')
+                        ->label(__('Uitlijning'))
                         ->default('center')
                         ->options([
-                            'center' => 'Midden',
-                            'left' => 'Links',
-                            'right' => 'Rechts',
+                            'center' => __('Midden'),
+                            'left' => __('Links'),
+                            'right' => __('Rechts'),
                         ]),
                 ]),
             Block::make('search-results-block')
-                ->label('Zoekresultaten')
+                ->label(__('Zoekresultaten'))
                 ->schema([
                     AppServiceProvider::getDefaultBlockFields(),
                 ]),
             Block::make('reviews-with-content')
-                ->label('Reviews met content')
+                ->label(__('Reviews met content'))
                 ->schema([
                     AppServiceProvider::getDefaultBlockFields(),
                     Toggle::make('hide_content')
-                        ->label('Content verbergen')
+                        ->label(__('Content verbergen'))
                         ->default(false),
                     TextInput::make('title')
-                        ->label('Titel')
+                        ->label(__('Titel'))
                         ->visible(fn (Get $get) => ! $get('hide_content')),
                     TextInput::make('subtitle')
-                        ->label('Subtitel')
+                        ->label(__('Subtitel'))
                         ->visible(fn (Get $get) => ! $get('hide_content')),
                     cms()->editorField('content', 'Content')
                         ->visible(fn (Get $get) => ! $get('hide_content')),
                     AppServiceProvider::getButtonRepeater('buttons', 'Buttons')
                         ->visible(fn (Get $get) => ! $get('hide_content')),
                     TextInput::make('amount_of_reviews')
-                        ->label('Aantal reviews')
+                        ->label(__('Aantal reviews'))
                         ->numeric()
                         ->default(12),
                     Toggle::make('random_reviews')
-                        ->label('Random reviews'),
+                        ->label(__('Random reviews')),
                     Select::make('min_stars')
-                        ->label('Minimaal aantal sterren')
+                        ->label(__('Minimaal aantal sterren'))
                         ->options([
-                            0 => 'Alle reviews',
-                            1 => '1 ster en hoger',
-                            2 => '2 sterren en hoger',
-                            3 => '3 sterren en hoger',
-                            4 => '4 sterren en hoger',
-                            5 => '5 sterren',
+                            0 => __('Alle reviews'),
+                            1 => __('1 ster en hoger'),
+                            2 => __('2 sterren en hoger'),
+                            3 => __('3 sterren en hoger'),
+                            4 => __('4 sterren en hoger'),
+                            5 => __('5 sterren'),
                         ]),
                 ]),
             Block::make('reviews-slider')
-                ->label('Reviews slider')
+                ->label(__('Reviews slider'))
                 ->schema([
                     AppServiceProvider::getDefaultBlockFields(),
                     TextInput::make('title')
-                        ->label('Titel'),
+                        ->label(__('Titel')),
                     AppServiceProvider::getButtonRepeater('buttons', 'Buttons'),
                     TextInput::make('amount_of_reviews')
-                        ->label('Aantal reviews')
+                        ->label(__('Aantal reviews'))
                         ->numeric()
                         ->default(12),
                     Toggle::make('random_reviews')
-                        ->label('Random reviews'),
+                        ->label(__('Random reviews')),
                     Select::make('min_stars')
-                        ->label('Minimaal aantal sterren')
+                        ->label(__('Minimaal aantal sterren'))
                         ->options([
-                            0 => 'Alle reviews',
-                            1 => '1 ster en hoger',
-                            2 => '2 sterren en hoger',
-                            3 => '3 sterren en hoger',
-                            4 => '4 sterren en hoger',
-                            5 => '5 sterren',
+                            0 => __('Alle reviews'),
+                            1 => __('1 ster en hoger'),
+                            2 => __('2 sterren en hoger'),
+                            3 => __('3 sterren en hoger'),
+                            4 => __('4 sterren en hoger'),
+                            5 => __('5 sterren'),
                         ]),
                 ]),
         ];
@@ -1356,19 +1356,19 @@ MARKDOWN,
     {
         $defaultBlocks = [
             Block::make('account-block')
-                ->label('Account')
+                ->label(__('Account'))
                 ->schema([]),
             Block::make('login-block')
-                ->label('Login')
+                ->label(__('Login'))
                 ->schema([]),
             Block::make('forgot-password-block')
-                ->label('Wachtwoord vergeten')
+                ->label(__('Wachtwoord vergeten'))
                 ->schema([]),
             Block::make('reset-password-block')
-                ->label('Reset wachtwoord')
+                ->label(__('Reset wachtwoord'))
                 ->schema([]),
             Block::make('password-protection-block')
-                ->label('Wachtwoord beveiliging voor pagina\'s')
+                ->label(__('Wachtwoord beveiliging voor pagina\'s'))
                 ->schema([]),
         ];
 

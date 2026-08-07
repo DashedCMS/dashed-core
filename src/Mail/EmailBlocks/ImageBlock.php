@@ -14,7 +14,7 @@ class ImageBlock extends EmailBlock
 
     public static function label(): string
     {
-        return 'Afbeelding';
+        return __('Afbeelding');
     }
 
     public static function filamentBlock(): Block
@@ -24,8 +24,8 @@ class ImageBlock extends EmailBlock
             ->icon('heroicon-o-photo')
             ->schema([
                 mediaHelper()->field('image', 'Afbeelding', isImage: true, required: true),
-                TextInput::make('alt')->label('Alt-tekst'),
-                TextInput::make('url')->label('Link (optioneel)'),
+                TextInput::make('alt')->label(__('Alt-tekst')),
+                TextInput::make('url')->label(__('Link (optioneel)')),
             ]);
     }
 

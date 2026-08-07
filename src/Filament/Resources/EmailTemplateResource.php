@@ -56,8 +56,8 @@ class EmailTemplateResource extends Resource
                 ))
                 ->columnSpanFull(),
 
-            Section::make('Beschikbare variabelen')
-                ->description('Gebruik deze variabelen in onderwerp en tekstblokken. Ze worden vervangen door de echte waarde bij verzenden.')
+            Section::make(__('Beschikbare variabelen'))
+                ->description(__('Gebruik deze variabelen in onderwerp en tekstblokken. Ze worden vervangen door de echte waarde bij verzenden.'))
                 ->schema([
                     Placeholder::make('available_variables')
                         ->hiddenLabel()
@@ -67,36 +67,36 @@ class EmailTemplateResource extends Resource
                 ->visible(fn ($record) => $record && cms()->emailTemplateRegistry()->find($record->mailable_key))
                 ->columnSpanFull(),
 
-            Section::make('Algemeen')
+            Section::make(__('Algemeen'))
                 ->schema([
                     Placeholder::make('name')
-                        ->label('Naam')
+                        ->label(__('Naam'))
                         ->content(fn ($record) => $record?->name ?? '-'),
                     Placeholder::make('mailable_key')
-                        ->label('Mailable class')
+                        ->label(__('Mailable class'))
                         ->content(fn ($record) => $record?->mailable_key ?? '-'),
                     TextInput::make('subject')
-                        ->label('Onderwerp')
+                        ->label(__('Onderwerp'))
                         ->required()
                         ->columnSpanFull(),
                     TextInput::make('from_name')
-                        ->label('Afzender naam')
+                        ->label(__('Afzender naam'))
                         ->placeholder(fn () => \Dashed\DashedCore\Models\Customsetting::get('site_name'))
-                        ->helperText('Laat leeg om de standaard afzendernaam uit de site instellingen te gebruiken.'),
+                        ->helperText(__('Laat leeg om de standaard afzendernaam uit de site instellingen te gebruiken.')),
                     TextInput::make('from_email')
-                        ->label('Afzender e-mail')
+                        ->label(__('Afzender e-mail'))
                         ->email()
                         ->placeholder(fn () => \Dashed\DashedCore\Models\Customsetting::get('site_from_email'))
-                        ->helperText('Laat leeg om het standaard afzenderadres uit de site instellingen te gebruiken.'),
-                    Toggle::make('is_active')->label('Actief')->columnSpanFull(),
+                        ->helperText(__('Laat leeg om het standaard afzenderadres uit de site instellingen te gebruiken.')),
+                    Toggle::make('is_active')->label(__('Actief'))->columnSpanFull(),
                 ])
                 ->columns(2)
                 ->columnSpanFull(),
 
-            Section::make('Inhoud')
+            Section::make(__('Inhoud'))
                 ->schema([
                     Builder::make('blocks')
-                        ->label('Blokken')
+                        ->label(__('Blokken'))
                         ->blocks(fn ($record) => self::allowedBlocksFor($record))
                         ->collapsible()
                         ->cloneable()
@@ -152,38 +152,38 @@ class EmailTemplateResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')->label('Naam')->searchable()->sortable(),
-                TextColumn::make('mailable_key')->label('Mailable')->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('subject')->label('Onderwerp')->limit(40),
+                TextColumn::make('name')->label(__('Naam'))->searchable()->sortable(),
+                TextColumn::make('mailable_key')->label(__('Mailable'))->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('subject')->label(__('Onderwerp'))->limit(40),
                 TextColumn::make('locale_status')
-                    ->label('Locales')
+                    ->label(__('Locales'))
                     ->state(fn ($record) => self::localeStatusLabel($record))
                     ->badge()
                     ->color(fn ($record) => empty($record->missingLocales()) ? 'success' : 'warning')
                     ->tooltip(fn ($record) => empty($record->missingLocales())
                         ? null
-                        : 'Ontbrekend: ' . implode(', ', array_map('strtoupper', $record->missingLocales()))),
-                IconColumn::make('is_active')->boolean()->label('Actief'),
-                TextColumn::make('updated_at')->label('Bijgewerkt')->dateTime('d-m-Y H:i')->sortable(),
+                        : __('Ontbrekend: :talen', ['talen' => implode(', ', array_map('strtoupper', $record->missingLocales()))])),
+                IconColumn::make('is_active')->boolean()->label(__('Actief')),
+                TextColumn::make('updated_at')->label(__('Bijgewerkt'))->dateTime('d-m-Y H:i')->sortable(),
             ])
             ->recordActions([
                 EditAction::make()->button(),
             ])
             ->toolbarActions([
                 BulkAction::make('translate_templates')
-                    ->label('Vertaal met DeepL')
+                    ->label(__('Vertaal met DeepL'))
                     ->icon('heroicon-o-language')
                     ->disabled(fn () => ! AutomatedTranslation::automatedTranslationsEnabled())
                     ->tooltip(fn () => ! AutomatedTranslation::automatedTranslationsEnabled()
-                        ? 'DeepL is niet geconfigureerd'
+                        ? __('DeepL is niet geconfigureerd')
                         : null)
                     ->schema([
                         Select::make('from_locale')
-                            ->label('Van locale')
+                            ->label(__('Van locale'))
                             ->options(Locales::getLocalesArray())
                             ->required(),
                         Select::make('to_locales')
-                            ->label('Naar locales')
+                            ->label(__('Naar locales'))
                             ->multiple()
                             ->options(Locales::getLocalesArray())
                             ->required(),
@@ -199,8 +199,8 @@ class EmailTemplateResource extends Resource
 
                         Notification::make()
                             ->warning()
-                            ->title('Vertaling gestart')
-                            ->body(count($records) . ' template(s) worden op de achtergrond vertaald met DeepL. Variabelen blijven onveranderd.')
+                            ->title(__('Vertaling gestart'))
+                            ->body(__(':aantal template(s) worden op de achtergrond vertaald met DeepL. Variabelen blijven onveranderd.', ['aantal' => count($records)]))
                             ->send();
                     })
                     ->deselectRecordsAfterCompletion(),

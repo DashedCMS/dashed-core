@@ -23,8 +23,9 @@ class NestableSortingAction
         ?Closure $labelResolver = null,
         string $name = 'sorteren',
         string $emptyLabel = 'Er zijn nog geen items om te sorteren.',
-        string $successMessage = 'Volgorde opgeslagen',
+        ?string $successMessage = null,
     ): Action {
+        $successMessage ??= __('Volgorde opgeslagen');
         $loadTree = function () use ($query, $parentColumn, $labelColumn, $orderColumn, $labelResolver): array {
             $items = (clone $query)->orderBy($orderColumn)->get();
             $byParent = $items->groupBy(fn (Model $item) => $item->{$parentColumn});
@@ -70,12 +71,12 @@ class NestableSortingAction
         };
 
         return Action::make($name)
-            ->label('Sorteren')
+            ->label(__('Sorteren'))
             ->icon('heroicon-o-bars-arrow-down')
             ->button()
-            ->modalHeading('Sorteren')
-            ->modalSubmitActionLabel('Opslaan')
-            ->modalCancelActionLabel('Annuleren')
+            ->modalHeading(__('Sorteren'))
+            ->modalSubmitActionLabel(__('Opslaan'))
+            ->modalCancelActionLabel(__('Annuleren'))
             ->modalWidth('xl')
             ->fillForm(fn () => [
                 'tree' => json_encode($loadTree(), JSON_THROW_ON_ERROR),

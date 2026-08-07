@@ -68,7 +68,7 @@ class GoogleOAuthController extends Controller
         if (isset($token['error'])) {
             Notification::make()
                 ->danger()
-                ->body('OAuth error: ' . ($token['error_description'] ?? $token['error']))
+                ->body(__('OAuth error: :bericht', ['bericht' => $token['error_description'] ?? $token['error']]))
                 ->send();
 
             return redirect(route('filament.dashed.resources.reviews.index'));
@@ -80,7 +80,7 @@ class GoogleOAuthController extends Controller
 
         Notification::make()
             ->success()
-            ->body('Google OAuth gekoppeld ✅')
+            ->body(__('Google OAuth gekoppeld ✅'))
             ->send();
 
         return redirect(route('filament.dashed.resources.reviews.index'));

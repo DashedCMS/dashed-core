@@ -20,7 +20,7 @@ class ListUsers extends ListRecords
         return [
             CreateAction::make(),
             Action::make('createAdminUser')
-                ->label('Admin user aanmaken')
+                ->label(__('Admin user aanmaken'))
                 ->button()
                 // Deze knop deelt de superadmin-rol uit, dus alleen een
                 // superadmin mag hem zien.
@@ -28,15 +28,15 @@ class ListUsers extends ListRecords
                 ->schema([
                     TextInput::make('first_name')
                         ->required()
-                        ->label('Voornaam'),
+                        ->label(__('Voornaam')),
                     TextInput::make('last_name')
                         ->required()
-                        ->label('Achternaam'),
+                        ->label(__('Achternaam')),
                     TextInput::make('email')
                         ->required()
                         ->unique('users', 'email')
                         ->email()
-                        ->label('E-mail'),
+                        ->label(__('E-mail')),
                 ])
                 ->action(function (array $data): void {
                     $password = bin2hex(random_bytes(8));
@@ -55,13 +55,13 @@ class ListUsers extends ListRecords
                         AdminNotifier::send(new NewAdminAccountMail($user, $password), $user->email);
                     } catch (\Exception $exception) {
                         Notification::make()
-                            ->title('Fout bij het verzenden van de e-mail: ' . $exception->getMessage())
+                            ->title(__('Fout bij het verzenden van de e-mail: :bericht', ['bericht' => $exception->getMessage()]))
                             ->danger()
                             ->send();
                     }
 
                     Notification::make()
-                        ->title('Admin gebruiker ' . $user->first_name . ' ' . $user->last_name . ' is aangemaakt.')
+                        ->title(__('Admin gebruiker :voornaam :achternaam is aangemaakt.', ['voornaam' => $user->first_name, 'achternaam' => $user->last_name]))
                         ->success()
                         ->send();
                 }),

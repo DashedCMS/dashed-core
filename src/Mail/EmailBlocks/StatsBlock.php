@@ -24,7 +24,7 @@ class StatsBlock extends EmailBlock
 
     public static function label(): string
     {
-        return 'Statistieken';
+        return __('Statistieken');
     }
 
     public static function filamentBlock(): Block
@@ -34,11 +34,11 @@ class StatsBlock extends EmailBlock
             ->icon('heroicon-o-chart-bar')
             ->schema([
                 Repeater::make('rows')
-                    ->label('Rijen')
+                    ->label(__('Rijen'))
                     ->schema([
-                        TextInput::make('label')->label('Label')->required(),
-                        TextInput::make('value')->label('Waarde')->required(),
-                        TextInput::make('sub')->label('Toelichting')->nullable(),
+                        TextInput::make('label')->label(__('Label'))->required(),
+                        TextInput::make('value')->label(__('Waarde'))->required(),
+                        TextInput::make('sub')->label(__('Toelichting'))->nullable(),
                     ])
                     ->minItems(1)
                     ->defaultItems(1),

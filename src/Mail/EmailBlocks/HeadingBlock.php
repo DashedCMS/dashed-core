@@ -15,7 +15,7 @@ class HeadingBlock extends EmailBlock
 
     public static function label(): string
     {
-        return 'Kop';
+        return __('Kop');
     }
 
     public static function filamentBlock(): Block
@@ -24,10 +24,10 @@ class HeadingBlock extends EmailBlock
             ->label(self::label())
             ->icon('heroicon-o-bars-3-bottom-left')
             ->schema([
-                TextInput::make('text')->label('Tekst')->required(),
+                TextInput::make('text')->label(__('Tekst'))->required(),
                 Select::make('level')
-                    ->label('Grootte')
-                    ->options(['h1' => 'Groot', 'h2' => 'Middel', 'h3' => 'Klein'])
+                    ->label(__('Grootte'))
+                    ->options(['h1' => __('Groot'), 'h2' => __('Middel'), 'h3' => __('Klein')])
                     ->default('h2')
                     ->required(),
             ]);

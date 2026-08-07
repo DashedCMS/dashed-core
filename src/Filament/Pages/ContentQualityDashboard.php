@@ -199,7 +199,7 @@ class ContentQualityDashboard extends Page
         }
 
         \Filament\Notifications\Notification::make()
-            ->title('AI-taken gestart. De resultaten verschijnen zodra de wachtrij ze heeft verwerkt.')
+            ->title(__('AI-taken gestart. De resultaten verschijnen zodra de wachtrij ze heeft verwerkt.'))
             ->success()
             ->send();
     }

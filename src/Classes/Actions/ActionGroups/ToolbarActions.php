@@ -49,7 +49,7 @@ class ToolbarActions
                     return false;
                 })
                 ->icon('heroicon-o-language')
-                ->label('Vertalen'),
+                ->label(__('Vertalen')),
             BulkActionGroup::make([
                 SetPublicAction::make(),
                 SetNotPublicAction::make(),
@@ -62,7 +62,7 @@ class ToolbarActions
                     return Schema::hasColumn($model->getTable(), 'public');
                 })
                 ->icon('heroicon-o-eye')
-                ->label('Status'),
+                ->label(__('Status')),
         ]);
     }
 }

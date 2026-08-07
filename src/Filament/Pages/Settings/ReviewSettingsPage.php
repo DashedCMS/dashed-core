@@ -47,7 +47,7 @@ class ReviewSettingsPage extends Page implements HasSchemas
         foreach ($sites as $site) {
             $newSchema = [
                 Select::make("review_overview_page_id_{$site['id']}")
-                    ->label('Review pagina')
+                    ->label(__('Review pagina'))
                     ->searchable()
                     ->preload()
                     ->options(PageModel::thisSite($site['id'])->pluck('name', 'id')),
@@ -77,7 +77,7 @@ class ReviewSettingsPage extends Page implements HasSchemas
         }
 
         Notification::make()
-            ->title('De review instellingen zijn opgeslagen')
+            ->title(__('De review instellingen zijn opgeslagen'))
             ->success()
             ->send();
 

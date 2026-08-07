@@ -120,7 +120,7 @@ class NotificationSubscriptions extends Page implements HasSchemas
                 ->description($class::description())
                 ->schema([
                     Select::make($this->fieldKey($key))
-                        ->label('Frequentie')
+                        ->label(__('Frequentie'))
                         ->options($this->frequencyOptions($class::availableFrequencies()))
                         ->default($this->resolveCurrentFrequency($key, $class))
                         ->required()
@@ -129,8 +129,8 @@ class NotificationSubscriptions extends Page implements HasSchemas
         }
 
         if (empty($sections)) {
-            $sections[] = Section::make('Nog geen samenvattings beschikbaar')
-                ->description('Er zijn nog geen modules geinstalleerd die samenvatting-mails aanleveren. Activeer een dashed-package zoals dashed-ecommerce-core, dashed-popups of dashed-marketing om hier opties te zien verschijnen.')
+            $sections[] = Section::make(__('Nog geen samenvattings beschikbaar'))
+                ->description(__('Er zijn nog geen modules geinstalleerd die samenvatting-mails aanleveren. Activeer een dashed-package zoals dashed-ecommerce-core, dashed-popups of dashed-marketing om hier opties te zien verschijnen.'))
                 ->schema([]);
         }
 
@@ -165,7 +165,7 @@ class NotificationSubscriptions extends Page implements HasSchemas
         }
 
         Notification::make()
-            ->title('Voorkeuren opgeslagen')
+            ->title(__('Voorkeuren opgeslagen'))
             ->success()
             ->send();
 
@@ -176,7 +176,7 @@ class NotificationSubscriptions extends Page implements HasSchemas
     {
         return [
             Action::make('sendTestNow')
-                ->label('Stuur testmail nu')
+                ->label(__('Stuur testmail nu'))
                 ->icon('heroicon-o-paper-airplane')
                 ->color('primary')
                 ->action(function (): void {
@@ -196,7 +196,7 @@ class NotificationSubscriptions extends Page implements HasSchemas
         try {
             $user = auth()->user();
             if (! $user || empty($user->email)) {
-                Notification::make()->title('Geen e-mailadres bekend')->danger()->send();
+                Notification::make()->title(__('Geen e-mailadres bekend'))->danger()->send();
 
                 return;
             }
@@ -208,8 +208,8 @@ class NotificationSubscriptions extends Page implements HasSchemas
 
             if ($subs->isEmpty()) {
                 Notification::make()
-                    ->title('Geen actieve samenvattings')
-                    ->body('Schakel ten minste 1 sectie in voordat je een testmail verstuurt.')
+                    ->title(__('Geen actieve samenvattings'))
+                    ->body(__('Schakel ten minste 1 sectie in voordat je een testmail verstuurt.'))
                     ->warning()
                     ->send();
 
@@ -243,8 +243,8 @@ class NotificationSubscriptions extends Page implements HasSchemas
 
             if (empty($sections)) {
                 Notification::make()
-                    ->title('Geen data voor de testmail')
-                    ->body('De geselecteerde samenvattings hadden geen data voor de gekozen periode.')
+                    ->title(__('Geen data voor de testmail'))
+                    ->body(__('De geselecteerde samenvattings hadden geen data voor de gekozen periode.'))
                     ->warning()
                     ->send();
 
@@ -254,14 +254,14 @@ class NotificationSubscriptions extends Page implements HasSchemas
             Mail::to($user->email)->send(new SummaryMail($user, $sections, $period));
 
             Notification::make()
-                ->title('Testmail verstuurd')
-                ->body('Bekijk je inbox op ' . $user->email . '.')
+                ->title(__('Testmail verstuurd'))
+                ->body(__('Bekijk je inbox op :email.', ['email' => $user->email]))
                 ->success()
                 ->send();
         } catch (Throwable $e) {
             report($e);
             Notification::make()
-                ->title('Testmail mislukt')
+                ->title(__('Testmail mislukt'))
                 ->body($e->getMessage())
                 ->danger()
                 ->send();

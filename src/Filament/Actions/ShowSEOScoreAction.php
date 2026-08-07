@@ -22,15 +22,15 @@ class ShowSEOScoreAction extends Action
 
         $seoScore = $this->record->seoScores->first();
 
-        $this->label('Bekijk SEO score ('.($seoScore->score ?? 0).')');
+        $this->label(__('Bekijk SEO score (:score)', ['score' => $seoScore->score ?? 0]));
 
-        $this->modalHeading('Bekijk de SEO score');
+        $this->modalHeading(__('Bekijk de SEO score'));
 
         //        $this->modalSubmitActionLabel(__('filament-actions::delete.single.modal.actions.delete.label'));
         //
         //        $this->successNotificationTitle(__('filament-actions::delete.single.notifications.deleted.title'));
         $this->modalSubmitAction(false);
-        $this->modalCancelActionLabel('Sluiten');
+        $this->modalCancelActionLabel(__('Sluiten'));
 
         if ($seoScore) {
             $this->color($seoScore->score < 70 ? 'danger' : ($seoScore->score < 90 ? 'warning' : 'success'));

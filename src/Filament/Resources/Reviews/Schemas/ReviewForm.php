@@ -16,15 +16,15 @@ class ReviewForm
             ->components([
                 Select::make('provider')
                     ->options([
-                        'own' => 'Own',
-                        'google' => 'Google',
-                        'trustpilot' => 'Trustpilot',
+                        'own' => __('Own'),
+                        'google' => __('Google'),
+                        'trustpilot' => __('Trustpilot'),
                     ])
                     ->required()
                     ->default('own'),
 
                 TextInput::make('review_id')
-                    ->label('Provider Review ID')
+                    ->label(__('Provider Review ID'))
                     ->disabled()
                     ->maxLength(255),
 
@@ -40,11 +40,11 @@ class ReviewForm
 
                 Select::make('stars')
                     ->options([
-                        1 => '⭐ 1',
-                        2 => '⭐⭐ 2',
-                        3 => '⭐⭐⭐ 3',
-                        4 => '⭐⭐⭐⭐ 4',
-                        5 => '⭐⭐⭐⭐⭐ 5',
+                        1 => __('⭐ 1'),
+                        2 => __('⭐⭐ 2'),
+                        3 => __('⭐⭐⭐ 3'),
+                        4 => __('⭐⭐⭐⭐ 4'),
+                        5 => __('⭐⭐⭐⭐⭐ 5'),
                     ])
                     ->required(),
 
@@ -54,7 +54,7 @@ class ReviewForm
                     ->columnSpanFull(),
 
                 DateTimePicker::make('created_at')
-                    ->label('Aangemaakt op')
+                    ->label(__('Aangemaakt op'))
                     ->columnSpanFull(),
             ]);
     }

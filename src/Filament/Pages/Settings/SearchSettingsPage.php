@@ -47,7 +47,7 @@ class SearchSettingsPage extends Page implements HasSchemas
         foreach ($sites as $site) {
             $newSchema = [
                 Select::make("search_page_id_{$site['id']}")
-                    ->label('Zoek pagina')
+                    ->label(__('Zoek pagina'))
                     ->searchable()
                     ->preload()
                     ->options(PageModel::thisSite($site['id'])->pluck('name', 'id')),
@@ -77,7 +77,7 @@ class SearchSettingsPage extends Page implements HasSchemas
         }
 
         Notification::make()
-            ->title('De zoek instellingen zijn opgeslagen')
+            ->title(__('De zoek instellingen zijn opgeslagen'))
             ->success()
             ->send();
 

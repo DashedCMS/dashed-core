@@ -17,7 +17,7 @@ class LinkHelper
 
             $routeModelInputs[] =
                 Select::make("{$prefix}_{$key}_id")
-                    ->label('Kies een ' . strtolower($routeModel['name']))
+                    ->label(__('Kies een :naam', ['naam' => strtolower($routeModel['name'])]))
                     ->required($required)
                     ->getSearchResultsUsing(fn (string $search): array => $routeModel['class']::where('name', 'like', "%{$search}%")->orWhere('content', 'like', "%{$search}%")->limit(50)->pluck('name', 'id')->toArray())
                     ->preload()
@@ -29,7 +29,7 @@ class LinkHelper
 
         return Group::make(array_merge([
             Select::make("{$prefix}_type")
-                ->label($label ?: ('Type voor ' . $prefix))
+                ->label($label ?: __('Type voor :prefix', ['prefix' => $prefix]))
                 ->default('normal')
                 ->options(array_merge([
                     'normal' => 'Normaal',
@@ -37,9 +37,9 @@ class LinkHelper
                 ->reactive()
                 ->required($required),
             TextInput::make("{$prefix}_url")
-                ->label('Url')
+                ->label(__('Url'))
                 ->required($required)
-                ->placeholder('Example: https://example.com of /contact')
+                ->placeholder(__('Example: https://example.com of /contact'))
                 ->visible(fn ($get) => in_array($get("{$prefix}_type"), ['normal'])),
         ], $routeModelInputs))->columnSpanFull()
             ->columns(2);

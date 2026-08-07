@@ -54,8 +54,8 @@ class IntegrationHealthWidget extends StatsOverviewWidget
 
         $color = $failing > 0 ? 'danger' : 'gray';
         $description = $failing > 0
-            ? 'Klik door om de cards te bekijken'
-            : 'Alle integraties draaien';
+            ? __('Klik door om de cards te bekijken')
+            : __('Alle integraties draaien');
 
         $stat = Stat::make('Falende integraties', (string) $failing)
             ->description($description)

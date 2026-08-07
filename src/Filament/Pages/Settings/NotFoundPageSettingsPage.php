@@ -36,8 +36,8 @@ class NotFoundPageSettingsPage extends Page implements HasSchemas
     {
         return $schema->schema([
             TextInput::make('not_found_page_occurrences_retention_days')
-                ->label('Bewaartermijn 404-bezoeken (dagen)')
-                ->helperText('Individuele 404-bezoeken (occurrences) ouder dan dit aantal dagen worden automatisch verwijderd. De not-found-pagina-records zelf blijven behouden; alleen hun bezoek-historie wordt opgeschoond. Standaard: 30 dagen.')
+                ->label(__('Bewaartermijn 404-bezoeken (dagen)'))
+                ->helperText(__('Individuele 404-bezoeken (occurrences) ouder dan dit aantal dagen worden automatisch verwijderd. De not-found-pagina-records zelf blijven behouden; alleen hun bezoek-historie wordt opgeschoond. Standaard: 30 dagen.'))
                 ->numeric()
                 ->minValue(1)
                 ->maxValue(3650)
@@ -54,7 +54,7 @@ class NotFoundPageSettingsPage extends Page implements HasSchemas
         }
 
         Notification::make()
-            ->title('404-pagina instellingen opgeslagen')
+            ->title(__('404-pagina instellingen opgeslagen'))
             ->success()
             ->send();
 

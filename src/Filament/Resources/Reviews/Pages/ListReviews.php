@@ -24,9 +24,9 @@ class ListReviews extends ListRecords
         return [
             CreateAction::make(),
             Action::make('editGoogleInfo')
-                ->label('Google Reviews instellingen')
+                ->label(__('Google Reviews instellingen'))
                 ->icon('heroicon-o-cog-6-tooth')
-                ->modalHeading('Google Business Profile instellingen')
+                ->modalHeading(__('Google Business Profile instellingen'))
                 ->modalWidth('2xl')
                 ->schema([
 
@@ -54,13 +54,13 @@ class ListReviews extends ListRecords
             '))
                         ->columnSpanFull(),
                     TextInput::make('google_oauth_client_id')
-                        ->label('OAuth Client ID')
+                        ->label(__('OAuth Client ID'))
                         ->required()
                         ->default(fn () => Customsetting::get('google_oauth_client_id'))
                         ->columnSpanFull(),
 
                     TextInput::make('google_oauth_client_secret')
-                        ->label('OAuth Client Secret')
+                        ->label(__('OAuth Client Secret'))
                         ->password()
                         ->revealable()
                         ->required()
@@ -84,7 +84,7 @@ class ListReviews extends ListRecords
                         ->columnSpanFull(),
 
                     TextInput::make('google_oauth_refresh_token')
-                        ->label('OAuth Refresh Token')
+                        ->label(__('OAuth Refresh Token'))
                         ->default(fn () => Customsetting::get('google_oauth_refresh_token'))
                         ->columnSpanFull(),
 
@@ -100,7 +100,7 @@ class ListReviews extends ListRecords
                         ->columnSpanFull(),
 
                     Select::make('google_business_location_name')
-                        ->label('Business Location')
+                        ->label(__('Business Location'))
                         ->options(function () {
                             try {
                                 return app(GoogleBusinessLocationsService::class)->getLocationOptions();
@@ -114,10 +114,10 @@ class ListReviews extends ListRecords
 
                             return Customsetting::get('google_business_location_name', $siteId);
                         })
-                        ->helperText('Kies de locatie die bij jouw Google Business Profile hoort.')
+                        ->helperText(__('Kies de locatie die bij jouw Google Business Profile hoort.'))
                         ->hintAction(
                             Action::make('refreshLocations')
-                                ->label('Ververs lijst')
+                                ->label(__('Ververs lijst'))
                                 ->icon('heroicon-o-arrow-path')
                                 ->action(function () {
                                     $service = app(GoogleBusinessLocationsService::class);
@@ -131,7 +131,7 @@ class ListReviews extends ListRecords
                                     }
 
                                     Notification::make()
-                                        ->title('Locaties worden opnieuw opgehaald ✅')
+                                        ->title(__('Locaties worden opnieuw opgehaald ✅'))
                                         ->success()
                                         ->send();
                                 })
@@ -140,7 +140,7 @@ class ListReviews extends ListRecords
                 ])
                 ->extraModalFooterActions([
                     Action::make('connectGoogle')
-                        ->label('Koppel met Google')
+                        ->label(__('Koppel met Google'))
                         ->icon('heroicon-o-arrow-top-right-on-square')
                         ->color('primary')
                         ->url(route('google.oauth.redirect'), shouldOpenInNewTab: true),
@@ -152,7 +152,7 @@ class ListReviews extends ListRecords
                     }
 
                     Notification::make()
-                        ->title('Google instellingen opgeslagen ✅')
+                        ->title(__('Google instellingen opgeslagen ✅'))
                         ->success()
                         ->send();
                 }),

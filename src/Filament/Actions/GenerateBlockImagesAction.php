@@ -15,14 +15,14 @@ class GenerateBlockImagesAction
     public static function make(): Action
     {
         return Action::make('generateBlockImages')
-            ->label('Genereer beelden')
+            ->label(__('Genereer beelden'))
             ->icon('heroicon-o-photo')
             ->visible(fn () => class_exists(Ai::class) && Ai::hasProvider())
             ->requiresConfirmation()
-            ->modalDescription('Genereer AI-beelden voor de beeld-velden die door de Content Studio zijn voorbereid. Sla de pagina eerst op.')
+            ->modalDescription(__('Genereer AI-beelden voor de beeld-velden die door de Content Studio zijn voorbereid. Sla de pagina eerst op.'))
             ->action(function ($livewire, $record) {
                 if (! $record || ! method_exists($record, 'customBlocks') || ! $record->customBlocks) {
-                    Notification::make()->title('Sla de pagina eerst op')->warning()->send();
+                    Notification::make()->title(__('Sla de pagina eerst op'))->warning()->send();
 
                     return;
                 }
@@ -35,7 +35,7 @@ class GenerateBlockImagesAction
                 $pending = is_array($blocks) ? (new ContentStudioImageScanner())->pending($blocks) : [];
 
                 if ($pending === []) {
-                    Notification::make()->title('Geen openstaande beeld-prompts')->body('Er zijn geen door AI voorbereide beeld-velden om te vullen.')->info()->send();
+                    Notification::make()->title(__('Geen openstaande beeld-prompts'))->body(__('Er zijn geen door AI voorbereide beeld-velden om te vullen.'))->info()->send();
 
                     return;
                 }
@@ -59,8 +59,8 @@ class GenerateBlockImagesAction
                 }
 
                 Notification::make()
-                    ->title(count($pending) . ' beeld(en) in de wachtrij')
-                    ->body('De beelden verschijnen in de blokken zodra ze klaar zijn. Herlaad de pagina om ze te zien.')
+                    ->title(__(':aantal beeld(en) in de wachtrij', ['aantal' => count($pending)]))
+                    ->body(__('De beelden verschijnen in de blokken zodra ze klaar zijn. Herlaad de pagina om ze te zien.'))
                     ->success()
                     ->send();
             });

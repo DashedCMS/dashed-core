@@ -49,7 +49,7 @@ class HorizonQueueStats extends StatsOverviewWidget
             $runtimeSec = round($runtimeMs / 1000, 2);
 
             return Stat::make($name, $pending.' pending')
-                ->description('Runtime: '.$runtimeSec.'s')
+                ->description(__('Runtime: :waarde', ['waarde' => $runtimeSec.'s']))
                 ->color($color);
         })->values()->all();
     }

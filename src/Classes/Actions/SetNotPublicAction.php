@@ -12,7 +12,7 @@ class SetNotPublicAction
     {
         return Action::make('setNotPublic')
             ->icon('heroicon-o-eye-slash')
-            ->label('Zet naar niet openbaar')
+            ->label(__('Zet naar niet openbaar'))
             ->accessSelectedRecords()
             ->deselectRecordsAfterCompletion()
             ->action(function (Collection $records) {
@@ -22,7 +22,7 @@ class SetNotPublicAction
                 }
 
                 Notification::make()
-                    ->title('De geselecteerde items zijn nu niet meer openbaar.')
+                    ->title(__('De geselecteerde items zijn nu niet meer openbaar.'))
                     ->success()
                     ->send();
             });

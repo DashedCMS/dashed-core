@@ -20,13 +20,13 @@ class EditUser extends EditRecord
     {
         return [
             Action::make('regeneratePassword')
-                ->label('Nieuw wachtwoord versturen')
+                ->label(__('Nieuw wachtwoord versturen'))
                 ->icon('heroicon-o-key')
                 ->color('warning')
                 ->requiresConfirmation()
-                ->modalHeading('Nieuw wachtwoord aanmaken')
-                ->modalDescription(fn () => 'Hiermee wordt een nieuw willekeurig wachtwoord gegenereerd, opgeslagen voor ' . ($this->record->email ?? 'deze gebruiker') . ' en direct per e-mail verzonden. De gebruiker kan daarna niet meer inloggen met het oude wachtwoord.')
-                ->modalSubmitActionLabel('Nieuw wachtwoord versturen')
+                ->modalHeading(__('Nieuw wachtwoord aanmaken'))
+                ->modalDescription(fn () => __('Hiermee wordt een nieuw willekeurig wachtwoord gegenereerd, opgeslagen voor :email en direct per e-mail verzonden. De gebruiker kan daarna niet meer inloggen met het oude wachtwoord.', ['email' => $this->record->email ?? __('deze gebruiker')]))
+                ->modalSubmitActionLabel(__('Nieuw wachtwoord versturen'))
                 ->action(function () {
                     $password = bin2hex(random_bytes(8));
 
@@ -36,14 +36,14 @@ class EditUser extends EditRecord
                         AdminNotifier::send(new NewAdminAccountMail($this->record, $password), $this->record->email);
 
                         Notification::make()
-                            ->title('Nieuw wachtwoord verstuurd')
-                            ->body('De inloggegevens zijn naar ' . $this->record->email . ' gestuurd.')
+                            ->title(__('Nieuw wachtwoord verstuurd'))
+                            ->body(__('De inloggegevens zijn naar :email gestuurd.', ['email' => $this->record->email]))
                             ->success()
                             ->send();
                     } catch (\Throwable $e) {
                         report($e);
                         Notification::make()
-                            ->title('Wachtwoord is opgeslagen, maar mail kon niet verstuurd worden')
+                            ->title(__('Wachtwoord is opgeslagen, maar mail kon niet verstuurd worden'))
                             ->body($e->getMessage())
                             ->danger()
                             ->send();

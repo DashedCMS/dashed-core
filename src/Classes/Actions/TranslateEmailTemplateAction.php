@@ -14,20 +14,20 @@ class TranslateEmailTemplateAction
     public static function make(): Action
     {
         return Action::make('translate_email_template')
-            ->label('Vertaal met DeepL')
+            ->label(__('Vertaal met DeepL'))
             ->icon('heroicon-o-language')
             ->disabled(fn () => ! AutomatedTranslation::automatedTranslationsEnabled())
             ->tooltip(fn () => ! AutomatedTranslation::automatedTranslationsEnabled()
-                ? 'DeepL is niet geconfigureerd'
+                ? __('DeepL is niet geconfigureerd')
                 : null)
             ->schema([
                 Select::make('from_locale')
-                    ->label('Van locale')
+                    ->label(__('Van locale'))
                     ->options(Locales::getLocalesArray())
                     ->default(fn ($livewire) => $livewire->activeLocale ?? null)
                     ->required(),
                 Select::make('to_locales')
-                    ->label('Naar locales')
+                    ->label(__('Naar locales'))
                     ->multiple()
                     ->options(Locales::getLocalesArray())
                     ->default(fn ($livewire) => array_keys(Locales::getLocalesArrayWithoutCurrent($livewire->activeLocale ?? null)))
@@ -38,8 +38,8 @@ class TranslateEmailTemplateAction
 
                 Notification::make()
                     ->warning()
-                    ->title('Vertaling gestart')
-                    ->body('DeepL-vertaling loopt op de achtergrond; even geduld.')
+                    ->title(__('Vertaling gestart'))
+                    ->body(__('DeepL-vertaling loopt op de achtergrond; even geduld.'))
                     ->send();
             });
     }

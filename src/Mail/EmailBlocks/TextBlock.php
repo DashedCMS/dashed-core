@@ -14,7 +14,7 @@ class TextBlock extends EmailBlock
 
     public static function label(): string
     {
-        return 'Tekst';
+        return __('Tekst');
     }
 
     public static function filamentBlock(): Block
@@ -24,7 +24,7 @@ class TextBlock extends EmailBlock
             ->icon('heroicon-o-document-text')
             ->schema([
                 RichEditor::make('body')
-                    ->label('Inhoud')
+                    ->label(__('Inhoud'))
                     ->required(),
             ]);
     }

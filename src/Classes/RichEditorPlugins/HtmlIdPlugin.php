@@ -38,7 +38,7 @@ class HtmlIdPlugin implements RichContentPlugin
                 ->action(
                     arguments: '{ id: $getEditor()?.getAttributes($getEditor()?.state?.selection?.$from?.parent?.type?.name)?.id }'
                 )
-                ->label('ID')
+                ->label(__('ID'))
                 ->icon(Heroicon::FingerPrint),
         ];
     }
@@ -47,12 +47,12 @@ class HtmlIdPlugin implements RichContentPlugin
     {
         return [
             Action::make('htmlId')
-                ->modalHeading('ID instellen')
+                ->modalHeading(__('ID instellen'))
                 ->modalWidth(Width::Medium)
                 ->schema([
                     TextInput::make('id')
-                        ->label('ID (anchor)')
-                        ->helperText('Bijv: features, pricing, faq-1')
+                        ->label(__('ID (anchor)'))
+                        ->helperText(__('Bijv: features, pricing, faq-1'))
                         ->regex('/^[A-Za-z][A-Za-z0-9\:\-\_\.]*$/')
                         ->maxLength(80),
                 ])

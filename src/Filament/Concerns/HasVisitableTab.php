@@ -31,7 +31,7 @@ trait HasVisitableTab
 //                })
                 ->schema([
                     TextInput::make('title')
-                        ->label('Meta titel')
+                        ->label(__('Meta titel'))
                         ->nullable()
                         ->minLength(5)
                         ->maxLength(70)
@@ -40,7 +40,7 @@ trait HasVisitableTab
                             'lg' => 2,
                         ]),
                     Textarea::make('description')
-                        ->label('Meta omschrijving')
+                        ->label(__('Meta omschrijving'))
                         ->nullable()
                         ->minLength(5)
                         ->maxLength(170)
@@ -50,7 +50,7 @@ trait HasVisitableTab
                             'lg' => 2,
                         ]),
                     mediaHelper()->field('image', 'Meta afbeelding', isImage: true)
-                        ->helperText('De beste afmeting is 1200x630 pixels')
+                        ->helperText(__('De beste afmeting is 1200x630 pixels'))
                         ->columnSpan([
                             'default' => 1,
                             'lg' => 2,
@@ -58,20 +58,20 @@ trait HasVisitableTab
                     //                        TextInput::make('canonical_url')
                     //                            ->label('Meta canonical URL'),
                     Toggle::make('noindex')
-                        ->label('Pagina niet indexeren')
+                        ->label(__('Pagina niet indexeren'))
                         ->columnSpan([
                             'default' => 1,
                             'lg' => 3,
                         ]),
                     TextInput::make('password')
-                        ->label('Wachtwoord van deze pagina')
+                        ->label(__('Wachtwoord van deze pagina'))
                         ->nullable()
                         ->columnSpan([
                             'default' => 1,
                             'lg' => 3,
                         ]),
                     Textarea::make('head_scripts')
-                        ->label('Scripts in head')
+                        ->label(__('Scripts in head'))
                         ->nullable()
                         ->maxLength(50000)
                         ->rows(2)
@@ -80,7 +80,7 @@ trait HasVisitableTab
                             'lg' => 3,
                         ]),
                     Textarea::make('top_body_scripts')
-                        ->label('Scripts in top van body')
+                        ->label(__('Scripts in top van body'))
                         ->nullable()
                         ->maxLength(50000)
                         ->rows(2)
@@ -96,23 +96,23 @@ trait HasVisitableTab
     {
         $schema = [
             Toggle::make('public')
-                ->label('Openbaar')
-                ->helperText('Indien je dit item niet openbaar maakt, is het enkel zichtbaar voor beheerders')
+                ->label(__('Openbaar'))
+                ->helperText(__('Indien je dit item niet openbaar maakt, is het enkel zichtbaar voor beheerders'))
                 ->default(true)
                 ->columnSpanFull(),
             DatePicker::make('start_date')
-                ->label('Vul een startdatum in voor dit item:')
-                ->helperText('Indien je geen startdatum opgeeft, is het item direct zichtbaar')
+                ->label(__('Vul een startdatum in voor dit item:'))
+                ->helperText(__('Indien je geen startdatum opgeeft, is het item direct zichtbaar'))
                 ->nullable()
                 ->date(),
             DatePicker::make('end_date')
-                ->label('Vul een einddatum in voor dit item:')
-                ->helperText('Indien je geen einddatum opgeeft, vervalt het item niet')
+                ->label(__('Vul een einddatum in voor dit item:'))
+                ->helperText(__('Indien je geen einddatum opgeeft, vervalt het item niet'))
                 ->nullable()
                 ->date()
                 ->after('startDate'),
             Select::make('site_ids')
-                ->label('Actief op sites')
+                ->label(__('Actief op sites'))
                 ->options(collect(Sites::getSites())->pluck('name', 'id'))
                 ->multiple()
                 ->hidden(fn () => ! (Sites::getAmountOfSites() > 1))
@@ -125,7 +125,7 @@ trait HasVisitableTab
                     ->relationship('parent', 'name')
                     ->options(fn ($record) => self::$model::where('id', '!=', $record->id ?? 0)->pluck('name', 'id'))
                     ->searchable()
-                    ->label('Bovenliggende item');
+                    ->label(__('Bovenliggende item'));
         }
 
         return [
@@ -144,17 +144,17 @@ trait HasVisitableTab
         if (method_exists(self::$model, 'parent') && \Illuminate\Support\Facades\Cache::remember("schema_has_parent_id_{$table}", 3600, fn () => Schema::hasColumn($table, 'parent_id'))) {
             $schema[] =
                 TextColumn::make('parent.name')
-                    ->label('Bovenliggende item')
+                    ->label(__('Bovenliggende item'))
                     ->sortable();
         }
         $schema[] =
             TextColumn::make('site_ids')
-                ->label('Actief op sites')
+                ->label(__('Actief op sites'))
                 ->sortable()
                 ->badge()
                 ->hidden(! (Sites::getAmountOfSites() > 1));
         $schema[] = IconColumn::make('status')
-            ->label('Status')
+            ->label(__('Status'))
             ->trueIcon('heroicon-o-check-circle')
             ->falseIcon('heroicon-o-x-circle')
             ->sortable(query: function (\Illuminate\Database\Eloquent\Builder $query, string $direction): \Illuminate\Database\Eloquent\Builder {
@@ -169,7 +169,7 @@ trait HasVisitableTab
                 );
             });
         $schema[] = TextColumn::make('created_at')
-            ->label('Aangemaakt op')
+            ->label(__('Aangemaakt op'))
             ->sortable()
             ->dateTime();
 

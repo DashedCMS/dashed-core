@@ -45,7 +45,7 @@ class CacheSettingsPage extends Page
         Cache::clear();
 
         Notification::make()
-            ->title('De cache is geleegd')
+            ->title(__('De cache is geleegd'))
             ->success()
             ->send();
     }

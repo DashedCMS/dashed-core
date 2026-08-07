@@ -66,16 +66,16 @@ class SEOScoreInfoList extends Component implements HasSchemas, HasInfolists
                     ->state('Huidige SEO score')
                     ->visible((bool) $seoScore)
                     ->state($seoScore->score.' van de 100')
-                    ->helperText('Let op: niet alles is altijd op te lossen en een 100% score is niet vereist.'),
+                    ->helperText(__('Let op: niet alles is altijd op te lossen en een 100% score is niet vereist.')),
                 TextEntry::make('seoScore')
                     ->state('Huidige SEO score')
                     ->hidden((bool) $seoScore)
                     ->state('Er is nog geen SEO score bekend, sla op om te laten berekenen'),
-                Section::make('Gelukte checks')->columnSpanFull()
+                Section::make(__('Gelukte checks'))->columnSpanFull()
                     ->visible((bool) $seoScore)
                     ->schema($succeededChecks)
                     ->visible(count($succeededChecks)),
-                Section::make('Mislukte checks')->columnSpanFull()
+                Section::make(__('Mislukte checks'))->columnSpanFull()
                     ->visible((bool) $seoScore)
                     ->schema($failedChecks)
                     ->visible(count($failedChecks)),

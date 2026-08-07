@@ -318,16 +318,16 @@ class CMSManager
         return ContentBuilder::make($name)
             ->blocks(array_merge([
                 Builder\Block::make('globalBlock')
-                    ->label('Globaal blok')
+                    ->label(__('Globaal blok'))
                     ->visible(GlobalBlock::count() > 0)
                     ->schema([
                         Select::make('globalBlock')
-                            ->label('Globaal blok')
+                            ->label(__('Globaal blok'))
                             ->options(GlobalBlock::all()->mapWithKeys(fn ($block) => [$block->id => $block->name]))
-                            ->placeholder('Kies een globaal blok')
+                            ->placeholder(__('Kies een globaal blok'))
                             ->hintAction(
                                 Action::make('editGlobalBlock')
-                                    ->label('Bewerk globaal blok')
+                                    ->label(__('Bewerk globaal blok'))
                                     ->url(fn (Get $get) => route('filament.dashed.resources.global-blocks.edit', ['record' => $get('globalBlock')]))
                                     ->openUrlInNewTab()
                                     ->visible(fn (Get $get) => $get('globalBlock'))

@@ -14,17 +14,17 @@ class CopyEmailTemplateLocaleAction
     public static function make(): Action
     {
         return Action::make('copy_locale')
-            ->label('Kopieer naar locale')
+            ->label(__('Kopieer naar locale'))
             ->icon('heroicon-o-document-duplicate')
-            ->modalHeading('Kopieer vertalingen van de ene locale naar een andere')
+            ->modalHeading(__('Kopieer vertalingen van de ene locale naar een andere'))
             ->schema([
                 Select::make('from_locale')
-                    ->label('Van locale')
+                    ->label(__('Van locale'))
                     ->options(Locales::getLocalesArray())
                     ->default(fn ($livewire) => self::defaultFromLocale($livewire))
                     ->required(),
                 Select::make('to_locales')
-                    ->label('Naar locales')
+                    ->label(__('Naar locales'))
                     ->multiple()
                     ->options(Locales::getLocalesArray())
                     ->default(function ($livewire) {
@@ -42,15 +42,15 @@ class CopyEmailTemplateLocaleAction
                 try {
                     self::copy($record, $data['from_locale'], $data['to_locales']);
                 } catch (InvalidArgumentException $e) {
-                    Notification::make()->danger()->title('Kopiëren mislukt')->body($e->getMessage())->send();
+                    Notification::make()->danger()->title(__('Kopiëren mislukt'))->body($e->getMessage())->send();
 
                     return;
                 }
 
                 Notification::make()
                     ->success()
-                    ->title('Gekopieerd')
-                    ->body('Vertalingen gekopieerd naar ' . implode(', ', $data['to_locales']))
+                    ->title(__('Gekopieerd'))
+                    ->body(__('Vertalingen gekopieerd naar :talen', ['talen' => implode(', ', $data['to_locales'])]))
                     ->send();
             });
     }

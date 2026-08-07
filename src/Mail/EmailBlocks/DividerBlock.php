@@ -13,7 +13,7 @@ class DividerBlock extends EmailBlock
 
     public static function label(): string
     {
-        return 'Scheiding';
+        return __('Scheiding');
     }
 
     public static function filamentBlock(): Block

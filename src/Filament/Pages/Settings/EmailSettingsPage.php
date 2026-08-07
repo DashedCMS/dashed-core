@@ -49,33 +49,33 @@ class EmailSettingsPage extends Page implements HasSchemas
     {
         return $schema->schema([
             Toggle::make('mail_show_logo')
-                ->label('Toon logo in e-mails')
-                ->helperText('Zet uit als er geen afbeelding in de header getoond moet worden.')
+                ->label(__('Toon logo in e-mails'))
+                ->helperText(__('Zet uit als er geen afbeelding in de header getoond moet worden.'))
                 ->default(true)
                 ->live(),
             mediaHelper()->field('mail_logo', 'Logo', false, false, true)
-                ->helperText('Laat leeg om het logo uit de algemene instellingen te gebruiken.')
+                ->helperText(__('Laat leeg om het logo uit de algemene instellingen te gebruiken.'))
                 ->visible(fn (Get $get) => (bool) $get('mail_show_logo')),
             Toggle::make('mail_show_site_name')
-                ->label('Toon sitenaam als er geen logo is')
-                ->helperText('Als er geen logo getoond wordt, wordt de sitenaam getoond in de header.')
+                ->label(__('Toon sitenaam als er geen logo is'))
+                ->helperText(__('Als er geen logo getoond wordt, wordt de sitenaam getoond in de header.'))
                 ->default(true)
                 ->visible(fn (Get $get) => ! (bool) $get('mail_show_logo')),
             ColorPicker::make('mail_primary_color')
-                ->label('Primaire kleur')
-                ->helperText('Wordt gebruikt voor de bovenbalk en knoppen in e-mails.')
+                ->label(__('Primaire kleur'))
+                ->helperText(__('Wordt gebruikt voor de bovenbalk en knoppen in e-mails.'))
                 ->required(),
             ColorPicker::make('mail_text_color')
-                ->label('Tekstkleur op primaire kleur')
-                ->helperText('Kleur van tekst die op de primaire kleur staat (bijv. in de header of op knoppen).')
+                ->label(__('Tekstkleur op primaire kleur'))
+                ->helperText(__('Kleur van tekst die op de primaire kleur staat (bijv. in de header of op knoppen).'))
                 ->required(),
             ColorPicker::make('mail_background_color')
-                ->label('Achtergrondkleur')
-                ->helperText('Achtergrondkleur rond de e-mail container.')
+                ->label(__('Achtergrondkleur'))
+                ->helperText(__('Achtergrondkleur rond de e-mail container.'))
                 ->required(),
             TextInput::make('mail_footer_text')
-                ->label('Footer tekst')
-                ->helperText('Laat leeg om automatisch "© jaar sitenaam" te gebruiken.'),
+                ->label(__('Footer tekst'))
+                ->helperText(__('Laat leeg om automatisch "© jaar sitenaam" te gebruiken.')),
         ])->statePath('data');
     }
 
@@ -94,7 +94,7 @@ class EmailSettingsPage extends Page implements HasSchemas
         }
 
         Notification::make()
-            ->title('E-mail instellingen opgeslagen')
+            ->title(__('E-mail instellingen opgeslagen'))
             ->success()
             ->send();
 
