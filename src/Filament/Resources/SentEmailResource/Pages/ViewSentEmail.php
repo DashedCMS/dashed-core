@@ -36,29 +36,29 @@ class ViewSentEmail extends ViewRecord
                     TextEntry::make('delivered_at')
                         ->label(__('Afgeleverd'))
                         ->dateTime()
-                        ->placeholder(__('-')),
+                        ->placeholder('-'),
                     TextEntry::make('opened_at')
                         ->label(__('Geopend'))
                         ->dateTime()
-                        ->placeholder(__('-')),
+                        ->placeholder('-'),
                     TextEntry::make('open_count')
                         ->label(__('Aantal opens')),
                     TextEntry::make('clicked_at')
                         ->label(__('Geklikt'))
                         ->dateTime()
-                        ->placeholder(__('-')),
+                        ->placeholder('-'),
                     TextEntry::make('click_count')
                         ->label(__('Aantal clicks')),
                     TextEntry::make('bounced_at')
                         ->label(__('Gebounced'))
                         ->dateTime()
-                        ->placeholder(__('-')),
+                        ->placeholder('-'),
                     TextEntry::make('bounce_reason')
                         ->label(__('Bounce-reden'))
-                        ->placeholder(__('-')),
+                        ->placeholder('-'),
                     TextEntry::make('attachments')
                         ->label(__('Bijlagen'))
-                        ->placeholder(__('-'))
+                        ->placeholder('-')
                         ->formatStateUsing(fn ($state): ?string => self::formatAttachmentState($state)),
                 ])
                 ->columns(2),

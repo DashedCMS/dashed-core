@@ -25,7 +25,7 @@ class ReviewsTable
                     ->sortable(),
 
                 TextColumn::make('stars')
-                    ->label(__('⭐'))
+                    ->label('⭐')
                     ->sortable(),
 
                 TextColumn::make('name')
