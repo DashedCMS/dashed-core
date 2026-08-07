@@ -18,7 +18,7 @@ class DocumentationOverviewPage extends Page
 
     protected static ?string $title = 'Documentatie';
 
-    protected static string | UnitEnum | null $navigationGroup = 'Overige';
+    protected static string | UnitEnum | null $navigationGroup = 'Systeem';
 
     protected static ?int $navigationSort = 100001;
 

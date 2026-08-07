@@ -18,7 +18,7 @@ use Dashed\DashedCore\Services\Summary\DailySummaryBuilder;
  */
 class DailySummaryPage extends Page
 {
-    protected static string | UnitEnum | null $navigationGroup = 'Overige';
+    protected static string | UnitEnum | null $navigationGroup = 'Systeem';
 
     protected static ?int $navigationSort = 5;
 

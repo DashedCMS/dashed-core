@@ -25,7 +25,7 @@ class ImageSettingsPage extends Page
 
     protected static ?string $navigationLabel = 'Afbeelding instellingen';
 
-    protected static string | UnitEnum | null $navigationGroup = 'Overige';
+    protected static string | UnitEnum | null $navigationGroup = 'Systeem';
 
     protected static ?string $title = 'Afbeelding instellingen';
 

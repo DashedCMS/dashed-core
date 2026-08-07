@@ -26,7 +26,7 @@ class HorizonDashboardPage extends Page
 
     protected static ?string $navigationLabel = 'Horizon';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Overige';
+    protected static string|UnitEnum|null $navigationGroup = 'Systeem';
 
     protected static ?int $navigationSort = 100000;
 

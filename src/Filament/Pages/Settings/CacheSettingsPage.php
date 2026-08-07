@@ -21,7 +21,7 @@ class CacheSettingsPage extends Page
 
     protected static ?string $navigationLabel = 'Cache instellingen';
 
-    protected static string | UnitEnum | null $navigationGroup = 'Overige';
+    protected static string | UnitEnum | null $navigationGroup = 'Systeem';
 
     protected static ?string $title = 'Cache instellingen';
 

@@ -31,7 +31,7 @@ class GeneralSettingsPage extends Page
 
     protected static ?string $navigationLabel = 'Algemene instellingen';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Overige';
+    protected static string|UnitEnum|null $navigationGroup = 'Systeem';
 
     protected static ?string $title = 'Algemene instellingen';
 
@@ -268,10 +268,10 @@ class GeneralSettingsPage extends Page
                 Select::make("cache_profile_{$site['id']}")
                     ->label('Cache-profiel')
                     ->options([
-                        'b2c'   => 'B2C (agressief cachen)',
-                        'b2b'   => 'B2B (per-klant, minimaal cachen)',
+                        'b2c' => 'B2C (agressief cachen)',
+                        'b2b' => 'B2B (per-klant, minimaal cachen)',
                         'mixed' => 'Gemengd (edge voor anoniem, bypass bij login)',
-                        'off'   => 'Uit',
+                        'off' => 'Uit',
                     ])
                     ->default('mixed')
                     ->helperText('Bepaalt hoe agressief deze site gecachet wordt in latere fases. Nu nog niet actief op response-niveau.')

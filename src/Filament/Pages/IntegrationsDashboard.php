@@ -16,9 +16,9 @@ use Dashed\DashedCore\Integrations\IntegrationHealthRunner;
  */
 class IntegrationsDashboard extends Page
 {
-    protected static string|UnitEnum|null $navigationGroup = 'Overige';
+    protected static string|UnitEnum|null $navigationGroup = 'Systeem';
 
-    protected static ?int $navigationSort = 99000;
+    protected static ?int $navigationSort = 2;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-puzzle-piece';
 

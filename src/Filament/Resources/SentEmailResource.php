@@ -18,7 +18,9 @@ class SentEmailResource extends Resource
 
     protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-envelope';
 
-    protected static string | UnitEnum | null $navigationGroup = 'Mail';
+    protected static string | UnitEnum | null $navigationGroup = 'Communicatie';
+
+    protected static ?int $navigationSort = 70;
 
     protected static ?string $navigationLabel = 'Verzonden mails';
 

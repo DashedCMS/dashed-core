@@ -15,9 +15,9 @@ class SettingsPage extends Page
     protected static ?string $navigationLabel = 'Instellingen';
     protected static ?string $title = 'Instellingen';
 
-    protected static string | UnitEnum | null $navigationGroup = 'Overige';
+    protected static string | UnitEnum | null $navigationGroup = 'Systeem';
 
-    protected static ?int $navigationSort = 100000;
+    protected static ?int $navigationSort = 1;
 
     protected string $view = 'dashed-core::settings.pages.settings';
 

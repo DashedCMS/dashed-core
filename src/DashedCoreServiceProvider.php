@@ -218,11 +218,12 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         \Dashed\DashedCore\Notifications\NotificationChannels::register('mail', 'E-mail');
         \Dashed\DashedCore\Notifications\NotificationChannels::register('telegram', 'Telegram');
 
-        cms()->registerNavigationGroup('Content', 10);
-        cms()->registerNavigationGroup('Gebruikers', 70);
-        cms()->registerNavigationGroup('Performance', 80);
-        cms()->registerNavigationGroup('Routes', 90);
-        cms()->registerNavigationGroup('Overige', 100);
+        cms()->registerNavigationGroup('Content', 30);
+        cms()->registerNavigationGroup('Communicatie', 35);
+        cms()->registerNavigationGroup('Gebruikers', 80);
+        // Beheer onderaan. Routes, Print queue en Overige zijn hierin opgegaan;
+        // Performance stond geregistreerd zonder dat een scherm die groep gebruikt.
+        cms()->registerNavigationGroup('Systeem', 95);
 
         // C4 first-pass: explicit Customsetting registrations. Promotes well-known
         // keys from auto-registered ("needs review") to explicit so the audit command

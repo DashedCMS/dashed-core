@@ -27,7 +27,7 @@ class SEOSettingsPage extends Page
 
     protected static ?string $navigationLabel = 'Meta data instellingen';
 
-    protected static string | UnitEnum | null $navigationGroup = 'Overige';
+    protected static string | UnitEnum | null $navigationGroup = 'Systeem';
 
     protected static ?string $title = 'Meta data instellingen';
 

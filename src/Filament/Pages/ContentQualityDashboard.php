@@ -5,20 +5,19 @@ namespace Dashed\DashedCore\Filament\Pages;
 use UnitEnum;
 use BackedEnum;
 use Filament\Pages\Page;
-use Illuminate\Support\Collection;
 use Dashed\DashedAi\Facades\Ai;
+use Illuminate\Support\Collection;
+use Dashed\DashedCore\Classes\Sites;
 use Dashed\DashedAi\Enums\AiCapability;
 use Dashed\DashedAi\Jobs\CreateAltTextForMediaItem;
-use Dashed\DashedCore\Classes\Sites;
-use Dashed\DashedCore\Models\Metadata;
-use Dashed\DashedCore\ContentQuality\ContentQualityScanner;
-use Dashed\DashedCore\ContentQuality\Jobs\GenerateMetaFieldForModel;
 use Dashed\DashedCore\ContentQuality\MetaFieldGenerator;
+use Dashed\DashedCore\ContentQuality\ContentQualityScanner;
 use RalphJSmit\Filament\MediaLibrary\Models\MediaLibraryItem;
+use Dashed\DashedCore\ContentQuality\Jobs\GenerateMetaFieldForModel;
 
 class ContentQualityDashboard extends Page
 {
-    protected static string|UnitEnum|null $navigationGroup = 'Overige';
+    protected static string|UnitEnum|null $navigationGroup = 'Systeem';
 
     protected static ?int $navigationSort = 50;
 
