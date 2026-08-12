@@ -50,12 +50,16 @@ class PostmarkEventHandler
         $mail->bounced_at = $mail->bounced_at ?? Carbon::now();
         $mail->bounce_reason = $payload['Description'] ?? ($payload['Details'] ?? null);
         $mail->save();
+
+        \Dashed\DashedCore\Events\SentEmailBouncedEvent::dispatch($mail, $payload);
     }
 
     protected function markComplained(SentEmail $mail): void
     {
         $mail->status = SentEmail::STATUS_COMPLAINED;
         $mail->save();
+
+        \Dashed\DashedCore\Events\SentEmailComplainedEvent::dispatch($mail);
     }
 
     protected function countOpen(SentEmail $mail): void
