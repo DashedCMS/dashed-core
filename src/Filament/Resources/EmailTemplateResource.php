@@ -133,6 +133,13 @@ class EmailTemplateResource extends Resource
         /** @var array<string, class-string<EmailBlock>> $registry */
         $registry = cms()->emailBlocks();
 
+        // Alleen blokken die transactioneel bedoeld zijn. Zonder dit zou een
+        // productraster uit de nieuwsbriefmodule opduiken in een
+        // wachtwoord-vergeten-mail zodra dat pakket geïnstalleerd is.
+        $registry = collect($registry)
+            ->filter(fn (string $class) => $class::inContext(EmailBlock::CONTEXT_TRANSACTIONAL))
+            ->all();
+
         $mailable = $record ? cms()->emailTemplateRegistry()->find($record->mailable_key) : null;
 
         if (! $mailable) {

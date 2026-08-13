@@ -7,6 +7,11 @@ use Filament\Forms\Components\Builder\Block;
 
 class TextBlock extends EmailBlock
 {
+    public static function contexts(): array
+    {
+        return [self::CONTEXT_TRANSACTIONAL, self::CONTEXT_NEWSLETTER];
+    }
+
     public static function key(): string
     {
         return 'text';
