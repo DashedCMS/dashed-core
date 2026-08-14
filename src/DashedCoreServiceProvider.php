@@ -58,6 +58,7 @@ use Dashed\DashedCore\Mail\EmailBlocks\TableBlock;
 use Dashed\DashedCore\Mail\EmailBlocks\SpacerBlock;
 use Dashed\DashedCore\Mail\EmailBlocks\ColumnsBlock;
 use Dashed\DashedCore\Mail\EmailBlocks\MediaTextBlock;
+use Dashed\DashedCore\Mail\EmailBlocks\CalloutBlock;
 use Dashed\DashedCore\Policies\NotFoundPagePolicy;
 use Dashed\DashedCore\Commands\MigrateDatabaseToV4;
 use Dashed\DashedCore\Livewire\Frontend\Auth\Login;
@@ -284,7 +285,8 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             ->emailBlock('order-summary', OrderSummaryBlock::class)
             ->emailBlock('spacer', SpacerBlock::class)
             ->emailBlock('columns', ColumnsBlock::class)
-            ->emailBlock('media-text', MediaTextBlock::class);
+            ->emailBlock('media-text', MediaTextBlock::class)
+            ->emailBlock('callout', CalloutBlock::class);
 
         // Builder-key voor packages die een sectie willen bijdragen aan de
         // admin samenvatting-mails. Initieel leeg zodat de key gevonden kan
