@@ -35,14 +35,14 @@ class NotFoundPageResource extends Resource
 
     protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-no-symbol';
 
-    protected static string | UnitEnum | null $navigationGroup = 'Systeem';
+    protected static string | UnitEnum | null $navigationGroup = 'SEO & site';
 
     protected static ?string $navigationLabel = 'Niet gevonden pagina hits';
 
     protected static ?string $label = 'Niet gevonden pagina hit';
 
     protected static ?string $pluralLabel = 'Niet gevonden pagina hits';
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 40;
 
     public static function form(Schema $schema): Schema
     {

@@ -27,14 +27,14 @@ class RedirectResource extends Resource
 
     protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-link';
 
-    protected static string | UnitEnum | null $navigationGroup = 'Systeem';
+    protected static string | UnitEnum | null $navigationGroup = 'SEO & site';
 
     protected static ?string $navigationLabel = 'Redirects';
 
     protected static ?string $label = 'Redirect';
 
     protected static ?string $pluralLabel = 'Redirects';
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 30;
 
     protected static bool $isGloballySearchable = false;
 

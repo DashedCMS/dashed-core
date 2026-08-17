@@ -228,7 +228,10 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         cms()->registerNavigationGroup('Content', 30);
         cms()->registerNavigationGroup('Communicatie', 35);
         cms()->registerNavigationGroup('Gebruikers', 80);
-        // Beheer onderaan. Routes, Print queue en Overige zijn hierin opgegaan;
+        // Sitescans, content-kwaliteit, redirects en 404-hits horen bij elkaar en
+        // stonden verspreid in Systeem.
+        cms()->registerNavigationGroup('SEO & site', 85);
+        // Beheer onderaan. Routes en Overige zijn hierin opgegaan;
         // Performance stond geregistreerd zonder dat een scherm die groep gebruikt.
         cms()->registerNavigationGroup('Systeem', 95);
 
