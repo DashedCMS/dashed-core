@@ -209,8 +209,24 @@ class Dashboard extends BaseDashboard
         $this->updateData();
     }
 
+    /**
+     * Het datumfilter bovenaan het dashboard is niet voor elk project nuttig:
+     * wie alleen naar de widgets kijkt, ziet er vooral een blok schermruimte in.
+     * Uitzetten laat de widgets gewoon draaien -- mount() vult $this->data nog
+     * steeds met de standaardperiode, alleen kan niemand die meer verschuiven.
+     * Standaard aan, zodat bestaande projecten niets merken.
+     */
+    public static function showsDateFilter(): bool
+    {
+        return (bool) Customsetting::get('dashboard_show_date_filter', null, true);
+    }
+
     public function filtersForm(Schema $schema): Schema
     {
+        if (! self::showsDateFilter()) {
+            return $schema->components([])->statePath('data');
+        }
+
         return $schema
             ->components([
                 Section::make()
