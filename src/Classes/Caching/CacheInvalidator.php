@@ -2,11 +2,11 @@
 
 namespace Dashed\DashedCore\Classes\Caching;
 
+use Dashed\DashedCore\Classes\Sites;
+use Illuminate\Support\Facades\Cache;
 use Dashed\DashedCore\Classes\CacheProfile;
 use Dashed\DashedCore\Classes\FragmentCache;
-use Dashed\DashedCore\Classes\Sites;
 use Dashed\DashedCore\Jobs\PurgeCloudflareJob;
-use Illuminate\Support\Facades\Cache;
 
 class CacheInvalidator
 {
@@ -23,7 +23,36 @@ class CacheInvalidator
         FragmentCache::flushTag('response:site:' . $siteId);
 
         if (CacheProfile::forSite($siteId)->edgeEnabled() && CloudflareConfig::for($siteId)->configured()) {
-            PurgeCloudflareJob::dispatch($siteId);
+            static::dispatchEdgePurge($siteId);
+        }
+    }
+
+    /**
+     * Dispatcht hooguit één zone-purge per site per venster.
+     *
+     * De origin-cache hierboven is goedkoop en per tag, maar CloudflarePurger
+     * purgt met purge_everything. Elke afzonderlijke save dispatchte voorheen
+     * zijn eigen purge, dus een reeks wijzigingen -- of een instelling die per
+     * bestelling wordt bijgewerkt -- leegde de hele zone keer op keer.
+     *
+     * De naloper zorgt dat de laatste wijziging binnen het venster alsnog landt;
+     * zonder die tweede ronde zou de edge stil verouderd blijven.
+     */
+    protected static function dispatchEdgePurge(string $siteId): void
+    {
+        $throttle = new EdgePurgeThrottle(Cache::store());
+
+        switch ($throttle->decide($siteId)) {
+            case EdgePurgeThrottle::NOW:
+                PurgeCloudflareJob::dispatch($siteId);
+
+                break;
+
+            case EdgePurgeThrottle::TRAILING:
+                PurgeCloudflareJob::dispatch($siteId)
+                    ->delay(now()->addSeconds($throttle->delaySeconds()));
+
+                break;
         }
     }
 

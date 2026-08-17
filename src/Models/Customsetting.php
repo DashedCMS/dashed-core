@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Dashed\DashedCore\Classes\Caching\CacheInvalidator;
+use Dashed\DashedCore\Classes\Caching\PurgeDecision;
 
 class Customsetting extends Model
 {
@@ -67,11 +68,36 @@ class Customsetting extends Model
             // for every site, so stale logo/webmaster-tags/site-name are never
             // served after a Customsetting change (closes the Fase-1 staleness
             // gap; multi-site: secondary sites are now purged too).
-            if (class_exists(CacheInvalidator::class)) {
-                foreach (Sites::getSites() as $site) {
-                    CacheInvalidator::flushFrontendShared($site['id']);
-                    CacheInvalidator::flushSite($site['id']);
-                }
+            //
+            // Twee poortwachters ervoor, want dit dispatcht een volledige
+            // Cloudflare zone-purge per site:
+            //
+            // 1. wasChanged(): set() gebruikt updateOrCreate, en Eloquent vuurt
+            //    saved ook als het model niet dirty was. Dezelfde waarde
+            //    wegschrijven purgede dus de hele zone zonder dat er iets
+            //    veranderde.
+            // 2. isOperationalSetting(): hartslagen van integratiechecks,
+            //    verbindingsfouten en tellers worden per probe, per bestelling
+            //    of per betaling weggeschreven en staan op geen enkele pagina.
+            //
+            // De cache-forgets hierboven blijven wel altijd draaien: die zijn
+            // goedkoop, en een operationele waarde moet wel meteen vers
+            // uitleesbaar zijn.
+            if (! class_exists(CacheInvalidator::class)) {
+                return;
+            }
+
+            if (! $customsetting->wasChanged() && ! $customsetting->wasRecentlyCreated) {
+                return;
+            }
+
+            if (PurgeDecision::isOperationalSetting($customsetting->name)) {
+                return;
+            }
+
+            foreach (Sites::getSites() as $site) {
+                CacheInvalidator::flushFrontendShared($site['id']);
+                CacheInvalidator::flushSite($site['id']);
             }
         });
     }
