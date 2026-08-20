@@ -96,6 +96,29 @@ class UserResource extends Resource
         return $options;
     }
 
+    /**
+     * Of het rollen-veld zichtbaar is bij deze combinatie.
+     *
+     * Het veld hing aan role === 'admin', en die rol wordt sinds de
+     * security-hardening niet meer uitgedeeld. Daarmee was er geen enkele weg
+     * meer om een nieuwe beheerder beperkte rechten te geven: de enige
+     * kiesbare back-office rol is superadmin, en die komt via Gate::before
+     * overal doorheen. Een gebruiker met gekoppelde rollen mag het paneel in
+     * (zie User::canAccessPanel) en krijgt precies de extra_permissions van die
+     * rollen, dus dit is de plek waar een beperkte beheerder gemaakt wordt.
+     *
+     * Bij superadmin blijft het veld weg: die heeft alles al, en een lijst die
+     * niets doet leest als een lijst die wel iets doet.
+     *
+     * Rollen uitdelen is rechten uitdelen, dus het staat achter dezelfde deur
+     * als de back-office rol zelf. Zonder die grendel kan een beheerder met
+     * gebruikersrechten zichzelf elke bevoegdheid toekennen.
+     */
+    public static function canSeeRolesField(?string $currentRole, ?string $selectedRole): bool
+    {
+        return static::canAssignBackOfficeRole($currentRole) && $selectedRole !== 'superadmin';
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -132,8 +155,8 @@ class UserResource extends Resource
                             ->multiple()
                             ->relationship('roles', 'name')
                             ->preload()
-                            ->visible(fn (Get $get) => $get('role') === 'admin')
-                            ->helperText(__('Wijs rollen toe om te bepalen tot welke onderdelen deze gebruiker toegang heeft.')),
+                            ->visible(fn (Get $get) => static::canSeeRolesField(auth()->user()?->role, $get('role')))
+                            ->helperText(__('Wijs rollen toe om te bepalen tot welke onderdelen deze gebruiker toegang heeft. Een gebruiker met rollen mag de beheeromgeving in, ook zonder beheerdersrol.')),
 
                         TextInput::make('password')
                             ->label(__('Wachtwoord'))
