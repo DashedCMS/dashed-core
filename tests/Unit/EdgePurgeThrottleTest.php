@@ -80,3 +80,41 @@ it('schakelt zichzelf uit in plaats van alles te blokkeren bij een leeg venster'
 it('rapporteert de vertraging waarmee de naloper ingepland moet worden', function () {
     expect(throttle(window: 45)->delaySeconds())->toBe(45);
 });
+
+/**
+ * Het venster stond op 30 seconden: hooguit twee zone-purges per halve minuut,
+ * dus nog altijd een paar honderd per uur als er de hele dag door producten en
+ * instellingen worden weggeschreven. Cloudflare purgt met purge_everything, dus
+ * elke purge kost de hele zone zijn cache. Vijf minuten is de nieuwe standaard;
+ * de eerste wijziging gaat nog steeds meteen door, alleen een reeks erna wacht.
+ */
+it('knijpt standaard af op een venster van vijf minuten', function () {
+    expect(EdgePurgeThrottle::WINDOW_SECONDS)->toBe(300)
+        ->and((new EdgePurgeThrottle(new Repository(new ArrayStore())))->delaySeconds())->toBe(300);
+});
+
+/**
+ * De configuratiewaarde komt uit een gepubliceerd config-bestand dat in oudere
+ * projecten de sleutel nog niet heeft. Die krijgen dus null binnen en moeten op
+ * de standaard terugvallen in plaats van op een venster van 0 -- dat laatste
+ * zou de throttle uitschakelen en precies de storm terugbrengen.
+ */
+it('valt terug op de standaard bij een ontbrekende of onzinnige instelling', function () {
+    expect(EdgePurgeThrottle::windowFromConfig(null))->toBe(300)
+        ->and(EdgePurgeThrottle::windowFromConfig(''))->toBe(300)
+        ->and(EdgePurgeThrottle::windowFromConfig('geen getal'))->toBe(300)
+        ->and(EdgePurgeThrottle::windowFromConfig(-5))->toBe(300);
+});
+
+it('neemt een ingestelde vensterlengte over', function () {
+    expect(EdgePurgeThrottle::windowFromConfig(60))->toBe(60)
+        ->and(EdgePurgeThrottle::windowFromConfig('120'))->toBe(120);
+});
+
+/**
+ * Nul is een bewuste keuze -- "niet knijpen" -- en geen ontbrekende waarde, dus
+ * die moet blijven staan; decide() heeft daar zijn eigen guard voor.
+ */
+it('respecteert een venster van nul als uitschakelaar', function () {
+    expect(EdgePurgeThrottle::windowFromConfig(0))->toBe(0);
+});

@@ -40,7 +40,10 @@ class CacheInvalidator
      */
     protected static function dispatchEdgePurge(string $siteId): void
     {
-        $throttle = new EdgePurgeThrottle(Cache::store());
+        $throttle = new EdgePurgeThrottle(
+            Cache::store(),
+            EdgePurgeThrottle::windowFromConfig(config('dashed-core.edge_purge.window_seconds')),
+        );
 
         switch ($throttle->decide($siteId)) {
             case EdgePurgeThrottle::NOW:

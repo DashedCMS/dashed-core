@@ -28,6 +28,14 @@ return [
 
     'response_cache_enabled' => env('RESPONSE_CACHE_ENABLED', false),
 
+    'edge_purge' => [
+        // Minimaal aantal seconden tussen twee Cloudflare zone-purges per site.
+        // Binnen een venster gaat de eerste purge meteen door en volgt er hooguit
+        // één naloper, zodat de laatste wijziging alsnog landt. Op 0 zetten
+        // schakelt de throttle uit; elke wijziging purgt dan weer de hele zone.
+        'window_seconds' => (int) env('DASHED_EDGE_PURGE_WINDOW_SECONDS', 300),
+    ],
+
     'site_theme' => env('SITE_THEME', 'dashed'),
     'site_id' => env('DASHED_SITE_ID'),
 

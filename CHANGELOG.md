@@ -8,6 +8,11 @@ All notable changes to `Dashed core` will be documented in this file.
 - Webhook idempotency middleware + BaseJob trait + replay command. See docs/webhook-idempotency.md.
 - Integrations dashboard, last-edited column, admin stat widgets with drilldown. See docs/admin-overview.md.
 
+## v4.41.0 - 2026-08-25
+
+### Changed
+- **Cloudflare zone-purges geknepen van maximaal twee per 30 seconden naar twee per 5 minuten.** Het venster van `EdgePurgeThrottle` stond op 30 seconden, wat neerkomt op ~240 zone-purges per uur bij een shop die de hele dag door producten, voorraden en instellingen wegschrijft. Omdat er met `purge_everything` wordt gepurged, kost elke ronde de hele zone zijn cache. De standaard is nu 300 seconden (~24 per uur) en per project instelbaar via `dashed-core.edge_purge.window_seconds` (`DASHED_EDGE_PURGE_WINDOW_SECONDS`). De eerste wijziging in een venster gaat nog steeds meteen door; alleen de naloper wacht langer. Projecten met een ouder gepubliceerd config-bestand missen de sleutel en vallen terug op 300 in plaats van op 0 — 0 zou de throttle uitschakelen.
+
 ## v4.31.4 - 2026-08-05
 
 ### Fixed

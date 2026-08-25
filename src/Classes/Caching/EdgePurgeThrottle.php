@@ -17,6 +17,13 @@ use Illuminate\Contracts\Cache\Repository;
  * één naloper. Die naloper is er niet voor de netheid: zonder hem zou de laatste
  * wijziging binnen het venster nooit gepurged worden en bleef de edge stil
  * verouderd, precies wat de purge moest voorkomen.
+ *
+ * Het venster staat standaard op vijf minuten, en is per project te zetten met
+ * `dashed-core.edge_purge.window_seconds`. Bij 30 seconden bleef een shop die de
+ * hele dag producten en instellingen wegschrijft nog altijd op honderden purges
+ * per uur zitten; met vijf minuten liggen er hooguit 24 in een uur. De prijs is
+ * dat een reeks wijzigingen pas na afloop van het venster volledig op de edge
+ * staat -- de eerste wijziging zelf gaat nog steeds meteen door.
  */
 class EdgePurgeThrottle
 {
@@ -24,7 +31,7 @@ class EdgePurgeThrottle
     public const TRAILING = 'trailing';
     public const SKIP = 'skip';
 
-    public const WINDOW_SECONDS = 30;
+    public const WINDOW_SECONDS = 300;
 
     public function __construct(
         protected readonly Repository $cache,
@@ -60,6 +67,24 @@ class EdgePurgeThrottle
         }
 
         return self::SKIP;
+    }
+
+    /**
+     * Vertaalt de ingestelde vensterlengte naar een bruikbaar aantal seconden.
+     *
+     * Projecten met een ouder gepubliceerd config-bestand kennen de sleutel niet
+     * en krijgen hier null binnen; die horen op de standaard terug te vallen en
+     * niet op 0, want 0 schakelt de throttle uit en brengt precies de purge-storm
+     * terug die hij moest stoppen. Een expliciete 0 blijft wél staan: dat is een
+     * bewuste uitschakelaar.
+     */
+    public static function windowFromConfig(mixed $configured): int
+    {
+        if (! is_numeric($configured) || (int) $configured < 0) {
+            return self::WINDOW_SECONDS;
+        }
+
+        return (int) $configured;
     }
 
     public function delaySeconds(): int
