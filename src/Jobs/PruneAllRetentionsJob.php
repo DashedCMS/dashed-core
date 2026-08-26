@@ -38,6 +38,17 @@ class PruneAllRetentionsJob implements ShouldQueue
                 continue;
             }
 
+            // Een overgeslagen entry zonder fout heeft geen rijen geteld omdat
+            // de tabel hier niet bestaat, niet omdat er niets op te ruimen
+            // viel. Zonder dit onderscheid leest "0 rijen verwijderd" op een
+            // installatie zonder dat pakket als een geslaagde, lege opruiming
+            // in plaats van als "dit logboek bestaat hier niet".
+            if ($regel['overgeslagen']) {
+                Log::info('Eerste opruimronde: ' . $regel['label'] . ' overgeslagen: ' . $regel['reden']);
+
+                continue;
+            }
+
             Log::info('Eerste opruimronde: ' . $regel['label'] . ', ' . $regel['aantal'] . ' rijen verwijderd.');
         }
     }
