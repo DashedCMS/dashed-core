@@ -42,6 +42,8 @@ class PostmarkEventHandler
         $mail->status = SentEmail::STATUS_DELIVERED;
         $mail->delivered_at = $mail->delivered_at ?? Carbon::now();
         $mail->save();
+
+        \Dashed\DashedCore\Events\SentEmailDeliveredEvent::dispatch($mail);
     }
 
     protected function markBounced(SentEmail $mail, array $payload): void
