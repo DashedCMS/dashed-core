@@ -93,7 +93,7 @@ class CleanupSettingsPage extends Page implements HasSchemas
                     // honderd dagen is weinig.
                     $inDagen = $termijn->eenheidNaam() === 'dagen';
 
-                    $velden[] = TextInput::make($this->veldnaam($termijn))
+                    $veld = TextInput::make($this->veldnaam($termijn))
                         ->label($termijn->labelTekst())
                         ->helperText($termijn->uitlegTekst())
                         ->placeholder((string) $termijn->standaardDagen())
@@ -102,10 +102,23 @@ class CleanupSettingsPage extends Page implements HasSchemas
                         ->minValue(1)
                         ->maxValue($inDagen ? 3650 : 100)
                         ->required();
+
+                    if ($termijn->minstensTermijn() !== null) {
+                        $andere = $this->vindTermijn($termijn->minstensTermijn());
+
+                        // Wijst de relatie naar een sleutel die niet bestaat (een
+                        // half aangemeld pakket), dan gewoon geen regel: de
+                        // instellingenpagina mag daar niet op stuklopen.
+                        if ($andere !== null) {
+                            $veld = $veld->gte($this->veldnaam($andere));
+                        }
+                    }
+
+                    $velden[] = $veld;
                 }
             }
 
-            $secties[] = Section::make($pakket)->schema($velden)->columns(2);
+            $secties[] = Section::make($entries[0]->pakketLabel())->schema($velden)->columns(2);
         }
 
         return $schema->schema($secties)->statePath('data');
@@ -140,6 +153,21 @@ class CleanupSettingsPage extends Page implements HasSchemas
         return collect(cms()->retentionRegistry()->alles())
             ->flatMap(fn ($retention) => $retention->termijnen())
             ->all();
+    }
+
+    /**
+     * Zoekt een termijn op zijn eigen Termijn::sleutel() (niet de
+     * instellingssleutel), voor de minstens()-relatie tussen twee termijnen.
+     */
+    protected function vindTermijn(string $sleutel): ?Termijn
+    {
+        foreach ($this->termijnen() as $termijn) {
+            if ($termijn->sleutel() === $sleutel) {
+                return $termijn;
+            }
+        }
+
+        return null;
     }
 
     /** @return array<string, array<int, \Dashed\DashedCore\Retention\Retention>> */

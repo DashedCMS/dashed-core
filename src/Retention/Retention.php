@@ -17,6 +17,8 @@ final class Retention
 
     private string $pakket = 'dashed-core';
 
+    private string|Closure|null $pakketLabel = null;
+
     private ?string $tabel = null;
 
     private string $sleutelkolom = 'id';
@@ -44,9 +46,15 @@ final class Retention
         return $this;
     }
 
-    public function pakket(string $pakket): self
+    /**
+     * $pakket is de slug waarop het scherm groepeert (stabiel, nooit vertaald).
+     * $label is wat de sectiekop toont; zonder label valt de kop terug op de
+     * slug, wat de vorige situatie was voor pakketten die nog niets opgeven.
+     */
+    public function pakket(string $pakket, string|Closure|null $label = null): self
     {
         $this->pakket = $pakket;
+        $this->pakketLabel = $label;
 
         return $this;
     }
@@ -110,6 +118,15 @@ final class Retention
     public function pakketNaam(): string
     {
         return $this->pakket;
+    }
+
+    public function pakketLabel(): string
+    {
+        if ($this->pakketLabel === null) {
+            return $this->pakket;
+        }
+
+        return $this->pakketLabel instanceof Closure ? (string) ($this->pakketLabel)() : $this->pakketLabel;
     }
 
     public function tabelNaam(): ?string

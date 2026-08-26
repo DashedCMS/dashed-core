@@ -24,6 +24,8 @@ final class Termijn
 
     private string $eenheid = 'dagen';
 
+    private ?string $minstens = null;
+
     private function __construct(
         private readonly string $sleutel,
         private readonly int|Closure $standaard,
@@ -84,6 +86,28 @@ final class Termijn
     public function eenheidNaam(): string
     {
         return $this->eenheid;
+    }
+
+    /**
+     * Legt vast dat deze termijn minstens zo lang moet zijn als een andere
+     * termijn, zoals de harde meldingentermijn die nooit korter mag zijn dan
+     * de termijn na lezen. Andersom zou een net gelezen melding eerder
+     * verdwijnen dan een die niemand ooit opende.
+     *
+     * De sleutel verwijst naar de andere Termijn::sleutel(), niet naar zijn
+     * instellingssleutel: die laatste is een implementatiedetail van hoe hij
+     * wordt opgeslagen en kan per omgeving verschillen.
+     */
+    public function minstens(string $andereTermijnSleutel): self
+    {
+        $this->minstens = $andereTermijnSleutel;
+
+        return $this;
+    }
+
+    public function minstensTermijn(): ?string
+    {
+        return $this->minstens;
     }
 
     public function sleutel(): string
