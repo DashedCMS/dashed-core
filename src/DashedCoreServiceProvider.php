@@ -139,6 +139,10 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         // Content-quality registry: package SPs call cms()->registerContentQualityCheck(...)
         // and cms()->registerContentQualityModel(...) in bootingPackage().
         $this->app->singleton(\Dashed\DashedCore\ContentQuality\ContentQualityRegistry::class);
+
+        // Retention-registry: package SPs melden hun opruimbare tabellen aan via
+        // cms()->registerRetention(...) in bootingPackage().
+        $this->app->singleton(\Dashed\DashedCore\Retention\RetentionRegistry::class);
     }
 
     public function packageBooted()

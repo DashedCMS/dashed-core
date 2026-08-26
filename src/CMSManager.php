@@ -608,6 +608,18 @@ class CMSManager
         return $this;
     }
 
+    public function retentionRegistry(): \Dashed\DashedCore\Retention\RetentionRegistry
+    {
+        return app(\Dashed\DashedCore\Retention\RetentionRegistry::class);
+    }
+
+    public function registerRetention(\Dashed\DashedCore\Retention\Retention $retention): self
+    {
+        $this->retentionRegistry()->registreer($retention);
+
+        return $this;
+    }
+
     /**
      * Register a recommendation strategy. Lives in dashed-ecommerce-core so
      * dashed-core stays lazily coupled - we use a FQN string + class_exists
