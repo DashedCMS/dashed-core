@@ -136,18 +136,35 @@ final class Termijn
     }
 
     /**
-     * Een termijn van nul of lager zou alles verwijderen tot en met wat er
+     * De canonieke lezer van de ingestelde waarde, in de eenheid van deze
+     * termijn (zie eenheid()). Voor de meeste termijnen zijn dat dagen, maar
+     * niet voor allemaal: sitescans tellen scans. Gebruik deze naam waar de
+     * eenheid uitmaakt of niet op voorhand dagen is, zodat er niet per
+     * ongeluk "dagen" gelezen wordt waar het een ander soort telling is.
+     *
+     * Een waarde van nul of lager zou alles verwijderen tot en met wat er
      * zojuist binnenkwam. Dat is nooit wat iemand met een leeg of stukgetypt
      * veld bedoelt, dus valt hij dan terug op de standaard.
      */
-    public function dagen(): int
+    public function waarde(): int
     {
         $standaard = $this->standaardDagen();
         // Customsetting::get() accepteert null|string|array als standaard; door
         // strict_types hierboven moet het gehele getal dus als string mee.
-        $dagen = (int) Customsetting::get($this->instellingssleutelNaam(), null, (string) $standaard);
+        $waarde = (int) Customsetting::get($this->instellingssleutelNaam(), null, (string) $standaard);
 
-        return $dagen >= 1 ? $dagen : $standaard;
+        return $waarde >= 1 ? $waarde : $standaard;
+    }
+
+    /**
+     * Dunne alias van waarde(). Gebruik dagen() waar de eenheid van deze
+     * termijn daadwerkelijk dagen is, dat leest het duidelijkst op de
+     * aanroepplek. Gebruik waarde() waar de eenheid iets anders is (zoals
+     * scans) of niet vaststaat.
+     */
+    public function dagen(): int
+    {
+        return $this->waarde();
     }
 
     public function labelTekst(): string
