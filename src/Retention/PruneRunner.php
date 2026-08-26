@@ -55,7 +55,7 @@ class PruneRunner
         // cijfers die de haak moest veiligstellen zijn dan al weg.
         if ($haak = $retention->voorafHaak()) {
             try {
-                $haak($this->vroegsteGrens($retention));
+                $haak($this->dekkingsGrens($retention));
             } catch (Throwable $e) {
                 report($e);
 
@@ -95,12 +95,16 @@ class PruneRunner
     }
 
     /**
-     * De haak krijgt de vroegste grens van alle termijnen mee: alles ouder dan
-     * dat gaat sowieso weg, dus dat is wat er veiliggesteld moet zijn.
+     * De grens waar alles wat verdwijnt vóór ligt: de kortste termijn, niet de
+     * langste. Een tabel met meerdere termijnen (`notifications` bijvoorbeeld,
+     * veertien dagen na lezen en zestig dagen na aanmaken) verliest al rijen
+     * zodra de eerste, kortste termijn ze raakt. Neem je de langste termijn,
+     * dan ligt die grens verder terug dan wat de kortste termijn al opruimt,
+     * en heeft de haak niet alles veiliggesteld wat zojuist verdween.
      */
-    protected function vroegsteGrens(Retention $retention): Carbon
+    protected function dekkingsGrens(Retention $retention): Carbon
     {
-        $dagen = collect($retention->termijnen())->map(fn (Termijn $t) => $t->dagen())->max() ?? 0;
+        $dagen = collect($retention->termijnen())->map(fn (Termijn $t) => $t->dagen())->min() ?? 0;
 
         return Carbon::now()->subDays((int) $dagen);
     }
