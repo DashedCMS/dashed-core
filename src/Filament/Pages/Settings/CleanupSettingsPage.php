@@ -1,0 +1,163 @@
+<?php
+
+namespace Dashed\DashedCore\Filament\Pages\Settings;
+
+use UnitEnum;
+use Filament\Pages\Page;
+use Filament\Schemas\Schema;
+use Dashed\DashedCore\Classes\Sites;
+use Dashed\DashedCore\Retention\Termijn;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Contracts\HasSchemas;
+use Dashed\DashedCore\Models\Customsetting;
+use Dashed\DashedCore\Traits\HasSettingsPermission;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+
+/**
+ * De bewaartermijnen van elke tabel die zichzelf via het bewaartermijnenregister
+ * heeft aangemeld. Het veld staat op de instellingssleutel van de termijn, dus
+ * één termijn levert precies één veld op, gegroepeerd per pakket.
+ */
+class CleanupSettingsPage extends Page implements HasSchemas
+{
+    use InteractsWithSchemas;
+    use HasSettingsPermission;
+
+    public const DEFAULT_ACTIVITY_LOG_DAYS = 90;
+
+    public const DEFAULT_NOTIFICATIONS_READ_DAYS = 14;
+
+    public const DEFAULT_NOTIFICATIONS_DAYS = 60;
+
+    protected static bool $shouldRegisterNavigation = true;
+
+    protected static string|UnitEnum|null $navigationGroup = 'Systeem';
+
+    protected static ?string $title = 'Opschonen';
+
+    protected string $view = 'dashed-core::settings.pages.default-settings';
+
+    public array $data = [];
+
+    public static function activityLogRetentionDays(): int
+    {
+        return self::days('activity_log_retention_days', self::DEFAULT_ACTIVITY_LOG_DAYS);
+    }
+
+    public static function notificationsReadRetentionDays(): int
+    {
+        return self::days('notifications_read_retention_days', self::DEFAULT_NOTIFICATIONS_READ_DAYS);
+    }
+
+    public static function notificationsRetentionDays(): int
+    {
+        return self::days('notifications_retention_days', self::DEFAULT_NOTIFICATIONS_DAYS);
+    }
+
+    /**
+     * Een termijn van nul of minder zou alles opruimen tot en met wat er zojuist
+     * binnenkwam. Dat is nooit de bedoeling van een leeg of stukgetypt veld, dus
+     * valt hij dan terug op de standaard.
+     */
+    protected static function days(string $name, int $default): int
+    {
+        $days = (int) Customsetting::get($name, null, $default);
+
+        return $days >= 1 ? $days : $default;
+    }
+
+    public function mount(): void
+    {
+        $waarden = [];
+
+        foreach ($this->termijnen() as $termijn) {
+            $waarden[$this->veldnaam($termijn)] = $termijn->dagen();
+        }
+
+        $this->form->fill($waarden);
+    }
+
+    public function form(Schema $schema): Schema
+    {
+        $secties = [];
+
+        foreach ($this->perPakket() as $pakket => $entries) {
+            $velden = [];
+
+            foreach ($entries as $retention) {
+                foreach ($retention->termijnen() as $termijn) {
+                    // Een termijn in scans heeft een heel andere schaal dan
+                    // een termijn in dagen: honderd scans bewaren is veel,
+                    // honderd dagen is weinig.
+                    $inDagen = $termijn->eenheidNaam() === 'dagen';
+
+                    $velden[] = TextInput::make($this->veldnaam($termijn))
+                        ->label($termijn->labelTekst())
+                        ->helperText($termijn->uitlegTekst())
+                        ->placeholder((string) $termijn->standaardDagen())
+                        ->suffix($termijn->eenheidNaam())
+                        ->numeric()
+                        ->minValue(1)
+                        ->maxValue($inDagen ? 3650 : 100)
+                        ->required();
+                }
+            }
+
+            $secties[] = Section::make($pakket)->schema($velden)->columns(2);
+        }
+
+        return $schema->schema($secties)->statePath('data');
+    }
+
+    public function submit(): void
+    {
+        $formData = $this->form->getState();
+
+        // Een termijn geldt per installatie, niet per site: notifications,
+        // activity_log en failed_jobs kennen helemaal geen site. Daarom
+        // dezelfde waarde naar elke site, zoals deze pagina dat altijd al deed.
+        foreach (Sites::getSites() as $site) {
+            foreach ($this->termijnen() as $termijn) {
+                $naam = $this->veldnaam($termijn);
+
+                if (array_key_exists($naam, $formData)) {
+                    Customsetting::set($termijn->instellingssleutelNaam(), (int) $formData[$naam], $site['id']);
+                }
+            }
+        }
+
+        Notification::make()
+            ->title(__('De opschoon instellingen zijn opgeslagen'))
+            ->success()
+            ->send();
+    }
+
+    /** @return array<int, Termijn> */
+    protected function termijnen(): array
+    {
+        return collect(cms()->retentionRegistry()->alles())
+            ->flatMap(fn ($retention) => $retention->termijnen())
+            ->all();
+    }
+
+    /** @return array<string, array<int, \Dashed\DashedCore\Retention\Retention>> */
+    protected function perPakket(): array
+    {
+        return collect(cms()->retentionRegistry()->alles())
+            ->groupBy(fn ($retention) => $retention->pakketNaam())
+            ->map->all()
+            ->all();
+    }
+
+    /**
+     * De veldnaam is gelijk aan de instellingssleutel, maar een sleutel met een
+     * punt erin (print_queue.job_retention_days) zou Filament als geneste
+     * staat lezen. Daarom de punt vervangen.
+     */
+    protected function veldnaam(Termijn $termijn): string
+    {
+        return str_replace('.', '__', $termijn->instellingssleutelNaam());
+    }
+}
