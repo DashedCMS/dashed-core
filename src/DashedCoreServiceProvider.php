@@ -1471,6 +1471,7 @@ MARKDOWN,
                 \Dashed\DashedCore\Commands\CheckIntegrationsHealth::class,
                 RebuildSearchIndexCommand::class,
                 \Dashed\DashedCore\Commands\PruneSentEmailsCommand::class,
+                \Dashed\DashedCore\Commands\PruneCommand::class,
             ]);
 
     }
