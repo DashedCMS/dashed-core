@@ -6,6 +6,7 @@ namespace Dashed\DashedCore\Retention;
 
 use Throwable;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Schema;
 use Dashed\DashedCore\Retention\Contracts\Opruimer;
 
 /**
@@ -20,7 +21,7 @@ class PruneRunner
     }
 
     /**
-     * @return array<int, array{sleutel: string, label: string, aantal: int, fout: ?string, overgeslagen: bool}>
+     * @return array<int, array{sleutel: string, label: string, aantal: int, fout: ?string, overgeslagen: bool, reden: ?string}>
      */
     public function draai(?string $alleen, int $portie, bool $droog): array
     {
@@ -38,7 +39,7 @@ class PruneRunner
     }
 
     /**
-     * @return array{sleutel: string, label: string, aantal: int, fout: ?string, overgeslagen: bool}
+     * @return array{sleutel: string, label: string, aantal: int, fout: ?string, overgeslagen: bool, reden: ?string}
      */
     protected function draaiEen(Retention $retention, int $portie, bool $droog): array
     {
@@ -48,11 +49,26 @@ class PruneRunner
             'aantal' => 0,
             'fout' => null,
             'overgeslagen' => false,
+            'reden' => null,
         ];
+
+        // Niet elk pakket staat op elke installatie, en deze monorepo zelf
+        // heeft ook geen migratie voor `failed_jobs`. Een tabel die ontbreekt
+        // is geen fout: dan bestaat dat logboek hier gewoon niet. Alleen
+        // getoetst als de entry überhaupt een tabel opgeeft; een entry met
+        // een eigen opruimer en zonder tabel heeft niets om te controleren en
+        // wordt dus nooit om deze reden overgeslagen.
+        $tabel = $retention->tabelNaam();
+
+        if ($tabel !== null && ! Schema::hasTable($tabel)) {
+            return [...$regel, 'overgeslagen' => true, 'reden' => 'tabel bestaat niet op deze installatie'];
+        }
 
         // De haak draait voor de eerste verwijdering. Faalt hij, dan blijft
         // alles staan: half opruimen is erger dan niet opruimen, want de
-        // cijfers die de haak moest veiligstellen zijn dan al weg.
+        // cijfers die de haak moest veiligstellen zijn dan al weg. Dit is wel
+        // een fout: de tabel bestaat wel, maar iets in de eigen logica van de
+        // haak liep stuk.
         if ($haak = $retention->voorafHaak()) {
             try {
                 $haak($this->dekkingsGrens($retention));

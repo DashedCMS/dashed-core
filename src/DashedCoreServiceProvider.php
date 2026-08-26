@@ -48,6 +48,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Guava\FilamentIconPicker\Forms\IconPicker;
 use Dashed\DashedCore\Commands\CreateAdminUser;
 use Dashed\DashedCore\Mail\NewAdminAccountMail;
+use Dashed\DashedCore\Retention\ExportsOpruimer;
 use Dashed\DashedCore\Retention\SleutelOpruimer;
 use Dashed\DashedCore\Commands\CleanupOldExports;
 use Dashed\DashedCore\Commands\SyncGoogleReviews;
@@ -1129,6 +1130,11 @@ MARKDOWN,
                 ->label(__('Exports'))
                 ->pakket('dashed-core', __('Systeem'))
                 ->tabel('dashed__exports')
+                // Niet de generieke TabelOpruimer: die verwijdert rechtstreeks in
+                // de database en slaat daarmee Export::deleting over, de listener
+                // die het bestand van de opslag haalt. Zonder deze eigen opruimer
+                // blijft elk opgeruimd exportbestand permanent op de opslag staan.
+                ->opruimer(new ExportsOpruimer())
                 ->termijn(
                     Termijn::make('exports', 365, 'created_at')
                         ->label(__('Exports bewaren (dagen)'))

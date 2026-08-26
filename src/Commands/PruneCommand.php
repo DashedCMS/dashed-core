@@ -39,8 +39,17 @@ class PruneCommand extends Command
 
         foreach ($uitkomst as $regel) {
             if ($regel['overgeslagen']) {
-                $fouten++;
-                $this->warn($regel['label'] . ': overgeslagen, ' . $regel['fout']);
+                // Een overslag om een echte fout (de vooraf-haak liep stuk) telt
+                // mee als mislukking: daar is iets kapot. Een overslag om een
+                // ontbrekende tabel (`reden` gevuld, `fout` leeg) is dat niet: op
+                // deze installatie bestaat dat logboek gewoon niet, en dat mag de
+                // dagelijkse cron niet laten falen.
+                if ($regel['fout'] !== null) {
+                    $fouten++;
+                    $this->warn($regel['label'] . ': overgeslagen, ' . $regel['fout']);
+                } else {
+                    $this->line($regel['label'] . ': overgeslagen, ' . ($regel['reden'] ?? ''));
+                }
 
                 continue;
             }
