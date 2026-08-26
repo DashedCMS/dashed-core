@@ -2,30 +2,24 @@
 
 namespace Dashed\DashedCore\Commands;
 
-use Illuminate\Support\Carbon;
 use Illuminate\Console\Command;
-use Dashed\DashedCore\Models\SentEmail;
 
+/**
+ * Verouderd: verzonden e-mails staan aangemeld in het bewaartermijnenregister
+ * en worden nu opgeruimd door dashed:prune. Dit command blijft bestaan als
+ * alias, zodat een bestaande cronregel op een productieserver niet in één
+ * klap kapot gaat.
+ */
 class PruneSentEmailsCommand extends Command
 {
     protected $signature = 'dashed:prune-sent-emails';
 
-    protected $description = 'Verwijder verzonden e-mails ouder dan de geconfigureerde bewaarperiode.';
+    protected $description = 'Verouderd. Gebruik dashed:prune. Verwijder verzonden e-mails ouder dan de geconfigureerde bewaarperiode.';
 
     public function handle(): int
     {
-        $days = (int) config('dashed-core.sent_emails.retention_days', 90);
-
-        if ($days < 1) {
-            $days = 90;
-        }
-
-        $cutoff = Carbon::now()->subDays($days);
-
-        $count = SentEmail::olderThan($cutoff)->delete();
-
-        $this->info("{$count} verzonden e-mail(s) ouder dan {$days} dagen verwijderd.");
-
-        return self::SUCCESS;
+        return $this->call('dashed:prune', [
+            '--only' => 'sent_emails',
+        ]);
     }
 }

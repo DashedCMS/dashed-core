@@ -22,6 +22,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\LaravelPackageTools\Package;
+use Dashed\DashedCore\Retention\Termijn;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Dashed\DashedCore\Mail\EmailRenderer;
@@ -29,6 +30,7 @@ use Dashed\DashedCore\Models\GlobalBlock;
 use Dashed\DashedCore\Models\NotFoundPage;
 use Dashed\DashedCore\Policies\RolePolicy;
 use Dashed\DashedCore\Policies\UserPolicy;
+use Dashed\DashedCore\Retention\Retention;
 use Filament\Support\Facades\FilamentView;
 use Dashed\DashedCore\Commands\MigrateToV4;
 use Dashed\DashedCore\Models\Customsetting;
@@ -46,32 +48,35 @@ use Filament\Schemas\Components\Utilities\Get;
 use Guava\FilamentIconPicker\Forms\IconPicker;
 use Dashed\DashedCore\Commands\CreateAdminUser;
 use Dashed\DashedCore\Mail\NewAdminAccountMail;
+use Dashed\DashedCore\Retention\SleutelOpruimer;
 use Dashed\DashedCore\Commands\CleanupOldExports;
 use Dashed\DashedCore\Commands\SyncGoogleReviews;
+use Dashed\DashedCore\Mail\EmailBlocks\HtmlBlock;
 use Dashed\DashedCore\Mail\EmailBlocks\TextBlock;
 use Dashed\DashedCore\Mail\EmailTemplateRegistry;
 use Dashed\DashedCore\Policies\GlobalBlockPolicy;
 use Dashed\DashedCore\Commands\CreateDefaultPages;
 use Dashed\DashedCore\Mail\EmailBlocks\ImageBlock;
+use Dashed\DashedCore\Mail\EmailBlocks\QuoteBlock;
 use Dashed\DashedCore\Mail\EmailBlocks\StatsBlock;
 use Dashed\DashedCore\Mail\EmailBlocks\TableBlock;
-use Dashed\DashedCore\Mail\EmailBlocks\SpacerBlock;
-use Dashed\DashedCore\Mail\EmailBlocks\ColumnsBlock;
-use Dashed\DashedCore\Mail\EmailBlocks\MediaTextBlock;
-use Dashed\DashedCore\Mail\EmailBlocks\CalloutBlock;
 use Dashed\DashedCore\Mail\EmailBlocks\VideoBlock;
-use Dashed\DashedCore\Mail\EmailBlocks\QuoteBlock;
-use Dashed\DashedCore\Mail\EmailBlocks\HtmlBlock;
 use Dashed\DashedCore\Policies\NotFoundPagePolicy;
 use Dashed\DashedCore\Commands\MigrateDatabaseToV4;
 use Dashed\DashedCore\Livewire\Frontend\Auth\Login;
 use Dashed\DashedCore\Mail\EmailBlocks\ButtonBlock;
+use Dashed\DashedCore\Mail\EmailBlocks\SpacerBlock;
+use Dashed\DashedCore\Retention\FailedJobsOpruimer;
 use Dashed\DashedCore\Commands\AuditSettingsCommand;
 use Dashed\DashedCore\Commands\CreateVisitableModel;
 use Dashed\DashedCore\Commands\ReplayWebhookCommand;
+use Dashed\DashedCore\Mail\EmailBlocks\CalloutBlock;
+use Dashed\DashedCore\Mail\EmailBlocks\ColumnsBlock;
 use Dashed\DashedCore\Mail\EmailBlocks\DividerBlock;
 use Dashed\DashedCore\Mail\EmailBlocks\HeadingBlock;
+use Dashed\DashedCore\Retention\ActivityLogOpruimer;
 use Dashed\DashedCore\Filament\Widgets\DashboardGrid;
+use Dashed\DashedCore\Mail\EmailBlocks\MediaTextBlock;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Dashed\DashedCore\Commands\CleanupExpiredRedirects;
 use Dashed\DashedCore\Commands\GenerateFaviconsCommand;
@@ -83,6 +88,7 @@ use Dashed\DashedCore\Commands\DispatchSummaryMailsCommand;
 use Dashed\DashedCore\Commands\ReplaceEditorStringsInFiles;
 use Dashed\DashedCore\Livewire\Admin\EditingPresenceBanner;
 use Dashed\DashedCore\Livewire\Frontend\Auth\ResetPassword;
+use Dashed\DashedCore\Retention\NotFoundOccurrenceOpruimer;
 use Dashed\DashedCore\Livewire\Frontend\Auth\ForgotPassword;
 use Dashed\DashedCore\Livewire\Frontend\Notification\Toastr;
 use Dashed\DashedCore\Classes\RichEditorPlugins\HtmlIdPlugin;
@@ -106,6 +112,7 @@ use Dashed\DashedCore\Filament\Pages\Settings\ReviewSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\SearchSettingsPage;
 use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonQueueStats;
 use Dashed\DashedCore\Filament\Pages\Settings\AccountSettingsPage;
+use Dashed\DashedCore\Filament\Pages\Settings\CleanupSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
 use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonOverviewStats;
 use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonWaitTimeChart;
@@ -976,10 +983,10 @@ MARKDOWN,
             $schedule = app(Schedule::class);
             $schedule->command(CreateSitemap::class)->daily();
             $schedule->command(InvalidatePasswordResetTokens::class)->everyFifteenMinutes();
-            $schedule->command(CleanupOldExports::class)->daily();
-            $schedule->command(CleanupOldNotFoundPageOccurrences::class)->daily();
             $schedule->command(CleanupExpiredRedirects::class)->daily();
-            $schedule->command(\Dashed\DashedCore\Commands\PruneSentEmailsCommand::class)->daily();
+            $schedule->command(\Dashed\DashedCore\Commands\PruneCommand::class)
+                ->dailyAt('03:00')
+                ->withoutOverlapping();
             $schedule->command(SyncGoogleReviews::class)->twiceDaily();
             //            $schedule->command(SeoScan::class)->daily();
             $schedule->command(\Dashed\DashedCore\Commands\CheckIntegrationsHealth::class)
@@ -1042,6 +1049,105 @@ MARKDOWN,
         cms()->registerContentQualityCheck(new \Dashed\DashedCore\ContentQuality\Checks\AccidentalNoindexCheck());
         cms()->registerContentQualityCheck(new \Dashed\DashedCore\ContentQuality\Checks\MetaTooLongCheck());
 
+        self::registreerBewaartermijnen();
+    }
+
+    /**
+     * De logboeken van dashed-core zelf aanmelden bij het bewaartermijnenregister.
+     *
+     * Statisch en apart van bootingPackage(), zodat een test hem opnieuw kan
+     * aanroepen na app(RetentionRegistry::class)->flush(). Deze __()-aanroepen
+     * mogen niet in registeringPackage() staan: die fase draait voordat de
+     * vertaalservice klaarstaat en zou de hele boot laten klappen.
+     */
+    public static function registreerBewaartermijnen(): void
+    {
+        cms()->registerRetention(
+            Retention::make('activity_log')
+                ->label(__('Activiteitenlogboek'))
+                ->pakket('dashed-core', __('Systeem'))
+                ->tabel('activity_log')
+                ->opruimer(new ActivityLogOpruimer())
+                ->termijn(
+                    Termijn::make('activity_log', CleanupSettingsPage::DEFAULT_ACTIVITY_LOG_DAYS, 'created_at')
+                        ->label(__('Bewaartermijn activiteitenlogboek (dagen)'))
+                        ->uitleg(__('Wie wat wanneer wijzigde. Regels ouder dan dit aantal dagen worden verwijderd, behalve de nieuwste regel per record: die voedt de kolom "laatst bewerkt door". Standaard: 90 dagen.'))
+                )
+        );
+
+        cms()->registerRetention(
+            Retention::make('notifications')
+                ->label(__('Meldingen'))
+                ->pakket('dashed-core', __('Systeem'))
+                ->tabel('notifications')
+                ->opruimer(new SleutelOpruimer('notifications'))
+                ->termijn(
+                    Termijn::make('notifications_read', CleanupSettingsPage::DEFAULT_NOTIFICATIONS_READ_DAYS, 'read_at')
+                        ->label(__('Meldingen bewaren na lezen (dagen)'))
+                        ->uitleg(__('Een melding die je hebt gezien verdwijnt dit aantal dagen na het lezen. Standaard: 14 dagen.'))
+                        ->filter(fn ($query) => $query->whereNotNull('read_at'))
+                )
+                ->termijn(
+                    Termijn::make('notifications', CleanupSettingsPage::DEFAULT_NOTIFICATIONS_DAYS, 'created_at')
+                        ->label(__('Meldingen bewaren (dagen)'))
+                        ->uitleg(__('De harde grens, gelezen of niet. Zonder deze grens blijft een melding die niemand opent voor altijd staan. Standaard: 60 dagen.'))
+                        // Andersom zou de harde grens de leestermijn overbodig maken
+                        // en zou een net gelezen melding eerder verdwijnen dan een
+                        // die nooit geopend is. Deze regel stond op het oude
+                        // formulier en wordt bewaakt door CleanupSettingsTest.
+                        ->minstens('notifications_read')
+                )
+        );
+
+        cms()->registerRetention(
+            Retention::make('sent_emails')
+                ->label(__('Verzonden e-mails'))
+                ->pakket('dashed-core', __('Systeem'))
+                ->tabel('dashed__sent_emails')
+                ->termijn(
+                    Termijn::make('sent_emails', fn () => (int) config('dashed-core.sent_emails.retention_days', 90), 'created_at')
+                        ->label(__('Verzonden e-mails bewaren (dagen)'))
+                        ->uitleg(__('Het logboek met elke verzonden mail en zijn bezorgstatus. Standaard: 90 dagen.'))
+                )
+        );
+
+        cms()->registerRetention(
+            Retention::make('not_found_page_occurrences')
+                ->label(__('404-registraties'))
+                ->pakket('dashed-core', __('Systeem'))
+                ->tabel('dashed__not_found_page_occurrences')
+                ->opruimer(new NotFoundOccurrenceOpruimer())
+                ->termijn(
+                    Termijn::make('not_found_page_occurrences', 30, 'created_at')
+                        ->label(__('404-registraties bewaren (dagen)'))
+                        ->uitleg(__('Elke losse 404-treffer. Het totaal en de laatste treffer blijven op de pagina zelf staan. Standaard: 30 dagen.'))
+                )
+        );
+
+        cms()->registerRetention(
+            Retention::make('exports')
+                ->label(__('Exports'))
+                ->pakket('dashed-core', __('Systeem'))
+                ->tabel('dashed__exports')
+                ->termijn(
+                    Termijn::make('exports', 365, 'created_at')
+                        ->label(__('Exports bewaren (dagen)'))
+                        ->uitleg(__('Gemaakte exportbestanden. Standaard: 365 dagen.'))
+                )
+        );
+
+        cms()->registerRetention(
+            Retention::make('failed_jobs')
+                ->label(__('Mislukte taken'))
+                ->pakket('dashed-core', __('Systeem'))
+                ->tabel('failed_jobs')
+                ->opruimer(new FailedJobsOpruimer())
+                ->termijn(
+                    Termijn::make('failed_jobs', 30, 'failed_at')
+                        ->label(__('Mislukte taken bewaren (dagen)'))
+                        ->uitleg(__('Taken die definitief zijn mislukt. Na deze termijn is de foutmelding weg, dus zet hem niet te kort als je nog wilt kunnen uitzoeken wat er misging. Standaard: 30 dagen.'))
+                )
+        );
     }
 
     public static function builderBlocks()
@@ -1472,6 +1578,8 @@ MARKDOWN,
                 \Dashed\DashedCore\Commands\CheckIntegrationsHealth::class,
                 RebuildSearchIndexCommand::class,
                 \Dashed\DashedCore\Commands\PruneSentEmailsCommand::class,
+                \Dashed\DashedCore\Commands\PruneActivityLogCommand::class,
+                \Dashed\DashedCore\Commands\PruneNotificationsCommand::class,
                 \Dashed\DashedCore\Commands\PruneCommand::class,
             ]);
 
