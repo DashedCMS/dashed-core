@@ -5,6 +5,7 @@ namespace Dashed\DashedCore\Classes;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Group;
 use Filament\Forms\Components\TextInput;
+use Dashed\DashedCore\Classes\QueryHelpers\RelationshipSearchQuery;
 
 class LinkHelper
 {
@@ -19,7 +20,7 @@ class LinkHelper
                 Select::make("{$prefix}_{$key}_id")
                     ->label(__('Kies een :naam', ['naam' => strtolower($routeModel['name'])]))
                     ->required($required)
-                    ->getSearchResultsUsing(fn (string $search): array => $routeModel['class']::where('name', 'like', "%{$search}%")->orWhere('content', 'like', "%{$search}%")->limit(50)->pluck('name', 'id')->toArray())
+                    ->getSearchResultsUsing(fn (string $search): array => RelationshipSearchQuery::make($routeModel['class'], $search))
                     ->preload()
                     ->getOptionLabelUsing(fn ($value): ?string => $routeModel['class']::find($value)?->nameWithParents)
 //                    ->options($routeModel['class']::pluck($routeModel['nameField'] ?: 'name', 'id'))

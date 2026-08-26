@@ -17,12 +17,13 @@ use Dashed\DashedCore\Models\UrlHistory;
 use Spatie\Translatable\HasTranslations;
 use Dashed\DashedCore\Models\Customsetting;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Dashed\DashedCore\Classes\FragmentCache;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Dashed\DashedCore\Jobs\SyncModelUrlHistoryJob;
-use Dashed\DashedCore\Classes\FragmentCache;
 use Dashed\DashedCore\Jobs\ClearContentBlocksCache;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Dashed\DashedCore\Classes\QueryHelpers\TokenizedSearch;
 
 trait IsVisitable
 {
@@ -633,39 +634,6 @@ trait IsVisitable
 
     public function scopeSearch($query, ?string $search = null)
     {
-        if (! filled($search)) {
-            return $query;
-        }
-
-        $needle = trim(mb_strtolower($search));
-
-        $columns = collect(self::getTranslatableAttributes())
-            ->reject(fn ($attr) => method_exists($this, $attr)) // sla relaties over
-            ->values()
-            ->all();
-
-        $query->where(function ($q) use ($columns, $needle, $search) {
-            foreach ($columns as $i => $col) {
-                $method = $i === 0 ? 'whereRaw' : 'orWhereRaw';
-                $q->{$method}("LOWER(`{$col}`) LIKE ?", ["%{$needle}%"]);
-            }
-        });
-
-        $cases = [];
-        $bindings = [];
-
-        $topWeight = count($columns) + 10;
-
-        foreach ($columns as $idx => $col) {
-            $weight = count($columns) - $idx; // eerste kolom = hoogste weight
-            $cases[] = "CASE WHEN LOWER(`{$col}`) LIKE ? THEN {$weight} ELSE 0 END";
-            $bindings[] = "%{$needle}%";
-        }
-
-        $query->select($query->getQuery()->columns ?? ['*'])
-            ->selectRaw('(' . implode(' + ', $cases) . ') as relevance', $bindings)
-            ->orderByDesc('relevance');
-
-        return $query;
+        return TokenizedSearch::apply($query, $search, TokenizedSearch::translatableColumns($this));
     }
 }
