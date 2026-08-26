@@ -27,6 +27,15 @@ class SleutelOpruimer implements Opruimer
         $grens = Carbon::now()->subDays($termijn->dagen());
         $totaal = 0;
 
+        // Query\Builder::limit() zet bij 0 een LIMIT 0 (pluck() dan altijd
+        // leeg, de lus stopt na de eerste ronde zonder iets te verwijderen)
+        // en negeert een negatieve waarde stilzwijgend (geen limit, dus alle
+        // rijen in één ongebreidelde query op een levende tabel), in beide
+        // gevallen zonder foutmelding. Hard op 1 geklemd zodat een portie
+        // altijd echt in porties verwerkt en de aanroeper geen stilzwijgend
+        // niets-doen of onbedoeld ongelimiteerd verwijderen terugkrijgt.
+        $portie = max(1, $portie);
+
         while (true) {
             $query = DB::table($this->tabel)->where($termijn->datumkolom(), '<', $grens);
 

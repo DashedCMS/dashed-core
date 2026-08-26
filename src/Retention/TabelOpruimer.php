@@ -25,23 +25,36 @@ use Dashed\DashedCore\Retention\Contracts\Opruimer;
  */
 class TabelOpruimer implements Opruimer
 {
+    protected readonly int $venster;
+
     public function __construct(
         protected readonly string $tabel,
         protected readonly string $sleutelkolom = 'id',
-        protected readonly int $venster = 10_000,
+        int $venster = 10_000,
     ) {
+        // Een venster van nul of lager laat $tot niet voorbij $vanaf komen,
+        // waardoor de sprong naar de eerstvolgende sleutel dezelfde $vanaf
+        // teruggeeft en de lus nooit meer verder komt. Op een productietabel
+        // is dat een oneindige lus, dus wordt hij hier hard op 1 geklemd.
+        $this->venster = max(1, $venster);
     }
 
     public function ruimOp(Termijn $termijn, int $portie, bool $droog): int
     {
         $grens = Carbon::now()->subDays($termijn->dagen());
 
-        $laagste = (int) DB::table($this->tabel)->min($this->sleutelkolom);
-        $hoogste = (int) DB::table($this->tabel)->max($this->sleutelkolom);
+        $laagste = DB::table($this->tabel)->min($this->sleutelkolom);
+        $hoogste = DB::table($this->tabel)->max($this->sleutelkolom);
 
-        if ($hoogste === 0) {
+        // Op null getoetst, niet op nul: een tabel waarvan de hoogste sleutel
+        // toevallig 0 is (bijvoorbeeld een rij met id 0) is niet leeg, en
+        // (int) null zou daar niet van te onderscheiden zijn.
+        if ($hoogste === null) {
             return 0;
         }
+
+        $laagste = (int) $laagste;
+        $hoogste = (int) $hoogste;
 
         $totaal = 0;
         $vanaf = $laagste;
