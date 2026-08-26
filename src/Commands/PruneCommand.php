@@ -6,6 +6,7 @@ namespace Dashed\DashedCore\Commands;
 
 use Illuminate\Console\Command;
 use Dashed\DashedCore\Retention\PruneRunner;
+use Dashed\DashedCore\Retention\RetentionRegistry;
 
 /**
  * Ruimt alles op wat in het bewaartermijnenregister staat. Vervangt de losse
@@ -20,14 +21,25 @@ class PruneCommand extends Command
 
     protected $description = 'Ruim logboeken en gebeurtenissentabellen op volgens hun bewaartermijn.';
 
-    public function handle(PruneRunner $runner): int
+    public function handle(PruneRunner $runner, RetentionRegistry $register): int
     {
         $droog = (bool) $this->option('dry-run');
-        $uitkomst = $runner->draai(
-            $this->option('only') ?: null,
-            max(1, (int) $this->option('chunk')),
-            $droog,
-        );
+        $alleen = $this->option('only') ?: null;
+
+        // Een sleutel die niet bestaat is een typfout van de aanroeper, geen
+        // leeg register. Zonder dit onderscheid meldt een verkeerd gespelde
+        // --only dat er niets op te ruimen valt en eindigt hij op nul, dus
+        // denkt een cron of een beheerder dat het gelukt is.
+        if ($alleen !== null && $register->vind($alleen) === null) {
+            $this->error(__('Onbekende sleutel: :sleutel', ['sleutel' => $alleen]));
+            $this->line(__('Bekende sleutels: :sleutels', [
+                'sleutels' => implode(', ', collect($register->alles())->map->sleutel()->all()),
+            ]));
+
+            return self::FAILURE;
+        }
+
+        $uitkomst = $runner->draai($alleen, max(1, (int) $this->option('chunk')), $droog);
 
         if ($uitkomst === []) {
             $this->warn(__('Er staat niets in het bewaartermijnenregister.'));
@@ -62,6 +74,10 @@ class PruneCommand extends Command
             }
 
             $this->line($regel['label'] . ': ' . $regel['aantal'] . ($droog ? ' zouden verdwijnen' : ' verwijderd'));
+
+            if ($regel['haak_overgeslagen']) {
+                $this->line($regel['label'] . ': ' . __('voorbereiding overgeslagen, een droge run schrijft niets.'));
+            }
         }
 
         $this->info(collect($uitkomst)->sum('aantal') . ($droog ? ' rijen zouden verdwijnen.' : ' rijen verwijderd.'));

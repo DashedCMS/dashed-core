@@ -7,6 +7,7 @@ namespace Dashed\DashedCore\Retention;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Dashed\DashedCore\Retention\Contracts\Opruimer;
+use Dashed\DashedCore\Retention\Contracts\FilterBewust;
 
 /**
  * Voor tabellen waarvan de sleutel een uuid is, zoals `notifications`. Een
@@ -14,7 +15,7 @@ use Dashed\DashedCore\Retention\Contracts\Opruimer;
  * Daarom per portie eerst de sleutels ophalen en die daarna verwijderen. Dat
  * werkt op elke database, ook zonder DELETE ... LIMIT.
  */
-class SleutelOpruimer implements Opruimer
+class SleutelOpruimer implements Opruimer, FilterBewust
 {
     public function __construct(
         protected readonly string $tabel,
@@ -37,11 +38,9 @@ class SleutelOpruimer implements Opruimer
         $portie = max(1, $portie);
 
         while (true) {
-            $query = DB::table($this->tabel)->where($termijn->datumkolom(), '<', $grens);
+            $query = DB::table($this->tabel);
 
-            if ($filter = $termijn->filterClosure()) {
-                $filter($query);
-            }
+            $termijn->pasVoorwaardenToe($query, $grens);
 
             if ($droog) {
                 return $query->count();

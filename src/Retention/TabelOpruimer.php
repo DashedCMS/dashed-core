@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Query\Builder;
 use Dashed\DashedCore\Retention\Contracts\Opruimer;
+use Dashed\DashedCore\Retention\Contracts\FilterBewust;
 
 /**
  * Ruimt op over de primaire sleutel in vensters, niet over de datum.
@@ -23,7 +24,7 @@ use Dashed\DashedCore\Retention\Contracts\Opruimer;
  * gaten (na een eerdere opruiming bijvoorbeeld) niet duizenden lege rondes
  * kost.
  */
-class TabelOpruimer implements Opruimer
+class TabelOpruimer implements Opruimer, FilterBewust
 {
     protected readonly int $venster;
 
@@ -91,11 +92,9 @@ class TabelOpruimer implements Opruimer
 
     protected function basis(Termijn $termijn, Carbon $grens): Builder
     {
-        $query = DB::table($this->tabel)->where($termijn->datumkolom(), '<', $grens);
+        $query = DB::table($this->tabel);
 
-        if ($filter = $termijn->filterClosure()) {
-            $filter($query);
-        }
+        $termijn->pasVoorwaardenToe($query, $grens);
 
         return $query;
     }

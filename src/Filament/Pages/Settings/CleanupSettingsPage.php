@@ -3,6 +3,7 @@
 namespace Dashed\DashedCore\Filament\Pages\Settings;
 
 use UnitEnum;
+use Throwable;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Dashed\DashedCore\Classes\Sites;
@@ -31,7 +32,9 @@ class CleanupSettingsPage extends Page implements HasSchemas
 
     public const DEFAULT_NOTIFICATIONS_DAYS = 60;
 
-    protected static bool $shouldRegisterNavigation = true;
+    // Zoals elke andere instellingenpagina van dit pakket: bereikbaar via
+    // Instellingen, niet ook nog eens los in de zijbalk.
+    protected static bool $shouldRegisterNavigation = false;
 
     protected static string|UnitEnum|null $navigationGroup = 'Systeem';
 
@@ -41,39 +44,22 @@ class CleanupSettingsPage extends Page implements HasSchemas
 
     public array $data = [];
 
-    public static function activityLogRetentionDays(): int
-    {
-        return self::days('activity_log_retention_days', self::DEFAULT_ACTIVITY_LOG_DAYS);
-    }
-
-    public static function notificationsReadRetentionDays(): int
-    {
-        return self::days('notifications_read_retention_days', self::DEFAULT_NOTIFICATIONS_READ_DAYS);
-    }
-
-    public static function notificationsRetentionDays(): int
-    {
-        return self::days('notifications_retention_days', self::DEFAULT_NOTIFICATIONS_DAYS);
-    }
-
-    /**
-     * Een termijn van nul of minder zou alles opruimen tot en met wat er zojuist
-     * binnenkwam. Dat is nooit de bedoeling van een leeg of stukgetypt veld, dus
-     * valt hij dan terug op de standaard.
-     */
-    protected static function days(string $name, int $default): int
-    {
-        $days = (int) Customsetting::get($name, null, $default);
-
-        return $days >= 1 ? $days : $default;
-    }
-
     public function mount(): void
     {
         $waarden = [];
 
         foreach ($this->termijnen() as $termijn) {
-            $waarden[$this->veldnaam($termijn)] = $termijn->dagen();
+            try {
+                // waarde() en niet dagen(): niet elke termijn telt dagen, en het
+                // formulier vult hier de eenheid van de termijn zelf in.
+                $waarden[$this->veldnaam($termijn)] = $termijn->waarde();
+            } catch (Throwable) {
+                // Een onbruikbare standaard (een lege env-regel bijvoorbeeld)
+                // laat waarde() klappen. Juist dit scherm moet dan blijven
+                // werken, want hier zet een beheerder er een geldige waarde
+                // neer; het veld blijft leeg en is verplicht, dus hij ziet
+                // meteen wat er moet gebeuren.
+            }
         }
 
         $this->form->fill($waarden);

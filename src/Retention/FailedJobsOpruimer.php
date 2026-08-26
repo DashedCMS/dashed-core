@@ -25,16 +25,24 @@ class FailedJobsOpruimer implements Opruimer
             return 0;
         }
 
-        $voor = DB::table('failed_jobs')->count();
+        // Hetzelfde getal in beide standen, want anders zegt --dry-run niets:
+        // het verschil tussen voor en na telt ook mislukte taken mee die tijdens
+        // het opruimen bijkwamen of die een ander proces wegnam, en dat zijn
+        // afwijkingen die niets met de bewaartermijn te maken hebben. Deze
+        // telling beantwoordt in beide standen dezelfde vraag: hoeveel taken
+        // vallen buiten de termijn.
+        $aantal = DB::table('failed_jobs')
+            ->where($termijn->datumkolom(), '<', now()->subDays($termijn->dagen()))
+            ->count();
 
         if ($droog) {
-            return DB::table('failed_jobs')
-                ->where($termijn->datumkolom(), '<', now()->subDays($termijn->dagen()))
-                ->count();
+            return $aantal;
         }
 
+        // Het verwijderen blijft bij Laravel zelf: queue:prune-failed werkt in
+        // porties en volgt de ingestelde failer.
         Artisan::call('queue:prune-failed', ['--hours' => $termijn->dagen() * 24]);
 
-        return max(0, $voor - DB::table('failed_jobs')->count());
+        return $aantal;
     }
 }

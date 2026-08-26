@@ -4,14 +4,16 @@ namespace Dashed\DashedCore\Filament\Pages\Settings;
 
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
-use Dashed\DashedCore\Classes\Sites;
-use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Text;
 use Filament\Schemas\Contracts\HasSchemas;
-use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedCore\Traits\HasSettingsPermission;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 
+/**
+ * De bewaartermijn van exports stond hier en staat nu bij Opschonen, waar alle
+ * termijnen bij elkaar staan. Twee schermen op dezelfde instellingssleutel
+ * geven twee verschillende uitlegteksten en overschrijven elkaars waarde.
+ */
 class ExportSettingsPage extends Page implements HasSchemas
 {
     use InteractsWithSchemas;
@@ -27,37 +29,18 @@ class ExportSettingsPage extends Page implements HasSchemas
 
     public function mount(): void
     {
-        $this->form->fill([
-            'exports_retention_days' => (int) Customsetting::get('exports_retention_days', null, 365),
-        ]);
+        $this->form->fill();
     }
 
     public function form(Schema $schema): Schema
     {
         return $schema->schema([
-            TextInput::make('exports_retention_days')
-                ->label(__('Bewaartermijn (dagen)'))
-                ->helperText(__('Exports ouder dan dit aantal dagen worden automatisch verwijderd. Standaard: 365 dagen (1 jaar).'))
-                ->numeric()
-                ->minValue(1)
-                ->maxValue(3650)
-                ->required(),
+            Text::make(__('De bewaartermijn van exports staat nu bij Instellingen, Opschonen, samen met de termijnen van alle andere logboeken.')),
         ])->statePath('data');
     }
 
     public function submit(): void
     {
-        $formData = $this->form->getState();
-
-        foreach (Sites::getSites() as $site) {
-            Customsetting::set('exports_retention_days', (int) $formData['exports_retention_days'], $site['id']);
-        }
-
-        Notification::make()
-            ->title(__('Export instellingen opgeslagen'))
-            ->success()
-            ->send();
-
-        redirect(ExportSettingsPage::getUrl());
+        redirect(CleanupSettingsPage::getUrl());
     }
 }

@@ -8,6 +8,7 @@ use Throwable;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Schema;
 use Dashed\DashedCore\Retention\Contracts\Opruimer;
+use Dashed\DashedCore\Retention\Contracts\FilterBewust;
 
 /**
  * Loopt het register af. Een entry die klapt sleept de rest niet mee: op een
@@ -21,7 +22,7 @@ class PruneRunner
     }
 
     /**
-     * @return array<int, array{sleutel: string, label: string, aantal: int, fout: ?string, overgeslagen: bool, reden: ?string}>
+     * @return array<int, array{sleutel: string, label: string, aantal: int, fout: ?string, overgeslagen: bool, reden: ?string, haak_overgeslagen: bool}>
      */
     public function draai(?string $alleen, int $portie, bool $droog): array
     {
@@ -39,7 +40,7 @@ class PruneRunner
     }
 
     /**
-     * @return array{sleutel: string, label: string, aantal: int, fout: ?string, overgeslagen: bool, reden: ?string}
+     * @return array{sleutel: string, label: string, aantal: int, fout: ?string, overgeslagen: bool, reden: ?string, haak_overgeslagen: bool}
      */
     protected function draaiEen(Retention $retention, int $portie, bool $droog): array
     {
@@ -50,6 +51,7 @@ class PruneRunner
             'fout' => null,
             'overgeslagen' => false,
             'reden' => null,
+            'haak_overgeslagen' => false,
         ];
 
         // Niet elk pakket staat op elke installatie, en deze monorepo zelf
@@ -69,7 +71,22 @@ class PruneRunner
         // cijfers die de haak moest veiligstellen zijn dan al weg. Dit is wel
         // een fout: de tabel bestaat wel, maar iets in de eigen logica van de
         // haak liep stuk.
-        if ($haak = $retention->voorafHaak()) {
+        //
+        // Bij een droge run blijft hij staan. Een haak stelt cijfers veilig
+        // voordat rijen verdwijnen, en bij een droge run verdwijnt er niets,
+        // dus valt er ook niets veilig te stellen. Hij is bovendien niet
+        // alleen-lezen: die van popup_views verwijdert en schrijft in de
+        // dagaggregatie na een ontdekkingsquery over de hele tabel. Wie eerst
+        // voorzichtig wil tellen mag daar niet de zwaarste schrijfronde van
+        // het systeem mee losmaken.
+        if (($haak = $retention->voorafHaak()) && $droog) {
+            // Alleen de haak vervalt, het tellen niet: een droge run hoort te
+            // laten zien hoeveel er zou verdwijnen.
+            $haak = null;
+            $regel['haak_overgeslagen'] = true;
+        }
+
+        if ($haak) {
             try {
                 $haak($this->dekkingsGrens($retention));
             } catch (Throwable $e) {
@@ -80,7 +97,7 @@ class PruneRunner
         }
 
         try {
-            $opruimer = $this->opruimerVoor($retention);
+            $opruimer = $this->opruimerVoor($retention, $portie);
 
             foreach ($retention->termijnen() as $termijn) {
                 $regel['aantal'] += $opruimer->ruimOp($termijn, $portie, $droog);
@@ -93,9 +110,11 @@ class PruneRunner
         return $regel;
     }
 
-    protected function opruimerVoor(Retention $retention): Opruimer
+    protected function opruimerVoor(Retention $retention, int $portie): Opruimer
     {
         if ($eigen = $retention->eigenOpruimer()) {
+            $this->weigerGenegeerdFilter($retention, $eigen);
+
             return $eigen;
         }
 
@@ -107,7 +126,37 @@ class PruneRunner
             );
         }
 
-        return new TabelOpruimer($tabel, $retention->tabelKolom());
+        // De portie is ook de venstergrootte. Zonder dit staat het venster
+        // vast op de standaard van de constructor en doet --chunk niets voor
+        // de acht entries die op deze opruimer leunen, terwijl het command de
+        // optie wel aanbiedt.
+        return new TabelOpruimer($tabel, $retention->tabelKolom(), $portie);
+    }
+
+    /**
+     * Een filter is een behoudregel: het zegt welke rijen ondanks hun leeftijd
+     * moeten blijven staan. Een opruimer die dat filter niet leest verwijdert
+     * ze alsnog, en dat is precies het soort verlies dat niemand opmerkt
+     * voordat het te laat is. Daarom klapt de entry hier hardop in plaats van
+     * stil door te draaien; hetzelfde geldt voor een terugvalkolom, want die
+     * verruimt juist wat er weg mag.
+     */
+    protected function weigerGenegeerdFilter(Retention $retention, Opruimer $opruimer): void
+    {
+        if ($opruimer instanceof FilterBewust) {
+            return;
+        }
+
+        foreach ($retention->termijnen() as $termijn) {
+            if ($termijn->filterClosure() === null && $termijn->terugvalkolomNaam() === null) {
+                continue;
+            }
+
+            throw new \RuntimeException(
+                'Retention "' . $retention->sleutel() . '" draagt een filter of terugvalkolom op termijn "'
+                . $termijn->sleutel() . '", maar ' . $opruimer::class . ' past die niet toe.'
+            );
+        }
     }
 
     /**

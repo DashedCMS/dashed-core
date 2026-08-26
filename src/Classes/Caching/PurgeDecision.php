@@ -39,6 +39,12 @@ class PurgeDecision
         // Tellers die per bestelling of per betaling opschuiven.
         'current_invoice_number',
         'cash_register_amount',
+
+        // Bewaartermijnen. Ze sturen alleen wat er 's nachts wordt opgeruimd
+        // en veranderen niets aan wat een bezoeker te zien krijgt, terwijl
+        // opslaan op het scherm Opschonen ze per site wegschrijft: zonder deze
+        // regel is elke aanpassing een volledige zone-purge per site.
+        '*_retention_days',
     ];
 
     public static function isOperationalSetting(string $name): bool

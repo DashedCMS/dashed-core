@@ -13,6 +13,15 @@ use Dashed\DashedCore\Jobs\PruneAllRetentionsJob;
 return new class () extends Migration {
     public function up(): void
     {
+        // Niet tijdens tests. De suite draait migrate:fresh per testbestand met
+        // de wachtrij op sync, dus zou elke test hier een volledige opruimronde
+        // over alle veertien entries doen voordat hij aan zijn eigen werk
+        // toekomt, en zou een test die zelf oude rijen klaarzet ze al kwijt
+        // zijn voordat hij begint.
+        if (app()->runningUnitTests()) {
+            return;
+        }
+
         PruneAllRetentionsJob::dispatch();
     }
 

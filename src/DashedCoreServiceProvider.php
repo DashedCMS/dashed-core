@@ -1121,7 +1121,7 @@ MARKDOWN,
                 ->termijn(
                     Termijn::make('not_found_page_occurrences', 30, 'created_at')
                         ->label(__('404-registraties bewaren (dagen)'))
-                        ->uitleg(__('Elke losse 404-treffer. Het totaal en de laatste treffer blijven op de pagina zelf staan. Standaard: 30 dagen.'))
+                        ->uitleg(__('Elke losse 404-treffer. De 404-pagina zelf blijft staan, maar het totaal en de laatste treffer worden opnieuw geteld over wat er overblijft en zakken dus mee. Standaard: 30 dagen.'))
                 )
         );
 
