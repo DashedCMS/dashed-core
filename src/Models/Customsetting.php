@@ -2,21 +2,19 @@
 
 namespace Dashed\DashedCore\Models;
 
-use Spatie\Activitylog\LogOptions;
 use Dashed\DashedCore\Classes\Sites;
 use Illuminate\Support\Facades\Cache;
 use Dashed\DashedCore\Classes\Locales;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\Model;
-use Spatie\Activitylog\Traits\LogsActivity;
-use Dashed\DashedCore\Classes\Caching\CacheInvalidator;
 use Dashed\DashedCore\Classes\Caching\PurgeDecision;
+use Dashed\DashedCore\Classes\Caching\CacheInvalidator;
 
 class Customsetting extends Model
 {
-    use LogsActivity;
-
-    protected static $logFillable = true;
+    // Bewust geen LogsActivity. Instellingen worden vooral door cron en jobs
+    // weggeschreven, niet door mensen: dat leverde 2,78 van de 2,9 miljoen
+    // regels in het activiteitenlogboek op, zonder dat iemand ze ooit terugleest.
 
     protected $table = 'dashed__custom_settings';
 
@@ -35,11 +33,6 @@ class Customsetting extends Model
      * ]
      */
     protected static array $runtimeContextCache = [];
-
-    public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults();
-    }
 
     public static function booted()
     {

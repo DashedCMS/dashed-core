@@ -21,7 +21,7 @@ class LocaleStatusColumn
     public static function make(string $attribute = 'name', string $name = 'locale_status'): TextColumn
     {
         return TextColumn::make($name)
-            ->label('Locales')
+            ->label(__('Locales'))
             ->badge()
             ->state(fn (Model $record) => self::statusLabel($record, $attribute))
             ->color(fn (Model $record) => self::missingLocales($record, $attribute) === [] ? 'success' : 'warning')

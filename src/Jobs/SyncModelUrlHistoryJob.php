@@ -53,6 +53,28 @@ class SyncModelUrlHistoryJob implements ShouldQueue, ShouldBeUnique
         $siteId = Sites::getActive();
         $allowedLocales = $site['locales'] ?? [];
 
+        // De lus hieronder zet de taal van de hele applicatie om, want
+        // getUrl() leest de actieve taal. Zonder herstel blijft die op de
+        // laatste taal staan nadat de taak klaar is. In een wachtrijproces
+        // valt dat nauwelijks op, maar deze taak wordt ook rechtstreeks
+        // uitgevoerd (een sync-wachtrij, of een opslag binnen een verzoek), en
+        // dan leest alles daarna vertaalbare velden in de verkeerde taal. Dat
+        // geeft geen fout maar lege tekst, en dat is het soort mislukking dat
+        // niemand opmerkt.
+        $oorspronkelijkeLocale = app()->getLocale();
+
+        try {
+            $this->schrijfGeschiedenis($model, $allowedLocales, $siteId);
+        } finally {
+            Locales::setLocale($oorspronkelijkeLocale);
+        }
+    }
+
+    /**
+     * @param  array<int, string>  $allowedLocales
+     */
+    private function schrijfGeschiedenis($model, array $allowedLocales, ?string $siteId): void
+    {
         foreach (Locales::getLocales() as $locale) {
             $localeId = $locale['id'];
 

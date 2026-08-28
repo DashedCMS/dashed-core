@@ -4,13 +4,16 @@ namespace Dashed\DashedCore\Filament\Pages\Settings;
 
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
+use Illuminate\Support\HtmlString;
 use Dashed\DashedCore\Classes\Sites;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Schemas\Contracts\HasSchemas;
 use Dashed\DashedCore\Models\Customsetting;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Utilities\Get;
 use Dashed\DashedCore\Traits\HasSettingsPermission;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
@@ -76,6 +79,33 @@ class EmailSettingsPage extends Page implements HasSchemas
             TextInput::make('mail_footer_text')
                 ->label(__('Footer tekst'))
                 ->helperText(__('Laat leeg om automatisch "© jaar sitenaam" te gebruiken.')),
+
+            // De webhook-URL stond nergens in het beheer en was alleen te
+            // vinden door in de routes te kijken. Dat leidde tot een verkeerd
+            // pad met /api ervoor, en dat matcht de catch-all van de
+            // front-end: die kent alleen GET, dus antwoordt Laravel met 405.
+            // Dat leest als een serverprobleem terwijl het gewoon een
+            // verkeerde URL is.
+            Section::make(__('Statistieken van verzonden mail'))
+                ->description(__('Postmark kan je laten weten of een mail is aangekomen. Zet daarvoor de webhook hieronder in Postmark, bij Servers, je server, Webhooks.'))
+                ->collapsible()
+                ->schema([
+                    TextEntry::make('postmark_webhook_url')
+                        ->label(__('Webhook-URL'))
+                        ->state(fn (): string => route('dashed.webhooks.postmark'))
+                        ->copyable()
+                        ->helperText(__('Let op: zonder /api ervoor. Met /api geeft Postmark een 405.')),
+                    TextEntry::make('postmark_webhook_events')
+                        ->label(__('Welke gebeurtenissen aanvinken'))
+                        ->state(new HtmlString(
+                            '<strong>Delivery</strong>, <strong>Bounce</strong> en <strong>Spam Complaint</strong>.<br>'
+                            . 'Zonder deze drie blijven Bezorgd en Gebounced leeg en rekenen de percentages van een '
+                            . 'campagne over verzonden in plaats van over bezorgd.<br><br>'
+                            . '<strong>Open en Click niet aanvinken.</strong> Openen en klikken meet deze website zelf, '
+                            . 'via je eigen domein; die werken dus ook zonder Postmark. Zet je ze daar ook aan, dan '
+                            . 'levert dat alleen ruis op in het maillogboek.'
+                        )),
+                ]),
         ])->statePath('data');
     }
 
