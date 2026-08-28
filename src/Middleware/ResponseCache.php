@@ -5,9 +5,9 @@ namespace Dashed\DashedCore\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Symfony\Component\HttpFoundation\Response;
 use Dashed\DashedCore\Classes\CacheProfile;
 use Dashed\DashedCore\Classes\FragmentCache;
+use Symfony\Component\HttpFoundation\Response;
 use Dashed\DashedCore\Classes\Caching\CacheDecision;
 use Dashed\DashedCore\Classes\Caching\CloudflareConfig;
 

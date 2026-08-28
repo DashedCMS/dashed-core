@@ -2,9 +2,9 @@
 
 namespace Dashed\DashedCore\Classes;
 
+use Dashed\DashedPages\Models\Page;
 use Dashed\DashedCore\Models\Review;
 use Dashed\DashedCore\Models\Customsetting;
-use Dashed\DashedPages\Models\Page;
 
 class Reviews
 {

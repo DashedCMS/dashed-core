@@ -3,8 +3,8 @@
 namespace Dashed\DashedCore\Classes;
 
 use Closure;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 
 class FragmentCache
 {
@@ -18,6 +18,7 @@ class FragmentCache
 
         try {
             Cache::tags(['__fragmentcache_probe'])->get('__probe');
+
             return static::$supportsTags = true;
         } catch (\BadMethodCallException) {
             return static::$supportsTags = false;
@@ -37,6 +38,7 @@ class FragmentCache
     {
         if (static::supportsTags()) {
             Cache::tags([$tag])->flush();
+
             return;
         }
 

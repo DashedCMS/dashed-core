@@ -9,9 +9,9 @@ use Illuminate\Support\Facades\View;
 use Dashed\DashedCore\Classes\AccountHelper;
 use Dashed\DashedTranslations\Models\Translation;
 use Dashed\DashedCore\Livewire\Frontend\Auth\Login;
+use Dashed\DashedCore\Classes\Caching\IdentifiedVisitor;
 use Dashed\DashedCore\Livewire\Frontend\Auth\ResetPassword;
 use Dashed\DashedCore\Livewire\Frontend\Auth\ForgotPassword;
-use Dashed\DashedCore\Classes\Caching\IdentifiedVisitor;
 
 class AuthController extends Controller
 {

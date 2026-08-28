@@ -1,18 +1,18 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Dashed\DashedCore\Middleware\ResponseCache;
 use Dashed\DashedCore\Middleware\AuthMiddleware;
 use Dashed\DashedCore\Middleware\AdminMiddleware;
 use Dashed\DashedCore\Middleware\GuestMiddleware;
 use Dashed\DashedTranslations\Models\Translation;
 use Dashed\DashedCore\Middleware\FrontendMiddleware;
-use Dashed\DashedCore\Middleware\ResponseCache;
 use Dashed\DashedCore\Controllers\Frontend\AuthController;
 use Dashed\LaravelLocalization\Facades\LaravelLocalization;
 use Dashed\DashedCore\Controllers\Frontend\AccountController;
-use Dashed\DashedCore\Controllers\Frontend\CsrfTokenController;
 use Dashed\DashedCore\Controllers\Frontend\FrontendController;
 use Dashed\DashedCore\Controllers\OAuth\GoogleOAuthController;
+use Dashed\DashedCore\Controllers\Frontend\CsrfTokenController;
 use Dashed\DashedCore\Middleware\AddLivewireReferrerToFlareMiddleware;
 use Dashed\LaravelLocalization\Middleware\LaravelLocalizationViewPath;
 use Dashed\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter;

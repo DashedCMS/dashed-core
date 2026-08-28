@@ -3,9 +3,9 @@
 namespace Dashed\DashedCore\Classes\Caching;
 
 use Throwable;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Dashed\DashedCore\Classes\Sites;
+use Illuminate\Support\Facades\Http;
 
 class CloudflarePurger
 {

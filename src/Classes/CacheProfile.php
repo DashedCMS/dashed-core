@@ -12,16 +12,17 @@ class CacheProfile
     public const OFF = 'off';
 
     private const PRESETS = [
-        'b2c'   => ['edge' => true,  'response' => true,  'bypassLogin' => true, 'bypassPriceGroups' => true, 'ttl' => 300],
-        'b2b'   => ['edge' => false, 'response' => false, 'bypassLogin' => true, 'bypassPriceGroups' => true, 'ttl' => 300],
+        'b2c' => ['edge' => true,  'response' => true,  'bypassLogin' => true, 'bypassPriceGroups' => true, 'ttl' => 300],
+        'b2b' => ['edge' => false, 'response' => false, 'bypassLogin' => true, 'bypassPriceGroups' => true, 'ttl' => 300],
         'mixed' => ['edge' => true,  'response' => true,  'bypassLogin' => true, 'bypassPriceGroups' => true, 'ttl' => 300],
-        'off'   => ['edge' => false, 'response' => false, 'bypassLogin' => true, 'bypassPriceGroups' => true, 'ttl' => 0],
+        'off' => ['edge' => false, 'response' => false, 'bypassLogin' => true, 'bypassPriceGroups' => true, 'ttl' => 0],
     ];
 
     private function __construct(
         private readonly string $name,
         private readonly array $flags,
-    ) {}
+    ) {
+    }
 
     public static function all(): array
     {

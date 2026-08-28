@@ -2,8 +2,8 @@
 
 namespace Dashed\DashedCore\Models\Concerns;
 
-use Dashed\DashedCore\Search\SearchIndexer;
 use Illuminate\Support\Facades\DB;
+use Dashed\DashedCore\Search\SearchIndexer;
 
 trait HasSearchIndex
 {

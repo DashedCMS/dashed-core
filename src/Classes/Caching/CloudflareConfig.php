@@ -10,7 +10,8 @@ class CloudflareConfig
     private function __construct(
         private readonly ?string $apiToken,
         private readonly ?string $zoneId,
-    ) {}
+    ) {
+    }
 
     public static function for(?string $siteId = null): self
     {
