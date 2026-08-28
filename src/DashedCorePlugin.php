@@ -11,13 +11,13 @@ use Dashed\DashedCore\Filament\Resources\ExportResource;
 use Dashed\DashedCore\Filament\Resources\RedirectResource;
 use Dashed\DashedCore\Filament\Pages\IntegrationsDashboard;
 use Dashed\DashedCore\Filament\Pages\Settings\SettingsPage;
+use Dashed\DashedCore\Filament\Resources\SentEmailResource;
 use Dashed\DashedCore\Filament\Pages\ContentQualityDashboard;
 use Dashed\DashedCore\Filament\Resources\GlobalBlockResource;
 use Dashed\DashedCore\Filament\Pages\Settings\SEOSettingsPage;
 use Dashed\DashedCore\Filament\Resources\NotFoundPageResource;
 use Dashed\DashedCore\Filament\Pages\NotificationSubscriptions;
 use Dashed\DashedCore\Filament\Resources\EmailTemplateResource;
-use Dashed\DashedCore\Filament\Resources\SentEmailResource;
 use Dashed\DashedCore\Filament\Pages\Settings\CacheSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\EmailSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\ImageSettingsPage;
@@ -67,6 +67,7 @@ class DashedCorePlugin implements Plugin
                 ReviewSettingsPage::class,
                 ExportSettingsPage::class,
                 NotFoundPageSettingsPage::class,
+                \Dashed\DashedCore\Filament\Pages\Settings\CleanupSettingsPage::class,
                 EmailSettingsPage::class,
                 NotificationSettingsPage::class,
                 NotificationSubscriptions::class,
