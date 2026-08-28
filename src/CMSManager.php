@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Route;
 use Dashed\DashedCore\Classes\Locales;
 use Filament\Forms\Components\Builder;
-use Dashed\DashedCore\Filament\Components\ContentBuilder;
 use Dashed\DashedCore\Models\GlobalBlock;
 use Filament\Forms\Components\RichEditor;
 use Awcodes\RicherEditor\Plugins\IdPlugin;
@@ -33,6 +32,7 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\Http\Middleware\DisableBladeIconComponents;
+use Dashed\DashedCore\Filament\Components\ContentBuilder;
 use LaraZeus\SpatieTranslatable\SpatieTranslatablePlugin;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -60,6 +60,7 @@ class CMSManager
         'ignorableKeysForTranslations' => [],
         'ignorableColumnsForTranslations' => [],
         'ignorableColumnsForTranslationsPerModel' => [],
+        'translatableColumnsForTranslationsPerModel' => [],
         'classes' => [],
         'richEditorPlugins' => [],
         'rolePermissions' => [],
@@ -152,8 +153,49 @@ class CMSManager
     }
 
     /**
+     * Register columns that a model always wants translated, even when the
+     * project put that column name on the global
+     * `ignorableColumnsForTranslations` list.
+     *
+     * Die globale lijst kent alleen kolomnamen, geen modellen. Vrijwel elk
+     * project zet er 'name' op om een merknaam als 'Amazon' onvertaald te
+     * houden, en raakte daarmee ook de modellen waar 'name' juist zichtbare
+     * tekst is - de kop van een formulierveld bijvoorbeeld. Die kop werd dan
+     * letterlijk uit de brontaal gekopieerd naar elke taal.
+     *
+     * Usage:
+     *
+     *     cms()->alwaysTranslateColumns(
+     *         \Dashed\DashedForms\Models\FormField::class,
+     *         ['name'],
+     *     );
+     *
+     * Or via the builder API:
+     *
+     *     cms()->builder('translatableColumnsForTranslationsPerModel', [
+     *         \Dashed\DashedForms\Models\FormField::class => ['name'],
+     *     ]);
+     *
+     * Een uitdrukkelijke `ignoreTranslatableColumns()` op hetzelfde model
+     * gaat hier nog steeds voor: die is per model ingesteld en dus net zo
+     * gericht, maar dan met de tegenovergestelde bedoeling.
+     */
+    public function alwaysTranslateColumns(string $modelClass, array $columns): self
+    {
+        $existing = static::$builders['translatableColumnsForTranslationsPerModel'] ?? [];
+        $existing[$modelClass] = array_values(array_unique(array_merge(
+            $existing[$modelClass] ?? [],
+            $columns,
+        )));
+        static::$builders['translatableColumnsForTranslationsPerModel'] = $existing;
+
+        return $this;
+    }
+
+    /**
      * Resolve the full list of columns to ignore for a given model - the
-     * global list PLUS the per-model overrides registered via
+     * global list, MINUS the columns the model registered via
+     * `alwaysTranslateColumns()`, PLUS the per-model overrides registered via
      * `ignoreTranslatableColumns()`.
      *
      * @return array<int,string>
@@ -166,16 +208,32 @@ class CMSManager
             return $global;
         }
 
-        $perModel = static::$builders['ignorableColumnsForTranslationsPerModel'] ?? [];
-        $extra = [];
+        $global = array_diff($global, $this->columnsForModel($modelInstance, 'translatableColumnsForTranslationsPerModel'));
 
-        foreach ($perModel as $fqcn => $columns) {
+        return array_values(array_unique(array_merge(
+            $global,
+            $this->columnsForModel($modelInstance, 'ignorableColumnsForTranslationsPerModel'),
+        )));
+    }
+
+    /**
+     * De kolommen die voor dit model in een per-model builder-lijst staan.
+     * De vergelijking gaat via instanceof, zodat een project dat een
+     * Dashed-model uitbreidt de registratie van de package erft.
+     *
+     * @return array<int,string>
+     */
+    private function columnsForModel(object $modelInstance, string $builder): array
+    {
+        $columns = [];
+
+        foreach (static::$builders[$builder] ?? [] as $fqcn => $modelColumns) {
             if ($modelInstance instanceof $fqcn) {
-                $extra = array_merge($extra, $columns);
+                $columns = array_merge($columns, (array) $modelColumns);
             }
         }
 
-        return array_values(array_unique(array_merge($global, $extra)));
+        return $columns;
     }
 
     protected static array $emailBlocks = [];
