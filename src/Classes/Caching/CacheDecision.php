@@ -2,9 +2,10 @@
 
 namespace Dashed\DashedCore\Classes\Caching;
 
-use Dashed\DashedCore\Classes\CacheProfile;
-use Dashed\DashedCore\Classes\Sites;
 use Illuminate\Http\Request;
+use Dashed\DashedCore\Classes\Sites;
+use Illuminate\Support\Facades\Vite;
+use Dashed\DashedCore\Classes\CacheProfile;
 
 class CacheDecision
 {
@@ -31,14 +32,38 @@ class CacheDecision
         private readonly int $ttl,
         private readonly array $tags,
         private readonly string $reason,
-    ) {}
+    ) {
+    }
+
+    /**
+     * De sleutel draagt de vingerafdruk van de gebouwde assets mee. Zonder dat
+     * blijft gecachete HTML bestaan waarin de gehashte naam van een stylesheet
+     * staat die de volgende build heeft weggegooid: de pagina laadt dan een
+     * 404'ende CSS en komt zonder opmaak binnen, terwijl elke nog niet
+     * gecachete pagina er goed uitziet. Een nieuwe build geeft nu vanzelf
+     * nieuwe sleutels, dus die HTML wordt simpelweg niet meer gevonden en
+     * handmatig legen na een deploy is niet meer nodig.
+     */
+    public static function cacheKeyFor(string $siteId, string $locale, string $path): string
+    {
+        return 'response:' . $siteId . ':' . $locale . ':' . self::assetsFingerprint() . ':' . sha1($path);
+    }
+
+    /**
+     * Vite geeft niets terug zonder build en met de dev-server aan; in beide
+     * gevallen valt er niets te verlopen en volstaat een vaste waarde.
+     */
+    private static function assetsFingerprint(): string
+    {
+        return Vite::manifestHash() ?: 'no-build';
+    }
 
     public static function for(Request $request): self
     {
         $siteId = Sites::getActive();
         $profile = CacheProfile::forSite($siteId);
         $locale = app()->getLocale();
-        $key = 'response:' . $siteId . ':' . $locale . ':' . sha1($request->getPathInfo());
+        $key = self::cacheKeyFor($siteId, $locale, $request->getPathInfo());
         $tags = ['response', 'response:site:' . $siteId];
         $deny = fn (string $why) => new self(false, $key, 0, $tags, $why);
 
