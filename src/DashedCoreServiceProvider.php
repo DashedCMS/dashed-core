@@ -182,6 +182,21 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             \Illuminate\Mail\Events\MessageSending::class,
             \Dashed\DashedCore\Listeners\EnablePostmarkTracking::class,
         );
+
+        // Uitloggen uit het CMS in het inloglogboek. Alleen via de uitlogroute
+        // van het paneel: de front-end deelt de guard maar hoort hier niet.
+        \Illuminate\Support\Facades\Event::listen(
+            \Illuminate\Auth\Events\Logout::class,
+            function (\Illuminate\Auth\Events\Logout $event): void {
+                if (! request()->routeIs('filament.*.auth.logout')) {
+                    return;
+                }
+
+                $user = $event->user instanceof \Dashed\DashedCore\Models\User ? $event->user : null;
+
+                \Dashed\DashedCore\Models\LoginAttempt::record(\Dashed\DashedCore\Models\LoginAttempt::RESULT_LOGOUT, $user?->email, $user);
+            },
+        );
     }
 
     public function bootingPackage()
@@ -1142,6 +1157,18 @@ MARKDOWN,
                     Termijn::make('sent_emails', fn () => (int) config('dashed-core.sent_emails.retention_days', 90), 'created_at')
                         ->label(__('Verzonden e-mails bewaren (dagen)'))
                         ->uitleg(__('Het logboek met elke verzonden mail en zijn bezorgstatus. Standaard: 90 dagen.'))
+                )
+        );
+
+        cms()->registerRetention(
+            Retention::make('login_attempts')
+                ->label(__('Inlogpogingen'))
+                ->pakket('dashed-core', __('Systeem'))
+                ->tabel('dashed__login_attempts')
+                ->termijn(
+                    Termijn::make('login_attempts', 180, 'created_at')
+                        ->label(__('Inlogpogingen bewaren (dagen)'))
+                        ->uitleg(__('Elke gelukte, mislukte en geweigerde inlogpoging op het CMS, met IP-adres. Standaard: 180 dagen.'))
                 )
         );
 

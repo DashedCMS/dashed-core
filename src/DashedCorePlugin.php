@@ -53,6 +53,7 @@ class DashedCorePlugin implements Plugin
                 ExportResource::class,
                 EmailTemplateResource::class,
                 SentEmailResource::class,
+                \Dashed\DashedCore\Filament\Resources\LoginAttemptResource::class,
             ])
             ->pages([
                 SettingsPage::class,

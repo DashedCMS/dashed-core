@@ -26,9 +26,12 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Awcodes\RicherEditor\Plugins\FullScreenPlugin;
 use Awcodes\RicherEditor\Plugins\SourceCodePlugin;
+use Dashed\DashedCore\Middleware\EnsureMfaIsFresh;
+use Dashed\DashedCore\Filament\Pages\Auth\CmsLogin;
 use Dashed\DashedCore\Middleware\EnsureCmsIpAllowed;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Illuminate\Routing\Middleware\SubstituteBindings;
+use Dashed\DashedCore\Filament\Pages\Auth\MfaReverify;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Auth\MultiFactor\Email\EmailAuthentication;
@@ -461,30 +464,8 @@ class CMSManager
     public function getFilamentPanelItems(Panel $panel): Panel
     {
         $pages = [];
-        $mfaMethods = [];
 
         $pages[] = \Dashed\DashedCore\Filament\Pages\Dashboard\Dashboard::class;
-
-
-        if (Customsetting::get('mfa_app_enabled', false)) {
-            $mfaMethods[] = AppAuthentication::make()
-                ->recoverable()
-                ->recoveryCodeCount(10)
-                ->brandName(Customsetting::get('site_name', null, 'DashedCMS'));
-        }
-
-        if (Customsetting::get('mfa_email_enabled', false)) {
-            $mfaMethods[] = EmailAuthentication::make();
-        }
-
-        $forceMFA = Customsetting::get('force_mfa', false) ?: false;
-        if ($forceMFA && ! count($mfaMethods)) {
-            $mfaMethods[] = EmailAuthentication::make();
-        }
-
-        if (app()->isLocal()) {
-            $forceMFA = false;
-        }
 
         $navigationGroups = collect(static::$builders['navigationGroups'] ?? [])
             ->sortBy(fn ($entry) => $entry['sort'] ?? 100)
@@ -495,7 +476,8 @@ class CMSManager
             ->default()
             ->id('dashed')
             ->path(config('dashed-core.dashed_cms.path', 'dashed'))
-            ->login()
+            ->login(CmsLogin::class)
+            ->routes(fn () => Route::get('/mfa-bevestigen', MfaReverify::class)->name(MfaReverify::ROUTE))
 //            ->registration()
             ->unsavedChangesAlerts()
             ->passwordReset()
@@ -530,12 +512,52 @@ class CMSManager
             ], isPersistent: true)
             ->authMiddleware([
                 Authenticate::class,
+                EnsureMfaIsFresh::class,
             ])
-            ->multiFactorAuthentication($mfaMethods, isRequired: $forceMFA)
+            // Als closures, zodat de MFA-instellingen per verzoek gelezen
+            // worden en niet één keer bij de boot: een schakelaar omzetten
+            // werkt dan meteen, en in tests bestaat de tabel bij de boot nog
+            // niet.
+            ->multiFactorAuthentication(fn () => $this->mfaProviders(), isRequired: fn () => $this->mfaIsRequired())
 //            ->brandLogo(fn () => mediaHelper()->getSingleMedia(Customsetting::get('site_logo'))->url)
             ->brandName(Customsetting::get('site_name', null, 'DashedCMS'));
 
         return $panel;
+    }
+
+    /**
+     * @return array<int, AppAuthentication|EmailAuthentication>
+     */
+    public function mfaProviders(): array
+    {
+        $providers = [];
+
+        if (Customsetting::get('mfa_app_enabled', false)) {
+            $providers[] = AppAuthentication::make()
+                ->recoverable()
+                ->recoveryCodeCount(10)
+                ->brandName(Customsetting::get('site_name', null, 'DashedCMS'));
+        }
+
+        if (Customsetting::get('mfa_email_enabled', false)) {
+            $providers[] = EmailAuthentication::make();
+        }
+
+        // Verplicht zonder één methode aan zou niemand meer binnenlaten.
+        if ($this->mfaIsRequired() && ! count($providers)) {
+            $providers[] = EmailAuthentication::make();
+        }
+
+        return $providers;
+    }
+
+    public function mfaIsRequired(): bool
+    {
+        if (app()->isLocal()) {
+            return false;
+        }
+
+        return (bool) (Customsetting::get('force_mfa', false) ?: false);
     }
 
     public function getFilamentPluginItems(): array

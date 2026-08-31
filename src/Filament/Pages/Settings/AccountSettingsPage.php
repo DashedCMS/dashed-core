@@ -8,9 +8,12 @@ use Dashed\DashedCore\Classes\Sites;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Tabs;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Contracts\HasSchemas;
+use Dashed\DashedCore\Classes\MfaFreshness;
 use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedPages\Models\Page as PageModel;
 use Dashed\DashedCore\Traits\HasSettingsPermission;
@@ -30,7 +33,9 @@ class AccountSettingsPage extends Page implements HasSchemas
 
     public function mount(): void
     {
-        $formData = [];
+        $formData = [
+            'mfa_reverify_hours' => MfaFreshness::hours(),
+        ];
         $sites = Sites::getSites();
         foreach ($sites as $site) {
             $formData["account_page_id_{$site['id']}"] = Customsetting::get('account_page_id', $site['id']);
@@ -99,12 +104,27 @@ class AccountSettingsPage extends Page implements HasSchemas
         $tabGroups[] = Tabs::make('Sites')
             ->tabs($tabs);
 
+        // Eén instelling voor de hele installatie, dus buiten de site-tabs.
+        $tabGroups[] = Section::make(__('MFA opnieuw bevestigen'))
+            ->description(__('Filament controleert de code bij het inloggen. Hiermee vraagt het CMS na een aantal uur opnieuw een code van iedereen met MFA, ook midden in een sessie; een sessie die via "onthoud mij" terugkomt moet altijd eerst een code invoeren.'))
+            ->schema([
+                TextInput::make('mfa_reverify_hours')
+                    ->label(__('Na hoeveel uur opnieuw een code vragen'))
+                    ->numeric()
+                    ->integer()
+                    ->minValue(0)
+                    ->suffix(__('uur'))
+                    ->helperText(__('0 betekent alleen bij het inloggen. Standaard 24.')),
+            ]);
+
         return $schema->schema($tabGroups)
             ->statePath('data');
     }
 
     public function submit()
     {
+        Customsetting::set(MfaFreshness::SETTING, max(0, (int) ($this->form->getState()['mfa_reverify_hours'] ?? MfaFreshness::DEFAULT_HOURS)), Sites::getFirstSite()['id']);
+
         $sites = Sites::getSites();
 
         foreach ($sites as $site) {

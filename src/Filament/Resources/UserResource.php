@@ -291,7 +291,8 @@ class UserResource extends Resource
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('role')
-                    ->label(__('Rol')),
+                    ->label(__('Rol'))
+                    ->sortable(),
             ])
             ->filters([
                 //
