@@ -25,7 +25,7 @@ class EnsureCmsIpAllowed
                 LoginAttempt::record(LoginAttempt::RESULT_IP_BLOCKED, null);
             }
 
-            abort(403, __('Het CMS is niet bereikbaar vanaf dit IP-adres.'));
+            abort(403, __('Het CMS is niet bereikbaar vanaf jouw IP-adres :ip.', ['ip' => (string) $request->ip()]));
         }
 
         return $next($request);

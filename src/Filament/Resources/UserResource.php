@@ -17,6 +17,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Schemas\Components\Utilities\Get;
 use STS\FilamentImpersonate\Actions\Impersonate;
 use Dashed\DashedCore\Filament\Resources\UserResource\Users\EditUser;
@@ -293,9 +294,26 @@ class UserResource extends Resource
                 TextColumn::make('role')
                     ->label(__('Rol'))
                     ->sortable(),
+                TextColumn::make('roles.name')
+                    ->label(__('Rollen'))
+                    ->badge()
+                    ->placeholder('-')
+                    ->toggleable(),
             ])
             ->filters([
-                //
+                SelectFilter::make('role')
+                    ->label(__('Rol'))
+                    ->multiple()
+                    ->options([
+                        'superadmin' => __('Superadmin'),
+                        'admin' => __('Admin'),
+                        'customer' => __('Customer'),
+                    ]),
+                SelectFilter::make('roles')
+                    ->label(__('Rollen'))
+                    ->multiple()
+                    ->relationship('roles', 'name')
+                    ->preload(),
             ])
             ->recordActions([
                 Impersonate::make(),
