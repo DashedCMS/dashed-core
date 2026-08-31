@@ -2,8 +2,11 @@
 
 namespace Dashed\DashedCore\Classes;
 
+use Dashed\DashedCore\Models\User;
+use Illuminate\Support\Facades\Mail;
 use Dashed\DashedCore\Models\Customsetting;
 use Symfony\Component\HttpFoundation\IpUtils;
+use Dashed\DashedCore\Mail\CmsIpAllowlistChangedMail;
 
 /**
  * De lijst met IP-adressen waarvandaan het CMS bereikbaar is.
@@ -108,7 +111,44 @@ class CmsIpAllowlist
      */
     public static function save(array $entries): void
     {
-        Customsetting::set(self::SETTING, implode("\n", array_values(array_unique($entries))), self::siteId());
+        $entries = array_values(array_unique($entries));
+        $previous = self::entries();
+
+        Customsetting::set(self::SETTING, implode("\n", $entries), self::siteId());
+
+        if ($entries !== $previous) {
+            self::notifySuperadmins($previous, $entries);
+        }
+    }
+
+    /**
+     * Elke superadmin hoort het zodra de lijst verandert, ook vanaf de
+     * commandoregel. Wie het CMS op adres afsluit of juist weer openzet, hoort
+     * dat niet alleen zelf te weten.
+     *
+     * @param  array<int, string>  $previous
+     * @param  array<int, string>  $current
+     */
+    protected static function notifySuperadmins(array $previous, array $current): void
+    {
+        $user = auth()->user();
+        $actor = $user
+            ? trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? '')) ?: ($user->name ?? $user->email)
+            : 'de commandoregel';
+
+        $mail = new CmsIpAllowlistChangedMail(
+            oldEntries: $previous,
+            newEntries: $current,
+            actor: $actor . ($user?->email ? ' (' . $user->email . ')' : ''),
+            actorIp: app()->runningInConsole() ? null : request()->ip(),
+            changedAt: now()->format('d-m-Y H:i'),
+        );
+
+        User::query()
+            ->where('role', 'superadmin')
+            ->whereNotNull('email')
+            ->get()
+            ->each(fn (User $superadmin) => Mail::to($superadmin->email)->send($mail));
     }
 
     public static function clear(): void
