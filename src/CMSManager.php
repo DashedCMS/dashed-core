@@ -26,6 +26,7 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Awcodes\RicherEditor\Plugins\FullScreenPlugin;
 use Awcodes\RicherEditor\Plugins\SourceCodePlugin;
+use Dashed\DashedCore\Middleware\EnsureCmsIpAllowed;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
@@ -522,6 +523,11 @@ class CMSManager
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
+            // Persistent, zodat ook Livewire-verzoeken van een al geopende
+            // pagina de IP-lijst passeren en niet alleen de paginaladingen.
+            ->middleware([
+                EnsureCmsIpAllowed::class,
+            ], isPersistent: true)
             ->authMiddleware([
                 Authenticate::class,
             ])

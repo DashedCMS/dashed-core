@@ -76,6 +76,7 @@ use Dashed\DashedCore\Mail\EmailBlocks\ColumnsBlock;
 use Dashed\DashedCore\Mail\EmailBlocks\DividerBlock;
 use Dashed\DashedCore\Mail\EmailBlocks\HeadingBlock;
 use Dashed\DashedCore\Retention\ActivityLogOpruimer;
+use Dashed\DashedCore\Commands\CmsIpAllowlistCommand;
 use Dashed\DashedCore\Filament\Widgets\DashboardGrid;
 use Dashed\DashedCore\Mail\EmailBlocks\MediaTextBlock;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -115,6 +116,7 @@ use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonQueueStats;
 use Dashed\DashedCore\Filament\Pages\Settings\AccountSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\CleanupSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
+use Dashed\DashedCore\Filament\Pages\Settings\SecuritySettingsPage;
 use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonOverviewStats;
 use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonWaitTimeChart;
 use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonFailedJobsTable;
@@ -623,6 +625,37 @@ MARKDOWN,
             tips: [
                 'Forceer je MFA, communiceer dit dan vooraf met je team. Iedereen moet eenmalig de tweede stap instellen voor ze weer kunnen inloggen.',
                 'MFA via een app is veiliger dan via e-mail. Bied beide aan als gebruikers de keuze willen hebben.',
+            ],
+        );
+
+        cms()->registerSettingsDocs(
+            page: \Dashed\DashedCore\Filament\Pages\Settings\SecuritySettingsPage::class,
+            title: 'Beveiliging',
+            intro: 'Hier beperk je vanaf welke IP-adressen het CMS bereikbaar is.',
+            sections: [
+                [
+                    'heading' => 'Hoe werkt de IP-lijst?',
+                    'body' => <<<MARKDOWN
+Laat je de lijst leeg, dan verandert er niets en is het CMS vanaf elk adres bereikbaar. Zet je er één of meer adressen in, dan kan er alleen nog vanaf die adressen ingelogd en gewerkt worden. Elk ander adres krijgt een foutmelding, ook op de inlogpagina en ook als iemand al ingelogd was. De website zelf en de koppeling met de mobiele app (API) blijven gewoon bereikbaar; de knop in de app die het CMS opent valt er wél onder, want die logt de webomgeving in.
+
+Een regel is een los adres (IPv4 of IPv6) of een reeks in CIDR-notatie, bijvoorbeeld `198.51.100.0/24` voor een heel kantoornetwerk.
+MARKDOWN,
+                ],
+                [
+                    'heading' => 'Jezelf niet buitensluiten',
+                    'body' => <<<MARKDOWN
+Het scherm toont vanaf welk adres jij het CMS nu bezoekt en weigert een lijst waar dat adres niet in past. Met de knop **Mijn IP toevoegen** zet je het er in één keer bij. Verandert het adres van je kantoor later (veel verbindingen krijgen af en toe een nieuw adres), dan zit je alsnog buiten. In dat geval maakt `php artisan dashed:cms-ip-allowlist --clear` de lijst leeg, of voegt `--add=<adres>` het nieuwe adres toe.
+MARKDOWN,
+                ],
+                [
+                    'heading' => 'Achter Cloudflare of een andere proxy',
+                    'body' => <<<MARKDOWN
+Het getoonde adres is wat de server als bezoeker ziet. Loopt de site via Cloudflare of een andere proxy en is die niet als vertrouwde proxy ingesteld, dan ziet de server het adres van de proxy in plaats van het jouwe. Klopt het getoonde adres niet met je eigen adres (bijvoorbeeld op whatismyip.com), zet de lijst dan nog niet aan en laat eerst de proxy goed instellen; anders sluit je óf iedereen buiten, óf laat je iedereen binnen die via dezelfde proxy komt.
+MARKDOWN,
+                ],
+            ],
+            fields: [
+                'Toegestane IP-adressen' => 'Eén adres of reeks per regel. Leeg betekent geen beperking.',
             ],
         );
 
@@ -1526,6 +1559,7 @@ MARKDOWN,
 
         cms()->registerSettingsPage(GeneralSettingsPage::class, 'Algemeen', 'cog', 'Algemene informatie van de website');
         cms()->registerSettingsPage(AccountSettingsPage::class, 'Account', 'user', 'Account instellingen van de website');
+        cms()->registerSettingsPage(SecuritySettingsPage::class, 'Beveiliging', 'shield-check', 'Toegang tot het CMS beperken op IP-adres');
         cms()->registerSettingsPage(SEOSettingsPage::class, 'SEO', 'identification', 'SEO van de website');
         cms()->registerSettingsPage(ImageSettingsPage::class, 'Afbeelding', 'photo', 'Afbeelding van de website');
         cms()->registerSettingsPage(CacheSettingsPage::class, 'Cache', 'photo', 'Cache van de website');
@@ -1564,6 +1598,7 @@ MARKDOWN,
             ->hasAssets()
             ->hasCommands([
                 CreateAdminUser::class,
+                CmsIpAllowlistCommand::class,
                 InstallCommand::class,
                 UpdateCommand::class,
                 InvalidatePasswordResetTokens::class,

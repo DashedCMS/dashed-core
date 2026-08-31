@@ -28,6 +28,7 @@ use Dashed\DashedCore\Filament\Pages\Settings\SearchSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\AccountSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\GeneralSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\HorizonDashboardPage;
+use Dashed\DashedCore\Filament\Pages\Settings\SecuritySettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\NotFoundPageSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Settings\NotificationSettingsPage;
 use Dashed\DashedCore\Filament\Pages\Documentation\DocumentationOverviewPage;
@@ -63,6 +64,7 @@ class DashedCorePlugin implements Plugin
                 IntegrationsDashboard::class,
                 ContentQualityDashboard::class,
                 AccountSettingsPage::class,
+                SecuritySettingsPage::class,
                 SearchSettingsPage::class,
                 ReviewSettingsPage::class,
                 ExportSettingsPage::class,
