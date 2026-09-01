@@ -157,6 +157,13 @@ class DashedCoreServiceProvider extends PackageServiceProvider
 
     public function packageBooted()
     {
+        // Vreemde Host-headers buiten de deur, vóór alles wat een URL uit het
+        // verzoek afleidt. Zie de klasse zelf voor het waarom.
+        $kernel = $this->app->make(\Illuminate\Contracts\Http\Kernel::class);
+        if (method_exists($kernel, 'prependMiddleware')) {
+            $kernel->prependMiddleware(\Dashed\DashedCore\Middleware\TrustedHosts::class);
+        }
+
         // Register the webhook-idempotency middleware alias so payment-gateway
         // routes can opt-in via `->middleware('webhook.idempotency:mollie')`
         // etc. The real handler implementation lands in Bundle 2 Task 10.

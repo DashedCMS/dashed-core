@@ -36,6 +36,17 @@ return [
         'window_seconds' => (int) env('DASHED_EDGE_PURGE_WINDOW_SECONDS', 300),
     ],
 
+    // Welke Host-headers dit systeem mogen aanspreken, naast de host van
+    // APP_URL en de site_url per site. Exact, zonder schema, komma-gescheiden;
+    // bijvoorbeeld een staging-domein. Zie Middleware\TrustedHosts.
+    'trusted_hosts' => [
+        'extra' => array_values(array_filter(array_map('trim', explode(',', (string) env('DASHED_TRUSTED_HOSTS', ''))))),
+        // null: zoals Laravel zelf, afdwingen buiten local en buiten tests.
+        // Op false zetten is de ontsnapping als een uitrol zichzelf buitensluit
+        // (verkeerde APP_URL); op true dwingt ook lokaal en in tests af.
+        'enforce' => env('DASHED_TRUSTED_HOSTS_ENFORCE'),
+    ],
+
     'site_theme' => env('SITE_THEME', 'dashed'),
     'site_id' => env('DASHED_SITE_ID'),
 

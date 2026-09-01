@@ -42,6 +42,7 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
+use Dashed\DashedCore\Filament\Pages\Auth\CmsRequestPasswordReset;
 
 class CMSManager
 {
@@ -481,7 +482,7 @@ class CMSManager
             ->routes(fn () => Route::get('/mfa-bevestigen', MfaReverify::class)->name(MfaReverify::ROUTE))
 //            ->registration()
             ->unsavedChangesAlerts()
-            ->passwordReset()
+            ->passwordReset(CmsRequestPasswordReset::class)
             ->emailVerification()
             ->emailChangeVerification()
             ->profile()

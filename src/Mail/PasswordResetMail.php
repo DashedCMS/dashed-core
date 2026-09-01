@@ -7,6 +7,7 @@ use Illuminate\Mail\Mailable;
 use Dashed\DashedCore\Models\User;
 use Illuminate\Queue\SerializesModels;
 use Dashed\DashedCore\Models\Customsetting;
+use Dashed\DashedCore\Classes\AccountHelper;
 use Dashed\DashedTranslations\Models\Translation;
 use Dashed\DashedCore\Mail\Concerns\HasEmailTemplate;
 use Dashed\DashedCore\Mail\Contracts\RegistersEmailTemplate;
@@ -63,7 +64,7 @@ class PasswordResetMail extends Mailable implements RegistersEmailTemplate
             'user' => $user,
             'userName' => $user?->name ?? 'Voorbeeldgebruiker',
             'userEmail' => $user?->email ?? 'voorbeeld@example.com',
-            'resetUrl' => url('/password/reset'),
+            'resetUrl' => AccountHelper::getResetPasswordUrl('voorbeeld'),
             'siteName' => Customsetting::get('site_name'),
         ];
     }
@@ -81,7 +82,9 @@ class PasswordResetMail extends Mailable implements RegistersEmailTemplate
             'user' => $this->user,
             'userName' => $this->user->name,
             'userEmail' => $this->user->email,
-            'resetUrl' => url('/password/reset'),
+            // Mét token en op het domein van de site: zonder token kon je vanuit
+            // een sjabloonmail nergens heen, en de host mag nooit uit het verzoek komen.
+            'resetUrl' => AccountHelper::getResetPasswordUrl($this->user->password_reset_token),
             'siteName' => Customsetting::get('site_name'),
         ];
 
