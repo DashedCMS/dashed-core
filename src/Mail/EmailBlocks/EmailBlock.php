@@ -35,6 +35,24 @@ abstract class EmailBlock
 
     abstract public static function render(array $blockData, array $context): string;
 
+    /**
+     * Een mailprogramma heeft geen basis-URL, dus een relatief pad
+     * ('/producten/x') is daar een dode link. Bovendien slaat LinkRewriter
+     * alles over wat niet met https begint, dus zo'n link wordt ook nooit
+     * gemeten. De basis is de site-URL uit de context (CampaignRenderer geeft
+     * die mee per lijst), met de app-URL als terugval voor aanroepen zonder.
+     */
+    protected static function absoluteUrl(string $url, array $context): string
+    {
+        if (preg_match('#^(https?:)?//#i', $url)) {
+            return $url;
+        }
+
+        $basis = rtrim((string) ($context['siteUrl'] ?? config('app.url')), '/');
+
+        return $basis . '/' . ltrim($url, '/');
+    }
+
     protected static function substitute(string $text, array $context): string
     {
         return preg_replace_callback('/:(\w+):/', function ($m) use ($context) {
