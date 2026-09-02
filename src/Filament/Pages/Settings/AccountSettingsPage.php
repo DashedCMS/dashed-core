@@ -86,7 +86,7 @@ class AccountSettingsPage extends Page implements HasSchemas
                     ->options(PageModel::thisSite($site['id'])->pluck('name', 'id')),
                 Toggle::make("force_mfa_{$site['id']}")
                     ->label(__('Forceer multi factor authenticatie bij het CMS'))
-                ->helperText(__('Als je deze optie activeert, activeer dan hieronder minimaal 1 methode.')),
+                ->helperText(__('Wie nog geen methode heeft ingesteld, wordt bij elke paginalading in het CMS eerst naar de instelpagina gestuurd. Activeer hieronder minimaal 1 methode.')),
                 Toggle::make("mfa_app_enabled_{$site['id']}")
                     ->label(__('Multi factor authenticatie via een app')),
                 Toggle::make("mfa_email_enabled_{$site['id']}")

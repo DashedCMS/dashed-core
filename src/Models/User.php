@@ -7,6 +7,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Spatie\Activitylog\LogOptions;
 use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Notifications\Notifiable;
+use Dashed\DashedCore\Classes\MfaFreshness;
 use Filament\Models\Contracts\FilamentUser;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Dashed\DashedCore\Traits\HasDynamicRelation;
@@ -66,6 +67,27 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasAppAut
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults();
+    }
+
+    protected static function booted(): void
+    {
+        // Wie midden in een sessie (verplicht) MFA instelt, heeft die code net
+        // zelf bevestigd. Stempel de sessie dan meteen als vers, anders stuurt
+        // EnsureMfaIsFresh hem direct daarna nog een keer langs een codescherm.
+        // In booted() en niet in de ServiceProvider, zodat het ook geldt voor
+        // App\Models\User in de projecten, die hiervan erft.
+        static::updated(function (self $user): void {
+            if (! auth()->hasUser() || auth()->id() !== $user->getKey()) {
+                return;
+            }
+
+            $justSetUp = ($user->wasChanged('app_authentication_secret') && $user->app_authentication_secret)
+                || ($user->wasChanged('has_email_authentication') && $user->has_email_authentication);
+
+            if ($justSetUp) {
+                MfaFreshness::stamp();
+            }
+        });
     }
 
     public function canAccessPanel(Panel $panel): bool
@@ -167,7 +189,9 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasAppAut
     {
         // This method should return true if the user has enabled email authentication.
 
-        return $this->has_email_authentication;
+        // Kolom is nullable; bij bestaande gebruikers is hij nog nooit gezet en
+        // zou het getypeerde bool-returntype op null klappen.
+        return (bool) $this->has_email_authentication;
     }
 
     public function toggleEmailAuthentication(bool $condition): void

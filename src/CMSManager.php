@@ -27,6 +27,7 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Awcodes\RicherEditor\Plugins\FullScreenPlugin;
 use Awcodes\RicherEditor\Plugins\SourceCodePlugin;
 use Dashed\DashedCore\Middleware\EnsureMfaIsFresh;
+use Dashed\DashedCore\Middleware\EnsureMfaIsSetUp;
 use Dashed\DashedCore\Filament\Pages\Auth\CmsLogin;
 use Dashed\DashedCore\Middleware\EnsureCmsIpAllowed;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
@@ -43,6 +44,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Dashed\DashedCore\Filament\Pages\Auth\CmsRequestPasswordReset;
+use Filament\Auth\MultiFactor\Pages\SetUpRequiredMultiFactorAuthentication;
 
 class CMSManager
 {
@@ -479,7 +481,22 @@ class CMSManager
             ->id('dashed')
             ->path(config('dashed-core.dashed_cms.path', 'dashed'))
             ->login(CmsLogin::class)
-            ->routes(fn () => Route::get('/mfa-bevestigen', MfaReverify::class)->name(MfaReverify::ROUTE))
+            ->routes(function (\Filament\Panel $routePanel) {
+                Route::get('/mfa-bevestigen', MfaReverify::class)->name(MfaReverify::ROUTE);
+
+                // Filament registreert de verplichte-instelpagina alleen als de
+                // verplichting al bij de routeregistratie aanstond, en in tests
+                // bestaat de instellingentabel op dat moment nog niet eens; met
+                // een routecache bevriest die stand bovendien. Daarom staat de
+                // route hier ook zodra Filament hem overslaat: de pagina stuurt
+                // zelf weg wie hem niet nodig heeft.
+                if (! ($routePanel->hasMultiFactorAuthentication() && $routePanel->isMultiFactorAuthenticationRequired())) {
+                    Route::get(
+                        '/' . trim($routePanel->getMultiFactorAuthenticationRoutePrefix(), '/') . '/' . $routePanel->getSetUpRequiredMultiFactorAuthenticationRouteSlug(),
+                        SetUpRequiredMultiFactorAuthentication::class,
+                    )->name('auth.multi-factor-authentication.set-up-required');
+                }
+            })
 //            ->registration()
             ->unsavedChangesAlerts()
             ->passwordReset(CmsRequestPasswordReset::class)
@@ -516,6 +533,7 @@ class CMSManager
             ], isPersistent: true)
             ->authMiddleware([
                 Authenticate::class,
+                EnsureMfaIsSetUp::class,
                 EnsureMfaIsFresh::class,
             ])
             // Als closures, zodat de MFA-instellingen per verzoek gelezen
