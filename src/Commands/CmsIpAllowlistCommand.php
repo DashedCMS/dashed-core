@@ -14,6 +14,7 @@ class CmsIpAllowlistCommand extends Command
 {
     protected $signature = 'dashed:cms-ip-allowlist
         {--add=* : Adres of reeks (CIDR) om toe te voegen}
+        {--name= : Naam bij de toegevoegde adressen, om terug te zien van wie ze zijn}
         {--clear : Maak de lijst leeg, zodat het CMS weer vanaf elk adres bereikbaar is}';
 
     protected $description = 'Toon, vul aan of leeg de lijst met IP-adressen waarvandaan het CMS bereikbaar is';
@@ -27,7 +28,11 @@ class CmsIpAllowlistCommand extends Command
             return self::SUCCESS;
         }
 
-        $toAdd = CmsIpAllowlist::parse(implode("\n", (array) $this->option('add')));
+        $name = (string) $this->option('name');
+        $toAdd = array_map(
+            fn (array $entry) => ['name' => $name, 'ip' => $entry['ip']],
+            CmsIpAllowlist::parse(implode("\n", (array) $this->option('add'))),
+        );
 
         if ($toAdd) {
             $invalid = CmsIpAllowlist::invalidEntries($toAdd);
@@ -51,8 +56,8 @@ class CmsIpAllowlistCommand extends Command
 
         $this->line('Het CMS is alleen bereikbaar vanaf:');
 
-        foreach ($entries as $entry) {
-            $this->line('  ' . $entry);
+        foreach (CmsIpAllowlist::labels($entries) as $label) {
+            $this->line('  ' . $label);
         }
 
         return self::SUCCESS;
