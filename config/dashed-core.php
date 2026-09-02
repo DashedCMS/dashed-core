@@ -47,6 +47,14 @@ return [
         'enforce' => env('DASHED_TRUSTED_HOSTS_ENFORCE'),
     ],
 
+    'dashed_cms' => [
+        'path' => env('DASHED_CMS_PATH', 'dashed'),
+        'primary_color' => env('DASHED_CMS_PRIMARY_COLOR', '#00D2CD'),
+        // Op false: geen wachtwoord-vergeten in het CMS-panel (routes en link
+        // op het loginscherm verdwijnen; er gaan geen resetmails meer uit).
+        'password_reset_enabled' => env('DASHED_CMS_PASSWORD_RESET_ENABLED', true),
+    ],
+
     'site_theme' => env('SITE_THEME', 'dashed'),
     'site_id' => env('DASHED_SITE_ID'),
 

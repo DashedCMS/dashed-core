@@ -499,7 +499,13 @@ class CMSManager
             })
 //            ->registration()
             ->unsavedChangesAlerts()
-            ->passwordReset(CmsRequestPasswordReset::class)
+            // Wachtwoord-reset van het CMS-panel is per omgeving uit te zetten
+            // (DASHED_CMS_PASSWORD_RESET_ENABLED=false): dan bestaan de routes
+            // niet en toont het loginscherm de link niet.
+            ->when(
+                (bool) config('dashed-core.dashed_cms.password_reset_enabled', true),
+                fn (Panel $p) => $p->passwordReset(CmsRequestPasswordReset::class),
+            )
             ->emailVerification()
             ->emailChangeVerification()
             ->profile()
