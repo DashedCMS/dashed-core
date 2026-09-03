@@ -223,7 +223,10 @@ class CmsIpAllowlist
             ? trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? '')) ?: ($user->name ?? $user->email)
             : 'de commandoregel';
 
-        $mail = new CmsIpAllowlistChangedMail(
+        // Per ontvanger een eigen mailable: Mail::to()->send() voegt het adres toe
+        // aan de ontvangers van het object, dus één gedeeld object stapelt op
+        // (mail 1 naar A, mail 2 naar A én B, ...) en iedereen krijgt hem vaker.
+        $mail = fn () => new CmsIpAllowlistChangedMail(
             oldEntries: self::labels($previous),
             newEntries: self::labels($current),
             actor: $actor . ($user?->email ? ' (' . $user->email . ')' : ''),
@@ -235,7 +238,7 @@ class CmsIpAllowlist
             ->where('role', 'superadmin')
             ->whereNotNull('email')
             ->get()
-            ->each(fn (User $superadmin) => Mail::to($superadmin->email)->send($mail));
+            ->each(fn (User $superadmin) => Mail::to($superadmin->email)->send($mail()));
     }
 
     /**
