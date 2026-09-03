@@ -4,6 +4,7 @@ namespace Dashed\DashedCore\Livewire\Frontend\Auth;
 
 use Livewire\Component;
 use Dashed\DashedCore\Models\User;
+use Dashed\DashedCore\Models\LoginAttempt;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Dashed\DashedCore\Classes\AccountHelper;
@@ -81,6 +82,10 @@ class Login extends Component
             return redirect()->back()->with('error', Translation::get('no-user-found', 'login', 'We could not find a user matching these criteria'));
         }
 
+        if ($user->mustLoginViaPanel()) {
+            return $this->refusePanelUser($user, 'security:frontend-login-refused');
+        }
+
         if (! Hash::check($this->loginPassword, $user->password)) {
             return redirect()->back()->with('error', Translation::get('no-user-found', 'login', 'We could not find a user matching these criteria'));
         }
@@ -136,6 +141,23 @@ class Login extends Component
         IdentifiedVisitor::mark();
 
         return redirect(AccountHelper::getAccountUrl())->with('success', Translation::get('succesfully-logged-in', 'login', 'You are logged in!'));
+    }
+
+    /**
+     * Beheerdersaccounts worden vóór de wachtwoordcontrole geweigerd, zodat de
+     * frontend geen orakel is om beheerderswachtwoorden op te proberen. De
+     * poging belandt wel in het inloglogboek en het activiteitenlogboek.
+     */
+    protected function refusePanelUser(User $user, string $description)
+    {
+        LoginAttempt::record(LoginAttempt::RESULT_FAILED, $user->email, $user);
+
+        activity()
+            ->performedOn($user)
+            ->withProperties(['ip' => request()->ip(), 'user_agent' => request()->userAgent()])
+            ->log($description);
+
+        return redirect()->route('filament.dashed.auth.login');
     }
 
     public function render()

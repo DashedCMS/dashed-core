@@ -42,10 +42,18 @@ class ResetPassword extends Component
             || \Illuminate\Support\Carbon::parse($this->user->password_reset_requested)->lt(\Illuminate\Support\Carbon::now()->subHour())) {
             abort(404);
         }
+
+        if ($this->user->mustLoginViaPanel()) {
+            return $this->refusePanelUser();
+        }
     }
 
     public function submit()
     {
+        if ($this->user->mustLoginViaPanel()) {
+            return $this->refusePanelUser();
+        }
+
         $this->validate([
             'password' => [
                 'min:6',
@@ -64,6 +72,20 @@ class ResetPassword extends Component
         IdentifiedVisitor::mark();
 
         return redirect(AccountHelper::getAccountUrl())->with('success', Translation::get('reset-password-post-success', 'login', 'Your password has been reset!'));
+    }
+
+    /**
+     * De frontend-reset logt direct in en omzeilt zo MFA en de IP-toegangslijst.
+     * Beheerdersaccounts resetten uitsluitend via het paneel.
+     */
+    protected function refusePanelUser()
+    {
+        activity()
+            ->performedOn($this->user)
+            ->withProperties(['ip' => request()->ip(), 'user_agent' => request()->userAgent()])
+            ->log('security:frontend-password-reset-refused');
+
+        return redirect()->route('filament.dashed.auth.login');
     }
 
     public function render()

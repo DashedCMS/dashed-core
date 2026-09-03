@@ -95,6 +95,16 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasAppAut
         return in_array($this->role, ['superadmin', 'admin']) || $this->roles->isNotEmpty();
     }
 
+    /**
+     * Accounts met paneelrechten loggen uitsluitend via het paneel in (MFA,
+     * IP-toegangslijst, inloglogboek). De frontend-login en -wachtwoordreset
+     * doen auth()->login() op dezelfde guard en zouden dat allemaal omzeilen.
+     */
+    public function mustLoginViaPanel(): bool
+    {
+        return $this->role !== 'customer' || $this->roles()->exists();
+    }
+
     public function getFilamentName(): string
     {
         return $this->name;

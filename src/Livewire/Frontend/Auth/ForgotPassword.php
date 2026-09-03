@@ -46,7 +46,16 @@ class ForgotPassword extends Component
         ]);
 
         $user = User::where('email', $this->email)->first();
-        if ($user) {
+        if ($user && $user->mustLoginViaPanel()) {
+            // Beheerdersaccounts resetten uitsluitend via het paneel: de
+            // frontend-reset logt direct in en omzeilt MFA. Geen token en geen
+            // mail, wel een regel in het activiteitenlogboek. De bezoeker ziet
+            // dezelfde generieke melding (geen account-enumeratie).
+            activity()
+                ->performedOn($user)
+                ->withProperties(['ip' => request()->ip(), 'user_agent' => request()->userAgent()])
+                ->log('security:frontend-password-reset-refused');
+        } elseif ($user) {
             $user->password_reset_token = Str::random(64);
             $user->password_reset_requested = Carbon::now();
             $user->save();
