@@ -37,7 +37,7 @@
                         @endif
 
                         @if ($item['visible'] || $editing)
-                            {!! rescue(fn () => app('livewire')->mount($item['class'], [], $item['id']), '<div style="color:#b91c1c;font-size:12px;">Widget kon niet geladen worden.</div>', false) !!}
+                            {!! rescue(fn () => app('livewire')->mount($item['class'], \Dashed\DashedCore\Filament\Widgets\DashboardGrid::mountParamsFor($item['class']), $item['id']), '<div style="color:#b91c1c;font-size:12px;">Widget kon niet geladen worden.</div>', false) !!}
                         @endif
                     </div>
                 @endif

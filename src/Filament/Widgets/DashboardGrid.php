@@ -32,6 +32,25 @@ class DashboardGrid extends Widget
         return Sites::getActive();
     }
 
+    /**
+     * De parameters waarmee een widget in de grid gemount wordt. Filament geeft
+     * via getDefaultProperties() ['lazy' => true] mee voor elke widget die dat
+     * niet zelf uitzet, precies zoals het standaarddashboard van Filament doet.
+     * Zonder die parameter draaien alle widgets hun queries in de request van de
+     * pagina zelf: die verschijnt dan pas als de traagste widget klaar is, en
+     * het geheugen van alle widgets samen zit in dat ene proces.
+     *
+     * @return array<string, mixed>
+     */
+    public static function mountParamsFor(string $class): array
+    {
+        if (! method_exists($class, 'getDefaultProperties')) {
+            return [];
+        }
+
+        return (array) $class::getDefaultProperties();
+    }
+
     public function canEdit(): bool
     {
         return in_array(auth()->user()?->role, ['admin', 'superadmin'], true);
