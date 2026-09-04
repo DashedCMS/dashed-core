@@ -103,7 +103,18 @@ class MfaReverify extends SimplePage
                             $providers,
                         ))
                         ->default(array_key_first($providers))
-                        ->live(),
+                        ->live()
+                        // Bij het openen krijgt alleen de eerste methode de
+                        // voorbereiding (zie mount). Wie overschakelt naar een
+                        // methode die iets moet versturen, zoals de e-mailcode,
+                        // krijgt die hier alsnog; net als op de inlogpagina.
+                        ->afterStateUpdated(function (?string $state) use ($providers, $user): void {
+                            $provider = $providers[$state] ?? null;
+
+                            if ($provider instanceof HasBeforeChallengeHook) {
+                                $provider->beforeChallenge($user);
+                            }
+                        }),
                 ] : []),
                 ...collect($providers)
                     ->map(fn (MultiFactorAuthenticationProvider $provider) => Group::make($provider->getChallengeFormComponents($user))
