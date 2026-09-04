@@ -37,6 +37,7 @@ use Dashed\DashedCore\Filament\Pages\Auth\MfaReverify;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Auth\MultiFactor\Email\EmailAuthentication;
+use Dashed\DashedCore\Notifications\MfaEmailCodeNotification;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Dashed\DashedCore\Filament\Components\ContentBuilder;
 use LaraZeus\SpatieTranslatable\SpatieTranslatablePlugin;
@@ -577,12 +578,14 @@ class CMSManager
         }
 
         if ($this->mfaSettingOnAnySite('mfa_email_enabled')) {
-            $providers[] = EmailAuthentication::make();
+            $providers[] = EmailAuthentication::make()
+                ->codeNotification(MfaEmailCodeNotification::class);
         }
 
         // Verplicht zonder één methode aan zou niemand meer binnenlaten.
         if ($this->mfaIsRequired() && ! count($providers)) {
-            $providers[] = EmailAuthentication::make();
+            $providers[] = EmailAuthentication::make()
+                ->codeNotification(MfaEmailCodeNotification::class);
         }
 
         return $providers;
