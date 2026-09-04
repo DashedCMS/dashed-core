@@ -130,6 +130,11 @@ class DashedCoreServiceProvider extends PackageServiceProvider
 
     public function registeringPackage()
     {
+        // Verouderde config/flare.php-bestanden wijzen Ignition-middleware aan die
+        // op productie (require-dev) niet bestaat; vertaal naar laravel-flare voordat
+        // de Flare-singleton wordt gebouwd. Zie FlareMiddlewareCompat.
+        \Dashed\DashedCore\Classes\FlareMiddlewareCompat::apply();
+
         // Bind the SettingsRegistry as a singleton in the register() phase so
         // that ANY bootingPackage() in other dashed-* providers (which run
         // alphabetically - dashed-ai before dashed-core) sees the same shared

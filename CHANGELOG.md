@@ -4,6 +4,12 @@ All notable changes to `Dashed core` will be documented in this file.
 
 ## Unreleased
 
+### Changed
+- **MFA is altijd verplicht, voor iedereen, op elke omgeving.** De schakelaar `force_mfa` per site en de uitzondering voor `local` zijn weg; allebei maakten dat de verplichting ergens niet gold zonder dat iemand het zag. De app-methode staat altijd aan, alleen e-mail als extra methode is nog instelbaar (`mfa_email_enabled`, over alle sites heen gelezen). Bij het uitrollen krijgt elke beheerder zonder ingestelde methode bij de eerstvolgende paginalading de instelpagina.
+
+### Fixed
+- **Productie viel om op `Class "Spatie\LaravelIgnition\FlareMiddleware\AddNotifierName" not found`.** Een door spatie/laravel-ignition gepubliceerd `config/flare.php` wijst de Flare-middleware aan onder de Ignition-namespace, maar Ignition zit in require-dev en ontbreekt na `composer install --no-dev`. dashed-core vertaalt die verwijzingen nu bij het registreren naar de gelijknamige middleware uit spatie/laravel-flare (`FlareMiddlewareCompat`), zodat een verouderd config-bestand niet per project hoeft te worden herschreven. De eigen standaardconfig van dashed-core wijst ook niet langer naar Ignition.
+
 ### Added
 - Webhook idempotency middleware + BaseJob trait + replay command. See docs/webhook-idempotency.md.
 - Integrations dashboard, last-edited column, admin stat widgets with drilldown. See docs/admin-overview.md.
