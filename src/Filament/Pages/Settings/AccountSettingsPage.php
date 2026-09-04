@@ -43,8 +43,6 @@ class AccountSettingsPage extends Page implements HasSchemas
             $formData["forgot_password_page_id_{$site['id']}"] = Customsetting::get('forgot_password_page_id', $site['id']);
             $formData["reset_password_page_id_{$site['id']}"] = Customsetting::get('reset_password_page_id', $site['id']);
             $formData["password_protection_page_id_{$site['id']}"] = Customsetting::get('password_protection_page_id', $site['id']);
-            $formData["force_mfa_{$site['id']}"] = Customsetting::get('force_mfa', $site['id']);
-            $formData["mfa_app_enabled_{$site['id']}"] = Customsetting::get('mfa_app_enabled', $site['id']);
             $formData["mfa_email_enabled_{$site['id']}"] = Customsetting::get('mfa_email_enabled', $site['id']);
         }
 
@@ -84,13 +82,9 @@ class AccountSettingsPage extends Page implements HasSchemas
                     ->searchable()
                     ->preload()
                     ->options(PageModel::thisSite($site['id'])->pluck('name', 'id')),
-                Toggle::make("force_mfa_{$site['id']}")
-                    ->label(__('Forceer multi factor authenticatie bij het CMS'))
-                ->helperText(__('Wie nog geen methode heeft ingesteld, wordt bij elke paginalading in het CMS eerst naar de instelpagina gestuurd. Activeer hieronder minimaal 1 methode.')),
-                Toggle::make("mfa_app_enabled_{$site['id']}")
-                    ->label(__('Multi factor authenticatie via een app')),
                 Toggle::make("mfa_email_enabled_{$site['id']}")
-                    ->label(__('Multi factor authenticatie via email')),
+                    ->label(__('Multi factor authenticatie ook via e-mail'))
+                    ->helperText(__('Multi factor authenticatie is in het CMS altijd verplicht en de app-methode staat altijd aan. Hiermee komt e-mail als extra keuze erbij; staat het op een van de sites aan, dan geldt het voor het hele CMS.')),
             ];
 
             $tabs[] = Tab::make($site['id'])
@@ -133,8 +127,6 @@ class AccountSettingsPage extends Page implements HasSchemas
             Customsetting::set('forgot_password_page_id', $this->form->getState()["forgot_password_page_id_{$site['id']}"], $site['id']);
             Customsetting::set('reset_password_page_id', $this->form->getState()["reset_password_page_id_{$site['id']}"], $site['id']);
             Customsetting::set('password_protection_page_id', $this->form->getState()["password_protection_page_id_{$site['id']}"], $site['id']);
-            Customsetting::set('force_mfa', $this->form->getState()["force_mfa_{$site['id']}"], $site['id']);
-            Customsetting::set('mfa_app_enabled', $this->form->getState()["mfa_app_enabled_{$site['id']}"], $site['id']);
             Customsetting::set('mfa_email_enabled', $this->form->getState()["mfa_email_enabled_{$site['id']}"], $site['id']);
         }
 

@@ -568,22 +568,16 @@ class CMSManager
      */
     public function mfaProviders(): array
     {
-        $providers = [];
-
-        if ($this->mfaSettingOnAnySite('mfa_app_enabled')) {
-            $providers[] = AppAuthentication::make()
+        // De app-methode staat altijd aan: MFA is verplicht, dus er moet
+        // altijd minstens één methode zijn om in te stellen.
+        $providers = [
+            AppAuthentication::make()
                 ->recoverable()
                 ->recoveryCodeCount(10)
-                ->brandName(Customsetting::get('site_name', null, 'DashedCMS'));
-        }
+                ->brandName(Customsetting::get('site_name', null, 'DashedCMS')),
+        ];
 
         if ($this->mfaSettingOnAnySite('mfa_email_enabled')) {
-            $providers[] = EmailAuthentication::make()
-                ->codeNotification(MfaEmailCodeNotification::class);
-        }
-
-        // Verplicht zonder één methode aan zou niemand meer binnenlaten.
-        if ($this->mfaIsRequired() && ! count($providers)) {
             $providers[] = EmailAuthentication::make()
                 ->codeNotification(MfaEmailCodeNotification::class);
         }
@@ -592,17 +586,17 @@ class CMSManager
     }
 
     /**
-     * De omgeving heeft hier geen stem in: wie de schakelaar aanzet, ook
-     * lokaal, moet meteen instellen. Een uitzondering voor local maakte dat
-     * de verplichting op een ontwikkelmachine nooit zichtbaar was.
+     * MFA is in het CMS altijd verplicht, voor iedereen, op elke omgeving.
+     * Er was een schakelaar per site en een uitzondering voor local; allebei
+     * maakten dat de verplichting ergens niet gold zonder dat iemand het zag.
      */
     public function mfaIsRequired(): bool
     {
-        return $this->mfaSettingOnAnySite('force_mfa');
+        return true;
     }
 
     /**
-     * De MFA-schakelaars staan per site in het instellingenscherm, maar het
+     * De keuze voor e-mail staat per site in het instellingenscherm, maar het
      * CMS is één paneel met één login. Alleen de actieve site lezen betekende
      * dat een schakelaar op een andere site aan kon staan zonder effect.
      */
