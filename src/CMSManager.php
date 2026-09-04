@@ -7,6 +7,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
+use Dashed\DashedCore\Classes\Sites;
 use Illuminate\Support\Facades\View;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Crypt;
@@ -560,14 +561,14 @@ class CMSManager
     {
         $providers = [];
 
-        if (Customsetting::get('mfa_app_enabled', false)) {
+        if ($this->mfaSettingOnAnySite('mfa_app_enabled')) {
             $providers[] = AppAuthentication::make()
                 ->recoverable()
                 ->recoveryCodeCount(10)
                 ->brandName(Customsetting::get('site_name', null, 'DashedCMS'));
         }
 
-        if (Customsetting::get('mfa_email_enabled', false)) {
+        if ($this->mfaSettingOnAnySite('mfa_email_enabled')) {
             $providers[] = EmailAuthentication::make();
         }
 
@@ -579,13 +580,30 @@ class CMSManager
         return $providers;
     }
 
+    /**
+     * De omgeving heeft hier geen stem in: wie de schakelaar aanzet, ook
+     * lokaal, moet meteen instellen. Een uitzondering voor local maakte dat
+     * de verplichting op een ontwikkelmachine nooit zichtbaar was.
+     */
     public function mfaIsRequired(): bool
     {
-        if (app()->isLocal()) {
-            return false;
+        return $this->mfaSettingOnAnySite('force_mfa');
+    }
+
+    /**
+     * De MFA-schakelaars staan per site in het instellingenscherm, maar het
+     * CMS is één paneel met één login. Alleen de actieve site lezen betekende
+     * dat een schakelaar op een andere site aan kon staan zonder effect.
+     */
+    protected function mfaSettingOnAnySite(string $key): bool
+    {
+        foreach (Sites::getSites() as $site) {
+            if (Customsetting::get($key, $site['id'], false)) {
+                return true;
+            }
         }
 
-        return (bool) (Customsetting::get('force_mfa', false) ?: false);
+        return false;
     }
 
     public function getFilamentPluginItems(): array
