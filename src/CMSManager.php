@@ -482,6 +482,11 @@ class CMSManager
             ->id('dashed')
             ->path(config('dashed-core.dashed_cms.path', 'dashed'))
             ->login(CmsLogin::class)
+            // Alleen een route is niet genoeg: de eerste render werkt dan wel,
+            // maar elk Livewire-verzoek erna (de code insturen) moet de klasse
+            // uit de componentnaam terugvinden, en zonder aanmelding eindigt
+            // dat sinds Livewire 3.8 in een 419 (release-token mismatch).
+            ->livewireComponents([MfaReverify::class])
             ->routes(function (\Filament\Panel $routePanel) {
                 Route::get('/mfa-bevestigen', MfaReverify::class)->name(MfaReverify::ROUTE);
 
@@ -492,8 +497,11 @@ class CMSManager
                 // route hier ook zodra Filament hem overslaat: de pagina stuurt
                 // zelf weg wie hem niet nodig heeft.
                 if (! ($routePanel->hasMultiFactorAuthentication() && $routePanel->isMultiFactorAuthenticationRequired())) {
+                    // Prefix en slug komen allebei al met een slash ervoor uit
+                    // Filament; nog een slash ertussen gaf `...//set-up`, en
+                    // nginx voegt die samen tot een pad dat niet meer matcht.
                     Route::get(
-                        '/' . trim($routePanel->getMultiFactorAuthenticationRoutePrefix(), '/') . '/' . $routePanel->getSetUpRequiredMultiFactorAuthenticationRouteSlug(),
+                        $routePanel->getMultiFactorAuthenticationRoutePrefix() . $routePanel->getSetUpRequiredMultiFactorAuthenticationRouteSlug(),
                         SetUpRequiredMultiFactorAuthentication::class,
                     )->name('auth.multi-factor-authentication.set-up-required');
                 }
