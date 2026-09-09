@@ -546,6 +546,9 @@ class CMSManager
             // pagina de IP-lijst passeren en niet alleen de paginaladingen.
             ->middleware([
                 EnsureCmsIpAllowed::class,
+                // Idem: de klok van "automatisch uitloggen" moet elke actie
+                // zien, en een verlopen sessie moet ook op een poll eruit.
+                \Dashed\DashedCore\Middleware\EnsureCmsSessionIsActive::class,
             ], isPersistent: true)
             ->authMiddleware([
                 Authenticate::class,

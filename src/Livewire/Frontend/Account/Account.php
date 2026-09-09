@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore\Livewire\Frontend\Account;
 
+use Illuminate\Validation\Rules\Password;
 use App\Models\User;
 use Livewire\Component;
 use Illuminate\Support\Facades\Hash;
@@ -84,11 +85,11 @@ class Account extends Component
             ],
             'password' => [
                 'nullable',
-                'min:6',
+                Password::defaults(),
                 'max:255',
             ],
             'passwordConfirmation' => [
-                'min:6',
+                'nullable',
                 'max:255',
                 'required_with:password',
                 'same:password',

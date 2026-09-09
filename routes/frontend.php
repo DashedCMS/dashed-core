@@ -67,6 +67,11 @@ Route::get('/oauth/google/callback', [GoogleOAuthController::class, 'callback'])
     ->middleware(['web', AdminMiddleware::class])
     ->name('google.oauth.callback');
 
+// Dynamisch, opgebouwd uit wat de pakketten aanmelden; zie RobotsTxtBuilder.
+// Een fysiek public/robots.txt gaat op de webserver voor deze route.
+Route::get('/robots.txt', \Dashed\DashedCore\Controllers\Frontend\RobotsTxtController::class)
+    ->name('dashed.frontend.robots');
+
 Route::fallback([FrontendController::class, 'index'])
     ->middleware(array_merge(['web', ResponseCache::class, FrontendMiddleware::class, AddLivewireReferrerToFlareMiddleware::class, \Dashed\DashedCore\Middleware\LocaleSessionRedirect::class, LaravelLocalizationRedirectFilter::class, LaravelLocalizationViewPath::class], cms()->builder('frontendMiddlewares')))
     ->name('dashed.frontend.general.index')

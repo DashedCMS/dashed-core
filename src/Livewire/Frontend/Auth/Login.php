@@ -2,11 +2,12 @@
 
 namespace Dashed\DashedCore\Livewire\Frontend\Auth;
 
+use Illuminate\Validation\Rules\Password;
 use Livewire\Component;
 use Dashed\DashedCore\Models\User;
 use Dashed\DashedCore\Models\LoginAttempt;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\RateLimiter;
+use Dashed\DashedCore\Classes\RateLimits;
 use Dashed\DashedCore\Classes\AccountHelper;
 use Illuminate\Validation\ValidationException;
 use Dashed\DashedTranslations\Models\Translation;
@@ -36,19 +37,19 @@ class Login extends Component
         }
     }
 
+    /**
+     * Per IP en per e-mailadres, met het aantal uit Instellingen, Beveiliging
+     * (limiter dashed-frontend-auth). Staat die op 0, dan telt hier niets.
+     */
     private function ensureNotRateLimited(string $action, string $field): void
     {
-        $throttleKey = $action . '|' . request()->ip();
+        $seconds = RateLimits::hit('dashed-frontend-auth', $action . '|' . request()->ip());
 
-        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
-            $seconds = RateLimiter::availableIn($throttleKey);
-
+        if ($seconds !== null) {
             throw ValidationException::withMessages([
                 $field => ['Te veel pogingen, probeer het over ' . $seconds . ' seconden opnieuw.'],
             ]);
         }
-
-        RateLimiter::hit($throttleKey, 60);
     }
 
     public function login()
@@ -113,12 +114,11 @@ class Login extends Component
                     'max:255',
                 ],
                 'registerPassword' => [
-                    'min:6',
+                    Password::defaults(),
                     'max:255',
                     'required',
                 ],
                 'registerPasswordConfirmation' => [
-                    'min:6',
                     'max:255',
                     'required',
                     'same:registerPassword',

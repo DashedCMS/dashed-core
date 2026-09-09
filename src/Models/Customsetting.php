@@ -273,6 +273,16 @@ class Customsetting extends Model
     /**
      * Wis cache + runtime cache voor een bepaalde site+locale.
      */
+    /**
+     * De in-memory cache van dit proces leegmaken. Voor tests: de statische
+     * cache overleeft de applicatie-herstart tussen twee tests, en een
+     * instelling uit de ene test lekt anders de volgende in.
+     */
+    public static function flushRuntimeCache(): void
+    {
+        static::$runtimeContextCache = [];
+    }
+
     public static function flushFor(?string $siteId = null, ?string $locale = null): void
     {
         if (! $siteId) {

@@ -3,6 +3,7 @@
 namespace Dashed\DashedCore\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Dashed\DashedCore\Classes\SecurityAlerts;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -27,6 +28,8 @@ class LoginAttempt extends Model
 
     public const RESULT_IP_BLOCKED = 'ip_blocked';
 
+    public const RESULT_IDLE_LOGOUT = 'idle_logout';
+
     protected $table = 'dashed__login_attempts';
 
     protected $guarded = [];
@@ -47,6 +50,7 @@ class LoginAttempt extends Model
             self::RESULT_FAILED_MFA => __('Mislukt op MFA-code'),
             self::RESULT_LOGOUT => __('Uitgelogd'),
             self::RESULT_IP_BLOCKED => __('Geweigerd op IP'),
+            self::RESULT_IDLE_LOGOUT => __('Automatisch uitgelogd'),
         ];
     }
 
@@ -58,6 +62,7 @@ class LoginAttempt extends Model
             self::RESULT_FAILED_MFA => 'danger',
             self::RESULT_LOGOUT => 'gray',
             self::RESULT_IP_BLOCKED => 'warning',
+            self::RESULT_IDLE_LOGOUT => 'gray',
         ];
     }
 
@@ -66,14 +71,23 @@ class LoginAttempt extends Model
      * ontbrekende tabel midden in een uitrol mag geen 500 op de inlogpagina
      * opleveren.
      */
-    public static function record(string $result, ?string $email, ?User $user = null): void
+    public static function record(string $result, ?string $email, ?User $user = null): ?static
     {
-        rescue(fn () => static::create([
+        $attempt = rescue(fn () => static::create([
             'result' => $result,
             'email' => $email ? mb_substr($email, 0, 255) : null,
             'user_id' => $user?->getKey(),
             'ip' => request()->ip(),
             'user_agent' => mb_substr((string) request()->userAgent(), 0, 1000) ?: null,
         ]), report: false);
+
+        // De beveiligingsmeldingen (nieuw IP, mislukte poging op een
+        // beheerdersaccount) hangen aan het logboek. Ook hier binnen rescue():
+        // een mail die niet weg kan is geen reden om iemand niet in te loggen.
+        if ($attempt) {
+            rescue(fn () => SecurityAlerts::afterAttempt($attempt), report: true);
+        }
+
+        return $attempt ?: null;
     }
 }

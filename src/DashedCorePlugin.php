@@ -66,6 +66,7 @@ class DashedCorePlugin implements Plugin
                 ContentQualityDashboard::class,
                 AccountSettingsPage::class,
                 SecuritySettingsPage::class,
+                \Dashed\DashedCore\Filament\Pages\Settings\SecurityCheckPage::class,
                 SearchSettingsPage::class,
                 ReviewSettingsPage::class,
                 ExportSettingsPage::class,

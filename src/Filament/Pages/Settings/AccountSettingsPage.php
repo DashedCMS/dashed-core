@@ -35,6 +35,7 @@ class AccountSettingsPage extends Page implements HasSchemas
     {
         $formData = [
             'mfa_reverify_hours' => MfaFreshness::hours(),
+            'mfa_reverify_on_ip_change' => MfaFreshness::bindsIp(),
         ];
         $sites = Sites::getSites();
         foreach ($sites as $site) {
@@ -109,6 +110,9 @@ class AccountSettingsPage extends Page implements HasSchemas
                     ->minValue(0)
                     ->suffix(__('uur'))
                     ->helperText(__('0 betekent alleen bij het inloggen. Standaard 24.')),
+                Toggle::make('mfa_reverify_on_ip_change')
+                    ->label(__('Ook opnieuw een code vragen als het IP-adres verandert'))
+                    ->helperText(__('Bijvoorbeeld van kantoor-wifi naar 4G. Zet dit alleen aan als het CMS het echte adres van de bezoeker ziet (achter Cloudflare of een load balancer hoort daar DASHED_TRUSTED_PROXIES bij), anders doet het niets of vraagt het juist te vaak.')),
             ]);
 
         return $schema->schema($tabGroups)
@@ -118,6 +122,7 @@ class AccountSettingsPage extends Page implements HasSchemas
     public function submit()
     {
         Customsetting::set(MfaFreshness::SETTING, max(0, (int) ($this->form->getState()['mfa_reverify_hours'] ?? MfaFreshness::DEFAULT_HOURS)), Sites::getFirstSite()['id']);
+        Customsetting::set(MfaFreshness::SETTING_BIND_IP, (bool) ($this->form->getState()['mfa_reverify_on_ip_change'] ?? false), Sites::getFirstSite()['id']);
 
         $sites = Sites::getSites();
 

@@ -47,6 +47,35 @@ return [
         'enforce' => env('DASHED_TRUSTED_HOSTS_ENFORCE'),
     ],
 
+    // Wachtwoordeisen, overal waar een wachtwoord gezet wordt (website en CMS),
+    // via Password::defaults(). Inloggen met een bestaand korter wachtwoord
+    // blijft werken; de eis geldt bij het kiezen van een nieuw wachtwoord.
+    'passwords' => [
+        'min_length' => (int) env('DASHED_PASSWORD_MIN_LENGTH', 8),
+        // Alleen in productie: controle tegen bekende datalekken (HaveIBeenPwned,
+        // k-anonimiteit, het wachtwoord zelf gaat de deur niet uit).
+        'uncompromised' => env('DASHED_PASSWORD_UNCOMPROMISED', true),
+    ],
+
+    // HTTP-beveiligingsheaders op elk antwoord (website en CMS). Een header op
+    // null of een lege string wordt niet gezet. HSTS gaat alleen mee over
+    // https en buiten local. Zie Middleware\SecurityHeaders.
+    'security_headers' => [
+        'enabled' => env('DASHED_SECURITY_HEADERS', true),
+        'strict_transport_security' => env('DASHED_HSTS', 'max-age=31536000; includeSubDomains'),
+        'x_frame_options' => env('DASHED_X_FRAME_OPTIONS', 'SAMEORIGIN'),
+        'x_content_type_options' => env('DASHED_X_CONTENT_TYPE_OPTIONS', 'nosniff'),
+        'referrer_policy' => env('DASHED_REFERRER_POLICY', 'strict-origin-when-cross-origin'),
+        'permissions_policy' => env('DASHED_PERMISSIONS_POLICY', 'camera=(), microphone=(), geolocation=(), payment=(self)'),
+    ],
+
+    // Proxy's waarvan X-Forwarded-For en X-Forwarded-Proto vertrouwd worden.
+    // Komma-gescheiden adressen of reeksen, of * voor elke proxy. Verplicht
+    // achter Cloudflare of een load balancer, anders ziet de applicatie het
+    // adres van de proxy: dan werkt de IP-lijst van het CMS niet zoals
+    // bedoeld, delen alle bezoekers een verzoeklimiet, en is elke link http.
+    'trusted_proxies' => array_values(array_filter(array_map('trim', explode(',', (string) env('DASHED_TRUSTED_PROXIES', ''))))),
+
     'dashed_cms' => [
         'path' => env('DASHED_CMS_PATH', 'dashed'),
         'primary_color' => env('DASHED_CMS_PRIMARY_COLOR', '#00D2CD'),

@@ -26,7 +26,11 @@ class MfaFreshness
 {
     public const SESSION_KEY = 'dashed.mfa_verified_at';
 
+    public const SESSION_IP_KEY = 'dashed.mfa_verified_ip';
+
     public const SETTING = 'mfa_reverify_hours';
+
+    public const SETTING_BIND_IP = 'mfa_reverify_on_ip_change';
 
     public const DEFAULT_HOURS = 24;
 
@@ -52,9 +56,47 @@ class MfaFreshness
         );
     }
 
+    /**
+     * Opnieuw een code vragen zodra het IP-adres van de beheerder afwijkt van
+     * het adres waarop de code is bevestigd. Standaard uit: achter een proxy
+     * zonder dashed-core.trusted_proxies is elk adres hetzelfde (dan doet het
+     * niets), en op mobiele netwerken wisselt het adres geregeld (dan vraagt
+     * het vaak).
+     */
+    public static function bindsIp(): bool
+    {
+        return filter_var(
+            Customsetting::get(self::SETTING_BIND_IP, (string) Sites::getFirstSite()['id'], '0') ?? '0',
+            FILTER_VALIDATE_BOOL,
+        );
+    }
+
     public static function stamp(): void
     {
         session()->put(self::SESSION_KEY, now()->timestamp);
+        session()->put(self::SESSION_IP_KEY, request()->ip());
+    }
+
+    public static function verifiedIp(): ?string
+    {
+        $ip = session(self::SESSION_IP_KEY);
+
+        return $ip ? (string) $ip : null;
+    }
+
+    /**
+     * Een sessie zonder bewaard adres (van voor deze functie) telt niet als
+     * gewisseld: die krijgt het adres bij de volgende stempel.
+     */
+    public static function ipChanged(): bool
+    {
+        if (! self::bindsIp()) {
+            return false;
+        }
+
+        $verifiedIp = self::verifiedIp();
+
+        return $verifiedIp !== null && $verifiedIp !== (string) request()->ip();
     }
 
     public static function stampIfUserHasMfa(?Authenticatable $user): void
@@ -86,8 +128,10 @@ class MfaFreshness
 
     public static function needsReverification(?Authenticatable $user): bool
     {
-        return self::hours() > 0
-            && self::enabledProviders($user)
-            && self::isStale();
+        if (! self::enabledProviders($user)) {
+            return false;
+        }
+
+        return (self::hours() > 0 && self::isStale()) || self::ipChanged();
     }
 }

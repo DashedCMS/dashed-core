@@ -169,6 +169,40 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             $kernel->prependMiddleware(\Dashed\DashedCore\Middleware\TrustedHosts::class);
         }
 
+        // Beveiligingsheaders op elk antwoord, als laatste in de globale
+        // middleware zodat de applicatie zelf voorrang houdt.
+        if (method_exists($kernel, 'pushMiddleware')) {
+            $kernel->pushMiddleware(\Dashed\DashedCore\Middleware\SecurityHeaders::class);
+        }
+
+        // Vertrouwde proxy's (DASHED_TRUSTED_PROXIES) op Laravels TrustProxies.
+        \Dashed\DashedCore\Classes\TrustedProxies::apply();
+
+        // De benoemde verzoeklimieten van de front-end (throttle:dashed-...),
+        // met de aantallen uit Instellingen, Beveiliging.
+        \Dashed\DashedCore\Classes\RateLimits::register();
+
+        // Wachtwoordeisen, overal waar Password::defaults() in de regels staat.
+        \Illuminate\Validation\Rules\Password::defaults(function () {
+            $rule = \Illuminate\Validation\Rules\Password::min(max(1, (int) config('dashed-core.passwords.min_length', 8)));
+
+            if ($this->app->isProduction() && filter_var(config('dashed-core.passwords.uncompromised', true), FILTER_VALIDATE_BOOL)) {
+                $rule->uncompromised();
+            }
+
+            return $rule;
+        });
+
+        // Horizon: dezelfde IP-lijst als het CMS, en daarbinnen de gate van het
+        // project als die er is, anders het recht "Horizon bekijken". Na de
+        // boot van alle providers, zodat een HorizonServiceProvider van het
+        // project deze laag niet per ongeluk overschrijft.
+        if (class_exists(\Laravel\Horizon\Horizon::class)) {
+            $this->app->booted(fn () => \Laravel\Horizon\Horizon::auth(
+                fn ($request) => \Dashed\DashedCore\Classes\HorizonAccess::allows($request)
+            ));
+        }
+
         // Register the webhook-idempotency middleware alias so payment-gateway
         // routes can opt-in via `->middleware('webhook.idempotency:mollie')`
         // etc. The real handler implementation lands in Bundle 2 Task 10.
@@ -213,6 +247,18 @@ class DashedCoreServiceProvider extends PackageServiceProvider
 
     public function bootingPackage()
     {
+        // Wat er in /robots.txt buiten de zoekmachines blijft. Elk pakket meldt
+        // zijn eigen paden aan; zie RobotsTxtBuilder.
+        $cmsPath = '/' . trim((string) config('dashed-core.dashed_cms.path', 'dashed'), '/');
+        cms()->builder(\Dashed\DashedCore\Classes\RobotsTxtBuilder::BUILDER, [
+            $cmsPath,
+            $cmsPath . '/',
+            '/horizon',
+            '/livewire/',
+            '/storage/dashed/invoices/',
+            '/storage/dashed/packing-slips/',
+        ]);
+
         // Filament-tafels: filters worden meteen toegepast bij het wijzigen,
         // geen losse "Toepassen"-knop meer. Geldt CMS-breed voor alle
         // resources tenzij een resource zelf deferFilters(true) zet.
@@ -658,7 +704,7 @@ MARKDOWN,
         cms()->registerSettingsDocs(
             page: \Dashed\DashedCore\Filament\Pages\Settings\SecuritySettingsPage::class,
             title: 'Beveiliging',
-            intro: 'Hier beperk je vanaf welke IP-adressen het CMS bereikbaar is.',
+            intro: 'Hier beperk je vanaf welke IP-adressen het CMS bereikbaar is, stel je in wanneer een beheerder automatisch wordt uitgelogd, wie een mail krijgt bij verdachte inlogactiviteit, en hoeveel verzoeken per minuut de website per bezoeker toelaat.',
             sections: [
                 [
                     'heading' => 'Hoe werkt de IP-lijst?',
@@ -680,9 +726,63 @@ MARKDOWN,
 Het getoonde adres is wat de server als bezoeker ziet. Loopt de site via Cloudflare of een andere proxy en is die niet als vertrouwde proxy ingesteld, dan ziet de server het adres van de proxy in plaats van het jouwe. Klopt het getoonde adres niet met je eigen adres (bijvoorbeeld op whatismyip.com), zet de lijst dan nog niet aan en laat eerst de proxy goed instellen; anders sluit je óf iedereen buiten, óf laat je iedereen binnen die via dezelfde proxy komt.
 MARKDOWN,
                 ],
+                [
+                    'heading' => 'Automatisch uitloggen',
+                    'body' => <<<MARKDOWN
+Een beheerder die het CMS een tijd niet gebruikt wordt bij zijn volgende actie uitgelogd en ziet op het inlogscherm waarom. Elke paginalading en elke knop of invoer telt als gebruik; een open dashboard dat alleen zichzelf ververst niet, anders zou een sessie nooit verlopen. Standaard 120 minuten, 0 zet het uit. Dit staat los van de MFA-herbevestiging bij Instellingen, Account, dat is een andere klok.
+MARKDOWN,
+                ],
+                [
+                    'heading' => 'Beveiligingsmeldingen',
+                    'body' => <<<MARKDOWN
+Er gaat een e-mail uit wanneer een beheerder inlogt vanaf een IP-adres waarvandaan dat account nog niet eerder is ingelogd, en wanneer er een mislukte inlogpoging is op een beheerdersaccount (verkeerd wachtwoord of verkeerde MFA-code). Bij mislukte pogingen gaat er hooguit één mail per kwartier per account uit, zodat je inbox niet volloopt bij een aanval; elke poging staat wel bij Gebruikers, Inlogpogingen.
+
+Wat "bekend" is volgt uit dat logboek: de allereerste login van een account wordt niet gemeld (er is niets om mee te vergelijken), daarna wordt elk nieuw adres gemeld. Klantaccounts van de webshop tellen niet mee. Zonder ingevulde adressen gaan de mails naar alle superadmins.
+MARKDOWN,
+                ],
+                [
+                    'heading' => 'Verzoeklimieten',
+                    'body' => <<<MARKDOWN
+Per IP-adres per minuut, op de website. Bestelpagina's en downloads op orderhash (factuur, pakbon, proforma, restbetaling, retourstatus) zijn beperkt tegen het raden van hashes, de kortingscode tegen het raden van codes, de winkelwagen en het inloggen tegen geautomatiseerd verkeer. Wie erboven komt krijgt een 429 en moet even wachten. 0 zet een limiet uit.
+
+Ook hier geldt: achter Cloudflare of een load balancer moet `DASHED_TRUSTED_PROXIES` gezet zijn, anders ziet de server voor alle bezoekers hetzelfde adres en raakt de limiet meteen vol. De Beveiligingscheck laat zien of dat het geval is.
+MARKDOWN,
+                ],
             ],
             fields: [
                 'Toegestane IP-adressen' => 'Eén adres of reeks per regel. Leeg betekent geen beperking.',
+                'Uitloggen na' => 'Minuten zonder activiteit waarna een beheerder wordt uitgelogd. 0 is uit, standaard 120.',
+                'Beveiligingsmeldingen versturen' => 'Aan of uit. Standaard aan.',
+                'Naar deze e-mailadressen' => 'Typ een adres en druk op Enter. Leeg: naar alle superadmins.',
+                'Bestelpagina\'s en downloads op orderhash' => 'Verzoeken per minuut per IP. Standaard 20.',
+                'Winkelwagen' => 'Verzoeken per minuut per IP. Standaard 60.',
+                'Kortingscode invoeren' => 'Pogingen per minuut per IP. Standaard 10.',
+                'Inloggen en registreren op de website' => 'Pogingen per minuut per IP en e-mailadres. Standaard 10.',
+            ],
+            tips: [
+                'Kijk na een uitrol op de Beveiligingscheck: die laat zien of de proxy, APP_URL en de debug-modus goed staan.',
+            ],
+        );
+
+        cms()->registerSettingsDocs(
+            page: \Dashed\DashedCore\Filament\Pages\Settings\SecurityCheckPage::class,
+            title: 'Beveiligingscheck',
+            intro: 'Eén overzicht van wat er aan beveiliging aan of uit staat op deze installatie, gelezen op het moment dat je de pagina opent.',
+            sections: [
+                [
+                    'heading' => 'Wat staat erop?',
+                    'body' => <<<MARKDOWN
+De serverinstellingen die vaak misgaan bij een uitrol (debug-modus, `APP_URL` op https, de sessiecookie, vertrouwde proxy's en hosts), en de instellingen uit het CMS zelf (IP-beperking, automatisch uitloggen, MFA-herbevestiging, beveiligingsmeldingen, verzoeklimieten, beveiligingsheaders, wachtwoordeisen, robots.txt). Daarnaast de lijst van beheerders die MFA nog niet hebben ingesteld.
+
+**Probleem** betekent dat iets nu niet doet wat het hoort te doen. **Let op** is een maatregel die uit staat. **Ter info** vraagt geen actie.
+MARKDOWN,
+                ],
+                [
+                    'heading' => 'Iets aanpassen',
+                    'body' => <<<MARKDOWN
+De meeste regels wijzen naar een variabele in `.env` op de server (`APP_DEBUG`, `APP_URL`, `SESSION_SECURE_COOKIE`, `DASHED_TRUSTED_PROXIES`) of naar Instellingen, Beveiliging en Instellingen, Account. Na een wijziging in `.env` hoort `php artisan config:cache` (of `config:clear`) te draaien.
+MARKDOWN,
+                ],
             ],
         );
 
@@ -1598,7 +1698,8 @@ MARKDOWN,
 
         cms()->registerSettingsPage(GeneralSettingsPage::class, 'Algemeen', 'cog', 'Algemene informatie van de website');
         cms()->registerSettingsPage(AccountSettingsPage::class, 'Account', 'user', 'Account instellingen van de website');
-        cms()->registerSettingsPage(SecuritySettingsPage::class, 'Beveiliging', 'shield-check', 'Toegang tot het CMS beperken op IP-adres');
+        cms()->registerSettingsPage(SecuritySettingsPage::class, 'Beveiliging', 'shield-check', 'IP-beperking, automatisch uitloggen, beveiligingsmeldingen en verzoeklimieten');
+        cms()->registerSettingsPage(\Dashed\DashedCore\Filament\Pages\Settings\SecurityCheckPage::class, 'Beveiligingscheck', 'shield-exclamation', 'Wat er aan beveiliging aan of uit staat op deze installatie');
         cms()->registerSettingsPage(SEOSettingsPage::class, 'SEO', 'identification', 'SEO van de website');
         cms()->registerSettingsPage(ImageSettingsPage::class, 'Afbeelding', 'photo', 'Afbeelding van de website');
         cms()->registerSettingsPage(CacheSettingsPage::class, 'Cache', 'photo', 'Cache van de website');

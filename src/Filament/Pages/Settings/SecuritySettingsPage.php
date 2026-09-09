@@ -6,12 +6,19 @@ use Filament\Pages\Page;
 use Illuminate\Support\Str;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\View;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Section;
+use Dashed\DashedCore\Classes\RateLimits;
 use Filament\Schemas\Contracts\HasSchemas;
+use Dashed\DashedCore\Models\Customsetting;
+use Dashed\DashedCore\Classes\CmsIdleTimeout;
 use Dashed\DashedCore\Classes\CmsIpAllowlist;
+use Dashed\DashedCore\Classes\SecurityAlerts;
 use Dashed\DashedCore\Traits\HasSettingsPermission;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 
@@ -30,9 +37,18 @@ class SecuritySettingsPage extends Page implements HasSchemas
 
     public function mount(): void
     {
-        $this->form->fill([
+        $fill = [
             'cms_allowed_ips' => CmsIpAllowlist::entries(),
-        ]);
+            'cms_idle_timeout_minutes' => CmsIdleTimeout::minutes(),
+            'security_alerts_enabled' => SecurityAlerts::enabled(),
+            'security_alert_emails' => SecurityAlerts::configuredEmails(),
+        ];
+
+        foreach (array_keys(RateLimits::LIMITERS) as $name) {
+            $fill[RateLimits::setting($name)] = RateLimits::perMinute($name);
+        }
+
+        $this->form->fill($fill);
     }
 
     public function form(Schema $schema): Schema
@@ -76,6 +92,59 @@ class SecuritySettingsPage extends Page implements HasSchemas
                                     }),
                             ),
                     ]),
+
+                Section::make(__('Automatisch uitloggen'))
+                    ->description(__('Een beheerder die het CMS een tijd niet gebruikt wordt bij zijn volgende actie uitgelogd. Een open dashboard dat alleen zichzelf ververst telt niet als gebruik.'))
+                    ->schema([
+                        TextInput::make('cms_idle_timeout_minutes')
+                            ->label(__('Uitloggen na'))
+                            ->numeric()
+                            ->integer()
+                            ->minValue(0)
+                            ->suffix(__('minuten zonder activiteit'))
+                            ->helperText(__('0 zet het uit. Standaard 120.')),
+                    ]),
+
+                Section::make(__('Beveiligingsmeldingen'))
+                    ->description(__('Een e-mail zodra een beheerder inlogt vanaf een IP-adres dat voor dat account nieuw is, en bij een mislukte inlogpoging op een beheerdersaccount (hooguit een per kwartier per account). Alles blijft daarnaast gewoon in het inloglogboek staan.'))
+                    ->schema([
+                        Toggle::make('security_alerts_enabled')
+                            ->label(__('Beveiligingsmeldingen versturen')),
+                        TagsInput::make('security_alert_emails')
+                            ->label(__('Naar deze e-mailadressen'))
+                            ->placeholder(__('Typ een adres en druk op Enter'))
+                            ->helperText(__('Leeg: naar alle superadmins.'))
+                            ->nestedRecursiveRules(['email']),
+                    ]),
+
+                Section::make(__('Verzoeklimieten'))
+                    ->description(__('Per IP-adres per minuut, op de website. Wie erboven komt krijgt een 429 en moet even wachten. 0 zet een limiet uit. Achter Cloudflare of een load balancer hoort DASHED_TRUSTED_PROXIES gezet te zijn, anders delen alle bezoekers samen een limiet.'))
+                    ->columns(['default' => 1, 'lg' => 2])
+                    ->schema([
+                        TextInput::make(RateLimits::setting('dashed-order-pages'))
+                            ->label(__('Bestelpagina\'s en downloads op orderhash'))
+                            ->helperText(__('Factuur, pakbon, proforma, restbetaling, retourstatus. Standaard 20.'))
+                            ->numeric()->integer()->minValue(0),
+                        TextInput::make(RateLimits::setting('dashed-cart'))
+                            ->label(__('Winkelwagen'))
+                            ->helperText(__('Toevoegen, bijwerken, verwijderen, herstellen. Standaard 60.'))
+                            ->numeric()->integer()->minValue(0),
+                        TextInput::make(RateLimits::setting('dashed-discount-code'))
+                            ->label(__('Kortingscode invoeren'))
+                            ->helperText(__('Standaard 10.'))
+                            ->numeric()->integer()->minValue(0),
+                        TextInput::make(RateLimits::setting('dashed-frontend-auth'))
+                            ->label(__('Inloggen en registreren op de website'))
+                            ->helperText(__('Per IP en per e-mailadres. Standaard 10.'))
+                            ->numeric()->integer()->minValue(0),
+                    ]),
+
+                Section::make(__('Alle beveiligingsmaatregelen'))
+                    ->description(__('Wat het CMS doet om de beheeromgeving en de webshop te beschermen, en waar elke maatregel ingesteld wordt. Wat er op deze installatie echt aan of uit staat zie je op de Beveiligingscheck.'))
+                    ->collapsible()
+                    ->schema([
+                        View::make('dashed-core::settings.partials.security-measures'),
+                    ]),
             ])
             ->statePath('data');
     }
@@ -109,6 +178,17 @@ class SecuritySettingsPage extends Page implements HasSchemas
         }
 
         CmsIpAllowlist::save($entries);
+
+        $state = $this->form->getState();
+        $siteId = CmsIpAllowlist::siteId();
+
+        Customsetting::set(CmsIdleTimeout::SETTING, max(0, (int) ($state['cms_idle_timeout_minutes'] ?? CmsIdleTimeout::DEFAULT_MINUTES)), $siteId);
+        Customsetting::set(SecurityAlerts::SETTING_ENABLED, (bool) ($state['security_alerts_enabled'] ?? true), $siteId);
+        Customsetting::set(SecurityAlerts::SETTING_EMAILS, implode("\n", array_values(array_filter(array_map('trim', (array) ($state['security_alert_emails'] ?? []))))), $siteId);
+
+        foreach (array_keys(RateLimits::LIMITERS) as $name) {
+            Customsetting::set(RateLimits::setting($name), max(0, (int) ($state[RateLimits::setting($name)] ?? RateLimits::default($name))), $siteId);
+        }
 
         Notification::make()
             ->title(__('De beveiligingsinstellingen zijn opgeslagen'))

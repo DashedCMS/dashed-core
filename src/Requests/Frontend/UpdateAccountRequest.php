@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore\Requests\Frontend;
 
+use Illuminate\Validation\Rules\Password;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateAccountRequest extends FormRequest
@@ -17,7 +18,7 @@ class UpdateAccountRequest extends FormRequest
             ],
             'password' => [
                 'nullable',
-                'min:6',
+                Password::defaults(),
                 'max:255',
                 'confirmed',
             ],

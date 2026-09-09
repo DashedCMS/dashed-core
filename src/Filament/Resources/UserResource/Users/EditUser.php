@@ -49,6 +49,7 @@ class EditUser extends EditRecord
                             ->send();
                     }
                 }),
+            \Dashed\DashedCore\Filament\Resources\UserResource\Actions\ResetMfaAction::make(),
             Impersonate::make(),
             DeleteAction::make(),
         ];

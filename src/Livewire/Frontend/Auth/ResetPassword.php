@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore\Livewire\Frontend\Auth;
 
+use Illuminate\Validation\Rules\Password;
 use Livewire\Component;
 use Dashed\DashedCore\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -56,7 +57,7 @@ class ResetPassword extends Component
 
         $this->validate([
             'password' => [
-                'min:6',
+                Password::defaults(),
                 'max:255',
                 'required_with:passwordConfirmation',
                 'same:passwordConfirmation',

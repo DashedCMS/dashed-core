@@ -164,7 +164,7 @@ class UserResource extends Resource
                             ->nullable()
                             ->password()
                             ->confirmed()
-                            ->minLength(6)
+                            ->rule(\Illuminate\Validation\Rules\Password::defaults())
                             ->maxLength(255)
                             ->required(fn ($livewire) => $livewire instanceof CreateUser)
                             ->helperText(__('Het wachtwoord wordt alleen aangepast als je iets invult'))
@@ -174,7 +174,6 @@ class UserResource extends Resource
                             ->label(__('Wachtwoord herhalen'))
                             ->required(fn (Get $get) => $get('password'))
                             ->password()
-                            ->minLength(6)
                             ->maxLength(255)
                             ->reactive(),
                     ])
@@ -319,6 +318,7 @@ class UserResource extends Resource
                 Impersonate::make(),
                 EditAction::make()
                     ->button(),
+                \Dashed\DashedCore\Filament\Resources\UserResource\Actions\ResetMfaAction::make(),
                 DeleteAction::make(),
             ])
             ->toolbarActions([

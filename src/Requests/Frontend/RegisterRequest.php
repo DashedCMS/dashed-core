@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore\Requests\Frontend;
 
+use Illuminate\Validation\Rules\Password;
 use Illuminate\Foundation\Http\FormRequest;
 
 class RegisterRequest extends FormRequest
@@ -16,7 +17,7 @@ class RegisterRequest extends FormRequest
                 'max:255',
             ],
             'password' => [
-                'min:6',
+                Password::defaults(),
                 'max:255',
                 'confirmed',
             ],
