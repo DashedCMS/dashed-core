@@ -76,6 +76,14 @@ return [
     // bedoeld, delen alle bezoekers een verzoeklimiet, en is elke link http.
     'trusted_proxies' => array_values(array_filter(array_map('trim', explode(',', (string) env('DASHED_TRUSTED_PROXIES', ''))))),
 
+    // Ontvangers van beveiligingsmeldingen (login vanaf nieuw IP, mislukte
+    // inlogpoging op een beheerdersaccount). Gezet in .env, komma-gescheiden:
+    // dan gaan die meldingen uitsluitend hierheen en telt de lijst bij
+    // Instellingen, Beveiliging niet meer mee. Zo kan iemand met toegang tot
+    // het CMS de meldingen niet omleiden. Leeg: die lijst, en zonder lijst
+    // alle superadmins. Zie Classes\SecurityAlerts.
+    'security_alert_recipients' => array_values(array_filter(array_map('trim', explode(',', (string) env('SECURITY_ALERT_RECIPIENTS', ''))))),
+
     'dashed_cms' => [
         'path' => env('DASHED_CMS_PATH', 'dashed'),
         'primary_color' => env('DASHED_CMS_PRIMARY_COLOR', '#00D2CD'),

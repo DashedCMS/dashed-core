@@ -113,7 +113,11 @@ class SecuritySettingsPage extends Page implements HasSchemas
                         TagsInput::make('security_alert_emails')
                             ->label(__('Naar deze e-mailadressen'))
                             ->placeholder(__('Typ een adres en druk op Enter'))
-                            ->helperText(__('Leeg: naar alle superadmins.'))
+                            ->disabled(SecurityAlerts::recipientsLockedByEnv())
+                            ->dehydrated(! SecurityAlerts::recipientsLockedByEnv())
+                            ->helperText(SecurityAlerts::recipientsLockedByEnv()
+                                ? __('Vastgezet via SECURITY_ALERT_RECIPIENTS in .env: de meldingen gaan uitsluitend naar :adressen. Deze lijst telt niet mee.', ['adressen' => implode(', ', SecurityAlerts::envRecipients())])
+                                : __('Leeg: naar alle superadmins.'))
                             ->nestedRecursiveRules(['email']),
                     ]),
 
@@ -184,7 +188,9 @@ class SecuritySettingsPage extends Page implements HasSchemas
 
         Customsetting::set(CmsIdleTimeout::SETTING, max(0, (int) ($state['cms_idle_timeout_minutes'] ?? CmsIdleTimeout::DEFAULT_MINUTES)), $siteId);
         Customsetting::set(SecurityAlerts::SETTING_ENABLED, (bool) ($state['security_alerts_enabled'] ?? true), $siteId);
-        Customsetting::set(SecurityAlerts::SETTING_EMAILS, implode("\n", array_values(array_filter(array_map('trim', (array) ($state['security_alert_emails'] ?? []))))), $siteId);
+        if (! SecurityAlerts::recipientsLockedByEnv()) {
+            Customsetting::set(SecurityAlerts::SETTING_EMAILS, implode("\n", array_values(array_filter(array_map('trim', (array) ($state['security_alert_emails'] ?? []))))), $siteId);
+        }
 
         foreach (array_keys(RateLimits::LIMITERS) as $name) {
             Customsetting::set(RateLimits::setting($name), max(0, (int) ($state[RateLimits::setting($name)] ?? RateLimits::default($name))), $siteId);

@@ -26,8 +26,11 @@ use Dashed\DashedCore\Mail\CmsLoginFromNewIpMail;
  * logboek blijft staan. Klantaccounts tellen niet mee: alleen wie via het
  * paneel moet inloggen (User::mustLoginViaPanel()).
  *
- * Ontvangers: de adressen bij Instellingen, Beveiliging, en zonder adressen
- * alle superadmins. De schakelaar staat standaard aan. Beide instellingen
+ * Ontvangers: staat SECURITY_ALERT_RECIPIENTS in .env, dan uitsluitend die
+ * adressen; de lijst in het CMS telt dan niet mee, zodat iemand met toegang
+ * tot het CMS de meldingen niet kan omleiden of uitzetten voor zichzelf.
+ * Zonder .env-adressen: de adressen bij Instellingen, Beveiliging, en zonder
+ * die alle superadmins. De schakelaar staat standaard aan. Beide instellingen
  * staan op de eerste site, om dezelfde reden als [[CmsIpAllowlist]].
  */
 class SecurityAlerts
@@ -75,10 +78,42 @@ class SecurityAlerts
     }
 
     /**
+     * Adressen uit .env (SECURITY_ALERT_RECIPIENTS, komma-gescheiden).
+     *
+     * @return array<int, string>
+     */
+    public static function envRecipients(): array
+    {
+        $emails = [];
+
+        foreach ((array) config('dashed-core.security_alert_recipients', []) as $email) {
+            $email = strtolower(trim((string) $email));
+
+            if ($email !== '' && filter_var($email, FILTER_VALIDATE_EMAIL) && ! in_array($email, $emails, true)) {
+                $emails[] = $email;
+            }
+        }
+
+        return $emails;
+    }
+
+    /**
+     * Staan er adressen in .env, dan is de lijst in het CMS niet leidend.
+     */
+    public static function recipientsLockedByEnv(): bool
+    {
+        return self::envRecipients() !== [];
+    }
+
+    /**
      * @return array<int, string>
      */
     public static function recipients(): array
     {
+        if ($fromEnv = self::envRecipients()) {
+            return $fromEnv;
+        }
+
         $configured = self::configuredEmails();
 
         if ($configured) {
