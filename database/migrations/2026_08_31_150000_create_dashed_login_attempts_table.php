@@ -13,6 +13,7 @@ return new class () extends Migration {
             $table->string('email')->nullable()->index();
             $table->string('ip', 45)->nullable()->index();
             $table->text('user_agent')->nullable();
+            $table->text('url')->nullable();
             $table->string('result', 20)->index();
             $table->timestamps();
 

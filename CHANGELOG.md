@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.60.0 - 2026-09-11
+
+### Added
+- **URL bij inlogpogingen.** `dashed__login_attempts` krijgt een kolom `url` met de pagina waar de poging vandaan kwam, zichtbaar en doorzoekbaar in het overzicht Inlogpogingen. Bij een Livewire-verzoek (inlogformulier, MFA-pagina) is de verzoek-URL altijd de Livewire-route, dus daar komt de pagina uit de Referer (`LoginAttempt::currentUrl()`); een paginalading of formulier-POST geeft zijn eigen URL. Handig op een installatie met meerdere sites, of om te zien dat een beheerdersaccount op de webshop-login werd geprobeerd.
+
 ## v4.59.0 - 2026-09-09
 
 ### Added

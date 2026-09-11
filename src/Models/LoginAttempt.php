@@ -67,6 +67,24 @@ class LoginAttempt extends Model
     }
 
     /**
+     * De URL waar de poging vandaan kwam. Het inlogformulier en de MFA-pagina
+     * zijn Livewire-componenten, dus daar is de verzoek-URL altijd de
+     * Livewire-route en zegt hij niets; de pagina staat dan in de Referer.
+     * Een gewone paginalading (geweigerd op IP) of een formulier-POST
+     * (uitloggen) heeft wel een sprekende eigen URL.
+     */
+    public static function currentUrl(): ?string
+    {
+        $request = request();
+
+        $url = $request->hasHeader('X-Livewire')
+            ? ($request->headers->get('referer') ?: $request->fullUrl())
+            : $request->fullUrl();
+
+        return mb_substr((string) $url, 0, 2000) ?: null;
+    }
+
+    /**
      * Schrijft de regel weg en laat het inloggen zelf nooit klappen: een
      * ontbrekende tabel midden in een uitrol mag geen 500 op de inlogpagina
      * opleveren.
@@ -79,6 +97,7 @@ class LoginAttempt extends Model
             'user_id' => $user?->getKey(),
             'ip' => request()->ip(),
             'user_agent' => mb_substr((string) request()->userAgent(), 0, 1000) ?: null,
+            'url' => static::currentUrl(),
         ]), report: false);
 
         // De beveiligingsmeldingen (nieuw IP, mislukte poging op een

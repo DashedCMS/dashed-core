@@ -103,6 +103,14 @@ class LoginAttemptResource extends Resource
                     ->label(__('IP-adres'))
                     ->searchable()
                     ->copyable(),
+                TextColumn::make('url')
+                    ->label(__('URL'))
+                    ->placeholder('-')
+                    ->limit(60)
+                    ->tooltip(fn (LoginAttempt $record): ?string => $record->url)
+                    ->searchable()
+                    ->copyable()
+                    ->toggleable(),
                 TextColumn::make('user_agent')
                     ->label(__('Browser'))
                     ->limit(40)
