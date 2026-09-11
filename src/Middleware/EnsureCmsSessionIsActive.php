@@ -9,6 +9,7 @@ use Dashed\DashedCore\Models\User;
 use Dashed\DashedCore\Models\LoginAttempt;
 use Filament\Notifications\Notification;
 use Dashed\DashedCore\Classes\CmsIdleTimeout;
+use Dashed\DashedCore\Classes\CmsSessionLimits;
 
 /**
  * Persistente paneelmiddleware, na de sessie en voor de authenticatie van de
@@ -21,14 +22,35 @@ class EnsureCmsSessionIsActive
 {
     public function handle(Request $request, Closure $next)
     {
-        $user = Filament::auth()->user();
+        $guard = Filament::auth();
+        $user = $guard->user();
 
-        if (! $user || ! CmsIdleTimeout::isEnabled()) {
+        if (! $user) {
+            return $next($request);
+        }
+
+        // Een login via het onthoud-mij-cookie slaat de MFA-uitdaging over en
+        // is voor een paneelaccount daarom geen login. Zie CmsSessionLimits.
+        if (method_exists($guard, 'viaRemember') && $guard->viaRemember() && $this->isPanelUser($user)) {
+            return $this->logout($request, $user, LoginAttempt::RESULT_REMEMBER_REJECTED, __('Log opnieuw in: een sessie via het onthoud-mij-cookie is voor beheerders niet toegestaan.'));
+        }
+
+        // Een sessie van voor deze functie heeft nog geen begin: dit verzoek
+        // is dan het begin.
+        if (! CmsSessionLimits::authenticatedAt()) {
+            CmsSessionLimits::stamp();
+        }
+
+        if (CmsSessionLimits::maxIsExceeded()) {
+            return $this->logout($request, $user, LoginAttempt::RESULT_SESSION_EXPIRED, __('Je sessie is verlopen na :minuten minuten; log opnieuw in.', ['minuten' => CmsSessionLimits::maxMinutes()]));
+        }
+
+        if (! CmsIdleTimeout::isEnabled()) {
             return $next($request);
         }
 
         if (CmsIdleTimeout::isExpired()) {
-            return $this->logout($request, $user);
+            return $this->logout($request, $user, LoginAttempt::RESULT_IDLE_LOGOUT, __('Je bent automatisch uitgelogd na :minuten minuten zonder activiteit.', ['minuten' => CmsIdleTimeout::minutes()]));
         }
 
         if (CmsIdleTimeout::isActivity($request->hasHeader('X-Livewire'), (array) $request->json()->all())) {
@@ -38,18 +60,21 @@ class EnsureCmsSessionIsActive
         return $next($request);
     }
 
-    protected function logout(Request $request, $user)
+    protected function isPanelUser($user): bool
     {
-        $minutes = CmsIdleTimeout::minutes();
+        return $user instanceof User ? $user->mustLoginViaPanel() : true;
+    }
 
-        LoginAttempt::record(LoginAttempt::RESULT_IDLE_LOGOUT, $user->email ?? null, $user instanceof User ? $user : null);
+    protected function logout(Request $request, $user, string $result, string $message)
+    {
+        LoginAttempt::record($result, $user->email ?? null, $user instanceof User ? $user : null);
 
         Filament::auth()->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
         Notification::make()
-            ->title(__('Je bent automatisch uitgelogd na :minuten minuten zonder activiteit.', ['minuten' => $minutes]))
+            ->title($message)
             ->warning()
             ->send();
 

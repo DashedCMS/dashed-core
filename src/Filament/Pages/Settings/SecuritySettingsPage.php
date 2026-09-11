@@ -17,6 +17,8 @@ use Dashed\DashedCore\Classes\RateLimits;
 use Filament\Schemas\Contracts\HasSchemas;
 use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedCore\Classes\CmsIdleTimeout;
+use Dashed\DashedCore\Classes\CmsSessionLimits;
+use Dashed\DashedCore\Classes\CmsPasswordReset;
 use Dashed\DashedCore\Classes\CmsIpAllowlist;
 use Dashed\DashedCore\Classes\SecurityAlerts;
 use Dashed\DashedCore\Traits\HasSettingsPermission;
@@ -40,8 +42,11 @@ class SecuritySettingsPage extends Page implements HasSchemas
         $fill = [
             'cms_allowed_ips' => CmsIpAllowlist::entries(),
             'cms_idle_timeout_minutes' => CmsIdleTimeout::minutes(),
+            'cms_session_max_minutes' => CmsSessionLimits::maxMinutes(),
             'security_alerts_enabled' => SecurityAlerts::enabled(),
             'security_alert_emails' => SecurityAlerts::configuredEmails(),
+            'security_alert_every_login' => SecurityAlerts::everyLogin(),
+            'cms_admin_password_reset_enabled' => CmsPasswordReset::adminResetEnabled(),
         ];
 
         foreach (array_keys(RateLimits::LIMITERS) as $name) {
@@ -103,6 +108,12 @@ class SecuritySettingsPage extends Page implements HasSchemas
                             ->minValue(0)
                             ->suffix(__('minuten zonder activiteit'))
                             ->helperText(__('0 zet het uit. Standaard 120.')),
+                        TextInput::make('cms_session_max_minutes')
+                            ->label(__('Hoe dan ook opnieuw inloggen na'))
+                            ->numeric()
+                            ->minValue(0)
+                            ->suffix(__('minuten na het inloggen'))
+                            ->helperText(__('Ook wie actief blijft moet na deze tijd opnieuw inloggen, met MFA. 0 zet het uit. Standaard 720. Een login via het onthoud-mij-cookie wordt voor beheerders altijd geweigerd.')),
                     ]),
 
                 Section::make(__('Beveiligingsmeldingen'))
@@ -110,6 +121,9 @@ class SecuritySettingsPage extends Page implements HasSchemas
                     ->schema([
                         Toggle::make('security_alerts_enabled')
                             ->label(__('Beveiligingsmeldingen versturen')),
+                        Toggle::make('security_alert_every_login')
+                            ->label(__('Ook mailen bij elke login van een beheerder'))
+                            ->helperText(__('Standaard alleen bij een IP-adres dat voor dat account nieuw is. Elke loginmail gaat ook naar de beheerder zelf en bevat een link waarmee hij het account vergrendelt als hij het niet was.')),
                         TagsInput::make('security_alert_emails')
                             ->label(__('Naar deze e-mailadressen'))
                             ->placeholder(__('Typ een adres en druk op Enter'))
@@ -119,6 +133,13 @@ class SecuritySettingsPage extends Page implements HasSchemas
                                 ? __('Vastgezet via SECURITY_ALERT_RECIPIENTS in .env: de meldingen gaan uitsluitend naar :adressen. Deze lijst telt niet mee.', ['adressen' => implode(', ', SecurityAlerts::envRecipients())])
                                 : __('Leeg: naar alle superadmins.'))
                             ->nestedRecursiveRules(['email']),
+                    ]),
+
+                Section::make(__('Wachtwoord-reset voor beheerders'))
+                    ->description(__('Wie bij de mailbox van een beheerder kan, kan met een reset per mail het account overnemen. Staat dit uit, dan krijgt een beheerder geen resetlink meer; een collega-superadmin zet dan een nieuw wachtwoord, of dashed:set-password op de server. Elk reset-verzoek op een beheerdersaccount geeft sowieso een beveiligingsmelding.'))
+                    ->schema([
+                        Toggle::make('cms_admin_password_reset_enabled')
+                            ->label(__('Beheerders kunnen hun wachtwoord per mail resetten')),
                     ]),
 
                 Section::make(__('Verzoeklimieten'))
@@ -187,7 +208,10 @@ class SecuritySettingsPage extends Page implements HasSchemas
         $siteId = CmsIpAllowlist::siteId();
 
         Customsetting::set(CmsIdleTimeout::SETTING, max(0, (int) ($state['cms_idle_timeout_minutes'] ?? CmsIdleTimeout::DEFAULT_MINUTES)), $siteId);
+        Customsetting::set(CmsSessionLimits::SETTING_MAX_MINUTES, max(0, (int) ($state['cms_session_max_minutes'] ?? CmsSessionLimits::DEFAULT_MAX_MINUTES)), $siteId);
         Customsetting::set(SecurityAlerts::SETTING_ENABLED, (bool) ($state['security_alerts_enabled'] ?? true), $siteId);
+        Customsetting::set(SecurityAlerts::SETTING_EVERY_LOGIN, (bool) ($state['security_alert_every_login'] ?? false), $siteId);
+        Customsetting::set(CmsPasswordReset::SETTING_ADMIN_RESET_ENABLED, (bool) ($state['cms_admin_password_reset_enabled'] ?? true), $siteId);
         if (! SecurityAlerts::recipientsLockedByEnv()) {
             Customsetting::set(SecurityAlerts::SETTING_EMAILS, implode("\n", array_values(array_filter(array_map('trim', (array) ($state['security_alert_emails'] ?? []))))), $siteId);
         }

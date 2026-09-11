@@ -264,6 +264,12 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         // project. Zie UploadSecurity.
         \Dashed\DashedCore\Classes\UploadSecurity::apply();
 
+        // IP en user-agent op elke activity-regel, en bewaking van de
+        // beheeracties die de verdediging van het CMS bepalen. Zie
+        // ActivityLogForensics en AdminActionMonitor.
+        \Dashed\DashedCore\Classes\ActivityLogForensics::register();
+        \Dashed\DashedCore\Classes\AdminActionMonitor::register();
+
         // Filament-tafels: filters worden meteen toegepast bij het wijzigen,
         // geen losse "Toepassen"-knop meer. Geldt CMS-breed voor alle
         // resources tenzij een resource zelf deferFilters(true) zet.
@@ -1744,6 +1750,8 @@ MARKDOWN,
             ->hasCommands([
                 CreateAdminUser::class,
                 CmsIpAllowlistCommand::class,
+                \Dashed\DashedCore\Commands\LockUserCommand::class,
+                \Dashed\DashedCore\Commands\SetPasswordCommand::class,
                 InstallCommand::class,
                 UpdateCommand::class,
                 InvalidatePasswordResetTokens::class,

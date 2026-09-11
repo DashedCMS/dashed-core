@@ -7,6 +7,7 @@ use Filament\Facades\Filament;
 use Dashed\DashedCore\Models\User;
 use Dashed\DashedCore\Models\LoginAttempt;
 use Dashed\DashedCore\Classes\MfaFreshness;
+use Dashed\DashedCore\Classes\CmsSessionLimits;
 use Illuminate\Validation\ValidationException;
 use Filament\Auth\Http\Responses\Contracts\LoginResponse;
 
@@ -40,6 +41,7 @@ class CmsLogin extends Login
             $user = Filament::auth()->user();
 
             MfaFreshness::stampIfUserHasMfa($user);
+            CmsSessionLimits::stamp();
             LoginAttempt::record(LoginAttempt::RESULT_SUCCESS, $user?->email ?? $email, $user instanceof User ? $user : null);
         }
 

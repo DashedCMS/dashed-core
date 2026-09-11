@@ -15,7 +15,7 @@
                             {{ $siteName ?? 'Dashed CMS' }}
                         </div>
                         <div style="font-size:22px; font-weight:bold; color:#111827;">
-                            Login vanaf een nieuw IP-adres
+                            {{ $newIp ? 'Login vanaf een nieuw IP-adres' : 'Login op het CMS' }}
                         </div>
                     </td>
                 </tr>
@@ -23,18 +23,32 @@
                     <td style="padding:24px 32px;">
                         <p style="font-size:16px; line-height:1.5; margin:0 0 16px 0;">
                             Het account <strong>{{ $email }}</strong>@if ($name) ({{ $name }})@endif is op {{ $at }}
-                            ingelogd op het CMS vanaf een IP-adres waarvandaan dit account nog niet eerder is ingelogd.
+                            ingelogd op het CMS
+                            @if ($newIp)
+                                vanaf een IP-adres waarvandaan dit account nog niet eerder is ingelogd.
+                            @else
+                                vanaf een bekend IP-adres.
+                            @endif
                         </p>
 
                         <table width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:14px; color:#374151; background-color:#fffbeb; border-radius:6px;">
                             <tr>
                                 <td style="padding:12px 16px;">
-                                    <div><span style="color:#6b7280;">IP-adres:</span> <span style="font-family: monospace;">{{ $ip }}</span></div>
+                                    <div><span style="color:#6b7280;">IP-adres:</span> <span style="font-family: monospace;">{{ $ip }}</span>@if ($allowlistName !== null) ({{ $allowlistName !== '' ? $allowlistName : 'staat in de IP-lijst' }})@endif</div>
                                     <div style="margin-top:4px;"><span style="color:#6b7280;">Browser:</span> {{ $userAgent ?: 'onbekend' }}</div>
                                     <div style="margin-top:4px;"><span style="color:#6b7280;">Tijdstip:</span> {{ $at }}</div>
                                 </td>
                             </tr>
                         </table>
+
+                        @if ($lockUrl)
+                            <p style="margin:24px 0 0 0;">
+                                <a href="{{ $lockUrl }}" style="display:inline-block; background:#dc2626; color:#fff; text-decoration:none; padding:12px 20px; border-radius:6px; font-weight:bold;">Dit was ik niet: vergrendel dit account</a>
+                            </p>
+                            <p style="font-size:13px; line-height:1.5; color:#6b7280; margin:8px 0 0 0;">
+                                De link is zeven dagen geldig en vraagt eerst om een bevestiging. Vergrendelen vervangt het wachtwoord, stopt elke sessie en haalt de beheerrechten weg; een superadmin kan het account daarna herstellen.
+                            </p>
+                        @endif
 
                         <p style="font-size:14px; line-height:1.5; color:#6b7280; margin:24px 0 0 0;">
                             Herken je deze login niet, reset dan direct het wachtwoord van dit account, controleer de

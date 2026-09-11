@@ -68,6 +68,12 @@ Route::get('/oauth/google/callback', [GoogleOAuthController::class, 'callback'])
     ->name('google.oauth.callback');
 
 // Dynamisch, opgebouwd uit wat de pakketten aanmelden; zie RobotsTxtBuilder.
+// "Dit was ik niet"-link uit de loginmail (zie LockUserAction). Ondertekend,
+// zeven dagen geldig, GET bevestigt, POST vergrendelt.
+Route::match(['GET', 'POST'], '/dashed/security/not-me/{user}', \Dashed\DashedCore\Controllers\Frontend\NotMeController::class)
+    ->middleware(['web', 'signed', 'throttle:10,1'])
+    ->name('dashed.security.not-me');
+
 // Een fysiek public/robots.txt gaat op de webserver voor deze route.
 Route::get('/robots.txt', \Dashed\DashedCore\Controllers\Frontend\RobotsTxtController::class)
     ->name('dashed.frontend.robots');

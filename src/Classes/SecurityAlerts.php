@@ -39,6 +39,9 @@ class SecurityAlerts
 
     public const SETTING_EMAILS = 'security_alert_emails';
 
+    /** Bij elke beheerderslogin mailen, niet alleen bij een nieuw IP-adres. */
+    public const SETTING_EVERY_LOGIN = 'security_alert_every_login';
+
     public const FAILED_LOGIN_COOLDOWN_MINUTES = 15;
 
     public static function siteId(): string
@@ -55,6 +58,11 @@ class SecurityAlerts
         }
 
         return filter_var($value, FILTER_VALIDATE_BOOL);
+    }
+
+    public static function everyLogin(): bool
+    {
+        return filter_var(Customsetting::get(self::SETTING_EVERY_LOGIN, self::siteId(), '0'), FILTER_VALIDATE_BOOL);
     }
 
     /**
@@ -152,31 +160,54 @@ class SecurityAlerts
         }
     }
 
+    /**
+     * Standaard alleen bij een IP-adres dat voor dit account nieuw is; met
+     * de schakelaar "bij elke login" aan bij elke login, met in de mail of
+     * het adres bekend is. De mail gaat ook naar de gebruiker zelf, want die
+     * weet als enige zeker of hij het was, en bevat de vergrendellink.
+     */
     protected static function handleSuccess(LoginAttempt $attempt): void
     {
+        $user = $attempt->user;
+
+        if (! $user || ! $user->mustLoginViaPanel()) {
+            return;
+        }
+
         $earlier = LoginAttempt::query()
             ->where('user_id', $attempt->user_id)
             ->where('result', LoginAttempt::RESULT_SUCCESS)
             ->where('id', '<', $attempt->id);
 
+        $firstEver = ! (clone $earlier)->exists();
+        $knownIp = $attempt->ip && (clone $earlier)->where('ip', $attempt->ip)->exists();
+        $newIp = ! $firstEver && ! $knownIp;
+
         // Eerste login ooit: niets om mee te vergelijken, en vanaf nu bekend.
-        if (! (clone $earlier)->exists()) {
+        if (! $newIp && ! self::everyLogin()) {
             return;
         }
 
-        if ($attempt->ip && (clone $earlier)->where('ip', $attempt->ip)->exists()) {
-            return;
-        }
-
-        $user = $attempt->user;
-
-        self::send(fn () => new CmsLoginFromNewIpMail(
-            email: (string) ($user?->email ?? $attempt->email),
-            name: trim(($user?->first_name ?? '') . ' ' . ($user?->last_name ?? '')) ?: ($user?->name ?? ''),
+        $mail = fn () => new CmsLoginFromNewIpMail(
+            email: (string) $user->email,
+            name: trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? '')) ?: ($user->name ?? ''),
             ip: (string) $attempt->ip,
             userAgent: (string) $attempt->user_agent,
             at: $attempt->created_at?->format('d-m-Y H:i') ?? now()->format('d-m-Y H:i'),
-        ));
+            newIp: $newIp,
+            lockUrl: LockUserAction::notMeUrl($user),
+            allowlistName: CmsIpAllowlist::nameFor((string) $attempt->ip),
+        );
+
+        $recipients = self::recipients();
+
+        if ($user->email && ! in_array(strtolower($user->email), $recipients, true)) {
+            $recipients[] = strtolower($user->email);
+        }
+
+        foreach ($recipients as $recipient) {
+            Mail::to($recipient)->queue($mail());
+        }
     }
 
     protected static function handleFailure(LoginAttempt $attempt): void

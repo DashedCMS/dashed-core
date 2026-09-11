@@ -55,6 +55,25 @@ class CmsIpAllowlist
         return array_values(array_map(fn (array $entry) => $entry['ip'], self::entries()));
     }
 
+    /**
+     * De naam van de regel waar dit adres in past (CIDR meegenomen). null als
+     * het adres niet in de lijst staat, '' als het erin staat zonder naam.
+     */
+    public static function nameFor(string $ip): ?string
+    {
+        if ($ip === '') {
+            return null;
+        }
+
+        foreach (self::entries() as $entry) {
+            if (($entry['ip'] ?? '') !== '' && IpUtils::checkIp($ip, [$entry['ip']])) {
+                return (string) ($entry['name'] ?? '');
+            }
+        }
+
+        return null;
+    }
+
     public static function isActive(): bool
     {
         return count(self::entries()) > 0;

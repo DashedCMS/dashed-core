@@ -30,6 +30,10 @@ class LoginAttempt extends Model
 
     public const RESULT_IDLE_LOGOUT = 'idle_logout';
 
+    public const RESULT_SESSION_EXPIRED = 'session_expired';
+
+    public const RESULT_REMEMBER_REJECTED = 'remember_rejected';
+
     protected $table = 'dashed__login_attempts';
 
     protected $guarded = [];
@@ -51,6 +55,8 @@ class LoginAttempt extends Model
             self::RESULT_LOGOUT => __('Uitgelogd'),
             self::RESULT_IP_BLOCKED => __('Geweigerd op IP'),
             self::RESULT_IDLE_LOGOUT => __('Automatisch uitgelogd'),
+            self::RESULT_SESSION_EXPIRED => __('Sessie verlopen'),
+            self::RESULT_REMEMBER_REJECTED => __('Onthoud-mij geweigerd'),
         ];
     }
 
@@ -63,6 +69,8 @@ class LoginAttempt extends Model
             self::RESULT_LOGOUT => 'gray',
             self::RESULT_IP_BLOCKED => 'warning',
             self::RESULT_IDLE_LOGOUT => 'gray',
+            self::RESULT_SESSION_EXPIRED => 'gray',
+            self::RESULT_REMEMBER_REJECTED => 'warning',
         ];
     }
 

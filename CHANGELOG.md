@@ -2,6 +2,16 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.62.0 - 2026-09-11
+
+### Security
+Tweede ronde beveiligingsmaatregelen, uit het Beveiligingsplaybook Dashed-projecten (M8, M9, M10, M12, M13 en extra rijen op de Beveiligingscheck). Zie CLAUDE.md, "Beveiligingsplaybook (11 september 2026)".
+- **Paneelsessie.** `CmsSessionLimits`: absolute sessieduur (`cms_session_max_minutes`, standaard 720, 0 = uit) naast het idle-uitloggen, en een login via het onthoud-mij-cookie wordt voor paneelaccounts geweigerd (slaat MFA over). Inloglogboek kent `session_expired` en `remember_rejected`.
+- **Loginmail met vergrendellink.** Bij een nieuw IP (standaard) of elke login (`security_alert_every_login`) een mail naar de ontvangers en de beheerder zelf, met de naam uit de IP-lijst en een ondertekende "dit was ik niet"-link (zeven dagen) die het account vergrendelt via `LockUserAction`. Zelfde via `dashed:lock-user`.
+- **Wachtwoord-reset voor beheerders.** Elk reset-verzoek op een paneelaccount geeft een `CmsPasswordResetRequestedMail` zonder link; met `cms_admin_password_reset_enabled` uit gaat er geen resetlink meer naar beheerders. `dashed:set-password` als ontsnapping.
+- **Beheeracties bewaken.** `AdminActionMonitor` (mail plus activity-regel bij wijziging van MFA-, meldings-, sessie- en reset-instellingen door een ingelogde gebruiker; `watchSettings()` voor pakketten) en `ActivityLogForensics` (IP en user-agent op elke activity-regel).
+- **Beveiligingscheck.** `SecurityCheck::extend()` voor pakketten, en rijen voor sessieduur, cookie-vlaggen, geheimen als env-terugval in config/, losse PHP in public/, shell-functies in app/ en routes/ (`ProjectScan`), Sanctum-vervaldatum, absolute sessieduur en reset voor beheerders.
+
 ## v4.61.1 - 2026-09-11
 
 ### Fixed
