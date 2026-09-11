@@ -2,7 +2,9 @@
 
 namespace Dashed\DashedCore\Classes;
 
+use Illuminate\Support\Facades\Validator;
 use Dashed\DashedCore\Rules\SafeUploadedFile;
+use Illuminate\Contracts\Validation\Validator as ValidatorContract;
 
 /**
  * Twee dingen aan de tijdelijke Livewire-uploads, afgedwongen vanuit het
@@ -32,8 +34,27 @@ class UploadSecurity
     Options -ExecCGI -Indexes
     HTACCESS;
 
+    /**
+     * De wachter staat als regelnaam in de config en niet als object: config:cache
+     * schrijft de config met var_export weg, en een object daarin breekt dat.
+     */
+    public const RULE = 'safe_uploaded_file';
+
     public static function apply(): void
     {
+        Validator::extend(static::RULE, function (string $attribute, mixed $value, array $parameters, ValidatorContract $validator): bool {
+            $message = null;
+            (new SafeUploadedFile())->validate($attribute, $value, function (string $reason) use (&$message): void {
+                $message = $reason;
+            });
+
+            if ($message !== null) {
+                $validator->setCustomMessages([$attribute . '.' . static::RULE => $message]);
+            }
+
+            return $message === null;
+        }, __('De inhoud van dit bestand is niet toegestaan.'));
+
         if (! static::temporaryDiskIsPrivate()) {
             config(['livewire.temporary_file_upload.disk' => 'local']);
         }
@@ -66,7 +87,7 @@ class UploadSecurity
     public static function guardIsActive(): bool
     {
         return collect(static::normalizeRules(config('livewire.temporary_file_upload.rules')))
-            ->contains(fn ($rule) => $rule instanceof SafeUploadedFile);
+            ->contains(fn ($rule) => static::isGuard($rule));
     }
 
     /**
@@ -76,13 +97,25 @@ class UploadSecurity
     {
         $rules = static::normalizeRules($rules);
 
-        if (collect($rules)->contains(fn ($rule) => $rule instanceof SafeUploadedFile)) {
+        if (collect($rules)->contains(fn ($rule) => static::isGuard($rule))) {
             return $rules;
         }
 
-        $rules[] = new SafeUploadedFile();
+        $rules[] = static::RULE;
 
         return $rules;
+    }
+
+    /**
+     * Zowel de regelnaam als een los object van een project telt als wachter.
+     */
+    public static function isGuard(mixed $rule): bool
+    {
+        if ($rule instanceof SafeUploadedFile) {
+            return true;
+        }
+
+        return is_string($rule) && (explode(':', $rule, 2)[0] === static::RULE);
     }
 
     /**

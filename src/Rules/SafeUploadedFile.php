@@ -33,6 +33,15 @@ class SafeUploadedFile implements ValidationRule
         'application/x-msdownload', 'application/x-dosexec', 'application/x-msdos-program', 'application/vnd.microsoft.portable-executable',
     ];
 
+    /**
+     * Zodat config:cache een project niet breekt dat dit object zelf in
+     * config/livewire.php zet; de regel heeft geen staat.
+     */
+    public static function __set_state(array $properties): static
+    {
+        return new static();
+    }
+
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if (! $value instanceof UploadedFile) {

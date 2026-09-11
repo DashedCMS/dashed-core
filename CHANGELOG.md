@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.61.1 - 2026-09-11
+
+### Fixed
+- **`config:cache` brak op de uploadwachter.** De config wordt met `var_export` weggeschreven en een object daarin kan niet. De wachter staat nu als regelnaam `safe_uploaded_file` in `livewire.temporary_file_upload.rules` (geregistreerd via `Validator::extend` in `UploadSecurity::apply()`), en `SafeUploadedFile` heeft een `__set_state()` zodat een project dat het object zelf in `config/livewire.php` zet ook kan cachen. `UploadSecurity::isGuard()` herkent allebei.
+
 ## v4.61.0 - 2026-09-11
 
 ### Security
