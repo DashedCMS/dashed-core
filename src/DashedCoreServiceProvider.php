@@ -257,7 +257,12 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             '/livewire/',
             '/storage/dashed/invoices/',
             '/storage/dashed/packing-slips/',
+            '/storage/livewire-tmp/',
         ]);
+
+        // Tijdelijke uploads prive en de wachter op de uploadroute, voor elk
+        // project. Zie UploadSecurity.
+        \Dashed\DashedCore\Classes\UploadSecurity::apply();
 
         // Filament-tafels: filters worden meteen toegepast bij het wijzigen,
         // geen losse "Toepassen"-knop meer. Geldt CMS-breed voor alle

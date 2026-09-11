@@ -2,6 +2,14 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.61.0 - 2026-09-11
+
+### Security
+- **Tijdelijke Livewire-uploads prive en bewaakt.** `UploadSecurity::apply()` draait in de boot van dashed-core en zet `livewire.temporary_file_upload.disk` op `local` zodra een project geen disk of een via de webserver bereikbare disk (`public`) had staan; een bewust gekozen prive disk blijft. Elke upload gaat langs de nieuwe regel `Rules\SafeUploadedFile`, die server-side code weigert op naam (`php`, `phtml`, `phar`, `cgi`, `sh`, `.htaccess`, ook als tussenstuk zoals `shell.php.jpg`), op gesnoven mimetype en op inhoud (`<?php`, `<?=`, shebang in de eerste 64 KB). Eigen regels in `config/livewire.php` blijven staan; de wachter komt er alleen bij.
+- **Migratie `harden_public_storage_for_uploads`** verwijdert de oude map `storage/app/public/livewire-tmp` (in een klantproject is daar een geupload `.php`-bestand aangetroffen) en zet een `.htaccess` in `storage/app/public` dat scriptuitvoering uitschakelt op Apache. Een bestaand `.htaccess` blijft staan. Op nginx hoort er een `location`-blok naast, zie CLAUDE.md.
+- **Beveiligingscheck** krijgt de regel Uploads: rood zodra de tijdelijke disk publiek is of de wachter op de uploadregels ontbreekt.
+- `/storage/livewire-tmp/` staat in robots.txt.
+
 ## v4.60.0 - 2026-09-11
 
 ### Added
