@@ -2,7 +2,6 @@
 
 namespace Dashed\DashedCore\Classes;
 
-use Dashed\DashedCore\Models\User;
 use Illuminate\Support\Facades\Mail;
 use Dashed\DashedCore\Models\Customsetting;
 use Symfony\Component\HttpFoundation\IpUtils;
@@ -228,9 +227,10 @@ class CmsIpAllowlist
     }
 
     /**
-     * Elke superadmin hoort het zodra de lijst verandert, ook vanaf de
-     * commandoregel. Wie het CMS op adres afsluit of juist weer openzet, hoort
-     * dat niet alleen zelf te weten.
+     * Wie het CMS op adres afsluit of juist weer openzet, hoort dat niet
+     * alleen zelf te weten: elke wijziging, ook vanaf de commandoregel, gaat
+     * naar de ontvangers van de meldingssoort "IP-lijst gewijzigd" (zonder
+     * eigen adressen de algemene lijst, zonder die alle superadmins).
      *
      * @param  array<int, array{name: string, ip: string}>  $previous
      * @param  array<int, array{name: string, ip: string}>  $current
@@ -253,11 +253,7 @@ class CmsIpAllowlist
             changedAt: now()->format('d-m-Y H:i'),
         );
 
-        User::query()
-            ->where('role', 'superadmin')
-            ->whereNotNull('email')
-            ->get()
-            ->each(fn (User $superadmin) => Mail::to($superadmin->email)->send($mail()));
+        SecurityAlerts::send(SecurityAlerts::TYPE_IP_ALLOWLIST, $mail);
     }
 
     /**

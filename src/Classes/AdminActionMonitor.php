@@ -3,7 +3,6 @@
 namespace Dashed\DashedCore\Classes;
 
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedCore\Mail\AdminActionAlertMail;
 
@@ -98,12 +97,15 @@ class AdminActionMonitor
             return;
         }
 
+        // De melding over het uitzetten van een meldingssoort gaat altijd,
+        // anders zet iemand eerst de beheeractie-meldingen uit en daarna
+        // ongemerkt de rest.
         self::alert(__('Instelling gewijzigd: :naam', ['naam' => $name]), [
             __('Instelling') => $name,
             __('Site') => (string) $setting->site_id,
             __('Oud') => self::stringify($old),
             __('Nieuw') => self::stringify($new),
-        ]);
+        ], force: str_starts_with($name, 'security_alert'));
     }
 
     /**
@@ -113,9 +115,9 @@ class AdminActionMonitor
      *
      * @param  array<string, string>  $facts
      */
-    public static function alert(string $title, array $facts): void
+    public static function alert(string $title, array $facts, bool $force = false): void
     {
-        if (! self::enabled()) {
+        if ($force ? ! SecurityAlerts::enabled() : ! SecurityAlerts::typeEnabled(SecurityAlerts::TYPE_ADMIN_ACTION)) {
             return;
         }
 
@@ -129,11 +131,7 @@ class AdminActionMonitor
 
         Log::warning('[admin-monitor] ' . $title, $facts);
 
-        rescue(function () use ($title, $facts): void {
-            foreach (SecurityAlerts::recipients() as $recipient) {
-                Mail::to($recipient)->queue(new AdminActionAlertMail($title, $facts));
-            }
-        }, report: true);
+        rescue(fn () => SecurityAlerts::send(SecurityAlerts::TYPE_ADMIN_ACTION, fn () => new AdminActionAlertMail($title, $facts), force: $force), report: true);
     }
 
     /**

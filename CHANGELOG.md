@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.63.0 - 2026-09-12
+
+### Changed
+- **Beveiligingsmeldingen per soort.** Vijf soorten (`SecurityAlerts::types()`: login van een beheerder, mislukte inlogpoging, wachtwoord-reset aangevraagd, beheeracties, IP-lijst gewijzigd), elk apart aan of uit te zetten bij Instellingen, Beveiliging, en elk met eigen ontvangers; leeg is de algemene lijst, zonder die alle superadmins, en `SECURITY_ALERT_RECIPIENTS` in .env gaat boven alles. `SecurityAlerts::send($type, $mail)` is de ene plek die dit toepast; de mail over de IP-lijst loopt daar nu ook doorheen (ging altijd naar alle superadmins). Het uitzetten van een meldingssoort wordt zelf altijd gemeld, ook als de soort "beheeracties" uit staat. De Beveiligingscheck noemt de uitgezette soorten.
+
 ## v4.62.0 - 2026-09-11
 
 ### Security

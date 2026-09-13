@@ -3,7 +3,6 @@
 namespace Dashed\DashedCore\Classes;
 
 use Dashed\DashedCore\Models\User;
-use Illuminate\Support\Facades\Mail;
 use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedCore\Mail\CmsPasswordResetRequestedMail;
 
@@ -58,20 +57,12 @@ class CmsPasswordReset
      */
     public static function notifyRequested(User $user, bool $linkSent): void
     {
-        if (! SecurityAlerts::enabled()) {
-            return;
-        }
-
-        rescue(function () use ($user, $linkSent): void {
-            foreach (SecurityAlerts::recipients() as $recipient) {
-                Mail::to($recipient)->queue(new CmsPasswordResetRequestedMail(
-                    email: (string) $user->email,
-                    ip: (string) request()->ip(),
-                    userAgent: (string) request()->userAgent(),
-                    at: now()->format('d-m-Y H:i'),
-                    linkSent: $linkSent,
-                ));
-            }
-        }, report: true);
+        rescue(fn () => SecurityAlerts::send(SecurityAlerts::TYPE_PASSWORD_RESET, fn () => new CmsPasswordResetRequestedMail(
+            email: (string) $user->email,
+            ip: (string) request()->ip(),
+            userAgent: (string) request()->userAgent(),
+            at: now()->format('d-m-Y H:i'),
+            linkSent: $linkSent,
+        )), report: true);
     }
 }

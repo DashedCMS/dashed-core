@@ -44,6 +44,106 @@ class SecurityAlerts
 
     public const FAILED_LOGIN_COOLDOWN_MINUTES = 15;
 
+    public const TYPE_LOGIN = 'login';
+
+    public const TYPE_FAILED_LOGIN = 'failed_login';
+
+    public const TYPE_PASSWORD_RESET = 'password_reset';
+
+    public const TYPE_ADMIN_ACTION = 'admin_action';
+
+    public const TYPE_IP_ALLOWLIST = 'ip_allowlist';
+
+    /**
+     * De soorten meldingen, elk apart aan of uit te zetten en met eigen
+     * ontvangers (Instellingen, Beveiliging). Sleutel => [label, uitleg].
+     *
+     * @return array<string, array{0: string, 1: string}>
+     */
+    public static function types(): array
+    {
+        return [
+            self::TYPE_LOGIN => [__('Login van een beheerder'), __('Bij een IP-adres dat voor dat account nieuw is, of bij elke login. Gaat ook naar de beheerder zelf, met de vergrendellink.')],
+            self::TYPE_FAILED_LOGIN => [__('Mislukte inlogpoging'), __('Fout wachtwoord of foute MFA-code op een beheerdersaccount, hooguit een per kwartier per account.')],
+            self::TYPE_PASSWORD_RESET => [__('Wachtwoord-reset aangevraagd'), __('Elk reset-verzoek op een beheerdersaccount, zonder de link.')],
+            self::TYPE_ADMIN_ACTION => [__('Beheeracties'), __('Gewijzigde beveiligingsinstellingen, prijzen, betaalmethodes, te veel handmatige betalingen, foute pincodes.')],
+            self::TYPE_IP_ALLOWLIST => [__('IP-lijst gewijzigd'), __('Elke wijziging van de IP-lijst, ook vanaf de commandoregel.')],
+        ];
+    }
+
+    public static function typeEnabledSetting(string $type): string
+    {
+        return 'security_alert_' . $type . '_enabled';
+    }
+
+    public static function typeEmailsSetting(string $type): string
+    {
+        return 'security_alert_' . $type . '_emails';
+    }
+
+    /** Aan als de hoofdschakelaar aan staat en de soort niet is uitgezet. */
+    public static function typeEnabled(string $type): bool
+    {
+        if (! self::enabled()) {
+            return false;
+        }
+
+        $value = Customsetting::get(self::typeEnabledSetting($type), self::siteId(), '1');
+
+        if ($value === null || $value === '') {
+            return true;
+        }
+
+        return filter_var($value, FILTER_VALIDATE_BOOL);
+    }
+
+    /**
+     * De eigen adressen van een soort; leeg betekent de algemene lijst.
+     *
+     * @return array<int, string>
+     */
+    public static function typeEmails(string $type): array
+    {
+        return self::parseEmails((string) Customsetting::get(self::typeEmailsSetting($type), self::siteId(), ''));
+    }
+
+    /**
+     * Ontvangers van een soort: .env gaat voor alles (zie recipients()),
+     * dan de adressen van de soort, dan de algemene lijst, dan de
+     * superadmins.
+     *
+     * @return array<int, string>
+     */
+    public static function recipientsFor(string $type): array
+    {
+        if ($fromEnv = self::envRecipients()) {
+            return $fromEnv;
+        }
+
+        if ($own = self::typeEmails($type)) {
+            return $own;
+        }
+
+        return self::recipients();
+    }
+
+    /**
+     * Verstuurt een melding van een soort naar de ontvangers van die soort,
+     * per ontvanger een eigen mailable (zie CmsIpAllowlist). Doet niets als
+     * de soort of de hoofdschakelaar uit staat, tenzij $force: dat is voor
+     * de melding over het uitzetten zelf.
+     */
+    public static function send(string $type, callable $mail, bool $force = false): void
+    {
+        if ($force ? ! self::enabled() : ! self::typeEnabled($type)) {
+            return;
+        }
+
+        foreach (self::recipientsFor($type) as $recipient) {
+            Mail::to($recipient)->queue($mail());
+        }
+    }
+
     public static function siteId(): string
     {
         return (string) Sites::getFirstSite()['id'];
@@ -70,8 +170,14 @@ class SecurityAlerts
      */
     public static function configuredEmails(): array
     {
-        $raw = (string) Customsetting::get(self::SETTING_EMAILS, self::siteId(), '');
+        return self::parseEmails((string) Customsetting::get(self::SETTING_EMAILS, self::siteId(), ''));
+    }
 
+    /**
+     * @return array<int, string>
+     */
+    protected static function parseEmails(string $raw): array
+    {
         $emails = [];
 
         foreach (preg_split('/[\s,;]+/', $raw) ?: [] as $email) {
@@ -170,7 +276,7 @@ class SecurityAlerts
     {
         $user = $attempt->user;
 
-        if (! $user || ! $user->mustLoginViaPanel()) {
+        if (! $user || ! $user->mustLoginViaPanel() || ! self::typeEnabled(self::TYPE_LOGIN)) {
             return;
         }
 
@@ -199,7 +305,7 @@ class SecurityAlerts
             allowlistName: CmsIpAllowlist::nameFor((string) $attempt->ip),
         );
 
-        $recipients = self::recipients();
+        $recipients = self::recipientsFor(self::TYPE_LOGIN);
 
         if ($user->email && ! in_array(strtolower($user->email), $recipients, true)) {
             $recipients[] = strtolower($user->email);
@@ -216,7 +322,7 @@ class SecurityAlerts
 
         $user = User::query()->whereRaw('LOWER(email) = ?', [$email])->first();
 
-        if (! $user || ! $user->mustLoginViaPanel()) {
+        if (! $user || ! $user->mustLoginViaPanel() || ! self::typeEnabled(self::TYPE_FAILED_LOGIN)) {
             return;
         }
 
@@ -228,7 +334,7 @@ class SecurityAlerts
             return;
         }
 
-        self::send(fn () => new CmsFailedLoginMail(
+        self::send(self::TYPE_FAILED_LOGIN, fn () => new CmsFailedLoginMail(
             email: (string) $user->email,
             ip: (string) $attempt->ip,
             userAgent: (string) $attempt->user_agent,
@@ -236,16 +342,5 @@ class SecurityAlerts
             viaMfa: $attempt->result === LoginAttempt::RESULT_FAILED_MFA,
             cooldownMinutes: self::FAILED_LOGIN_COOLDOWN_MINUTES,
         ));
-    }
-
-    /**
-     * Per ontvanger een eigen mailable, anders stapelen de adressen op
-     * (zie CmsIpAllowlist::notifySuperadmins()).
-     */
-    protected static function send(callable $mail): void
-    {
-        foreach (self::recipients() as $recipient) {
-            Mail::to($recipient)->queue($mail());
-        }
     }
 }

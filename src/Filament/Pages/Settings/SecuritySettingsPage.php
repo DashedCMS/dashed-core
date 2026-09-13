@@ -14,13 +14,14 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Section;
 use Dashed\DashedCore\Classes\RateLimits;
+use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Contracts\HasSchemas;
 use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedCore\Classes\CmsIdleTimeout;
-use Dashed\DashedCore\Classes\CmsSessionLimits;
-use Dashed\DashedCore\Classes\CmsPasswordReset;
 use Dashed\DashedCore\Classes\CmsIpAllowlist;
 use Dashed\DashedCore\Classes\SecurityAlerts;
+use Dashed\DashedCore\Classes\CmsPasswordReset;
+use Dashed\DashedCore\Classes\CmsSessionLimits;
 use Dashed\DashedCore\Traits\HasSettingsPermission;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 
@@ -46,6 +47,14 @@ class SecuritySettingsPage extends Page implements HasSchemas
             'security_alerts_enabled' => SecurityAlerts::enabled(),
             'security_alert_emails' => SecurityAlerts::configuredEmails(),
             'security_alert_every_login' => SecurityAlerts::everyLogin(),
+        ];
+
+        foreach (array_keys(SecurityAlerts::types()) as $type) {
+            $fill[SecurityAlerts::typeEnabledSetting($type)] = SecurityAlerts::typeEnabled($type) || ! SecurityAlerts::enabled() && filter_var(Customsetting::get(SecurityAlerts::typeEnabledSetting($type), SecurityAlerts::siteId(), '1') ?: '1', FILTER_VALIDATE_BOOL);
+            $fill[SecurityAlerts::typeEmailsSetting($type)] = SecurityAlerts::typeEmails($type);
+        }
+
+        $fill += [
             'cms_admin_password_reset_enabled' => CmsPasswordReset::adminResetEnabled(),
         ];
 
@@ -117,23 +126,21 @@ class SecuritySettingsPage extends Page implements HasSchemas
                     ]),
 
                 Section::make(__('Beveiligingsmeldingen'))
-                    ->description(__('Een e-mail zodra een beheerder inlogt vanaf een IP-adres dat voor dat account nieuw is, en bij een mislukte inlogpoging op een beheerdersaccount (hooguit een per kwartier per account). Alles blijft daarnaast gewoon in het inloglogboek staan.'))
-                    ->schema([
+                    ->description(__('E-mails over wat er met de beheeromgeving gebeurt. Per soort aan of uit te zetten, en per soort naar eigen adressen; leeg is de algemene lijst hieronder. Alles blijft daarnaast gewoon in het inloglogboek en het activiteitenlogboek staan.'))
+                    ->schema(array_merge([
                         Toggle::make('security_alerts_enabled')
-                            ->label(__('Beveiligingsmeldingen versturen')),
-                        Toggle::make('security_alert_every_login')
-                            ->label(__('Ook mailen bij elke login van een beheerder'))
-                            ->helperText(__('Standaard alleen bij een IP-adres dat voor dat account nieuw is. Elke loginmail gaat ook naar de beheerder zelf en bevat een link waarmee hij het account vergrendelt als hij het niet was.')),
+                            ->label(__('Beveiligingsmeldingen versturen'))
+                            ->helperText(__('De hoofdschakelaar: uit betekent geen enkele melding, wat er per soort ook staat.')),
                         TagsInput::make('security_alert_emails')
-                            ->label(__('Naar deze e-mailadressen'))
+                            ->label(__('Algemene ontvangers'))
                             ->placeholder(__('Typ een adres en druk op Enter'))
                             ->disabled(SecurityAlerts::recipientsLockedByEnv())
                             ->dehydrated(! SecurityAlerts::recipientsLockedByEnv())
                             ->helperText(SecurityAlerts::recipientsLockedByEnv()
-                                ? __('Vastgezet via SECURITY_ALERT_RECIPIENTS in .env: de meldingen gaan uitsluitend naar :adressen. Deze lijst telt niet mee.', ['adressen' => implode(', ', SecurityAlerts::envRecipients())])
+                                ? __('Vastgezet via SECURITY_ALERT_RECIPIENTS in .env: de meldingen gaan uitsluitend naar :adressen. De lijsten op deze pagina tellen niet mee.', ['adressen' => implode(', ', SecurityAlerts::envRecipients())])
                                 : __('Leeg: naar alle superadmins.'))
                             ->nestedRecursiveRules(['email']),
-                    ]),
+                    ], $this->alertTypeFields())),
 
                 Section::make(__('Wachtwoord-reset voor beheerders'))
                     ->description(__('Wie bij de mailbox van een beheerder kan, kan met een reset per mail het account overnemen. Staat dit uit, dan krijgt een beheerder geen resetlink meer; een collega-superadmin zet dan een nieuw wachtwoord, of dashed:set-password op de server. Elk reset-verzoek op een beheerdersaccount geeft sowieso een beveiligingsmelding.'))
@@ -211,6 +218,12 @@ class SecuritySettingsPage extends Page implements HasSchemas
         Customsetting::set(CmsSessionLimits::SETTING_MAX_MINUTES, max(0, (int) ($state['cms_session_max_minutes'] ?? CmsSessionLimits::DEFAULT_MAX_MINUTES)), $siteId);
         Customsetting::set(SecurityAlerts::SETTING_ENABLED, (bool) ($state['security_alerts_enabled'] ?? true), $siteId);
         Customsetting::set(SecurityAlerts::SETTING_EVERY_LOGIN, (bool) ($state['security_alert_every_login'] ?? false), $siteId);
+        foreach (array_keys(SecurityAlerts::types()) as $type) {
+            Customsetting::set(SecurityAlerts::typeEnabledSetting($type), (bool) ($state[SecurityAlerts::typeEnabledSetting($type)] ?? true), $siteId);
+            if (! SecurityAlerts::recipientsLockedByEnv()) {
+                Customsetting::set(SecurityAlerts::typeEmailsSetting($type), implode("\n", array_values(array_filter(array_map('trim', (array) ($state[SecurityAlerts::typeEmailsSetting($type)] ?? []))))), $siteId);
+            }
+        }
         Customsetting::set(CmsPasswordReset::SETTING_ADMIN_RESET_ENABLED, (bool) ($state['cms_admin_password_reset_enabled'] ?? true), $siteId);
         if (! SecurityAlerts::recipientsLockedByEnv()) {
             Customsetting::set(SecurityAlerts::SETTING_EMAILS, implode("\n", array_values(array_filter(array_map('trim', (array) ($state['security_alert_emails'] ?? []))))), $siteId);
@@ -226,6 +239,42 @@ class SecuritySettingsPage extends Page implements HasSchemas
             ->send();
 
         return redirect(static::getUrl());
+    }
+
+    /**
+     * Per soort melding een schakelaar en eigen ontvangers. De loginmail
+     * heeft daarnaast de keuze tussen alleen een nieuw IP-adres of elke login.
+     *
+     * @return array<int, \Filament\Schemas\Components\Component>
+     */
+    protected function alertTypeFields(): array
+    {
+        $fields = [];
+
+        foreach (SecurityAlerts::types() as $type => [$label, $description]) {
+            $schema = [
+                Toggle::make(SecurityAlerts::typeEnabledSetting($type))
+                    ->label(__('Versturen'))
+                    ->helperText($description),
+            ];
+
+            if ($type === SecurityAlerts::TYPE_LOGIN) {
+                $schema[] = Toggle::make('security_alert_every_login')
+                    ->label(__('Ook bij elke login, niet alleen bij een nieuw IP-adres'));
+            }
+
+            $schema[] = TagsInput::make(SecurityAlerts::typeEmailsSetting($type))
+                ->label(__('Eigen ontvangers'))
+                ->placeholder(__('Typ een adres en druk op Enter'))
+                ->disabled(SecurityAlerts::recipientsLockedByEnv())
+                ->dehydrated(! SecurityAlerts::recipientsLockedByEnv())
+                ->helperText(__('Leeg: de algemene ontvangers.'))
+                ->nestedRecursiveRules(['email']);
+
+            $fields[] = Fieldset::make($label)->schema($schema)->columns(1);
+        }
+
+        return $fields;
     }
 
     /**

@@ -8,12 +8,12 @@ use Dashed\DashedCore\Classes\RateLimits;
 use Dashed\DashedCore\Classes\MfaFreshness;
 use Dashed\DashedCore\Classes\CmsIdleTimeout;
 use Dashed\DashedCore\Classes\CmsIpAllowlist;
-use Dashed\DashedCore\Classes\CmsPasswordReset;
-use Dashed\DashedCore\Classes\CmsSessionLimits;
 use Dashed\DashedCore\Classes\SecurityAlerts;
 use Dashed\DashedCore\Classes\TrustedProxies;
 use Dashed\DashedCore\Classes\UploadSecurity;
 use Dashed\DashedCore\Middleware\TrustedHosts;
+use Dashed\DashedCore\Classes\CmsPasswordReset;
+use Dashed\DashedCore\Classes\CmsSessionLimits;
 
 /**
  * Eén scherm dat laat zien wat er aan beveiliging aan of uit staat, per
@@ -184,13 +184,14 @@ class SecurityCheck
         );
 
         $recipients = SecurityAlerts::enabled() ? SecurityAlerts::recipients() : [];
+        $typesOff = array_keys(array_filter(SecurityAlerts::types(), fn ($_, $type) => ! SecurityAlerts::typeEnabled($type), ARRAY_FILTER_USE_BOTH));
         $items[] = self::item(
             'security_alerts',
             __('Beveiligingsmeldingen'),
-            SecurityAlerts::enabled() && $recipients ? self::OK : self::WARNING,
+            SecurityAlerts::enabled() && $recipients ? ($typesOff ? self::WARNING : self::OK) : self::WARNING,
             SecurityAlerts::enabled()
                 ? ($recipients
-                    ? __('Naar :emails.', ['emails' => implode(', ', $recipients)])
+                    ? __('Naar :emails.', ['emails' => implode(', ', $recipients)]) . ($typesOff ? ' ' . __('Uitgezet: :soorten.', ['soorten' => implode(', ', array_map(fn ($type) => SecurityAlerts::types()[$type][0], $typesOff))]) : '')
                     : __('Aan, maar er is geen ontvanger: geen ingestelde adressen en geen superadmin met e-mailadres.'))
                 : __('Uitgeschakeld.')
         );
