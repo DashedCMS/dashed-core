@@ -27,6 +27,35 @@ abstract class EmailBlock
         return in_array($context, static::contexts(), true);
     }
 
+    /**
+     * Of dit blok per ontvanger gerenderd moet worden. Standaard nee: de
+     * nieuwsbrief rendert één keer per campagne en vervangt daarna alleen
+     * plaatshouders (CampaignRenderer::substitute()). Een blok dat iets van
+     * de ontvanger zelf toont (zijn verlanglijst) zet dit op true; de
+     * nieuwsbrief laat dan een plaatshouder staan en roept per ontvanger
+     * renderForRecipient() aan met 'recipientEmail' en 'subscriber' in de
+     * context. Kost per ontvanger één extra render van alleen dat blok.
+     */
+    public static function perRecipient(): bool
+    {
+        return false;
+    }
+
+    /**
+     * De per-ontvanger-variant van render(). Zelfde blokdata, dezelfde context
+     * als render() plus 'recipientEmail' (string) en 'subscriber' (het
+     * NewsletterSubscriber-model of null bij een proefmail). Standaard
+     * gewoon render(), zodat een blok dat perRecipient() aanzet maar deze
+     * methode niet overschrijft nog steeds iets oplevert.
+     *
+     * @param  array<string, mixed>  $blockData
+     * @param  array<string, mixed>  $context
+     */
+    public static function renderForRecipient(array $blockData, array $context): string
+    {
+        return static::render($blockData, $context);
+    }
+
     abstract public static function key(): string;
 
     abstract public static function label(): string;

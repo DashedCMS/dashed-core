@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.64.0 - 2026-09-15
+
+### Added
+- **Per-ontvanger-blokken in de nieuwsbrief.** `EmailBlock::perRecipient()` (standaard `false`) geeft aan dat een blok iets van de ontvanger zelf toont en dus niet één keer per campagne gerenderd mag worden; `EmailBlock::renderForRecipient()` is de per-ontvanger-variant van `render()`, met dezelfde blokdata en context plus `recipientEmail` en `subscriber`, en valt standaard terug op `render()`.
+
 ## v4.63.0 - 2026-09-12
 
 ### Changed
