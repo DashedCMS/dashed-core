@@ -85,8 +85,16 @@ class AdminActionMonitor
             return;
         }
 
-        $old = $setting->getOriginal($field);
+        $old = $setting->wasRecentlyCreated ? null : $setting->getOriginal($field);
         $new = $setting->{$field};
+
+        // Alleen een echte verandering telt. Het instellingenscherm slaat elk
+        // veld op, ook de lege: de eerste keer opslaan maakt rijen zonder
+        // waarde aan, en null tegenover '' geldt voor Eloquent als gewijzigd.
+        // Dat gaf een mail "Oud: leeg, Nieuw: leeg".
+        if (self::stringify($old) === self::stringify($new)) {
+            return;
+        }
 
         rescue(fn () => activity()
             ->performedOn($setting)
@@ -114,10 +122,14 @@ class AdminActionMonitor
      * tegenhouden.
      *
      * @param  array<string, string>  $facts
+     * @param  string|null  $type  de meldingssoort waar de schakelaar en de
+     *                             ontvangers van gelden; standaard Beheeracties
      */
-    public static function alert(string $title, array $facts, bool $force = false): void
+    public static function alert(string $title, array $facts, bool $force = false, ?string $type = null): void
     {
-        if ($force ? ! SecurityAlerts::enabled() : ! SecurityAlerts::typeEnabled(SecurityAlerts::TYPE_ADMIN_ACTION)) {
+        $type ??= SecurityAlerts::TYPE_ADMIN_ACTION;
+
+        if ($force ? ! SecurityAlerts::enabled() : ! SecurityAlerts::typeEnabled($type)) {
             return;
         }
 
@@ -131,7 +143,7 @@ class AdminActionMonitor
 
         Log::warning('[admin-monitor] ' . $title, $facts);
 
-        rescue(fn () => SecurityAlerts::send(SecurityAlerts::TYPE_ADMIN_ACTION, fn () => new AdminActionAlertMail($title, $facts), force: $force), report: true);
+        rescue(fn () => SecurityAlerts::send($type, fn () => new AdminActionAlertMail($title, $facts), force: $force), report: true);
     }
 
     /**

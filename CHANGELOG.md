@@ -2,6 +2,14 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.66.0 - 2026-09-16
+
+### Added
+- **Prijswijzigingen als eigen meldingssoort.** `SecurityAlerts::TYPE_PRICE_CHANGE` ("Prijswijzigingen") met eigen schakelaar en eigen ontvangers bij Instellingen, Beveiliging, los van de Beheeracties. `AdminActionMonitor::alert()` heeft een parameter `type`; zonder blijft het Beheeracties. Hoort bij dashed-ecommerce-core v4.128.0, dat de geldvelden van een product onder die soort meldt.
+
+### Fixed
+- **Geen mail meer voor "Oud: leeg, Nieuw: leeg".** Het instellingenscherm slaat elk veld op, ook de lege; de eerste keer opslaan maakte rijen zonder waarde aan en dat gold als beheeractie. Alleen een echte verandering telt nu, ook bij een nieuwe rij en ook bij `null` tegenover een lege tekst.
+
 ## v4.65.0 - 2026-09-16
 
 ### Changed

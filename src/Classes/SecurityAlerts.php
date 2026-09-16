@@ -52,6 +52,9 @@ class SecurityAlerts
 
     public const TYPE_ADMIN_ACTION = 'admin_action';
 
+    /** Geldvelden van een product gewijzigd door een beheerder; apart van de beheeracties, want dat gebeurt vaak en bewust. */
+    public const TYPE_PRICE_CHANGE = 'price_change';
+
     public const TYPE_IP_ALLOWLIST = 'ip_allowlist';
 
     /**
@@ -66,7 +69,8 @@ class SecurityAlerts
             self::TYPE_LOGIN => [__('Login van een beheerder'), __('Bij een IP-adres dat voor dat account nieuw is, of bij elke login. Gaat ook naar de beheerder zelf, met de vergrendellink.')],
             self::TYPE_FAILED_LOGIN => [__('Mislukte inlogpoging'), __('Fout wachtwoord of foute MFA-code op een beheerdersaccount, hooguit een per kwartier per account.')],
             self::TYPE_PASSWORD_RESET => [__('Wachtwoord-reset aangevraagd'), __('Elk reset-verzoek op een beheerdersaccount, zonder de link.')],
-            self::TYPE_ADMIN_ACTION => [__('Beheeracties'), __('Gewijzigde beveiligingsinstellingen, prijzen, betaalmethodes, te veel handmatige betalingen, foute pincodes.')],
+            self::TYPE_ADMIN_ACTION => [__('Beheeracties'), __('Gewijzigde beveiligingsinstellingen, betaalmethodes, te veel handmatige betalingen, foute pincodes.')],
+            self::TYPE_PRICE_CHANGE => [__('Prijswijzigingen'), __('Een beheerder wijzigt een prijs, inkoopprijs of btw-tarief van een product; een drastische verlaging wordt apart genoemd.')],
             self::TYPE_IP_ALLOWLIST => [__('IP-lijst gewijzigd'), __('Elke wijziging van de IP-lijst, ook vanaf de commandoregel.')],
         ];
     }
