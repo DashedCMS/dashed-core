@@ -29,6 +29,14 @@ class WebhookProviderDetector
             return 'paynl';
         }
 
+        // PayNL, klassieke exchange: `order_id` samen met een `action`
+        // (new_ppt, pending, paid, cancel, refund, chargeback). Zonder deze
+        // regel viel zo'n aanroep buiten elke provider en werd hij helemaal
+        // niet gededupliceerd.
+        if ($request->input('order_id') !== null && $request->input('action') !== null) {
+            return 'paynl';
+        }
+
         // Multisafepay: ships a `transactionid` query/body param or a typed
         // `type=initialized|completed|...` flag.
         if ($request->input('transactionid') !== null || in_array($request->input('type'), ['initialized', 'completed', 'cancelled', 'expired'], true)) {
