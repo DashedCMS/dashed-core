@@ -10,7 +10,7 @@ class ArrayImport implements ToCollection
     /**
      * @param Collection $collection
      */
-    public function collection(Collection $collection)
+    public function collection(Collection $collection): void
     {
     }
 }

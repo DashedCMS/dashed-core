@@ -2,6 +2,14 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.65.0 - 2026-09-16
+
+### Changed
+- **`pxlrbt/filament-excel` is weg uit de afhankelijkheden.** Het werd nergens gebruikt en pinde `maatwebsite/excel` op 3.1, en die zit vast op phpspreadsheet 1.30, die PHP 8.5 weigert. `ArrayImport::collection()` heeft nu het `void`-retourtype dat Laravel-Excel 4 eist.
+
+### Fixed
+- Pay.nl-exchange wordt herkend op `order_id` plus `action` (webhooks).
+
 ## v4.64.0 - 2026-09-15
 
 ### Added
