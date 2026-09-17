@@ -24,6 +24,12 @@ return [
         'secret_query_params' => ['token', 'signature', 'passwordResetToken', 'code', 'otp'],
     ],
 
+    'notifications' => [
+        // Hoeveel meldingen (het belletje in het CMS) er per persoon blijven
+        // staan; dashed:prune haalt de oudste daarboven weg. 0 = geen grens.
+        'max_per_user' => (int) env('DASHED_NOTIFICATIONS_MAX_PER_USER', 50),
+    ],
+
     'blocks' => [
         'disable_caching' => env('DISABLE_BLOCK_CACHING', false),
         'caching_disabled' => [

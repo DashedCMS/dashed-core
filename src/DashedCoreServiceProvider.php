@@ -49,7 +49,6 @@ use Guava\FilamentIconPicker\Forms\IconPicker;
 use Dashed\DashedCore\Commands\CreateAdminUser;
 use Dashed\DashedCore\Mail\NewAdminAccountMail;
 use Dashed\DashedCore\Retention\ExportsOpruimer;
-use Dashed\DashedCore\Retention\SleutelOpruimer;
 use Dashed\DashedCore\Commands\CleanupOldExports;
 use Dashed\DashedCore\Commands\SyncGoogleReviews;
 use Dashed\DashedCore\Mail\EmailBlocks\HtmlBlock;
@@ -63,6 +62,7 @@ use Dashed\DashedCore\Mail\EmailBlocks\StatsBlock;
 use Dashed\DashedCore\Mail\EmailBlocks\TableBlock;
 use Dashed\DashedCore\Mail\EmailBlocks\VideoBlock;
 use Dashed\DashedCore\Policies\NotFoundPagePolicy;
+use Dashed\DashedCore\Retention\MeldingenOpruimer;
 use Dashed\DashedCore\Commands\MigrateDatabaseToV4;
 use Dashed\DashedCore\Livewire\Frontend\Auth\Login;
 use Dashed\DashedCore\Mail\EmailBlocks\ButtonBlock;
@@ -1247,12 +1247,14 @@ MARKDOWN,
                 )
         );
 
+        $maxMeldingen = (int) config('dashed-core.notifications.max_per_user', MeldingenOpruimer::STANDAARD_MAXIMUM);
+
         cms()->registerRetention(
             Retention::make('notifications')
                 ->label(__('Meldingen'))
                 ->pakket('dashed-core', __('Systeem'))
                 ->tabel('notifications')
-                ->opruimer(new SleutelOpruimer('notifications'))
+                ->opruimer(new MeldingenOpruimer())
                 ->termijn(
                     Termijn::make('notifications_read', CleanupSettingsPage::DEFAULT_NOTIFICATIONS_READ_DAYS, 'read_at')
                         ->label(__('Meldingen bewaren na lezen (dagen)'))
@@ -1262,7 +1264,10 @@ MARKDOWN,
                 ->termijn(
                     Termijn::make('notifications', CleanupSettingsPage::DEFAULT_NOTIFICATIONS_DAYS, 'created_at')
                         ->label(__('Meldingen bewaren (dagen)'))
-                        ->uitleg(__('De harde grens, gelezen of niet. Zonder deze grens blijft een melding die niemand opent voor altijd staan. Standaard: 60 dagen.'))
+                        ->uitleg(
+                            __('De harde grens, gelezen of niet. Zonder deze grens blijft een melding die niemand opent voor altijd staan. Standaard: 60 dagen.')
+                            . ($maxMeldingen > 0 ? ' ' . __('Daarnaast blijven per persoon alleen de nieuwste :aantal meldingen staan.', ['aantal' => $maxMeldingen]) : '')
+                        )
                         // Andersom zou de harde grens de leestermijn overbodig maken
                         // en zou een net gelezen melding eerder verdwijnen dan een
                         // die nooit geopend is. Deze regel stond op het oude

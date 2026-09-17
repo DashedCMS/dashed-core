@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.68.0 - 2026-09-17
+
+### Changed
+- **Hooguit vijftig meldingen per persoon.** `notifications` (het belletje in het CMS) had alleen grenzen in dagen, en die zeggen niets over aantallen: op lovora stonden 2,2 miljoen rijen. `MeldingenOpruimer` vervangt de `SleutelOpruimer` op de register-entry `notifications`. Hij past de twee termijnen toe zoals eerst, haalt daarna alle meldingen van gebruikers met rol `customer` weg (die komen het paneel niet in) en laat per ontvanger alleen de nieuwste N staan. N staat in `dashed-core.notifications.max_per_user` (`DASHED_NOTIFICATIONS_MAX_PER_USER`, standaard 50, 0 = geen grens). Het draait mee met `dashed:prune`; een migratie zet eenmalig een ronde voor alleen `notifications` in de wachtrij. `PruneAllRetentionsJob` neemt daarvoor een optionele sleutel aan.
+
 ## v4.67.0 - 2026-09-17
 
 ### Security
