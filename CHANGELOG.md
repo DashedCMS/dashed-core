@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.69.0 - 2026-09-17
+
+### Security
+- **MFA-geheimen altijd versleuteld en verborgen.** De encrypted-casts en de verborgen velden voor `app_authentication_secret` en `app_authentication_recovery_codes` stonden in `$casts` en `$hidden` van het basismodel. `App\Models\User` in 29 van de 39 klantprojecten overschrijft `$casts` met de skeletonwaarden, en in alle 39 overschrijft hij `$hidden`. Daardoor schreef Filament het geheim en de herstelcodes onversleuteld weg, en kwamen ze mee in `toArray()`. De mobiele API leest via het basismodel, dus daar klapte het inloggen op `DecryptException: The payload is invalid` (gezien op demaanvis). De casts zitten nu in `User::getCasts()` en de verborgen velden in `User::getHidden()`, zodat een kindmodel ze niet kwijt kan raken via `$casts`, `casts()` of `$hidden`. Een migratie versleutelt bestaande onversleutelde waarden op hun plek (`MfaSecretEncryption::encryptPlaintext()`), dus niemand hoeft MFA opnieuw in te stellen. Een waarde die al versleuteld is blijft staan, ook als hij met een andere sleutel versleuteld is.
+
 ## v4.68.0 - 2026-09-17
 
 ### Changed

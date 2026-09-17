@@ -45,6 +45,10 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasAppAut
     protected $hidden = [
         'password',
         'remember_token',
+    ];
+
+    /** Altijd versleuteld en verborgen, ook als een kindmodel $casts, casts() of $hidden overschrijft. */
+    public const MFA_SECRET_COLUMNS = [
         'app_authentication_secret',
         'app_authentication_recovery_codes',
     ];
@@ -56,13 +60,33 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasAppAut
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'app_authentication_secret' => 'encrypted',
-        'app_authentication_recovery_codes' => 'encrypted:array',
     ];
 
     protected $appends = [
         'name',
     ];
+
+    /**
+     * App\Models\User in de klantprojecten overschrijft $casts of casts() met
+     * de skeletonwaarden. Stonden de MFA-casts alleen daar, dan schreef Filament
+     * het geheim onversleuteld weg en klapte elke lezing via dit basismodel (de
+     * mobiele API) op DecryptException. Alle cast-logica van Eloquent loopt via
+     * getCasts(), dus hier kan een kindmodel ze niet kwijtraken.
+     */
+    public function getCasts()
+    {
+        return [
+            ...parent::getCasts(),
+            'app_authentication_secret' => 'encrypted',
+            'app_authentication_recovery_codes' => 'encrypted:array',
+        ];
+    }
+
+    /** Om dezelfde reden als getCasts(): een overschreven $hidden mag de MFA-velden niet prijsgeven. */
+    public function getHidden()
+    {
+        return array_values(array_unique([...parent::getHidden(), ...self::MFA_SECRET_COLUMNS]));
+    }
 
     public function getActivitylogOptions(): LogOptions
     {
