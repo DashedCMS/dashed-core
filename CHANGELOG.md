@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.67.0 - 2026-09-17
+
+### Security
+- **Geen geheimen meer in het logboek van verzonden mails.** `SentEmailScrubber`: mails uit `dashed-core.sent_emails.withhold_body_for` (nieuw beheerdersaccount, wachtwoordreset, Filament MFA-code per mail, resetnotificaties) en mailables die `ContainsSecrets` implementeren krijgen geen body in het logboek, alleen de vaste tekst en de metadata. Elke andere mail wordt gescrubd: mailgegevens met een naam uit `secret_keys` (`password`, `pin`, `code`, `token`, ...) worden in de body gemaskeerd en de waarde van `token`, `signature`, `passwordResetToken` in links wordt weggehaald. Bij een notificatie komt de notificatieklasse in `mailable_class`. `dashed:scrub-sent-emails` schoont bestaande rijen op; een migratie zet dat eenmalig in de wachtrij.
+
 ## v4.66.0 - 2026-09-16
 
 ### Added

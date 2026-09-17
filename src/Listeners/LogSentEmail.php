@@ -8,6 +8,7 @@ use Dashed\DashedCore\Classes\Sites;
 use Dashed\DashedCore\Models\SentEmail;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Mail\Events\MessageSent;
+use Dashed\DashedCore\Classes\SentEmailScrubber;
 
 /**
  * Logt elke door de CMS verzonden mail centraal in dashed__sent_emails.
@@ -31,13 +32,12 @@ class LogSentEmail
             $from = $this->addresses($message->getFrom());
 
             [$subjectType, $subjectId] = $this->resolveSubject($event->data);
+            $withhold = SentEmailScrubber::withholdsBody($event->data);
 
             SentEmail::create([
                 'site_id' => $this->currentSiteId(),
                 'message_id' => $event->sent?->getMessageId(),
-                'mailable_class' => is_object($event->data['__laravel_mailable'] ?? null)
-                    ? get_class($event->data['__laravel_mailable'])
-                    : ($event->data['__laravel_mailable'] ?? null),
+                'mailable_class' => SentEmailScrubber::classFor($event->data),
                 'from_email' => $from[0]['email'] ?? null,
                 'from_name' => $from[0]['name'] ?? null,
                 'to_email' => $to[0]['email'] ?? null,
@@ -47,8 +47,8 @@ class LogSentEmail
                     'bcc' => array_column($bcc, 'email'),
                 ],
                 'subject' => (string) ($message->getSubject() ?? ''),
-                'html_body' => $message->getHtmlBody(),
-                'text_body' => $message->getTextBody(),
+                'html_body' => $withhold ? SentEmailScrubber::WITHHELD : SentEmailScrubber::scrub($message->getHtmlBody(), $event->data),
+                'text_body' => $withhold ? SentEmailScrubber::WITHHELD : SentEmailScrubber::scrub($message->getTextBody(), $event->data),
                 'attachments' => $this->attachments($message),
                 'subject_type' => $subjectType,
                 'subject_id' => $subjectId,

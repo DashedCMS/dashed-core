@@ -9,6 +9,19 @@ return [
         'retention_days' => (int) env('DASHED_SENT_EMAILS_RETENTION_DAYS', 90),
         'track_opens_clicks' => env('DASHED_SENT_EMAILS_TRACK', true),
         'postmark_webhook_secret' => env('POSTMARK_WEBHOOK_SECRET'),
+        // Mails waarvan de body nooit in het logboek komt (alleen metadata):
+        // ze bevatten per definitie een wachtwoord, code of inloglink.
+        'withhold_body_for' => [
+            \Dashed\DashedCore\Mail\NewAdminAccountMail::class,
+            \Dashed\DashedCore\Mail\PasswordResetMail::class,
+            \Illuminate\Auth\Notifications\ResetPassword::class,
+            'Filament\\Auth\\Notifications\\ResetPassword',
+            'Filament\\Auth\\MultiFactor\\Email\\Notifications\\VerifyEmailAuthentication',
+        ],
+        // Mailgegevens met deze naam worden in de body van elke andere mail gemaskeerd.
+        'secret_keys' => ['password', 'plaintextPassword', 'pin', 'code', 'otp', 'token', 'secret', 'passwordResetToken'],
+        // Querystring-parameters in links waarvan de waarde wordt weggehaald.
+        'secret_query_params' => ['token', 'signature', 'passwordResetToken', 'code', 'otp'],
     ],
 
     'blocks' => [
