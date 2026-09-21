@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.71.1 - 2026-09-21
+
+### Fixed
+- **Klikbare statistiekkaarten openden een lijst zonder filter.** `ResourceFilterUrl` zette de filters in de URL als `tableFilters[...]`, maar Filament 4 leest de tabelfilters alleen onder `filters[...]`. Elke kaart die via `ResourceFilterUrl` naar een gefilterde lijst wees (openstaande bestellingen, actieve winkelwagens, cadeaubonnen, uitverkochte producten, social posts, popups, vertaalstatus) opende daardoor de hele lijst.
+
 ## v4.71.0 - 2026-09-21
 
 ### Added

@@ -10,8 +10,13 @@ namespace Dashed\DashedCore\Filament\Support;
  *     Stat::make('Unhandled orders', $count)
  *         ->url(ResourceFilterUrl::for(OrderResource::class, ['status' => 'unhandled']));
  *
- * Filters are coerced into Filament's `tableFilters[name][value]=…` shape.
- * Pass an array value to forward a multi-select filter as `tableFilters[name][values][]=…`.
+ * Filters are coerced into Filament's `filters[name][value]=…` shape.
+ * Pass an array value to forward a multi-select filter as `filters[name][values][]=…`.
+ *
+ * The query-string key is `filters`, not `tableFilters`: Filament 4 binds the
+ * `$tableFilters` property to the URL under the alias `filters` and ignores a
+ * `tableFilters` parameter, so links built with the property name opened an
+ * unfiltered list.
  */
 class ResourceFilterUrl
 {
@@ -23,6 +28,6 @@ class ResourceFilterUrl
             ])
             ->all();
 
-        return $resource::getUrl($page, ['tableFilters' => $tableFilters]);
+        return $resource::getUrl($page, ['filters' => $tableFilters]);
     }
 }
