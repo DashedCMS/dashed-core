@@ -1222,6 +1222,34 @@ MARKDOWN,
         cms()->registerContentQualityCheck(new \Dashed\DashedCore\ContentQuality\Checks\MetaTooLongCheck());
 
         self::registreerBewaartermijnen();
+        self::registreerVertaalbaren();
+    }
+
+    /**
+     * E-mailtemplates en globale blokken aanmelden bij het
+     * vertaalstatus-overzicht.
+     *
+     * Statisch en apart van bootingPackage(), naar het voorbeeld van
+     * registreerBewaartermijnen(). Guarded op class_exists: dashed-core kent
+     * dashed-translations niet als afhankelijkheid, dus een project zonder
+     * dat pakket moet gewoon kunnen booten.
+     */
+    public static function registreerVertaalbaren(): void
+    {
+        if (! class_exists(\Dashed\DashedTranslations\Classes\Translatables\TranslatableRegistry::class)) {
+            return;
+        }
+
+        $registry = \Dashed\DashedTranslations\Classes\Translatables\TranslatableRegistry::class;
+        $make = fn (string $model) => \Dashed\DashedTranslations\Classes\Translatables\Translatable::make($model)->group(__('Inhoud'));
+
+        $registry::register($make(\Dashed\DashedCore\Models\EmailTemplate::class)
+            ->label(__('E-mailtemplates'))
+            ->urlVia(\Dashed\DashedCore\Filament\Resources\EmailTemplateResource::class));
+
+        $registry::register($make(\Dashed\DashedCore\Models\GlobalBlock::class)
+            ->label(__('Globale blokken'))
+            ->urlVia(\Dashed\DashedCore\Filament\Resources\GlobalBlockResource::class));
     }
 
     /**

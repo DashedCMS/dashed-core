@@ -2,6 +2,14 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.70.0 - 2026-09-21
+
+### Added
+- **E-mailtemplates en globale blokken in de vertaalstatus.** `registreerVertaalbaren()` meldt ze aan bij het scherm Vertaalstatus van dashed-translations 4.6.0, guarded op `class_exists`, dus een project zonder dat pakket boot gewoon.
+
+### Fixed
+- **"Vertaal" vertaalt ook de kinderen.** De bulkactie op een lijst en de knop op de bewerkpagina gingen rechtstreeks naar `translateModel()`, dat alleen het model, metadata en customBlocks meestuurt. Opties van een filter of extra en velden van een formulier bleven onvertaald, en de vertaalstatus van zo'n item kwam nooit op compleet. Beide lopen nu via `TranslateAction::startTranslation()`, dat `TranslationStarter` gebruikt als die bestaat.
+
 ## v4.69.0 - 2026-09-17
 
 ### Security

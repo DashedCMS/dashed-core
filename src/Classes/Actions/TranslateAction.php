@@ -7,7 +7,9 @@ use Illuminate\Support\Collection;
 use Filament\Forms\Components\Select;
 use Dashed\DashedCore\Classes\Locales;
 use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Model;
 use Dashed\DashedTranslations\Classes\AutomatedTranslation;
+use Dashed\DashedTranslations\Classes\Translatables\TranslationStarter;
 
 class TranslateAction
 {
@@ -30,7 +32,7 @@ class TranslateAction
             ])
             ->action(function (Collection $records, array $data, $livewire) {
                 foreach ($records as $record) {
-                    AutomatedTranslation::translateModel($record, $livewire->activeLocale, $data['to_locales']);
+                    self::startTranslation($record, $livewire->activeLocale, $data['to_locales']);
                 }
 
                 Notification::make()
@@ -38,5 +40,26 @@ class TranslateAction
                     ->warning()
                     ->send();
             });
+    }
+
+    /**
+     * Start een vertaling van het model plus elk geregistreerd kind dat in
+     * zijn vingerafdruk meetelt (de opties van een filter of extra, de velden
+     * van een formulier). translateModel() alleen stuurt die kinderen niet
+     * mee, en dan wordt de vertaalstatus van de ouder nooit compleet. Met een
+     * oudere dashed-translations zonder TranslationStarter blijft het oude
+     * gedrag staan.
+     *
+     * @param  array<int, string>  $toLocales
+     */
+    public static function startTranslation(Model $record, string $fromLocale, array $toLocales): void
+    {
+        if (class_exists(TranslationStarter::class)) {
+            TranslationStarter::start($record, $fromLocale, $toLocales);
+
+            return;
+        }
+
+        AutomatedTranslation::translateModel($record, $fromLocale, $toLocales);
     }
 }

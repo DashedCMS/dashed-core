@@ -10,6 +10,7 @@ use Filament\Forms\Components\Select;
 use Dashed\DashedCore\Classes\Locales;
 use Filament\Notifications\Notification;
 use Dashed\DashedCore\Models\GlobalBlock;
+use Dashed\DashedCore\Classes\Actions\TranslateAction;
 use Filament\Infolists\Components\TextEntry;
 use LaraZeus\SpatieTranslatable\Actions\LocaleSwitcher;
 use Dashed\DashedTranslations\Classes\AutomatedTranslation;
@@ -199,7 +200,7 @@ trait HasEditableCMSActions
                     ->multiple(),
             ])
             ->action(function (array $data) {
-                AutomatedTranslation::translateModel($this->record, $this->activeLocale, $data['to_locales']);
+                TranslateAction::startTranslation($this->record, $this->activeLocale, $data['to_locales']);
 
                 Notification::make()
                     ->title(__('Item wordt vertaald, dit kan even duren. Sla de pagina niet op tot de vertalingen klaar zijn.'))
