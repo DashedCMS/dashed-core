@@ -37,14 +37,50 @@ class RateLimits
         'dashed-frontend-auth' => ['setting' => 'rate_limit_frontend_auth', 'default' => 10],
     ];
 
+    /**
+     * Limiters die een pakket zelf aanmeldt. Statisch, net als LIMITERS; een
+     * pakket meldt ze bij elke boot opnieuw aan onder dezelfde naam.
+     *
+     * @var array<string, array{setting: string, default: int, label: string, help: ?string, by: string}>
+     */
+    private static array $extended = [];
+
+    public static function extend(string $name, string $setting, int $default, string $label, ?string $help = null, string $by = 'ip'): void
+    {
+        self::$extended[$name] = [
+            'setting' => $setting,
+            'default' => $default,
+            'label' => $label,
+            'help' => $help,
+            'by' => $by,
+        ];
+
+        self::define($name);
+    }
+
+    public static function forgetExtended(string $name): void
+    {
+        unset(self::$extended[$name]);
+    }
+
+    public static function all(): array
+    {
+        return array_merge(self::LIMITERS, self::$extended);
+    }
+
+    public static function extended(): array
+    {
+        return self::$extended;
+    }
+
     public static function setting(string $name): string
     {
-        return self::LIMITERS[$name]['setting'];
+        return self::all()[$name]['setting'];
     }
 
     public static function default(string $name): int
     {
-        return self::LIMITERS[$name]['default'];
+        return self::all()[$name]['default'];
     }
 
     public static function perMinute(string $name): int
@@ -70,16 +106,38 @@ class RateLimits
     public static function register(): void
     {
         foreach (array_keys(self::LIMITERS) as $name) {
-            RateLimiter::for($name, function (Request $request) use ($name) {
-                $perMinute = self::perMinute($name);
-
-                if ($perMinute <= 0) {
-                    return Limit::none();
-                }
-
-                return Limit::perMinute($perMinute)->by($name . '|' . ($request->ip() ?: 'unknown'));
-            });
+            self::define($name);
         }
+    }
+
+    private static function define(string $name): void
+    {
+        RateLimiter::for($name, function (Request $request) use ($name) {
+            $perMinute = self::perMinute($name);
+
+            if ($perMinute <= 0) {
+                return Limit::none();
+            }
+
+            return Limit::perMinute($perMinute)->by($name . '|' . self::keyFor($name, $request));
+        });
+    }
+
+    /**
+     * Een API-sleutel telt per sleutel: meerdere afnemers achter dezelfde
+     * koppelpartij delen anders één IP en dus één limiet.
+     */
+    private static function keyFor(string $name, Request $request): string
+    {
+        if ((self::all()[$name]['by'] ?? 'ip') === 'token') {
+            $token = $request->user()?->currentAccessToken();
+
+            if ($token && method_exists($token, 'getKey') && $token->getKey()) {
+                return 'token:' . $token->getKey();
+            }
+        }
+
+        return $request->ip() ?: 'unknown';
     }
 
     /**

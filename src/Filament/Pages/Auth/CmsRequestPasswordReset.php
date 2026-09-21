@@ -5,8 +5,8 @@ namespace Dashed\DashedCore\Filament\Pages\Auth;
 use Dashed\DashedCore\Classes\Sites;
 use Illuminate\Support\Facades\Password;
 use Dashed\DashedCore\Classes\CmsPasswordReset;
-use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use Filament\Auth\Pages\PasswordReset\RequestPasswordReset;
+use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 
 /**
  * Filament bouwt de resetlink met URL::signedRoute(), dus op de Host-header

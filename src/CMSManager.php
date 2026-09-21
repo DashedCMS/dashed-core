@@ -37,13 +37,13 @@ use Dashed\DashedCore\Filament\Pages\Auth\MfaReverify;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Auth\MultiFactor\Email\EmailAuthentication;
-use Dashed\DashedCore\Notifications\MfaEmailCodeNotification;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Dashed\DashedCore\Filament\Components\ContentBuilder;
 use LaraZeus\SpatieTranslatable\SpatieTranslatablePlugin;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Dashed\DashedCore\Notifications\MfaEmailCodeNotification;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Dashed\DashedCore\Filament\Pages\Auth\CmsRequestPasswordReset;
 use Filament\Auth\MultiFactor\Pages\SetUpRequiredMultiFactorAuthentication;
@@ -808,6 +808,19 @@ class CMSManager
 
         $definition = \Dashed\DashedCore\Integrations\IntegrationDefinition::fromArray($cfg);
         $this->integrationRegistry()->register($definition);
+
+        return $this;
+    }
+
+    /**
+     * Meld uitgaande webhook-events aan. Aanroepen in packageBooted(), want
+     * de labels zijn vertaalbaar.
+     *
+     * @param  array<string, array{label: string, description?: string}>  $events
+     */
+    public function registerWebhookEvents(string $group, array $events): self
+    {
+        app(\Dashed\DashedCore\Webhooks\Outgoing\WebhookEventRegistry::class)->register($group, $events);
 
         return $this;
     }

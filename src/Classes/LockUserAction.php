@@ -36,6 +36,11 @@ class LockUserAction
         $user->save();
         $user->roles()->detach();
 
+        // Een nieuw wachtwoord breekt sessies af, maar geen API-sleutels: die
+        // blijven geldig tot ze weg zijn. Dus weg ermee, van de app en van
+        // de afnemers-API tegelijk.
+        $user->tokens()->delete();
+
         rescue(fn () => activity()
             ->performedOn($user)
             ->withProperties(['reason' => $reason, 'before' => $before])

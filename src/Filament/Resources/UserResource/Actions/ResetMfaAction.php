@@ -5,8 +5,8 @@ namespace Dashed\DashedCore\Filament\Resources\UserResource\Actions;
 use Filament\Actions\Action;
 use Dashed\DashedCore\Models\User;
 use Illuminate\Support\Facades\Mail;
-use Filament\Notifications\Notification;
 use Dashed\DashedCore\Mail\MfaResetMail;
+use Filament\Notifications\Notification;
 
 /**
  * De MFA van een collega opnieuw laten instellen: wist het app-geheim, de

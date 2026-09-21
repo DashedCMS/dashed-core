@@ -6,8 +6,8 @@ use Closure;
 use Illuminate\Http\Request;
 use Filament\Facades\Filament;
 use Dashed\DashedCore\Models\User;
-use Dashed\DashedCore\Models\LoginAttempt;
 use Filament\Notifications\Notification;
+use Dashed\DashedCore\Models\LoginAttempt;
 use Dashed\DashedCore\Classes\CmsIdleTimeout;
 use Dashed\DashedCore\Classes\CmsSessionLimits;
 

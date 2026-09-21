@@ -2,12 +2,12 @@
 
 namespace Dashed\DashedCore\Livewire\Frontend\Auth;
 
-use Illuminate\Validation\Rules\Password;
 use Livewire\Component;
 use Dashed\DashedCore\Models\User;
-use Dashed\DashedCore\Models\LoginAttempt;
 use Illuminate\Support\Facades\Hash;
 use Dashed\DashedCore\Classes\RateLimits;
+use Illuminate\Validation\Rules\Password;
+use Dashed\DashedCore\Models\LoginAttempt;
 use Dashed\DashedCore\Classes\AccountHelper;
 use Illuminate\Validation\ValidationException;
 use Dashed\DashedTranslations\Models\Translation;

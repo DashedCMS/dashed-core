@@ -2,6 +2,17 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.71.0 - 2026-09-21
+
+### Added
+- **Uitgaande webhooks.** `WebhookSubscription` (eigenaar is een morph), `WebhookDispatcher`, `SendWebhookJob` met een HMAC over tijdstip en body, herkansen via `dashed:webhooks:retry` (elke minuut ingepland: 1 min, 5 min, 30 min, 2 uur, 12 uur) en uitzetten na twintig mislukkingen op rij met een mail naar de beheerders. `UrlGuard` staat alleen https toe en geen intern adres, ook niet na DNS-resolutie, en volgt geen doorverwijzingen. Pakketten melden events aan met `cms()->registerWebhookEvents()`. Bewaartermijn `webhook_deliveries` (30 dagen).
+- **`ApiTokenAbilities`** met `isReseller()` voor afnemerssleutels.
+- **`RateLimits::extend()`** voor limiters uit pakketten, per IP of per API-sleutel, met een veld op het beveiligingsscherm.
+
+### Changed
+- `LockUserAction` trekt ook alle API-sleutels van de gebruiker in.
+- Vereist na uitrol: `php artisan migrate` en een draaiende scheduler.
+
 ## v4.70.0 - 2026-09-21
 
 ### Added

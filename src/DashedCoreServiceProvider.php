@@ -158,6 +158,8 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         // Retention-registry: package SPs melden hun opruimbare tabellen aan via
         // cms()->registerRetention(...) in bootingPackage().
         $this->app->singleton(\Dashed\DashedCore\Retention\RetentionRegistry::class);
+
+        $this->app->singleton(\Dashed\DashedCore\Webhooks\Outgoing\WebhookEventRegistry::class);
     }
 
     public function packageBooted()
@@ -1155,6 +1157,7 @@ MARKDOWN,
             $schedule = app(Schedule::class);
             $schedule->command(CreateSitemap::class)->daily();
             $schedule->command(InvalidatePasswordResetTokens::class)->everyFifteenMinutes();
+            $schedule->command(\Dashed\DashedCore\Commands\RetryWebhooksCommand::class)->everyMinute()->withoutOverlapping();
             $schedule->command(CleanupExpiredRedirects::class)->daily();
             $schedule->command(\Dashed\DashedCore\Commands\PruneCommand::class)
                 ->dailyAt('03:00')
@@ -1325,6 +1328,18 @@ MARKDOWN,
                     Termijn::make('login_attempts', 180, 'created_at')
                         ->label(__('Inlogpogingen bewaren (dagen)'))
                         ->uitleg(__('Elke gelukte, mislukte en geweigerde inlogpoging op het CMS, met IP-adres. Standaard: 180 dagen.'))
+                )
+        );
+
+        cms()->registerRetention(
+            Retention::make('webhook_deliveries')
+                ->label(__('Webhook-bezorgingen'))
+                ->pakket('dashed-core', __('Systeem'))
+                ->tabel('dashed__webhook_deliveries')
+                ->termijn(
+                    Termijn::make('webhook_deliveries', 30, 'created_at')
+                        ->label(__('Webhook-bezorgingen bewaren (dagen)'))
+                        ->uitleg(__('Elke verstuurde of mislukte webhook, met het antwoord van de ontvanger. Standaard: 30 dagen.'))
                 )
         );
 
@@ -1809,6 +1824,7 @@ MARKDOWN,
                 \Dashed\DashedCore\Commands\PruneActivityLogCommand::class,
                 \Dashed\DashedCore\Commands\PruneNotificationsCommand::class,
                 \Dashed\DashedCore\Commands\PruneCommand::class,
+                \Dashed\DashedCore\Commands\RetryWebhooksCommand::class,
             ]);
 
     }

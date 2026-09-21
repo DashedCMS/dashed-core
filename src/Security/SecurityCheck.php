@@ -196,7 +196,7 @@ class SecurityCheck
                 : __('Uitgeschakeld.')
         );
 
-        $off = array_keys(array_filter(RateLimits::LIMITERS, fn ($_, $name) => ! RateLimits::isEnabled($name), ARRAY_FILTER_USE_BOTH));
+        $off = array_keys(array_filter(RateLimits::all(), fn ($_, $name) => ! RateLimits::isEnabled($name), ARRAY_FILTER_USE_BOTH));
         $items[] = self::item(
             'rate_limits',
             __('Verzoeklimieten'),

@@ -2,10 +2,10 @@
 
 namespace Dashed\DashedCore\Livewire\Frontend\Auth;
 
-use Illuminate\Validation\Rules\Password;
 use Livewire\Component;
 use Dashed\DashedCore\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 use Dashed\DashedCore\Classes\AccountHelper;
 use Dashed\DashedTranslations\Models\Translation;
 use Dashed\DashedCore\Classes\Caching\IdentifiedVisitor;

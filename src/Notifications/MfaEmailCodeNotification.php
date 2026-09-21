@@ -3,8 +3,8 @@
 namespace Dashed\DashedCore\Notifications;
 
 use Dashed\DashedCore\Models\Customsetting;
-use Filament\Auth\MultiFactor\Email\Notifications\VerifyEmailAuthentication;
 use Illuminate\Notifications\Messages\MailMessage;
+use Filament\Auth\MultiFactor\Email\Notifications\VerifyEmailAuthentication;
 
 /**
  * Filaments eigen codemail zet geen afzender en valt daardoor terug op

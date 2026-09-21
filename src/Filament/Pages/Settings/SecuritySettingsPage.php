@@ -58,7 +58,7 @@ class SecuritySettingsPage extends Page implements HasSchemas
             'cms_admin_password_reset_enabled' => CmsPasswordReset::adminResetEnabled(),
         ];
 
-        foreach (array_keys(RateLimits::LIMITERS) as $name) {
+        foreach (array_keys(RateLimits::all()) as $name) {
             $fill[RateLimits::setting($name)] = RateLimits::perMinute($name);
         }
 
@@ -169,6 +169,13 @@ class SecuritySettingsPage extends Page implements HasSchemas
                             ->label(__('Inloggen en registreren op de website'))
                             ->helperText(__('Per IP en per e-mailadres. Standaard 10.'))
                             ->numeric()->integer()->minValue(0),
+                        ...collect(RateLimits::extended())
+                            ->map(fn (array $limiter) => TextInput::make($limiter['setting'])
+                                ->label($limiter['label'])
+                                ->helperText($limiter['help'])
+                                ->numeric()->integer()->minValue(0))
+                            ->values()
+                            ->all(),
                     ]),
 
                 Section::make(__('Alle beveiligingsmaatregelen'))
@@ -229,7 +236,7 @@ class SecuritySettingsPage extends Page implements HasSchemas
             Customsetting::set(SecurityAlerts::SETTING_EMAILS, implode("\n", array_values(array_filter(array_map('trim', (array) ($state['security_alert_emails'] ?? []))))), $siteId);
         }
 
-        foreach (array_keys(RateLimits::LIMITERS) as $name) {
+        foreach (array_keys(RateLimits::all()) as $name) {
             Customsetting::set(RateLimits::setting($name), max(0, (int) ($state[RateLimits::setting($name)] ?? RateLimits::default($name))), $siteId);
         }
 
