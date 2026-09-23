@@ -44,7 +44,9 @@ class AccountSettingsPage extends Page implements HasSchemas
             $formData["forgot_password_page_id_{$site['id']}"] = Customsetting::get('forgot_password_page_id', $site['id']);
             $formData["reset_password_page_id_{$site['id']}"] = Customsetting::get('reset_password_page_id', $site['id']);
             $formData["password_protection_page_id_{$site['id']}"] = Customsetting::get('password_protection_page_id', $site['id']);
-            $formData["mfa_email_enabled_{$site['id']}"] = Customsetting::get('mfa_email_enabled', $site['id']);
+            // Standaard aan: e-mail is de terugval als een beheerder niet bij
+            // zijn authenticator-app kan.
+            $formData["mfa_email_enabled_{$site['id']}"] = filter_var(Customsetting::get('mfa_email_enabled', $site['id'], '1'), FILTER_VALIDATE_BOOL);
         }
 
         $this->form->fill($formData);
@@ -85,7 +87,7 @@ class AccountSettingsPage extends Page implements HasSchemas
                     ->options(PageModel::thisSite($site['id'])->pluck('name', 'id')),
                 Toggle::make("mfa_email_enabled_{$site['id']}")
                     ->label(__('Multi factor authenticatie ook via e-mail'))
-                    ->helperText(__('Multi factor authenticatie is in het CMS altijd verplicht en de app-methode staat altijd aan. Hiermee komt e-mail als extra keuze erbij; staat het op een van de sites aan, dan geldt het voor het hele CMS.')),
+                    ->helperText(__('Multi factor authenticatie is in het CMS altijd verplicht en de app-methode staat altijd aan. Hiermee komt e-mail als extra keuze erbij; staat het op een van de sites aan, dan geldt het voor het hele CMS. Staat standaard aan.')),
             ];
 
             $tabs[] = Tab::make($site['id'])

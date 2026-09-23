@@ -580,7 +580,7 @@ class CMSManager
                 ->brandName(Customsetting::get('site_name', null, 'DashedCMS')),
         ];
 
-        if ($this->mfaSettingOnAnySite('mfa_email_enabled')) {
+        if ($this->mfaSettingOnAnySite('mfa_email_enabled', default: true)) {
             $providers[] = EmailAuthentication::make()
                 ->codeNotification(MfaEmailCodeNotification::class);
         }
@@ -602,11 +602,15 @@ class CMSManager
      * De keuze voor e-mail staat per site in het instellingenscherm, maar het
      * CMS is één paneel met één login. Alleen de actieve site lezen betekende
      * dat een schakelaar op een andere site aan kon staan zonder effect.
+     *
+     * $default geldt per site: e-mail als tweede methode staat standaard aan,
+     * zodat een beheerder die zijn telefoon kwijt is niet buitengesloten is
+     * voordat iemand die schakelaar ooit heeft aangeraakt.
      */
-    protected function mfaSettingOnAnySite(string $key): bool
+    protected function mfaSettingOnAnySite(string $key, bool $default = false): bool
     {
         foreach (Sites::getSites() as $site) {
-            if (Customsetting::get($key, $site['id'], false)) {
+            if (filter_var(Customsetting::get($key, $site['id'], $default ? '1' : '0'), FILTER_VALIDATE_BOOL)) {
                 return true;
             }
         }

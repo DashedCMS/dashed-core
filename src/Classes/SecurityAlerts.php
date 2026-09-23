@@ -30,8 +30,14 @@ use Dashed\DashedCore\Mail\CmsLoginFromNewIpMail;
  * adressen; de lijst in het CMS telt dan niet mee, zodat iemand met toegang
  * tot het CMS de meldingen niet kan omleiden of uitzetten voor zichzelf.
  * Zonder .env-adressen: de adressen bij Instellingen, Beveiliging, en zonder
- * die alle superadmins. De schakelaar staat standaard aan. Beide instellingen
- * staan op de eerste site, om dezelfde reden als [[CmsIpAllowlist]].
+ * die alle superadmins. Beide instellingen staan op de eerste site, om
+ * dezelfde reden als [[CmsIpAllowlist]].
+ *
+ * De hoofdschakelaar staat standaard UIT. Een installatie die deze pakketten
+ * bijwerkt gaat anders ongevraagd mailen naar alle superadmins, en dat is
+ * precies het soort verrassing dat een beheerder de meldingen in zijn geheel
+ * laat uitzetten. De soorten staan onderling wel standaard aan, zodat het
+ * omzetten van die ene schakelaar meteen alles oplevert.
  */
 class SecurityAlerts
 {
@@ -88,10 +94,17 @@ class SecurityAlerts
     /** Aan als de hoofdschakelaar aan staat en de soort niet is uitgezet. */
     public static function typeEnabled(string $type): bool
     {
-        if (! self::enabled()) {
-            return false;
-        }
+        return self::enabled() && self::typeSwitchOn($type);
+    }
 
+    /**
+     * Alleen de schakelaar van de soort zelf, los van de hoofdschakelaar.
+     * Het instellingenscherm toont die stand ook als de hoofdschakelaar uit
+     * staat, want anders lijkt elke soort uitgezet zodra iemand de
+     * hoofdschakelaar omzet.
+     */
+    public static function typeSwitchOn(string $type): bool
+    {
         $value = Customsetting::get(self::typeEnabledSetting($type), self::siteId(), '1');
 
         if ($value === null || $value === '') {
@@ -155,13 +168,7 @@ class SecurityAlerts
 
     public static function enabled(): bool
     {
-        $value = Customsetting::get(self::SETTING_ENABLED, self::siteId(), '1');
-
-        if ($value === null || $value === '') {
-            return true;
-        }
-
-        return filter_var($value, FILTER_VALIDATE_BOOL);
+        return filter_var(Customsetting::get(self::SETTING_ENABLED, self::siteId(), '0'), FILTER_VALIDATE_BOOL);
     }
 
     public static function everyLogin(): bool

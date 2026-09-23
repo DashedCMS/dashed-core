@@ -22,18 +22,39 @@
                 <tr>
                     <td style="padding:24px 32px;">
                         <p style="font-size:16px; line-height:1.5; margin:0 0 16px 0;">
-                            Er is een beheeractie uitgevoerd die bewaakt wordt. Herken je deze actie niet, controleer dan direct het account dat hem uitvoerde.
+                            @if (count($actions) > 1)
+                                Er zijn beheeracties uitgevoerd die bewaakt worden. Herken je ze niet, controleer dan direct het account dat ze uitvoerde.
+                            @else
+                                Er is een beheeractie uitgevoerd die bewaakt wordt. Herken je deze actie niet, controleer dan direct het account dat hem uitvoerde.
+                            @endif
                         </p>
 
-                        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:14px; color:#374151; background-color:#fffbeb; border-radius:6px;">
-                            <tr>
-                                <td style="padding:12px 16px;">
-                                    @foreach ($facts as $label => $value)
-                                        <div style="margin-top:4px;"><span style="color:#6b7280;">{{ $label }}:</span> {{ $value }}</div>
-                                    @endforeach
-                                </td>
-                            </tr>
-                        </table>
+                        @if ($context)
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:14px; color:#374151; background-color:#f9fafb; border-radius:6px; margin-bottom:16px;">
+                                <tr>
+                                    <td style="padding:12px 16px;">
+                                        @foreach ($context as $label => $value)
+                                            <div style="margin-top:4px;"><span style="color:#6b7280;">{{ $label }}:</span> {{ $value }}</div>
+                                        @endforeach
+                                    </td>
+                                </tr>
+                            </table>
+                        @endif
+
+                        @foreach ($actions as $action)
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:14px; color:#374151; background-color:#fffbeb; border-radius:6px; margin-bottom:12px;">
+                                <tr>
+                                    <td style="padding:12px 16px;">
+                                        @if (count($actions) > 1)
+                                            <div style="font-weight:bold; color:#111827; margin-bottom:4px;">{{ $action['title'] }}</div>
+                                        @endif
+                                        @foreach ($action['facts'] as $label => $value)
+                                            <div style="margin-top:4px;"><span style="color:#6b7280;">{{ $label }}:</span> {{ $value }}</div>
+                                        @endforeach
+                                    </td>
+                                </tr>
+                            </table>
+                        @endforeach
                     </td>
                 </tr>
             </table>

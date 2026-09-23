@@ -50,7 +50,7 @@ class SecuritySettingsPage extends Page implements HasSchemas
         ];
 
         foreach (array_keys(SecurityAlerts::types()) as $type) {
-            $fill[SecurityAlerts::typeEnabledSetting($type)] = SecurityAlerts::typeEnabled($type) || ! SecurityAlerts::enabled() && filter_var(Customsetting::get(SecurityAlerts::typeEnabledSetting($type), SecurityAlerts::siteId(), '1') ?: '1', FILTER_VALIDATE_BOOL);
+            $fill[SecurityAlerts::typeEnabledSetting($type)] = SecurityAlerts::typeSwitchOn($type);
             $fill[SecurityAlerts::typeEmailsSetting($type)] = SecurityAlerts::typeEmails($type);
         }
 
@@ -130,7 +130,7 @@ class SecuritySettingsPage extends Page implements HasSchemas
                     ->schema(array_merge([
                         Toggle::make('security_alerts_enabled')
                             ->label(__('Beveiligingsmeldingen versturen'))
-                            ->helperText(__('De hoofdschakelaar: uit betekent geen enkele melding, wat er per soort ook staat.')),
+                            ->helperText(__('De hoofdschakelaar: uit betekent geen enkele melding, wat er per soort ook staat. Staat standaard uit, zodat een installatie niet ongevraagd gaat mailen.')),
                         TagsInput::make('security_alert_emails')
                             ->label(__('Algemene ontvangers'))
                             ->placeholder(__('Typ een adres en druk op Enter'))
@@ -223,7 +223,7 @@ class SecuritySettingsPage extends Page implements HasSchemas
 
         Customsetting::set(CmsIdleTimeout::SETTING, max(0, (int) ($state['cms_idle_timeout_minutes'] ?? CmsIdleTimeout::DEFAULT_MINUTES)), $siteId);
         Customsetting::set(CmsSessionLimits::SETTING_MAX_MINUTES, max(0, (int) ($state['cms_session_max_minutes'] ?? CmsSessionLimits::DEFAULT_MAX_MINUTES)), $siteId);
-        Customsetting::set(SecurityAlerts::SETTING_ENABLED, (bool) ($state['security_alerts_enabled'] ?? true), $siteId);
+        Customsetting::set(SecurityAlerts::SETTING_ENABLED, (bool) ($state['security_alerts_enabled'] ?? false), $siteId);
         Customsetting::set(SecurityAlerts::SETTING_EVERY_LOGIN, (bool) ($state['security_alert_every_login'] ?? false), $siteId);
         foreach (array_keys(SecurityAlerts::types()) as $type) {
             Customsetting::set(SecurityAlerts::typeEnabledSetting($type), (bool) ($state[SecurityAlerts::typeEnabledSetting($type)] ?? true), $siteId);

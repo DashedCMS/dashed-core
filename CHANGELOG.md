@@ -2,6 +2,13 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.72.0 - 2026-09-23
+
+### Changed
+- **Beveiligingsmeldingen staan standaard uit.** `security_alerts_enabled` valt nu terug op uit in plaats van aan. Een installatie die bijwerkt ging anders ongevraagd mailen naar alle superadmins. De soorten staan onderling wel standaard aan, dus de hoofdschakelaar bij Instellingen, Beveiliging omzetten levert meteen alles op. `SecurityAlerts::typeSwitchOn()` leest de stand van een soort los van de hoofdschakelaar, zodat het scherm die stand ook toont als de meldingen uit staan.
+- **MFA via e-mail staat standaard aan.** `mfa_email_enabled` valt nu terug op aan. MFA is altijd verplicht, en zonder tweede methode is een beheerder die niet bij zijn authenticator-app kan buitengesloten.
+- **Eén mail per verzoek in plaats van één per bewaakte wijziging.** `AdminActionMonitor` verzamelt de meldingen van een verzoek per soort en stuurt er bij `flush()` één mail van, met elke actie erin; het instellingenscherm slaat elk veld apart op en gaf zo acht mails voor één keer opslaan. `flush()` hangt aan `app()->terminating()` en aan `Queue::after()`/`Queue::failing()`. De ontvangers worden vastgelegd op het moment van de actie, zodat wie in datzelfde verzoek de meldingen uitzet de melding daarover niet tegenhoudt. `AdminActionAlertMail` draagt daarvoor een lijst acties plus de context (wie, vanaf welk adres, wanneer) in plaats van één titel met feiten.
+
 ## v4.71.1 - 2026-09-21
 
 ### Fixed
