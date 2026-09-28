@@ -2,6 +2,12 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## Unreleased
+
+### Changed
+- **`Customsetting::get` kijkt per proces nog maar één keer of de tabel bestaat.** `flushRuntimeCache()` wist die vlag ook.
+- **Indexen op `dashed__redirects.from` en `.to`** (migratie `add_indexes_to_dashed__redirects`). Het opzoeken van een redirect bij een onbekende URL was een volledige tabelscan.
+
 ## v4.72.0 - 2026-09-23
 
 ### Changed
