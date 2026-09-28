@@ -34,6 +34,9 @@ class Customsetting extends Model
      */
     protected static array $runtimeContextCache = [];
 
+    /** Alleen true wordt onthouden, zodat migrate en tests in één proces blijven werken. */
+    protected static ?bool $tableExists = null;
+
     public static function booted()
     {
         static::saved(function (Customsetting $customsetting) {
@@ -104,12 +107,16 @@ class Customsetting extends Model
         bool $disableCache = false
     ) {
         // Check of de table bestaat (voor vroege boot / artisankommandos)
-        $tableExists = Cache::remember('dashed__custom_settings_table_exists', 60, function () {
-            return Schema::hasTable('dashed__custom_settings');
-        });
+        if (! static::$tableExists) {
+            $tableExists = Cache::remember('dashed__custom_settings_table_exists', 60, function () {
+                return Schema::hasTable('dashed__custom_settings');
+            });
 
-        if (! $tableExists) {
-            return $default;
+            if (! $tableExists) {
+                return $default;
+            }
+
+            static::$tableExists = true;
         }
 
         // Registry touch: auto-register unknown keys with caller file:line for
@@ -281,6 +288,7 @@ class Customsetting extends Model
     public static function flushRuntimeCache(): void
     {
         static::$runtimeContextCache = [];
+        static::$tableExists = null;
     }
 
     public static function flushFor(?string $siteId = null, ?string $locale = null): void
