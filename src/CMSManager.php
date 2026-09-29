@@ -754,10 +754,13 @@ class CMSManager
         return $this;
     }
 
-    public function registerContentQualityModel(string $modelClass, string $resourceClass, string $label): self
+    /**
+     * @param  array<int, string>|null  $checks  only run these check keys on the model (null = all)
+     */
+    public function registerContentQualityModel(string $modelClass, string $resourceClass, string $label, ?array $checks = null): self
     {
         $this->contentQualityRegistry()->registerModel(
-            new \Dashed\DashedCore\ContentQuality\RegisteredModel($modelClass, $resourceClass, $label)
+            new \Dashed\DashedCore\ContentQuality\RegisteredModel($modelClass, $resourceClass, $label, $checks)
         );
 
         return $this;

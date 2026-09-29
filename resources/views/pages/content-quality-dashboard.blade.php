@@ -44,8 +44,9 @@
         @endif
         <div class="fi-section rounded-xl bg-white ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
             @forelse($this->issues as $issue)
+                @php($issueArgs = "'" . $issue->checkKey . "', " . ($issue->mediaId ?: 'null') . ', ' . ($issue->modelClass ? "'" . addslashes($issue->modelClass) . "'" : 'null') . ', ' . ($issue->modelId ? "'" . $issue->modelId . "'" : 'null') . ', ' . ($issue->field ? "'" . $issue->field . "'" : 'null'))
                 <div
-                    wire:key="issue-{{ $issue->checkKey }}-{{ $issue->mediaId ?? $issue->modelId }}"
+                    wire:key="issue-{{ $issue->checkKey }}-{{ $issue->mediaId ?? $issue->modelId }}-{{ $issue->field }}"
                     class="flex items-center justify-between gap-3 border-b border-gray-100 p-3 last:border-0 dark:border-white/5"
                 >
                     <div>
@@ -55,13 +56,13 @@
                     <div class="flex items-center gap-2">
                         @if(in_array('inline', $this->cards[$selectedCheck]['resolutions'] ?? []))
                             <button type="button" class="text-sm text-primary-600 hover:underline"
-                                wire:click="editInline('{{ $issue->checkKey }}', {{ $issue->mediaId ? $issue->mediaId : 'null' }}, {{ $issue->modelClass ? "'".addslashes($issue->modelClass)."'" : 'null' }}, {{ $issue->modelId ? "'".$issue->modelId."'" : 'null' }})">
+                                wire:click="editInline({{ $issueArgs }})">
                                 Inline
                             </button>
                         @endif
                         @if($this->aiAvailable($selectedCheck) && in_array('ai', $this->cards[$selectedCheck]['resolutions'] ?? []))
                             <button type="button" class="text-sm font-medium text-primary-600 hover:underline"
-                                wire:click="aiFix('{{ $issue->checkKey }}', {{ $issue->mediaId ? $issue->mediaId : 'null' }}, {{ $issue->modelClass ? "'".addslashes($issue->modelClass)."'" : 'null' }}, {{ $issue->modelId ? "'".$issue->modelId."'" : 'null' }})"
+                                wire:click="aiFix({{ $issueArgs }})"
                                 wire:loading.attr="disabled">
                                 Fix met AI
                             </button>
@@ -71,14 +72,33 @@
                         @endif
                     </div>
                 </div>
-                @if($inlineTarget && ($inlineTarget['mediaId'] ?? null) == ($issue->mediaId ?? null) && (string) ($inlineTarget['modelId'] ?? '') === (string) ($issue->modelId ?? '') && ($inlineTarget['checkKey'] ?? '') === $issue->checkKey)
-                    <div class="bg-gray-50 p-3 dark:bg-white/5" wire:key="inline-{{ $issue->checkKey }}-{{ $issue->mediaId ?? $issue->modelId }}">
+                @if($inlineTarget && ($inlineTarget['mediaId'] ?? null) == ($issue->mediaId ?? null) && (string) ($inlineTarget['modelId'] ?? '') === (string) ($issue->modelId ?? '') && ($inlineTarget['checkKey'] ?? '') === $issue->checkKey && ($inlineTarget['field'] ?? null) === $issue->field)
+                    @php($limit = \Dashed\DashedCore\ContentQuality\Checks\MetaLengthCheck::LIMITS[$issue->field] ?? null)
+                    <div class="bg-gray-50 p-3 dark:bg-white/5" wire:key="inline-{{ $issue->checkKey }}-{{ $issue->mediaId ?? $issue->modelId }}-{{ $issue->field }}">
                         @foreach($inlineValues as $localeKey => $val)
-                            <label class="mb-2 block text-xs uppercase text-gray-500">{{ strtoupper($localeKey) }}</label>
-                            <input type="text" wire:model="inlineValues.{{ $localeKey }}"
-                                class="mb-2 w-full rounded border-gray-300 text-sm dark:bg-gray-800" />
+                            <div x-data="{ value: @entangle('inlineValues.' . $localeKey), limit: {{ $limit ?? 'null' }} }">
+                                <div class="mb-1 flex items-center justify-between text-xs uppercase text-gray-500">
+                                    <label>{{ strtoupper($localeKey) }}</label>
+                                    <template x-if="limit">
+                                        <span :class="(value ?? '').length > limit ? 'text-danger-600 font-semibold' : 'text-gray-500'"
+                                              x-text="(value ?? '').length + ' / ' + limit"></span>
+                                    </template>
+                                </div>
+                                @if($issue->field === 'description')
+                                    <textarea x-model="value" rows="3"
+                                        class="mb-2 w-full rounded border-gray-300 text-sm dark:bg-gray-800"></textarea>
+                                @else
+                                    <input type="text" x-model="value"
+                                        class="mb-2 w-full rounded border-gray-300 text-sm dark:bg-gray-800" />
+                                @endif
+                            </div>
                         @endforeach
-                        <x-filament::button size="sm" wire:click="saveInline">Opslaan</x-filament::button>
+                        <div class="flex gap-2">
+                            <x-filament::button size="sm" wire:click="saveInline">Opslaan</x-filament::button>
+                            <x-filament::button size="sm" color="gray" wire:click="saveInline(true)" icon="heroicon-o-arrow-right" icon-position="after">
+                                Opslaan en volgende
+                            </x-filament::button>
+                        </div>
                     </div>
                 @endif
             @empty

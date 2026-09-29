@@ -12,7 +12,15 @@ All notable changes to `Dashed core` will be documented in this file.
 
 ## Unreleased
 
+### Added
+- **Sitemap per taal.** `Sitemap::create()` schrijft nu `sitemap-{locale}.xml` per taal van de site en maakt van `sitemap.xml` een sitemap-index die daarnaar verwijst. Robots.txt en bestaande Search Console-aanmeldingen blijven werken; per taal aanmelden geeft indexeringscijfers per taal. URL's zonder taalprefix vallen onder de standaardtaal van `laravellocalization`.
+- **Check "Meta-omschrijving afgebroken"** (`MetaTruncatedCheck`): omschrijvingen van precies de limiet die niet als zin eindigen, de restanten van het oude afkappen.
+- **`registerContentQualityModel(..., $checks)`**: optioneel alleen bepaalde checks op een model draaien (`ContentQualityRegistry::modelsFor()`).
+- **Content-kwaliteit: lengte-issues inline bewerken en met AI herschrijven.** Inline begint vanaf de huidige tekst, met tekenteller en "Opslaan en volgende". "Fix met AI" en bulk-AI herschrijven de bestaande tekst binnen de limiet (`MetaFieldGenerator::rewrite()`); een antwoord boven de limiet wordt niet opgeslagen.
+
 ### Changed
+- **Meta-teksten worden niet meer afgekapt bij opslaan.** `Metadata::saved` sneed titels op 70 en omschrijvingen op 170 tekens af, midden in een woord en ook bij automatische vertalingen. Daardoor vond de check "Meta-tekst te lang" nooit iets. Te lange teksten blijven nu staan en verschijnen in die check.
+- **`MetaTooLongCheck` meldt per veld alle talen die te lang zijn** (was: alleen de eerste taal van het eerste veld), en gebruikt de gedeelde basis `MetaLengthCheck`.
 - **`Customsetting::get` kijkt per proces nog maar één keer of de tabel bestaat.** `flushRuntimeCache()` wist die vlag ook.
 - **Indexen op `dashed__redirects.from` en `.to`** (migratie `add_indexes_to_dashed__redirects`). Het opzoeken van een redirect bij een onbekende URL was een volledige tabelscan.
 

@@ -23,6 +23,7 @@ class GenerateMetaFieldForModel implements ShouldQueue
         public int|string $modelId,
         public string $field,
         public array $missingLocales,
+        public bool $rewrite = false,
     ) {
     }
 
@@ -33,7 +34,10 @@ class GenerateMetaFieldForModel implements ShouldQueue
             return;
         }
 
-        $generated = app(MetaFieldGenerator::class)->generate($model, $this->field, $this->missingLocales);
+        $generator = app(MetaFieldGenerator::class);
+        $generated = $this->rewrite
+            ? $generator->rewrite($model, $this->field, $this->missingLocales)
+            : $generator->generate($model, $this->field, $this->missingLocales);
         if ($generated === []) {
             return;
         }

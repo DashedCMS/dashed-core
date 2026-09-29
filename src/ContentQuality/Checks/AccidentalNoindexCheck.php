@@ -30,7 +30,7 @@ class AccidentalNoindexCheck implements ContentQualityCheck
     {
         $issues = collect();
 
-        foreach (app(ContentQualityRegistry::class)->models() as $registered) {
+        foreach (app(ContentQualityRegistry::class)->modelsFor($this->key()) as $registered) {
             $modelClass = $registered->modelClass;
 
             $modelClass::query()

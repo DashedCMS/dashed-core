@@ -1223,6 +1223,7 @@ MARKDOWN,
         );
         cms()->registerContentQualityCheck(new \Dashed\DashedCore\ContentQuality\Checks\AccidentalNoindexCheck());
         cms()->registerContentQualityCheck(new \Dashed\DashedCore\ContentQuality\Checks\MetaTooLongCheck());
+        cms()->registerContentQualityCheck(new \Dashed\DashedCore\ContentQuality\Checks\MetaTruncatedCheck());
 
         self::registreerBewaartermijnen();
         self::registreerVertaalbaren();

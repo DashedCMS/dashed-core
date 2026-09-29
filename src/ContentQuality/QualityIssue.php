@@ -15,6 +15,7 @@ class QualityIssue
         public ?string $modelClass = null,
         public int|string|null $modelId = null,
         public array $missingLocales = [],
+        public ?string $field = null,
     ) {
     }
 }

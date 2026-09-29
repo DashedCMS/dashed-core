@@ -10,6 +10,8 @@ class RegisteredModel
         public string $modelClass,
         public string $resourceClass,
         public string $label,
+        /** @var array<int, string>|null only these check keys; null = every check */
+        public ?array $checks = null,
     ) {
     }
 }

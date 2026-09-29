@@ -37,6 +37,12 @@ class ContentQualityDashboard extends Page
 
     public array $inlineValues = [];
 
+    /**
+     * Checks on an existing meta text: inline editing starts from the current
+     * text and "Fix met AI" rewrites it instead of generating a new one.
+     */
+    public const REWRITE_CHECKS = ['meta_too_long', 'meta_truncated'];
+
     public static function canAccess(): bool
     {
         return (bool) auth()->user();
@@ -67,13 +73,14 @@ class ContentQualityDashboard extends Page
         $this->dispatch('$refresh');
     }
 
-    public function editInline(string $checkKey, ?int $mediaId, ?string $modelClass, int|string|null $modelId): void
+    public function editInline(string $checkKey, ?int $mediaId, ?string $modelClass, int|string|null $modelId, ?string $field = null): void
     {
         $this->inlineTarget = [
             'checkKey' => $checkKey,
             'mediaId' => $mediaId,
             'modelClass' => $modelClass,
             'modelId' => $modelId,
+            'field' => $field,
         ];
         $this->inlineValues = [];
 
@@ -83,18 +90,24 @@ class ContentQualityDashboard extends Page
             return;
         }
 
-        // Seed one input per missing locale for the targeted meta field.
-        $issue = $this->issues->first(
-            fn ($i) => $i->modelClass === $modelClass && (string) $i->modelId === (string) $modelId && $i->checkKey === $checkKey
-        );
+        // Seed one input per affected locale for the targeted meta field;
+        // for length checks start from the current text so it can be trimmed.
+        $issue = $this->findIssue($checkKey, $modelClass, $modelId, $field);
+        $metadata = $modelClass && in_array($checkKey, self::REWRITE_CHECKS, true)
+            ? $modelClass::find($modelId)?->metadata
+            : null;
+        $metaField = $this->fieldForCheck($checkKey, $field);
         foreach (($issue?->missingLocales ?? []) as $locale) {
-            $this->inlineValues[$locale] = '';
+            $this->inlineValues[$locale] = $metadata
+                ? (string) $metadata->getTranslation($metaField, $locale, false)
+                : '';
         }
     }
 
-    public function saveInline(): void
+    public function saveInline(bool $openNext = false): void
     {
         $target = $this->inlineTarget;
+        $position = $this->issues->search(fn ($i) => $this->isTarget($i, $target));
 
         if ($target['mediaId'] ?? null) {
             $item = MediaLibraryItem::withoutGlobalScopes()->find($target['mediaId']);
@@ -107,7 +120,7 @@ class ContentQualityDashboard extends Page
             $model = $modelClass::find($target['modelId']);
             if ($model) {
                 $metadata = $model->metadata ?: $model->metadata()->make();
-                $field = $this->fieldForCheck($target['checkKey']);
+                $field = $this->fieldForCheck($target['checkKey'], $target['field'] ?? null);
                 foreach ($this->inlineValues as $locale => $value) {
                     $metadata->setTranslation($field, $locale, trim((string) $value));
                 }
@@ -118,10 +131,55 @@ class ContentQualityDashboard extends Page
         $this->rescan();
         $this->inlineTarget = [];
         $this->inlineValues = [];
+        unset($this->issues);
+
+        if ($openNext && $position !== false) {
+            $this->openNextAfter($position, $target);
+        }
     }
 
-    protected function fieldForCheck(string $checkKey): string
+    /**
+     * Opens the issue that now sits where the saved one was. If the saved
+     * item is still listed (e.g. still too long), move one further.
+     */
+    protected function openNextAfter(int $position, array $saved): void
     {
+        $remaining = $this->issues->values();
+        $next = $remaining->get($position);
+        if ($next && $this->isTarget($next, $saved)) {
+            $next = $remaining->get($position + 1);
+        }
+        if (! $next) {
+            return;
+        }
+
+        $this->editInline($next->checkKey, $next->mediaId, $next->modelClass, $next->modelId, $next->field);
+    }
+
+    protected function isTarget($issue, array $target): bool
+    {
+        return $issue->checkKey === ($target['checkKey'] ?? null)
+            && ($issue->mediaId ?? null) == ($target['mediaId'] ?? null)
+            && (string) ($issue->modelId ?? '') === (string) ($target['modelId'] ?? '')
+            && ($issue->field ?? null) === ($target['field'] ?? null);
+    }
+
+    protected function findIssue(string $checkKey, ?string $modelClass, int|string|null $modelId, ?string $field)
+    {
+        return $this->issues->first(
+            fn ($i) => $i->modelClass === $modelClass
+                && (string) $i->modelId === (string) $modelId
+                && $i->checkKey === $checkKey
+                && ($field === null || $i->field === $field)
+        );
+    }
+
+    protected function fieldForCheck(string $checkKey, ?string $field = null): string
+    {
+        if ($field) {
+            return $field;
+        }
+
         return match ($checkKey) {
             'missing_meta_title' => 'title',
             'missing_meta_description' => 'description',
@@ -130,7 +188,7 @@ class ContentQualityDashboard extends Page
         };
     }
 
-    public function aiFix(string $checkKey, ?int $mediaId, ?string $modelClass, int|string|null $modelId): void
+    public function aiFix(string $checkKey, ?int $mediaId, ?string $modelClass, int|string|null $modelId, ?string $field = null): void
     {
         if ($mediaId) {
             $item = MediaLibraryItem::withoutGlobalScopes()->find($mediaId);
@@ -150,13 +208,14 @@ class ContentQualityDashboard extends Page
             return;
         }
 
-        $field = $this->fieldForCheck($checkKey);
-        $issue = $this->issues->first(
-            fn ($i) => $i->modelClass === $modelClass && (string) $i->modelId === (string) $modelId && $i->checkKey === $checkKey
-        );
+        $issue = $this->findIssue($checkKey, $modelClass, $modelId, $field);
+        $field = $this->fieldForCheck($checkKey, $field);
         $missing = $issue?->missingLocales ?? [];
 
-        $generated = app(MetaFieldGenerator::class)->generate($model, $field, $missing);
+        $generator = app(MetaFieldGenerator::class);
+        $generated = in_array($checkKey, self::REWRITE_CHECKS, true)
+            ? $generator->rewrite($model, $field, $missing)
+            : $generator->generate($model, $field, $missing);
         if ($generated === []) {
             return;
         }
@@ -176,7 +235,7 @@ class ContentQualityDashboard extends Page
             return;
         }
 
-        $field = $this->fieldForCheck($this->selectedCheck);
+        $rewrite = in_array($this->selectedCheck, self::REWRITE_CHECKS, true);
 
         foreach ($this->issues as $issue) {
             if ($issue->mediaId) {
@@ -192,8 +251,9 @@ class ContentQualityDashboard extends Page
                 GenerateMetaFieldForModel::dispatch(
                     $issue->modelClass,
                     $issue->modelId,
-                    $field,
+                    $this->fieldForCheck($this->selectedCheck, $issue->field),
                     $issue->missingLocales,
+                    $rewrite,
                 );
             }
         }
@@ -210,7 +270,7 @@ class ContentQualityDashboard extends Page
             return (bool) Ai::default(AiCapability::Vision);
         }
 
-        if (in_array($checkKey, ['missing_meta_title', 'missing_meta_description', 'missing_meta_image'], true)) {
+        if (in_array($checkKey, ['missing_meta_title', 'missing_meta_description', 'missing_meta_image', ...self::REWRITE_CHECKS], true)) {
             return (bool) Ai::default(AiCapability::Json);
         }
 

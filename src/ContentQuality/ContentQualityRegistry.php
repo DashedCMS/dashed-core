@@ -36,6 +36,15 @@ class ContentQualityRegistry
         return array_values($this->checks);
     }
 
+    /** @return array<int, RegisteredModel> the models a given check should scan */
+    public function modelsFor(string $checkKey): array
+    {
+        return array_values(array_filter(
+            $this->models,
+            fn (RegisteredModel $model) => $model->checks === null || in_array($checkKey, $model->checks, true),
+        ));
+    }
+
     public function check(string $key): ?ContentQualityCheck
     {
         return $this->checks[$key] ?? null;
