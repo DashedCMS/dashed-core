@@ -146,6 +146,46 @@
     })();
 </script>
 
+<script>
+    // Inloggen en registreren vernieuwen het CSRF-token (Laravels
+    // SessionGuard::updateSession()). Een achtergrondverzoek dat daarna nog
+    // met het token van deze pagina vertrekt, zoals de livechat-poll, krijgt
+    // een 419 en Livewire vraagt dan "This page has expired" terwijl de
+    // redirect naar het account al loopt. Tijdens een redirect is zo'n 419
+    // betekenisloos: de volgende pagina brengt een nieuw token mee.
+    (function () {
+        let redirecting = false;
+
+        const register = () => {
+            Livewire.hook('commit', ({ succeed }) => {
+                succeed(({ effects }) => {
+                    if (effects && effects.redirect) {
+                        redirecting = true;
+                    }
+                });
+            });
+
+            Livewire.hook('request', ({ fail }) => {
+                fail(({ status, preventDefault }) => {
+                    if (status === 419 && redirecting) {
+                        preventDefault();
+                    }
+                });
+            });
+        };
+
+        document.addEventListener('livewire:navigated', () => {
+            redirecting = false;
+        });
+
+        if (window.Livewire) {
+            register();
+        } else {
+            document.addEventListener('livewire:init', register);
+        }
+    })();
+</script>
+
 {{--@include('cookie-consent::index')--}}
 
 @if(class_exists(\Dashed\DashedPopups\Models\Popup::class))
