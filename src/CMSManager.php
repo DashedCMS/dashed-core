@@ -42,6 +42,7 @@ use Dashed\DashedCore\Filament\Components\ContentBuilder;
 use LaraZeus\SpatieTranslatable\SpatieTranslatablePlugin;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Dashed\DashedCore\Filament\Components\BlockHeaderLabel;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Dashed\DashedCore\Notifications\MfaEmailCodeNotification;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -383,15 +384,28 @@ class CMSManager
             }
         }
 
+        foreach ($blocks as $block) {
+            $base = (string) $block->getLabel();
+
+            $block->label(fn (?array $state = null, ?int $index = null): string => BlockHeaderLabel::for($base, $state, $index));
+        }
+
+        $globalBlocks = GlobalBlock::all()->mapWithKeys(fn ($block) => [$block->id => $block->name]);
+
         return ContentBuilder::make($name)
             ->blocks(array_merge([
                 Builder\Block::make('globalBlock')
-                    ->label(__('Globaal blok'))
-                    ->visible(GlobalBlock::count() > 0)
+                    ->label(fn (?array $state = null, ?int $index = null): string => BlockHeaderLabel::for(
+                        __('Globaal blok'),
+                        $state,
+                        $index,
+                        filled($state['globalBlock'] ?? null) ? ($globalBlocks[$state['globalBlock']] ?? null) : null,
+                    ))
+                    ->visible($globalBlocks->isNotEmpty())
                     ->schema([
                         Select::make('globalBlock')
                             ->label(__('Globaal blok'))
-                            ->options(GlobalBlock::all()->mapWithKeys(fn ($block) => [$block->id => $block->name]))
+                            ->options($globalBlocks)
                             ->placeholder(__('Kies een globaal blok'))
                             ->hintAction(
                                 Action::make('editGlobalBlock')
@@ -411,7 +425,7 @@ class CMSManager
             ], $blocks))
             ->collapsible(true)
             ->blockIcons()
-            ->blockNumbers()
+            ->blockNumbers(false)
             ->blockPickerColumns(3)
             ->blockLabels()
             ->cloneable()

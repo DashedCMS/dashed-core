@@ -23,7 +23,7 @@
         "dashed/laravel-drift": "^1.0",
         "dashed/laravel-localization": "^1.0",
         "doctrine/dbal": "^4.1",
-        "filament/filament": "^4.0",
+        "filament/filament": "^4.12",
         "flowframe/laravel-trend": "^0.3|^0.4|^0.5",
         "google/apiclient": "^2.0",
         "guava/filament-icon-picker": "^3.0",

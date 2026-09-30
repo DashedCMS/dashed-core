@@ -245,6 +245,13 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                 \Dashed\DashedCore\Models\LoginAttempt::record(\Dashed\DashedCore\Models\LoginAttempt::RESULT_LOGOUT, $user?->email, $user);
             },
         );
+
+        // De labelmemo van LinkHelper is statisch en overleeft de herstart
+        // tussen verzoeken niet, maar wel tussen tests en queue-jobs binnen
+        // hetzelfde proces; leeg hem daarom aan het eind van elk verzoek en
+        // elke wachtrijtaak.
+        $this->app->terminating(fn () => \Dashed\DashedCore\Classes\LinkHelper::flushLabelMemo());
+        \Illuminate\Support\Facades\Queue::after(fn () => \Dashed\DashedCore\Classes\LinkHelper::flushLabelMemo());
     }
 
     public function bootingPackage()

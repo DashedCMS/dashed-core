@@ -9,6 +9,23 @@ use Dashed\DashedCore\Classes\QueryHelpers\RelationshipSearchQuery;
 
 class LinkHelper
 {
+    /** @var array<string, ?string> */
+    protected static array $labelMemo = [];
+
+    public static function labelFor(string $class, mixed $id): ?string
+    {
+        if (blank($id)) {
+            return null;
+        }
+
+        return static::$labelMemo["{$class}:{$id}"] ??= $class::find($id)?->nameWithParents;
+    }
+
+    public static function flushLabelMemo(): void
+    {
+        static::$labelMemo = [];
+    }
+
     public function field($prefix = 'url', $required = false, $label = '')
     {
         $routeModels = [];
@@ -22,11 +39,17 @@ class LinkHelper
                     ->required($required)
                     ->getSearchResultsUsing(fn (string $search): array => RelationshipSearchQuery::make($routeModel['class'], $search))
                     ->preload()
-                    ->getOptionLabelUsing(fn ($value): ?string => $routeModel['class']::find($value)?->nameWithParents)
+                    ->getOptionLabelUsing(fn ($value): ?string => static::labelFor($routeModel['class'], $value))
 //                    ->options($routeModel['class']::pluck($routeModel['nameField'] ?: 'name', 'id'))
                     ->searchable()
                     ->visible(fn ($get) => in_array($get("{$prefix}_type"), [$key]));
         }
+
+        // Filaments resolveRelativeKey() strip per "../" één puntsegment; een
+        // prefix met een punt erin (linkHelper()->field('url.url')) liet
+        // "../{$prefix}_link" daardoor op een niet-bestaande sleutel uitkomen.
+        // Punten in de groepssleutel zelf omzeilen dat.
+        $groupKey = str_replace('.', '_', $prefix) . '_link';
 
         return Group::make(array_merge([
             Select::make("{$prefix}_type")
@@ -35,14 +58,17 @@ class LinkHelper
                 ->options(array_merge([
                     'normal' => 'Normaal',
                 ], $routeModels))
-                ->reactive()
+                ->live()
+                ->partiallyRenderComponentsAfterStateUpdated(["../{$groupKey}"])
                 ->required($required),
             TextInput::make("{$prefix}_url")
                 ->label(__('Url'))
                 ->required($required)
                 ->placeholder(__('Example: https://example.com of /contact'))
                 ->visible(fn ($get) => in_array($get("{$prefix}_type"), ['normal'])),
-        ], $routeModelInputs))->columnSpanFull()
+        ], $routeModelInputs))
+            ->key($groupKey)
+            ->columnSpanFull()
             ->columns(2);
     }
 
