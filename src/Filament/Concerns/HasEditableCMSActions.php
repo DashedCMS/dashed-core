@@ -2,7 +2,9 @@
 
 namespace Dashed\DashedCore\Filament\Concerns;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Model;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
@@ -10,8 +12,8 @@ use Filament\Forms\Components\Select;
 use Dashed\DashedCore\Classes\Locales;
 use Filament\Notifications\Notification;
 use Dashed\DashedCore\Models\GlobalBlock;
-use Dashed\DashedCore\Classes\Actions\TranslateAction;
 use Filament\Infolists\Components\TextEntry;
+use Dashed\DashedCore\Classes\Actions\TranslateAction;
 use LaraZeus\SpatieTranslatable\Actions\LocaleSwitcher;
 use Dashed\DashedTranslations\Classes\AutomatedTranslation;
 use Dashed\DashedMarketing\Filament\Actions\RequestSeoAuditAction;
@@ -331,6 +333,38 @@ trait HasEditableCMSActions
         }
 
         return $new_array;
+    }
+
+    /**
+     * Zelfde als LaraZeus' Translatable::handleRecordUpdate(), zonder de
+     * `$this->form->fill($this->form->getState())` per andere taal. Die
+     * valideerde opnieuw de actieve formulierdata, die save() op dat moment
+     * al gevalideerd had, en hydrateerde daarna het hele formulier opnieuw.
+     * Op een pagina met veel blokken was dat per extra taal de helft van de
+     * opslaantijd, en elk builder-blok kreeg een nieuwe sleutel, waardoor
+     * open blokken na opslaan weer dichtklapten.
+     */
+    protected function handleRecordUpdate(Model $record, array $data): Model
+    {
+        $translatableAttributes = static::getResource()::getTranslatableAttributes();
+
+        $record->fill(Arr::except($data, $translatableAttributes));
+
+        foreach (Arr::only($data, $translatableAttributes) as $key => $value) {
+            $record->setTranslation($key, $this->activeLocale, $value);
+        }
+
+        foreach ($this->otherLocaleData as $locale => $localeData) {
+            $localeData = $this->mutateFormDataBeforeSave($localeData);
+
+            foreach (Arr::only($localeData, $translatableAttributes) as $key => $value) {
+                $record->setTranslation($key, $locale, $value);
+            }
+        }
+
+        $record->save();
+
+        return $record;
     }
 
     public function mutateFormDataBeforeSave(array $data): array

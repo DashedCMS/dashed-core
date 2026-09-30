@@ -251,6 +251,8 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         // hetzelfde proces; leeg hem daarom aan het eind van elk verzoek en
         // elke wachtrijtaak.
         $this->app->terminating(fn () => \Dashed\DashedCore\Classes\LinkHelper::flushLabelMemo());
+        // Ook ervoor: after vuurt niet na een mislukte taak.
+        \Illuminate\Support\Facades\Queue::before(fn () => \Dashed\DashedCore\Classes\LinkHelper::flushLabelMemo());
         \Illuminate\Support\Facades\Queue::after(fn () => \Dashed\DashedCore\Classes\LinkHelper::flushLabelMemo());
     }
 
