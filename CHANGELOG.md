@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.76.0 - 2026-09-30
+
+### Added
+- **Zoekpopup van het menu: recent en belangrijk eerst.** Bij een lege zoekbalk staan eerst de laatst geopende pagina's (Recent, bijgehouden in de browser), daarna de rest met de belangrijkste pagina's bovenaan. Pakketten melden hun hoofdpagina's aan met `cms()->builder('navigationSearchPriority', [Klasse::class => gewicht])`; dashed-core doet dat voor Dashboard en Gebruikers. Bij zoeken telt eerst de naam, dan het gewicht, dan hoe vaak je de pagina opent.
+
 ## v4.75.0 - 2026-09-30
 
 ### Added

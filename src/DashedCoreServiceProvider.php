@@ -249,6 +249,13 @@ class DashedCoreServiceProvider extends PackageServiceProvider
 
     public function bootingPackage()
     {
+        // Gewicht in de zoekpopup van het menu (NavigationSearch): hoger staat
+        // bovenaan. Elk pakket meldt zijn eigen hoofdpagina's aan.
+        cms()->builder('navigationSearchPriority', [
+            \Dashed\DashedCore\Filament\Pages\Dashboard\Dashboard::class => 100,
+            \Dashed\DashedCore\Filament\Resources\UserResource::class => 50,
+        ]);
+
         // Wat er in /robots.txt buiten de zoekmachines blijft. Elk pakket meldt
         // zijn eigen paden aan; zie RobotsTxtBuilder.
         $cmsPath = '/' . trim((string) config('dashed-core.dashed_cms.path', 'dashed'), '/');

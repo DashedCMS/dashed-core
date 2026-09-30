@@ -11,13 +11,67 @@
         query: '',
         active: 0,
         items: @js(\Dashed\DashedCore\Classes\NavigationSearch::items()),
+        storageKey: 'dashed-navsearch-history',
+        history: {},
+        init() {
+            this.history = this.readHistory();
+            this.recordVisit();
+        },
         normalize(text) {
             return (text || '').toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+        },
+        path(url) {
+            try { return new URL(url, window.location.origin).pathname.replace(/\/+$/, ''); } catch (e) { return url; }
+        },
+        readHistory() {
+            // Alleen een gemak per browser: zonder localStorage (privevenster)
+            // werkt de popup gewoon, alleen zonder Recent.
+            try { return JSON.parse(window.localStorage.getItem(this.storageKey) || '{}') || {}; } catch (e) { return {}; }
+        },
+        writeHistory() {
+            try { window.localStorage.setItem(this.storageKey, JSON.stringify(this.history)); } catch (e) {}
+        },
+        recordVisit() {
+            // De huidige pagina telt voor het item met het langste passende
+            // pad, zodat /bestellingen/12/bekijken bij Bestellingen hoort.
+            const current = this.path(window.location.href);
+            let match = null;
+            for (const item of this.items) {
+                const itemPath = this.path(item.url);
+                if (itemPath && (current === itemPath || current.startsWith(itemPath + '/')) && (! match || itemPath.length > this.path(match.url).length)) {
+                    match = item;
+                }
+            }
+            if (! match) return;
+            const entry = this.history[match.url] || { count: 0, last: 0 };
+            this.history[match.url] = { count: Math.min(entry.count + 1, 1000), last: Date.now() };
+            const urls = Object.keys(this.history).sort((a, b) => this.history[b].last - this.history[a].last);
+            for (const url of urls.slice(100)) delete this.history[url];
+            this.writeHistory();
+        },
+        visits(item) {
+            return (this.history[item.url] || {}).count || 0;
+        },
+        rank(item) {
+            // Gewicht van het pakket eerst, dan hoe vaak je hem opent, dan
+            // menu boven instellingen.
+            return item.weight * 1000 + Math.min(this.visits(item), 999) + (item.kind === 'menu' ? 0.5 : 0);
         },
         get results() {
             const words = this.normalize(this.query).split(/\s+/).filter(Boolean);
             if (! words.length) {
-                return this.items.slice(0, 50);
+                const recent = this.items
+                    .filter((item) => this.history[item.url])
+                    .sort((a, b) => this.history[b.url].last - this.history[a.url].last)
+                    .slice(0, 8);
+                const recentUrls = new Set(recent.map((item) => item.url));
+                const rest = this.items
+                    .filter((item) => ! recentUrls.has(item.url))
+                    .sort((a, b) => this.rank(b) - this.rank(a));
+                return [
+                    ...recent.map((item, i) => ({ ...item, section: i === 0 ? @js(__('Recent')) : null })),
+                    ...rest.slice(0, 50).map((item, i) => ({ ...item, section: i === 0 && recent.length ? @js(__('Alles')) : null })),
+                ];
             }
             return this.items
                 .map((item) => {
@@ -26,15 +80,16 @@
                     if (! words.every((word) => haystack.includes(word))) {
                         return null;
                     }
-                    let score = 0;
-                    if (label.startsWith(words[0])) score += 3;
-                    if (words.every((word) => label.includes(word))) score += 2;
-                    return { item, score };
+                    let match = 0;
+                    if (label === words.join(' ')) match += 4;
+                    if (label.startsWith(words[0])) match += 3;
+                    if (words.every((word) => label.includes(word))) match += 2;
+                    return { item, score: match * 1000000 + this.rank(item) };
                 })
                 .filter(Boolean)
                 .sort((a, b) => b.score - a.score || a.item.label.localeCompare(b.item.label))
                 .slice(0, 50)
-                .map((result) => result.item);
+                .map((result) => ({ ...result.item, section: null }));
         },
         show() {
             this.open = true;
@@ -94,6 +149,7 @@
         .dark .dashed-navsearch-item[data-active=true] { background: rgb(255 255 255 / .08); color: var(--primary-400, #fff); }
         .dashed-navsearch-label { font-weight: 500; }
         .dashed-navsearch-group { font-size: 12px; opacity: .6; white-space: nowrap; }
+        .dashed-navsearch-section { margin: 8px 12px 4px; font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; opacity: .5; }
         .dashed-navsearch-empty { padding: 18px 16px; font-size: 14px; opacity: .7; }
         .dashed-navsearch-foot { display: flex; gap: 14px; padding: 8px 16px; font-size: 12px; opacity: .6; border-top: 1px solid rgb(0 0 0 / .08); }
         .dark .dashed-navsearch-foot { border-color: rgb(255 255 255 / .1); }
@@ -128,21 +184,24 @@
                     >
                 </label>
 
-                <ul class="dashed-navsearch-list" role="listbox">
+                <div class="dashed-navsearch-list" role="listbox">
                     <template x-for="(item, index) in results" :key="item.url">
-                        <li
-                            class="dashed-navsearch-item"
-                            role="option"
-                            :data-active="index === active"
-                            :aria-selected="index === active"
-                            x-on:mouseenter="active = index"
-                            x-on:click="go(item, $event.metaKey || $event.ctrlKey)"
-                        >
-                            <span class="dashed-navsearch-label" x-text="item.label"></span>
-                            <span class="dashed-navsearch-group" x-text="item.group"></span>
-                        </li>
+                        <div>
+                            <p class="dashed-navsearch-section" x-show="item.section" x-text="item.section"></p>
+                            <div
+                                class="dashed-navsearch-item"
+                                role="option"
+                                :data-active="index === active"
+                                :aria-selected="index === active"
+                                x-on:mouseenter="active = index"
+                                x-on:click="go(item, $event.metaKey || $event.ctrlKey)"
+                            >
+                                <span class="dashed-navsearch-label" x-text="item.label"></span>
+                                <span class="dashed-navsearch-group" x-text="item.group"></span>
+                            </div>
+                        </div>
                     </template>
-                </ul>
+                </div>
 
                 <p class="dashed-navsearch-empty" x-show="! results.length">{{ __('Niets gevonden') }}</p>
 
