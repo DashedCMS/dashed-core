@@ -2,15 +2,7 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
-## v4.74.0 - 2026-09-30
-
-### Added
-- **Zoeken in het menu.** "/" of Ctrl/Cmd+K opent overal in het paneel een zoekpopup met alle menu-items en instellingenschermen die de gebruiker mag openen; bovenaan de zijbalk staat een zoekveld dat dezelfde popup opent. Woord-voor-woord zoeken, pijltjes en Enter, Cmd/Ctrl+Enter opent in een nieuw tabblad. De lijst komt uit `NavigationSearch::items()` en wordt per pagina aan de serverkant op rechten gefilterd.
-
-### Changed
-- **Instellingenkaarten opnieuw opgemaakt.** Hele kaart klikbaar, pictogram in een licht vakje, omschrijving op hooguit twee regels, ondersteuning voor donkere modus. `SettingsPage::visibleSettingPages()` is de gedeelde bron voor het instellingenscherm en de zoekpopup.
-
-## Unreleased
+## v4.75.0 - 2026-09-30
 
 ### Added
 - **Sitemap per taal.** `Sitemap::create()` schrijft nu `sitemap-{locale}.xml` per taal van de site en maakt van `sitemap.xml` een sitemap-index die daarnaar verwijst. Robots.txt en bestaande Search Console-aanmeldingen blijven werken; per taal aanmelden geeft indexeringscijfers per taal. URL's zonder taalprefix vallen onder de standaardtaal van `laravellocalization`.
@@ -21,6 +13,18 @@ All notable changes to `Dashed core` will be documented in this file.
 ### Changed
 - **Meta-teksten worden niet meer afgekapt bij opslaan.** `Metadata::saved` sneed titels op 70 en omschrijvingen op 170 tekens af, midden in een woord en ook bij automatische vertalingen. Daardoor vond de check "Meta-tekst te lang" nooit iets. Te lange teksten blijven nu staan en verschijnen in die check.
 - **`MetaTooLongCheck` meldt per veld alle talen die te lang zijn** (was: alleen de eerste taal van het eerste veld), en gebruikt de gedeelde basis `MetaLengthCheck`.
+
+## v4.74.0 - 2026-09-30
+
+### Added
+- **Zoeken in het menu.** "/" of Ctrl/Cmd+K opent overal in het paneel een zoekpopup met alle menu-items en instellingenschermen die de gebruiker mag openen; bovenaan de zijbalk staat een zoekveld dat dezelfde popup opent. Woord-voor-woord zoeken, pijltjes en Enter, Cmd/Ctrl+Enter opent in een nieuw tabblad. De lijst komt uit `NavigationSearch::items()` en wordt per pagina aan de serverkant op rechten gefilterd.
+
+### Changed
+- **Instellingenkaarten opnieuw opgemaakt.** Hele kaart klikbaar, pictogram in een licht vakje, omschrijving op hooguit twee regels, ondersteuning voor donkere modus. `SettingsPage::visibleSettingPages()` is de gedeelde bron voor het instellingenscherm en de zoekpopup.
+
+## v4.73.0 - 2026-09-29
+
+### Changed
 - **`Customsetting::get` kijkt per proces nog maar één keer of de tabel bestaat.** `flushRuntimeCache()` wist die vlag ook.
 - **Indexen op `dashed__redirects.from` en `.to`** (migratie `add_indexes_to_dashed__redirects`). Het opzoeken van een redirect bij een onbekende URL was een volledige tabelscan.
 
