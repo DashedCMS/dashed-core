@@ -2,6 +2,14 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.74.0 - 2026-09-30
+
+### Added
+- **Zoeken in het menu.** "/" of Ctrl/Cmd+K opent overal in het paneel een zoekpopup met alle menu-items en instellingenschermen die de gebruiker mag openen; bovenaan de zijbalk staat een zoekveld dat dezelfde popup opent. Woord-voor-woord zoeken, pijltjes en Enter, Cmd/Ctrl+Enter opent in een nieuw tabblad. De lijst komt uit `NavigationSearch::items()` en wordt per pagina aan de serverkant op rechten gefilterd.
+
+### Changed
+- **Instellingenkaarten opnieuw opgemaakt.** Hele kaart klikbaar, pictogram in een licht vakje, omschrijving op hooguit twee regels, ondersteuning voor donkere modus. `SettingsPage::visibleSettingPages()` is de gedeelde bron voor het instellingenscherm en de zoekpopup.
+
 ## Unreleased
 
 ### Changed

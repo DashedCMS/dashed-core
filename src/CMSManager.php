@@ -561,7 +561,18 @@ class CMSManager
             // niet.
             ->multiFactorAuthentication(fn () => $this->mfaProviders(), isRequired: fn () => $this->mfaIsRequired())
 //            ->brandLogo(fn () => mediaHelper()->getSingleMedia(Customsetting::get('site_logo'))->url)
-            ->brandName(Customsetting::get('site_name', null, 'DashedCMS'));
+            ->brandName(Customsetting::get('site_name', null, 'DashedCMS'))
+            // Zoekpopup voor het menu ("/" of Ctrl/Cmd+K), met een zoekveld
+            // bovenaan de zijbalk. Alleen voor wie ingelogd is: BODY_END staat
+            // ook op de inlogpagina.
+            ->renderHook(
+                \Filament\View\PanelsRenderHook::BODY_END,
+                fn () => auth()->check() ? view('dashed-core::filament.navigation-search') : '',
+            )
+            ->renderHook(
+                \Filament\View\PanelsRenderHook::SIDEBAR_NAV_START,
+                fn () => view('dashed-core::filament.navigation-search-trigger'),
+            );
 
         return $panel;
     }

@@ -47,19 +47,33 @@ class SettingsPage extends Page
     }
 
     /**
-     * Livewire computed property: $this->settingPages
+     * De instellingenkaarten die de ingelogde gebruiker mag openen en die echt
+     * een route hebben. Het instellingenscherm en de zoekpopup van het menu
+     * (NavigationSearch) lezen allebei hier, zodat ze hetzelfde laten zien.
      */
-    public function getSettingPagesProperty(): Collection
+    public static function visibleSettingPages(): Collection
     {
         $user = auth()->user();
 
-        $pages = collect(cms()->builder('settingPages'))
+        if (! $user) {
+            return collect();
+        }
+
+        return collect(cms()->builder('settingPages'))
             ->filter(function ($page) use ($user) {
                 $permission = $page['permission'] ?? null;
 
                 return ! $permission || $user->can($permission);
             })
             ->filter(fn ($page) => static::heeftRoute($page));
+    }
+
+    /**
+     * Livewire computed property: $this->settingPages
+     */
+    public function getSettingPagesProperty(): Collection
+    {
+        $pages = static::visibleSettingPages();
 
         $search = trim($this->search);
 
