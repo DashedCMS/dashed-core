@@ -6,6 +6,7 @@ use ReflectionMethod;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
 use Filament\Actions\Action;
+use Filament\Schemas\Schema;
 use Filament\Support\Enums\Size;
 use Filament\Support\Enums\Width;
 use Illuminate\Support\Facades\Log;
@@ -70,8 +71,27 @@ class ContentBuilder extends Builder
             fn (ContentBuilder $component) => $component->openItem((string) array_key_last($component->getRawState() ?? [])),
         );
 
+        // Een kloon van een ongemoeid blok erft de markering en dus ook de
+        // databasevorm van zijn data; openItem() ontsluit en vult hem.
         $this->addAction($openLastItem);
         $this->cloneAction($openLastItem);
+
+        // De bewerkknop (alleen bij blokvoorbeelden) leest het schema van het
+        // item; een ongemoeid item heeft er geen, dus eerst ontsluiten. Gelijk
+        // aan Filaments fillForm() en schema(), met alleen die stap ervoor.
+        $this->editAction(fn (Action $action): Action => $action
+            ->fillForm(function (array $arguments, ContentBuilder $component) {
+                $component->unlockItem((string) $arguments['item']);
+
+                return $component->getState()[$arguments['item']]['data'];
+            })
+            ->schema(function (array $arguments, ContentBuilder $component) {
+                $component->unlockItem((string) $arguments['item']);
+
+                return $component->getChildSchema($arguments['item'])
+                    ->getClone()
+                    ->getComponents(withHidden: true);
+            }));
 
         $this->registerActions([
             fn (ContentBuilder $component): Action => $component->getInsertBlockAction(),
@@ -176,6 +196,8 @@ class ContentBuilder extends Builder
 
     public function openItem(string $item): void
     {
+        $this->unlockItem($item);
+
         $open = $this->getOpenItems();
 
         if (! in_array($item, $open, true)) {
@@ -228,6 +250,295 @@ class ContentBuilder extends Builder
         if ($kept !== $open) {
             session()->put($this->openItemsSessionKey(), $kept);
         }
+    }
+
+    /**
+     * Sleutel in de ruwe state van een item (naast `type` en `data`) die zegt
+     * dat het item ongemoeid is. De markering staat bewust in de state en niet
+     * in de sessie: zo reist hij in dezelfde Livewire-snapshot als de data.
+     * Een sessie wordt aan het eind van elk verzoek in zijn geheel
+     * weggeschreven, dus een gelijktijdig verzoek (een poll) kan een oude
+     * sessie terugzetten. Een item waarvan de data al gehydrateerd is, zou dan
+     * weer als ongemoeid gelden en in gehydrateerde vorm opgeslagen worden.
+     * mutateDehydratedState() haalt de markering er bij opslaan af.
+     */
+    public const UNTOUCHED_MARKER = '_dashed_untouched';
+
+    protected bool $isHydratingAsUntouched = false;
+
+    /**
+     * Alleen een builder waarvan elk blok een kop heeft om het mee open te
+     * klappen, en die zijn eigen render gebruikt, kan blokken ongemoeid
+     * laten. Zonder kop (niet collapsible of geen blokkoppen) rendert elk blok
+     * altijd open, en de render van Filament zelf (terugval bij een andere
+     * Filament-versie) toont alleen blokken met een schema.
+     */
+    protected function tracksUntouchedItems(): bool
+    {
+        return $this->isCollapsible() && $this->hasBlockHeaders() && static::usesOwnRender() && static::knowsHydrateOrder();
+    }
+
+    /** @var array<class-string, bool> */
+    protected static array $knowsHydrateOrder = [];
+
+    protected static function expectedFilamentHydrateHash(): string
+    {
+        return self::FILAMENT_HYDRATE_HASH;
+    }
+
+    /**
+     * Klopt de hash van Filaments hydrateState() niet (een klantproject met
+     * een andere Filament-versie), dan is niet zeker dat de child-schema's
+     * nog vóór hydrateItems() gehydrateerd worden. De builder bouwt dan weer
+     * elk blok, zoals voorheen. Zelfde drempel voor de waarschuwing als bij
+     * usesOwnRender().
+     */
+    public static function knowsHydrateOrder(): bool
+    {
+        return static::$knowsHydrateOrder[static::class] ??= (function (): bool {
+            $matches = sha1(static::filamentHydrateSource()) === static::expectedFilamentHydrateHash();
+
+            if (! $matches) {
+                $version = \Composer\InstalledVersions::getVersion('filament/schemas') ?? 'unknown';
+
+                if (Cache::add('dashed-content-builder-hydrate-mismatch:' . $version, true, now()->addDay())) {
+                    Log::warning('ContentBuilder: Filament HasState::hydrateState() wijkt af, ongemoeide blokken staan uit.');
+                }
+            }
+
+            return $matches;
+        })();
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getUntouchedItems(): array
+    {
+        if (! $this->tracksUntouchedItems()) {
+            return [];
+        }
+
+        $keys = [];
+
+        foreach ($this->getRawState() ?? [] as $key => $item) {
+            if (is_array($item) && ($item[self::UNTOUCHED_MARKER] ?? false) === true) {
+                $keys[] = (string) $key;
+            }
+        }
+
+        return $keys;
+    }
+
+    public function isItemUntouched(string $item): bool
+    {
+        return in_array($item, $this->getUntouchedItems(), true);
+    }
+
+    /**
+     * Na een volledige hydratie van de builder is elk item ongemoeid.
+     */
+    protected function markAllItemsUntouched(): void
+    {
+        $items = $this->getRawState() ?? [];
+
+        foreach ($items as $key => $item) {
+            $items[$key][self::UNTOUCHED_MARKER] = true;
+        }
+
+        $this->rawState($items);
+        $this->clearCachedChildSchemas();
+    }
+
+    /**
+     * Maakt een ongemoeid blok gewoon onderdeel van het formulier: Filament
+     * bouwt vanaf nu zijn schema en vult het met zijn ruwe data, net als bij
+     * een nieuw blok.
+     */
+    public function unlockItem(string $item): void
+    {
+        if (! $this->isItemUntouched($item)) {
+            return;
+        }
+
+        $livewire = $this->getLivewire();
+        $hadNoUnsavedChanges = static::savedDataHashMatches($livewire);
+
+        $items = $this->getRawState();
+        unset($items[$item][self::UNTOUCHED_MARKER]);
+        $this->rawState($items);
+        $this->clearCachedChildSchemas();
+
+        $this->getChildSchema($item)?->fill($items[$item]['data'] ?? []);
+
+        // Openen verandert $wire.data (markering weg, data gehydrateerd). Zonder
+        // dit meldt de waarschuwing voor niet-opgeslagen wijzigingen van
+        // Filament dan een wijziging die er niet is. Stond er al een echte
+        // wijziging, dan blijft de oude hash staan en blijft die gemeld.
+        if ($hadNoUnsavedChanges) {
+            $livewire->savedDataHash = static::dataHash($livewire->data);
+        }
+    }
+
+    /**
+     * Zelfde formule als Filaments HasUnsavedDataChangesAlert::rememberData()
+     * en unsaved-changes-alert.js.
+     */
+    public static function dataHash(mixed $data): string
+    {
+        return md5((string) str(json_encode($data, JSON_UNESCAPED_UNICODE))->replace('\\', ''));
+    }
+
+    protected static function savedDataHashMatches(object $livewire): bool
+    {
+        if (! property_exists($livewire, 'savedDataHash') || ! property_exists($livewire, 'data')) {
+            return false;
+        }
+
+        $hash = (new \ReflectionProperty($livewire, 'savedDataHash'))->isInitialized($livewire) ? $livewire->savedDataHash : null;
+
+        return is_string($hash) && $hash === static::dataHash($livewire->data);
+    }
+
+    /**
+     * Een blok dat in deze sessie niet geopend is, heeft geen schema: Filament
+     * valideert het dan niet, leest het niet uit en zoekt er niet in, en zijn
+     * data gaat bij opslaan terug zoals hij uit de database kwam.
+     *
+     * @return array<Schema>
+     */
+    public function getDefaultChildSchemas(): array
+    {
+        if ($this->isHydratingAsUntouched) {
+            return [];
+        }
+
+        $untouched = $this->getUntouchedItems();
+
+        return array_filter(
+            parent::getDefaultChildSchemas(),
+            fn ($schema, $key): bool => ! in_array((string) $key, $untouched, true),
+            ARRAY_FILTER_USE_BOTH,
+        );
+    }
+
+    /**
+     * Filament hydrateert eerst de child-schema's en roept daarna pas
+     * afterStateHydrated (hydrateItems) aan. Zonder deze override zouden
+     * alle blokken bij het vullen gehydrateerd worden en daarna als
+     * ongemoeid, dus in gehydrateerde vorm, worden weggeschreven.
+     *
+     * @param  array<string, mixed> | null  $hydratedDefaultState
+     * @param  array<string, true>  $appliedStateCastPaths
+     */
+    public function hydrateState(?array &$hydratedDefaultState, bool $shouldCallHydrationHooks = true, bool $shouldApplyStateCasts = true, array &$appliedStateCastPaths = []): void
+    {
+        if (! $this->tracksUntouchedItems()) {
+            parent::hydrateState($hydratedDefaultState, $shouldCallHydrationHooks, $shouldApplyStateCasts, $appliedStateCastPaths);
+
+            return;
+        }
+
+        $this->isHydratingAsUntouched = true;
+        $this->clearCachedChildSchemas();
+
+        try {
+            parent::hydrateState($hydratedDefaultState, $shouldCallHydrationHooks, $shouldApplyStateCasts, $appliedStateCastPaths);
+        } finally {
+            $this->isHydratingAsUntouched = false;
+        }
+
+        $this->markAllItemsUntouched();
+    }
+
+    /**
+     * Raakt een gedeeltelijke hydratie de builder zelf (of een ouderpad), dan
+     * is dat een volledige hydratie van de builder en worden alle blokken weer
+     * ongemoeid, net als in hydrateState().
+     *
+     * @param  array<string>  $statePaths
+     */
+    public function hydrateStatePartially(array $statePaths, bool $shouldCallHydrationHooks = true): void
+    {
+        $path = $this->getStatePath();
+        $matches = false;
+
+        while (filled($path)) {
+            if (in_array($path, $statePaths, true)) {
+                $matches = true;
+
+                break;
+            }
+
+            $path = str_contains($path, '.') ? (string) str($path)->beforeLast('.') : '';
+        }
+
+        if ((! $matches) || (! $this->tracksUntouchedItems())) {
+            parent::hydrateStatePartially($statePaths, $shouldCallHydrationHooks);
+
+            return;
+        }
+
+        $this->isHydratingAsUntouched = true;
+        $this->clearCachedChildSchemas();
+
+        try {
+            parent::hydrateStatePartially($statePaths, $shouldCallHydrationHooks);
+        } finally {
+            $this->isHydratingAsUntouched = false;
+        }
+
+        $this->markAllItemsUntouched();
+    }
+
+    /**
+     * Altijd waar, ook als een project mutateDehydratedStateUsing() vervangt:
+     * de markering mag nooit in de opgeslagen data belanden.
+     */
+    public function mutatesDehydratedState(): bool
+    {
+        return true;
+    }
+
+    public function mutateDehydratedState(mixed $state): mixed
+    {
+        return parent::mutateDehydratedState(static::withoutUntouchedMarkers($state));
+    }
+
+    /**
+     * Haalt de markering voor ongemoeid van elk item. Voor elke plek die
+     * builderdata opslaat zonder getState(), zoals de data van de andere
+     * talen in HasEditableCMSActions.
+     */
+    public static function withoutUntouchedMarkers(mixed $items): mixed
+    {
+        if (! is_array($items)) {
+            return $items;
+        }
+
+        foreach ($items as $key => $item) {
+            if (is_array($item)) {
+                unset($items[$key][self::UNTOUCHED_MARKER]);
+            }
+        }
+
+        return $items;
+    }
+
+    /**
+     * sha1 van de broncode van Filament\Schemas\Components\Concerns\HasState::hydrateState()
+     * (Filament 4.14.0). hydrateState() hierboven gaat ervan uit dat de
+     * child-schema's daar vóór callAfterStateHydrated() gehydrateerd worden;
+     * de guard-test wordt rood als die methode verandert.
+     */
+    public const FILAMENT_HYDRATE_HASH = '78386ab37f6302bbe8d05ef1f4898f675d730d55';
+
+    public static function filamentHydrateSource(): string
+    {
+        $method = new ReflectionMethod(\Filament\Schemas\Components\Component::class, 'hydrateState');
+        $lines = file($method->getFileName());
+
+        return implode('', array_slice($lines, $method->getStartLine() - 1, $method->getEndLine() - $method->getStartLine() + 1));
     }
 
     #[ExposedLivewireMethod]
@@ -351,7 +662,11 @@ class ContentBuilder extends Builder
      *    blokkiezer per tussenruimte;
      *  - een item staat altijd open (isItemOpen() wordt overgeslagen) als de
      *    builder niet collapsible is of geen blokkoppen heeft, want dan is er
-     *    geen toggle om het anders nog open te klappen.
+     *    geen toggle om het anders nog open te klappen;
+     *  - de lus loopt over de ruwe state in plaats van over getItems(), zodat
+     *    ongemoeide blokken zonder schema (getUntouchedItems()) een kop
+     *    krijgen; label en voorbeeld lezen de ruwe data van het item, en een
+     *    item zonder schema rendert altijd dicht.
      */
     public function toEmbeddedHtml(): string
     {
@@ -359,16 +674,19 @@ class ContentBuilder extends Builder
             return parent::toEmbeddedHtml();
         }
 
-        $items = $this->getItems();
+        $itemSchemas = $this->getItems();
+        $blocksByName = collect($this->getBlocks())->keyBy(fn (Block $block): string => $block->getName());
 
         // Filter before counting so `$itemCount` agrees with the loop's
-        // `$isFirst` / `$isLast` calculations.
+        // `$isFirst` / `$isLast` calculations. Loopt over de ruwe state, zodat
+        // ongemoeide blokken zonder schema ook een kop krijgen.
         $items = array_filter(
-            $items,
-            static fn ($item): bool => $item->getParentComponent() instanceof Block,
+            $this->getRawState() ?? [],
+            fn ($itemData): bool => is_array($itemData) && $blocksByName->has($itemData['type'] ?? null),
         );
 
-        $this->pruneOpenItems(array_map('strval', array_keys($items)));
+        $existingKeys = array_map('strval', array_keys($items));
+        $this->pruneOpenItems($existingKeys);
 
         $blockPickerBlocks = $this->getBlockPickerBlocks();
         $blockPickerColumns = $this->getBlockPickerColumns();
@@ -462,7 +780,10 @@ class ContentBuilder extends Builder
                 >
                     <?php foreach ($items as $itemKey => $item) {
                         /** @var Block $block */
-                        $block = $item->getParentComponent();
+                        $block = $blocksByName->get($item['type']);
+                        $itemData = is_array($item['data'] ?? null) ? $item['data'] : [];
+                        $itemSchema = $itemSchemas[$itemKey] ?? null;
+                        $itemLivewireKey = "{$this->getLivewireKey()}.item.{$itemKey}";
 
                         $itemIndex++;
                         $isFirst = $itemIndex === 1;
@@ -471,6 +792,10 @@ class ContentBuilder extends Builder
                         // toggle om het blok mee te openen: dan altijd renderen, anders
                         // is het blok onbereikbaar.
                         $isItemOpen = (! $isCollapsible) || (! $hasBlockHeaders) || $this->isItemOpen((string) $itemKey);
+
+                        // Open impliceert ontsloten; ontbreekt het schema toch,
+                        // dan de dichte weergave in plaats van een fout.
+                        $isItemOpen = $isItemOpen && ($itemSchema !== null);
 
                         $visibleExtraItemActions = array_filter(
                             $extraItemActions,
@@ -492,7 +817,7 @@ class ContentBuilder extends Builder
 
                         <li
                             wire:ignore.self
-                            wire:key="<?= e($item->getLivewireKey()) ?>.item"
+                            wire:key="<?= e($itemLivewireKey) ?>.item"
                             x-data="{
                                 isCollapsed: <?= Js::from(! $isItemOpen) ?>,
                             }"
@@ -544,7 +869,7 @@ class ContentBuilder extends Builder
                                                 'fi-truncated' => $isBlockLabelTruncated,
                                             ])->toHtml() ?>
                                         >
-                                            <?= e($block->getLabel($item->getRawState(), $itemKey, $itemIndex - 1)) ?>
+                                            <?= e($block->getLabel($itemData, $itemKey, $itemIndex - 1)) ?>
                                             <?php if ($hasBlockNumbers) { ?>
                                                 <?= e($itemIndex) ?>
                                             <?php } ?>
@@ -592,7 +917,7 @@ class ContentBuilder extends Builder
                                 ])->toHtml() ?>
                             >
                                 <?php if ($isItemOpen) { ?>
-                                    <span wire:key="<?= e($item->getLivewireKey()) ?>.open" x-init="isCollapsed = false" hidden></span>
+                                    <span wire:key="<?= e($itemLivewireKey) ?>.open" x-init="isCollapsed = false" hidden></span>
                                     <?php if ($hasBlockPreviews && $block->hasPreview()) { ?>
                                         <div
                                             <?= (new FilamentComponentAttributeBag())->class([
@@ -600,7 +925,7 @@ class ContentBuilder extends Builder
                                                 'fi-interactive' => $hasInteractiveBlockPreviews,
                                             ])->toHtml() ?>
                                         >
-                                            <?= $block->renderPreview($item->getRawState())->render() ?>
+                                            <?= $block->renderPreview($itemData)->render() ?>
                                         </div>
 
                                         <?php if ($editActionIsVisible && (! $hasInteractiveBlockPreviews)) { ?>
@@ -611,10 +936,10 @@ class ContentBuilder extends Builder
                                             ></div>
                                         <?php } ?>
                                     <?php } else { ?>
-                                        <?= $item->toHtml() ?>
+                                        <?= $itemSchema->toHtml() ?>
                                     <?php } ?>
                                 <?php } else { ?>
-                                    <span wire:key="<?= e($item->getLivewireKey()) ?>.closed" x-init="isCollapsed = true" hidden></span>
+                                    <span wire:key="<?= e($itemLivewireKey) ?>.closed" x-init="isCollapsed = true" hidden></span>
                                     <div class="fi-fo-builder-item-content-loading" style="padding: 0.75rem 1rem; font-size: 0.875rem; opacity: 0.6;">
                                         <?= e(__('Blok laden...')) ?>
                                     </div>
