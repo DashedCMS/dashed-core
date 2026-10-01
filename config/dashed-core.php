@@ -122,4 +122,15 @@ return [
         'image_pipeline_v2' => env('DASHED_PERF_IMAGE_V2', false),
         'font_self_hosted' => env('DASHED_PERF_FONT_SELF', false),
     ],
+
+    // Taal van de beheeromgeving. Bewust los van APP_LOCALE: dat is de taal
+    // van de inhoud, en een project als rechargehamster heeft daar 'en'.
+    'admin_locale' => env('DASHED_ADMIN_LOCALE', 'nl'),
+
+    // Talen die een beheerder op zijn profiel kan kiezen. De labels zijn
+    // onvertaald: wie de verkeerde taal ziet, moet zijn eigen taal herkennen.
+    'admin_locales' => [
+        'nl' => 'Nederlands',
+        'en' => 'English',
+    ],
 ];

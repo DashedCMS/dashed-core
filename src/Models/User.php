@@ -88,6 +88,16 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasAppAut
         return array_values(array_unique([...parent::getHidden(), ...self::MFA_SECRET_COLUMNS]));
     }
 
+    /**
+     * admin_locale moet ook opgeslagen worden in klantprojecten, waar
+     * App\Models\User $fillable overschrijft met de skeletonlijst. Daarom
+     * hier en niet in $fillable, zoals de MFA-casts in getCasts().
+     */
+    public function getFillable()
+    {
+        return array_values(array_unique([...parent::getFillable(), 'admin_locale']));
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults();
