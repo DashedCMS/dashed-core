@@ -18,6 +18,8 @@ use Dashed\DashedCore\Services\Summary\DailySummaryBuilder;
  */
 class DailySummaryPage extends Page
 {
+    use \Dashed\DashedCore\Filament\Concerns\TranslatesPageLabels;
+
     protected static string | UnitEnum | null $navigationGroup = 'Systeem';
 
     protected static ?int $navigationSort = 5;

@@ -18,6 +18,8 @@ use Dashed\DashedCore\Filament\Resources\Reviews\Tables\ReviewsTable;
 
 class ReviewResource extends Resource
 {
+    use \Dashed\DashedCore\Filament\Concerns\TranslatesResourceLabels;
+
     protected static ?string $model = Review::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedStar;

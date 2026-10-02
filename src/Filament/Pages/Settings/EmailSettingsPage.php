@@ -20,6 +20,7 @@ use Filament\Schemas\Concerns\InteractsWithSchemas;
 
 class EmailSettingsPage extends Page implements HasSchemas
 {
+    use \Dashed\DashedCore\Filament\Concerns\TranslatesPageLabels;
     use HasSettingsPermission;
     use InteractsWithSchemas;
 

@@ -22,6 +22,8 @@ use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonThroughputChart;
 
 class HorizonDashboardPage extends Page
 {
+    use \Dashed\DashedCore\Filament\Concerns\TranslatesPageLabels;
+
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-queue-list';
 
     protected static ?string $navigationLabel = 'Horizon';

@@ -17,6 +17,8 @@ use Dashed\DashedCore\ContentQuality\Jobs\GenerateMetaFieldForModel;
 
 class ContentQualityDashboard extends Page
 {
+    use \Dashed\DashedCore\Filament\Concerns\TranslatesPageLabels;
+
     protected static string|UnitEnum|null $navigationGroup = 'SEO & site';
 
     protected static ?int $navigationSort = 20;

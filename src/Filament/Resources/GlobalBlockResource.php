@@ -26,6 +26,7 @@ use Dashed\DashedCore\Filament\Resources\GlobalBlockResource\Pages\CreateGlobalB
 
 class GlobalBlockResource extends Resource
 {
+    use \Dashed\DashedCore\Filament\Concerns\TranslatesResourceLabels;
     use Translatable;
 
     protected static ?string $model = GlobalBlock::class;

@@ -16,6 +16,8 @@ use Dashed\DashedCore\Integrations\IntegrationHealthRunner;
  */
 class IntegrationsDashboard extends Page
 {
+    use \Dashed\DashedCore\Filament\Concerns\TranslatesPageLabels;
+
     protected static string|UnitEnum|null $navigationGroup = 'Systeem';
 
     protected static ?int $navigationSort = 2;

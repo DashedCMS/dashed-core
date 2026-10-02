@@ -23,6 +23,7 @@ use Filament\Schemas\Concerns\InteractsWithSchemas;
  */
 class CleanupSettingsPage extends Page implements HasSchemas
 {
+    use \Dashed\DashedCore\Filament\Concerns\TranslatesPageLabels;
     use InteractsWithSchemas;
     use HasSettingsPermission;
 

@@ -12,6 +12,8 @@ use Dashed\DashedCore\Services\DocsRegistry;
 
 class DocumentationOverviewPage extends Page
 {
+    use \Dashed\DashedCore\Filament\Concerns\TranslatesPageLabels;
+
     protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-question-mark-circle';
 
     protected static ?string $navigationLabel = 'Documentatie';

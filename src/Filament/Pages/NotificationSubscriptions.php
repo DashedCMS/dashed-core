@@ -27,6 +27,7 @@ use Dashed\DashedCore\Services\Summary\Contracts\SummaryContributorInterface;
  */
 class NotificationSubscriptions extends Page implements HasSchemas
 {
+    use \Dashed\DashedCore\Filament\Concerns\TranslatesPageLabels;
     use InteractsWithSchemas;
 
     protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-envelope';

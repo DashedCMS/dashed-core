@@ -12,6 +12,8 @@ use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
 class SettingsPage extends Page
 {
+    use \Dashed\DashedCore\Filament\Concerns\TranslatesPageLabels;
+
     protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-cog';
 
     protected static ?string $navigationLabel = 'Instellingen';

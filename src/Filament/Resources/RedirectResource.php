@@ -21,6 +21,8 @@ use Dashed\DashedCore\Filament\Resources\RedirectResource\Pages\CreateRedirect;
 
 class RedirectResource extends Resource
 {
+    use \Dashed\DashedCore\Filament\Concerns\TranslatesResourceLabels;
+
     protected static ?string $model = Redirect::class;
 
     protected static ?string $recordTitleAttribute = 'from';

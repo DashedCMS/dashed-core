@@ -31,6 +31,8 @@ use Dashed\DashedCore\Filament\Resources\NotFoundPageResource\Pages\ViewNotFound
 
 class NotFoundPageResource extends Resource
 {
+    use \Dashed\DashedCore\Filament\Concerns\TranslatesResourceLabels;
+
     protected static ?string $model = NotFoundPage::class;
 
     protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-no-symbol';

@@ -27,6 +27,8 @@ use Dashed\DashedCore\Filament\Resources\UserResource\Users\CreateUser;
 
 class UserResource extends Resource
 {
+    use \Dashed\DashedCore\Filament\Concerns\TranslatesResourceLabels;
+
     protected static ?string $model = User::class;
 
     protected static ?string $recordTitleAttribute = 'name';

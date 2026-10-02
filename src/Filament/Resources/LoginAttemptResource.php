@@ -17,6 +17,8 @@ use Dashed\DashedCore\Filament\Resources\LoginAttemptResource\Pages\ListLoginAtt
 
 class LoginAttemptResource extends Resource
 {
+    use \Dashed\DashedCore\Filament\Concerns\TranslatesResourceLabels;
+
     protected static ?string $model = LoginAttempt::class;
 
     protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-finger-print';

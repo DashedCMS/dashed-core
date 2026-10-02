@@ -14,6 +14,8 @@ use Dashed\DashedCore\Filament\Resources\SentEmailResource\Pages\ListSentEmails;
 
 class SentEmailResource extends Resource
 {
+    use \Dashed\DashedCore\Filament\Concerns\TranslatesResourceLabels;
+
     protected static ?string $model = SentEmail::class;
 
     protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-envelope';

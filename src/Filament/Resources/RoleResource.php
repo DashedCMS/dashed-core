@@ -25,6 +25,8 @@ use Dashed\DashedCore\Filament\Resources\RoleResource\Pages\CreateRole;
 
 class RoleResource extends Resource
 {
+    use \Dashed\DashedCore\Filament\Concerns\TranslatesResourceLabels;
+
     protected static ?string $model = Role::class;
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-shield-check';

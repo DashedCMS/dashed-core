@@ -19,6 +19,8 @@ use Dashed\DashedCore\Filament\Resources\ExportResource\Pages\ListExports;
 
 class ExportResource extends Resource
 {
+    use \Dashed\DashedCore\Filament\Concerns\TranslatesResourceLabels;
+
     protected static ?string $model = Export::class;
 
     protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-document-arrow-down';

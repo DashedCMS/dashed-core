@@ -29,6 +29,7 @@ use Dashed\DashedCore\Filament\Resources\EmailTemplateResource\Pages\ListEmailTe
 
 class EmailTemplateResource extends Resource
 {
+    use \Dashed\DashedCore\Filament\Concerns\TranslatesResourceLabels;
     use Translatable;
 
     protected static ?string $model = EmailTemplate::class;

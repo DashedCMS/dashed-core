@@ -25,6 +25,7 @@ use Dashed\DashedCore\Services\Summary\Contracts\SummaryContributorInterface;
 
 class NotificationSettingsPage extends Page implements HasSchemas
 {
+    use \Dashed\DashedCore\Filament\Concerns\TranslatesPageLabels;
     use HasSettingsPermission;
     use InteractsWithSchemas;
 
