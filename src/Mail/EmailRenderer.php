@@ -3,6 +3,7 @@
 namespace Dashed\DashedCore\Mail;
 
 use Illuminate\Support\Facades\App;
+use Dashed\DashedCore\Classes\AdminLocale;
 use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedCore\Models\EmailTemplate;
 use Dashed\DashedCore\Mail\Exceptions\EmptyEmailTemplateException;
@@ -100,14 +101,21 @@ class EmailRenderer
      */
     private function withLocale(string $locale, \Closure $callback): mixed
     {
-        $previous = App::getLocale();
+        // Binnen asContent(): ook het voorbeeld en de testmail op het
+        // sjabloonscherm renderen buiten Mailer::send(), en die tonen wat de
+        // klant krijgt, niet de taal van de beheerder. Zonder asContent zet
+        // het paneel de translator na App::setLocale() meteen terug op de
+        // beheerderstaal. Zie AdminLocale::reapplyAfterLocaleChange().
+        return AdminLocale::asContent(function () use ($locale, $callback) {
+            $previous = App::getLocale();
 
-        try {
-            App::setLocale($locale);
+            try {
+                App::setLocale($locale);
 
-            return $callback();
-        } finally {
-            App::setLocale($previous);
-        }
+                return $callback();
+            } finally {
+                App::setLocale($previous);
+            }
+        });
     }
 }

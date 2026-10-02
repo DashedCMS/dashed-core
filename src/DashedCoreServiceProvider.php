@@ -160,6 +160,14 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         $this->app->singleton(\Dashed\DashedCore\Retention\RetentionRegistry::class);
 
         $this->app->singleton(\Dashed\DashedCore\Webhooks\Outgoing\WebhookEventRegistry::class);
+
+        // Mails altijd in de inhoudstaal, ook als een Engelse beheerder op de
+        // knop drukt. Zie ContentLocaleMailer. Via extend() en niet met een
+        // eigen singleton: MailServiceProvider is deferred en zou bij de eerste
+        // make('mail.manager') zijn eigen binding over de onze heen zetten. Een
+        // extender blijft over een nieuwe binding heen staan. 'mailer' loopt
+        // via mail.manager en hoeft daarom niet mee.
+        $this->app->extend('mail.manager', fn ($manager, $app) => new \Dashed\DashedCore\Mail\ContentLocaleMailManager($app));
     }
 
     public function packageBooted()
