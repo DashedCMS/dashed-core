@@ -388,6 +388,9 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         // Beheer onderaan. Routes en Overige zijn hierin opgegaan;
         // Performance stond geregistreerd zonder dat een scherm die groep gebruikt.
         cms()->registerNavigationGroup('Systeem', 95);
+        // Groep uit de stub van make:visitable-model (filament-resource.stub);
+        // zonder registratie valt zo'n resource buiten de vaste volgorde.
+        cms()->registerNavigationGroup('Custom modules', 100);
 
         // C4 first-pass: explicit Customsetting registrations. Promotes well-known
         // keys from auto-registered ("needs review") to explicit so the audit command

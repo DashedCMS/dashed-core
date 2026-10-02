@@ -488,9 +488,14 @@ class CMSManager
 
         $pages[] = \Dashed\DashedCore\Filament\Pages\Dashboard\Dashboard::class;
 
+        // De Nederlandse naam blijft de sleutel waarop resources koppelen
+        // ($navigationGroup = 'Content'); Filament matcht eerst op de
+        // array-sleutel. Het zichtbare label wordt pas bij het renderen
+        // vertaald, als SetAdminLocale de translator al heeft gezet.
         $navigationGroups = collect(static::$builders['navigationGroups'] ?? [])
             ->sortBy(fn ($entry) => $entry['sort'] ?? 100)
             ->keys()
+            ->mapWithKeys(fn (string $naam) => [$naam => \Filament\Navigation\NavigationGroup::make(fn () => __($naam))])
             ->all();
 
         $panel
