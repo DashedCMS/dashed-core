@@ -591,27 +591,6 @@ class CMSManager
                 fn () => view('dashed-core::filament.navigation-search-trigger'),
             );
 
-        // Livewire's eigen SupportLocales-functie zet app()->setLocale() (en
-        // dus ook de translator, zie Application::setLocale()) bij elke
-        // hydratie van een Livewire-component terug op wat er bij de vorige
-        // dehydrate in memo.locale lag: dat is altijd de inhoudstaal, want
-        // die blijft bewust ongemoeid. Dat overschrijft SetAdminLocale op elk
-        // Livewire-verzoek, omdat 'hydrate' na 'snapshot-verified' (waar de
-        // persistente middleware aan hangt) draait. Een 'after'-listener op
-        // hetzelfde hook-punt draait altijd als laatste (EventBus::trigger()
-        // voegt eerst listenersBefore, dan listeners, dan listenersAfter
-        // samen), dus deze wint alsnog. Alleen binnen een door Filament
-        // bediend verzoek: anders zou een webshopklant met toevallig een
-        // admin_locale op zijn rij (zelfde users-tabel) de vertaler van de
-        // front-end omzetten.
-        \Livewire\after('hydrate', function (): void {
-            if (! Filament::isServing()) {
-                return;
-            }
-
-            \Dashed\DashedCore\Classes\AdminLocale::apply(auth()->guard('web')->user());
-        });
-
         return $panel;
     }
 

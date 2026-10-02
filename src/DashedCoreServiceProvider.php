@@ -177,6 +177,26 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             $kernel->pushMiddleware(\Dashed\DashedCore\Middleware\SecurityHeaders::class);
         }
 
+        // Taal van de beheerder op Livewire-verzoeken. SetAdminLocale zet de
+        // translator in de persistente paneelmiddleware, maar Livewire's eigen
+        // SupportLocales roept bij elke hydratie app()->setLocale() aan met de
+        // taal uit memo.locale, en Application::setLocale() zet de translator
+        // mee terug op de inhoudstaal. Dat gebeurt vóór de booted-hook waarin
+        // Filament tabel, filters en acties opbouwt, dus elke klik op een
+        // lijst gaf Nederlandse labels. Daarom laten we memo.locale leeg bij
+        // componenten die Filament bedient: SupportLocales::hydrate() slaat
+        // een lege taal over, en de translator houdt wat de middleware zette.
+        // De memo valt binnen de checksum, die pas na 'dehydrate' berekend
+        // wordt. Buiten het paneel (front-end, ook voor een ingelogde
+        // webshopklant in dezelfde users-tabel) blijft Livewire's gedrag
+        // ongemoeid. Hier en niet in de paneelbouwer, want die kan vaker
+        // draaien en zou de listener dan dubbel registreren.
+        \Livewire\after('dehydrate', function ($component, $context): void {
+            if (\Filament\Facades\Filament::isServing()) {
+                $context->addMemo('locale', null);
+            }
+        });
+
         // Vertrouwde proxy's (DASHED_TRUSTED_PROXIES) op Laravels TrustProxies.
         \Dashed\DashedCore\Classes\TrustedProxies::apply();
 
