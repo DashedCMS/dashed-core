@@ -12,6 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Forms\Components\Select;
+use Dashed\DashedCore\Classes\AdminLocale;
 use Filament\Forms\Components\Toggle;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
@@ -151,6 +152,13 @@ class UserResource extends Resource
                             // dus een gespoofde waarde wordt geweigerd.
                             ->options(fn ($record) => static::roleOptions(auth()->user()?->role, $record?->role)),
 
+                        Select::make('admin_locale')
+                            ->label(__('Taal van het CMS'))
+                            ->options(AdminLocale::options())
+                            ->in(array_keys(AdminLocale::options()))
+                            ->placeholder(AdminLocale::options()[AdminLocale::default()] ?? null)
+                            ->visible(fn () => auth()->user()?->role === 'superadmin'),
+
                         Select::make('roles')
                             ->label(__('Rollen'))
                             ->multiple()
@@ -282,6 +290,9 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('id')
+                    ->label(__('ID'))
+                    ->sortable(),
                 TextColumn::make('name')
                     ->label(__('Naam'))
                     ->sortable()
@@ -298,6 +309,10 @@ class UserResource extends Resource
                     ->badge()
                     ->placeholder('-')
                     ->toggleable(),
+                TextColumn::make('created_at')
+                    ->label(__('Aangemaakt op'))
+                    ->dateTime('d-m-Y H:i')
+                    ->sortable(),
             ])
             ->filters([
                 SelectFilter::make('role')

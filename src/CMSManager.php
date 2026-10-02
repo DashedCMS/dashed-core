@@ -30,6 +30,7 @@ use Awcodes\RicherEditor\Plugins\SourceCodePlugin;
 use Dashed\DashedCore\Middleware\EnsureMfaIsFresh;
 use Dashed\DashedCore\Middleware\EnsureMfaIsSetUp;
 use Dashed\DashedCore\Filament\Pages\Auth\CmsLogin;
+use Dashed\DashedCore\Filament\Pages\Auth\EditProfile;
 use Dashed\DashedCore\Middleware\EnsureCmsIpAllowed;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Illuminate\Routing\Middleware\SubstituteBindings;
@@ -532,7 +533,7 @@ class CMSManager
             )
             ->emailVerification()
             ->emailChangeVerification()
-            ->profile()
+            ->profile(EditProfile::class)
             ->when(! empty($navigationGroups), fn (Panel $p) => $p->navigationGroups($navigationGroups))
             ->colors([
                 'primary' => config('dashed-core.dashed_cms.primary_color', '#00D2CD'),
