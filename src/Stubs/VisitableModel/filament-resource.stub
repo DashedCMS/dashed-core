@@ -27,6 +27,7 @@ use LaraZeus\SpatieTranslatable\Resources\Concerns\Translatable;
 
 class {{ CLASS }} extends Resource
 {
+    use \Dashed\DashedCore\Filament\Concerns\TranslatesResourceLabels;
     use Translatable;
     use HasVisitableTab;
     use HasCustomBlocksTab;
