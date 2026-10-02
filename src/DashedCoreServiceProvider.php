@@ -197,6 +197,16 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             }
         });
 
+        // En na elke wissel van de app-taal binnen een paneelverzoek de
+        // translator terug op de taal van de beheerder, anders maakt de
+        // eerste getUrl() in een tabel de rest van de pagina Nederlands. Zie
+        // AdminLocale::reapplyAfterLocaleChange().
+        \Dashed\DashedCore\Classes\AdminLocale::resetContentDepth();
+        \Illuminate\Support\Facades\Event::listen(
+            \Illuminate\Foundation\Events\LocaleUpdated::class,
+            fn () => \Dashed\DashedCore\Classes\AdminLocale::reapplyAfterLocaleChange(),
+        );
+
         // Vertrouwde proxy's (DASHED_TRUSTED_PROXIES) op Laravels TrustProxies.
         \Dashed\DashedCore\Classes\TrustedProxies::apply();
 
