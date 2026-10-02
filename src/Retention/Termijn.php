@@ -238,7 +238,10 @@ final class Termijn
 
     public function labelTekst(): string
     {
-        return $this->label instanceof Closure ? (string) ($this->label)() : $this->label;
+        // Bij de boot staat de translator op de standaardtaal, dus het
+        // opgeslagen label is de Nederlandse sleutel. Pas bij het tonen weet
+        // SetAdminLocale welke taal de beheerder wil.
+        return __($this->label instanceof Closure ? (string) ($this->label)() : $this->label);
     }
 
     public function uitlegTekst(): ?string
@@ -247,6 +250,6 @@ final class Termijn
             return null;
         }
 
-        return $this->uitleg instanceof Closure ? (string) ($this->uitleg)() : $this->uitleg;
+        return __($this->uitleg instanceof Closure ? (string) ($this->uitleg)() : $this->uitleg);
     }
 }

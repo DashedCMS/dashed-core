@@ -112,7 +112,9 @@ final class Retention
 
     public function labelTekst(): string
     {
-        return $this->label instanceof Closure ? (string) ($this->label)() : $this->label;
+        // Vertalen bij het tonen: bij de boot is het label de Nederlandse
+        // sleutel, de taal van de beheerder is pas per verzoek bekend.
+        return __($this->label instanceof Closure ? (string) ($this->label)() : $this->label);
     }
 
     public function pakketNaam(): string
@@ -126,7 +128,9 @@ final class Retention
             return $this->pakket;
         }
 
-        return $this->pakketLabel instanceof Closure ? (string) ($this->pakketLabel)() : $this->pakketLabel;
+        // De slug hierboven blijft onvertaald, want daarop groepeert het
+        // scherm; alleen het opgegeven label gaat door de vertaling.
+        return __($this->pakketLabel instanceof Closure ? (string) ($this->pakketLabel)() : $this->pakketLabel);
     }
 
     public function tabelNaam(): ?string

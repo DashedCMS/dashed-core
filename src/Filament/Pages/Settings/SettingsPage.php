@@ -67,7 +67,20 @@ class SettingsPage extends Page
 
                 return ! $permission || $user->can($permission);
             })
-            ->filter(fn ($page) => static::heeftRoute($page));
+            ->filter(fn ($page) => static::heeftRoute($page))
+            ->map(fn (array $page) => [
+                ...$page,
+                // Geregistreerd als kale Nederlandse tekst; vertalen bij het
+                // tonen, zodat de kaart en de zoekpopup de taal van de
+                // beheerder volgen. Leeg blijft leeg.
+                'name' => static::vertaal($page['name'] ?? null),
+                'description' => static::vertaal($page['description'] ?? null),
+            ]);
+    }
+
+    private static function vertaal(?string $tekst): ?string
+    {
+        return $tekst === null || $tekst === '' ? $tekst : __($tekst);
     }
 
     /**
