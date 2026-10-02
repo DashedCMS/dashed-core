@@ -1831,6 +1831,7 @@ MARKDOWN,
 
         $package
             ->name(static::$name)
+            ->hasTranslations()
             ->hasConfigFile([
                 'filament',
                 'filament-spatie-laravel-translatable-plugin',
