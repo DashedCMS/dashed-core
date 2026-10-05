@@ -252,6 +252,28 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             \Dashed\DashedCore\Http\Middleware\EnsureWebhookIdempotency::class,
         );
 
+        // Gemanipuleerde Livewire-updates (exploit-scanners) afwijzen voordat ze een
+        // component bereiken, en de uitzonderingen die Livewire zelf gooit bij geknoei
+        // met snapshot of vergrendelde properties als 400 afhandelen in plaats van als
+        // gerapporteerde 500.
+        // Via de Kernel en niet via de router: zodra een ander pakket de Kernel-groep
+        // aanpast, wordt die opnieuw naar de router gesynct en verdwijnt een router-push.
+        $this->app->make(\Illuminate\Contracts\Http\Kernel::class)
+            ->appendMiddlewareToGroup('web', \Dashed\DashedCore\Middleware\RejectTamperedLivewireUpdates::class);
+
+        $exceptionHandler = $this->app->make(\Illuminate\Contracts\Debug\ExceptionHandler::class);
+        if (method_exists($exceptionHandler, 'map')) {
+            foreach ([
+                \Livewire\Mechanisms\HandleComponents\CorruptComponentPayloadException::class,
+                \Livewire\Features\SupportLockedProperties\CannotUpdateLockedPropertyException::class,
+            ] as $tamperException) {
+                $exceptionHandler->map(
+                    $tamperException,
+                    fn (\Throwable $e) => new \Symfony\Component\HttpKernel\Exception\BadRequestHttpException($e->getMessage(), $e),
+                );
+            }
+        }
+
         // Content Studio: schrijf gegenereerde AI-beelden terug in de
         // pagina-blokken zodra dashed-files de generatie heeft afgerond.
         \Illuminate\Support\Facades\Event::listen(

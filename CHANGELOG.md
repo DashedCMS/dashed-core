@@ -2,6 +2,16 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## Unreleased
+
+### Added
+- **Gemanipuleerde Livewire-updates worden geweigerd.** Nieuwe middleware `RejectTamperedLivewireUpdates` (web-groep) geeft een 400 op updates waarin de client synthetische tuples meestuurt, de payload van de scanners rond CVE-2025-54068. Livewire zelf is gepatcht, maar de rommel belandde in publieke properties en liep stuk in componenten en views. `CorruptComponentPayloadException` en `CannotUpdateLockedPropertyException` worden als 400 afgehandeld en niet meer gerapporteerd.
+
+### Fixed
+- **`SyncGoogleReviews` bevatte twee vergeten `dd()`-aanroepen.** De queue-worker stopte daardoor midden in de job, die vervolgens eindigde in `MaxAttemptsExceededException`.
+- **Wachtwoord resetten met een onbekend of verlopen token gaf een 500** (`Cannot assign null to property ResetPassword::$user`). De bezoeker gaat nu met een melding naar de wachtwoord-vergeten-pagina (vertaling `reset-password-link-invalid`).
+- **Zoekindex: `Duplicate entry` bij gelijktijdige saves van hetzelfde model.** `SearchIndexer::index()` gebruikt een upsert in plaats van verwijderen en invoegen; dit brak onder meer de betaalwebhook af.
+
 ## v4.76.0 - 2026-09-30
 
 ### Added

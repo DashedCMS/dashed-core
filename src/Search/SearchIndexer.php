@@ -46,15 +46,27 @@ class SearchIndexer
             ];
         }
 
-        // Verwijder eerst de oude rijen voor dit model, schrijf daarna de nieuwe.
-        DB::table(self::TABLE)
+        $forModel = fn () => DB::table(self::TABLE)
             ->where('searchable_type', $type)
-            ->where('searchable_id', $id)
-            ->delete();
+            ->where('searchable_id', $id);
 
-        if ($rows !== []) {
-            DB::table(self::TABLE)->insert($rows);
+        if ($rows === []) {
+            $forModel()->delete();
+
+            return;
         }
+
+        // Upsert in plaats van "eerst verwijderen, dan invoegen": twee gelijktijdige saves
+        // van hetzelfde model (bv. voorraad afboeken in de betaalwebhook) verwijderden
+        // allebei en voegden daarna allebei in, wat op de unieke sleutel stukliep en de
+        // orderverwerking afbrak.
+        DB::table(self::TABLE)->upsert(
+            $rows,
+            ['searchable_type', 'searchable_id', 'locale'],
+            ['search_text', 'keywords', 'updated_at'],
+        );
+
+        $forModel()->whereNotIn('locale', array_column($rows, 'locale'))->delete();
     }
 
     public function remove(Model $model): void

@@ -28,21 +28,21 @@ class ResetPassword extends Component
             $passwordResetToken = request()->query('passwordResetToken');
         }
 
-        if (! $passwordResetToken) {
-            abort(404);
-        }
-
-        $this->user = User::where('password_reset_token', $passwordResetToken)->first();
-        if (! $this->user) {
-            abort(404);
-        }
+        // Eerst in een lokale variabele: `$this->user` is niet-nullable getypeerd, dus een
+        // onbekend token gaf een TypeError (500) nog voordat de controle eronder kon ingrijpen.
+        $user = $passwordResetToken
+            ? User::where('password_reset_token', $passwordResetToken)->first()
+            : null;
 
         // Dezelfde TTL als de geplande opschoon-taak (1 uur), maar nu ook afgedwongen
         // bij het inwisselen zodat een token niet langer geldig is dan bedoeld.
-        if (! $this->user->password_reset_requested
-            || \Illuminate\Support\Carbon::parse($this->user->password_reset_requested)->lt(\Illuminate\Support\Carbon::now()->subHour())) {
-            abort(404);
+        if (! $user
+            || ! $user->password_reset_requested
+            || \Illuminate\Support\Carbon::parse($user->password_reset_requested)->lt(\Illuminate\Support\Carbon::now()->subHour())) {
+            return redirect(AccountHelper::getForgotPasswordUrl())->with('error', Translation::get('reset-password-link-invalid', 'login', 'This password reset link is invalid or has expired. Request a new one.'));
         }
+
+        $this->user = $user;
 
         if ($this->user->mustLoginViaPanel()) {
             return $this->refusePanelUser();

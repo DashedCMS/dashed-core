@@ -63,7 +63,6 @@ class SyncGoogleReviews implements ShouldQueue
 
             $status = $json['status'] ?? null;
 
-            dd($json);
             if ($status !== 'OK') {
                 // Google statuses: ZERO_RESULTS, OVER_QUERY_LIMIT, REQUEST_DENIED, INVALID_REQUEST, UNKNOWN_ERROR
                 $this->markFailed();
@@ -87,7 +86,6 @@ class SyncGoogleReviews implements ShouldQueue
                 'class' => get_class($e),
             ]);
         }
-        dd('asdf');
     }
 
     protected function markFailed(): void
