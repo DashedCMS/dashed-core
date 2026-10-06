@@ -64,9 +64,6 @@ class ContentBuilder extends Builder
     {
         parent::setUp();
 
-        // Alles uitklappen rendert elk blok en brengt precies de bevriezing terug.
-        $this->expandAllAction(fn (Action $action): Action => $action->hidden());
-
         $openLastItem = fn (Action $action): Action => $action->after(
             fn (ContentBuilder $component) => $component->openItem((string) array_key_last($component->getRawState() ?? [])),
         );
@@ -555,6 +552,21 @@ class ContentBuilder extends Builder
         $this->partiallyRender();
     }
 
+    /**
+     * Bewust een eigen knop en niet de standaard: alles open is zo zwaar als
+     * de builder van Filament zelf (elk blok gerenderd, en bij opslaan
+     * gevalideerd en uitgelezen), tot de gebruiker weer inklapt of herlaadt.
+     */
+    #[ExposedLivewireMethod]
+    public function expandAllItems(): void
+    {
+        foreach (array_keys($this->getRawState() ?? []) as $item) {
+            $this->openItem((string) $item);
+        }
+
+        $this->partiallyRender();
+    }
+
     #[ExposedLivewireMethod]
     public function collapseAllItems(): void
     {
@@ -652,11 +664,12 @@ class ContentBuilder extends Builder
      * usesOwnRender() bewaakt dat. Afwijkingen van het origineel:
      *  - alleen open items (isItemOpen()) renderen hun velden, een dicht item
      *    krijgt kop en een lege body met een laadtekst;
-     *  - in- en uitklappen gaat via expandItem(), collapseItem() en
-     *    collapseAllItems() op de server (#[ExposedLivewireMethod]) in plaats
-     *    van alleen Alpine-state, met een gedeeltelijke render;
-     *  - "Alles inklappen" wist ook de serverstaat van open items, niet
-     *    alleen de client-state;
+     *  - in- en uitklappen gaat via expandItem(), collapseItem(),
+     *    expandAllItems() en collapseAllItems() op de server
+     *    (#[ExposedLivewireMethod]) in plaats van alleen Alpine-state, met een
+     *    gedeeltelijke render;
+     *  - "Alles uitklappen" en "Alles inklappen" zetten ook de serverstaat
+     *    van open items, niet alleen de client-state;
      *  - de blokkiezer tussen elk paar items is vervangen door de
      *    insertBlock-plusknop met één modal, in plaats van een volledige
      *    blokkiezer per tussenruimte;
@@ -764,7 +777,7 @@ class ContentBuilder extends Builder
                     <?php } ?>
 
                     <?php if ($expandAllActionIsVisible) { ?>
-                        <span x-on:click="$dispatch('builder-expand', '<?= e($statePath) ?>')">
+                        <span x-on:click="$dispatch('builder-expand', '<?= e($statePath) ?>'); $wire.callSchemaComponentMethod(<?= e(Js::from($key)) ?>, 'expandAllItems')">
                             <?= $expandAllAction->toHtml() ?>
                         </span>
                     <?php } ?>

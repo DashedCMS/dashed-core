@@ -2,9 +2,10 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
-## Unreleased
+## v4.80.0 - 2026-10-06
 
 ### Added
+- **"Alles uitklappen" is terug in de pagina-builder.** De knop was in v4.77.0 weggehaald omdat hij elk blok rendert. Hij loopt nu via `ContentBuilder::expandAllItems()` op de server, net als het uitklappen van één blok. Standaard blijft alles dicht; wie alles uitklapt, heeft tot inklappen of herladen weer de zware pagina (elk blok gerenderd en bij opslaan gevalideerd).
 - **Gemanipuleerde Livewire-updates worden geweigerd.** Nieuwe middleware `RejectTamperedLivewireUpdates` (web-groep) geeft een 400 op updates waarin de client synthetische tuples meestuurt, de payload van de scanners rond CVE-2025-54068. Livewire zelf is gepatcht, maar de rommel belandde in publieke properties en liep stuk in componenten en views. `CorruptComponentPayloadException` en `CannotUpdateLockedPropertyException` worden als 400 afgehandeld en niet meer gerapporteerd.
 
 ### Fixed
