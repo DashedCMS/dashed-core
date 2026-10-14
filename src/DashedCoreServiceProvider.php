@@ -215,6 +215,18 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             fn () => \Dashed\DashedCore\Classes\AdminLocale::reapplyAfterLocaleChange(),
         );
 
+        // Een pakket dat tijdens het opstarten al een tekst vertaalt, laat de
+        // translator het JSON-taalbestand inlezen terwijl de meeste pakketten
+        // hun taalmap nog moeten aanmelden; Laravel leest het daarna niet
+        // opnieuw in. Alles wat later kwam bleef in die taal onvertaald. Na
+        // het opstarten dus weggooien wat er al geladen was: het eerste
+        // vertaalverzoek leest dan opnieuw, met alle taalmappen.
+        $this->app->booted(function ($app): void {
+            if ($app->resolved('translator')) {
+                $app['translator']->setLoaded([]);
+            }
+        });
+
         // Vertrouwde proxy's (DASHED_TRUSTED_PROXIES) op Laravels TrustProxies.
         \Dashed\DashedCore\Classes\TrustedProxies::apply();
 

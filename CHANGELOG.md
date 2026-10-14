@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.80.1 - 2026-10-14
+
+### Fixed
+- **De beheeromgeving bleef deels onvertaald in de taal waarin de applicatie opstart.** Een pakket dat tijdens het opstarten al een tekst vertaalt (dashed-articles bij het aanmelden van zijn vertaalbare modellen) liet de translator het JSON-taalbestand inlezen toen pas een paar pakketten hun taalmap hadden aangemeld. Laravel leest het daarna niet opnieuw in, dus teksten van pakketten die later opstarten (dashed-forms en alles daarna) bleven Nederlands voor een Engelstalige beheerder op een site met Engels als standaardtaal. Na het opstarten wordt nu weggegooid wat de translator al geladen had, zodat het eerste vertaalverzoek alle taalmappen meeneemt.
+
 ## v4.80.0 - 2026-10-06
 
 ### Added
