@@ -5,8 +5,8 @@ namespace Dashed\DashedCore\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Dashed\DashedCore\Models\Customsetting;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Dashed\DashedCore\Enums\IntegrationStatus;
 
 /**
