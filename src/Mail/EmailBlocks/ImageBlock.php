@@ -28,7 +28,7 @@ class ImageBlock extends EmailBlock
             ->label(self::label())
             ->icon('heroicon-o-photo')
             ->schema([
-                mediaHelper()->field('image', 'Afbeelding', isImage: true, required: true),
+                mediaHelper()->field('image', 'Afbeelding', isImage: true),
                 TextInput::make('alt')->label(__('Alt-tekst')),
                 TextInput::make('url')->label(__('Link (optioneel)')),
             ]);
