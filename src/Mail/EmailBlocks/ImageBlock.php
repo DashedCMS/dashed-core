@@ -36,10 +36,19 @@ class ImageBlock extends EmailBlock
 
     public static function render(array $blockData, array $context): string
     {
-        $media = mediaHelper()->getSingleMedia($blockData['image'] ?? null);
+        // getSingleMedia() geeft '' bij niets, een object met een
+        // url-eigenschap bij een media-item en een geplakte URL ongewijzigd
+        // terug; getFullUrl() bestaat op geen van drie.
+        $media = ($blockData['image'] ?? null) ? mediaHelper()->getSingleMedia($blockData['image']) : '';
+
+        $src = match (true) {
+            is_object($media) => (string) ($media->url ?? ''),
+            is_string($media) => $media,
+            default => '',
+        };
 
         return view('dashed-core::emails.blocks.image', [
-            'src' => $media?->getFullUrl(),
+            'src' => $src,
             'alt' => $blockData['alt'] ?? '',
             'url' => $blockData['url'] ?? null,
         ])->render();
