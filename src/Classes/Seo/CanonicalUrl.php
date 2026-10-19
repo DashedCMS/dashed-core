@@ -14,13 +14,23 @@ class CanonicalUrl
 {
     public static function for(Request $request, ?object $model): string
     {
-        $base = $model && method_exists($model, 'getUrl')
-            ? (string) $model->getUrl(app()->getLocale(), false)
-            : $request->url();
+        $base = $request->url();
 
-        if (parse_url($base, PHP_URL_PATH) !== '/') {
-            $base = rtrim($base, '/');
+        // De URL van het model alleen als hij dezelfde pagina is als het verzoek
+        // (hooguit anders in hoofdletters of trailing slash). Een categorie met
+        // één product geeft bijvoorbeeld de product-URL terug, en zonder
+        // overzichtspagina een kale plaatshouder; dat is nooit de canonical.
+        if ($model && method_exists($model, 'getUrl')) {
+            $modelUrl = (string) $model->getUrl(app()->getLocale(), false);
+            if (self::samePage($modelUrl, $base)) {
+                $base = $modelUrl;
+            }
         }
+
+        // De homepage eindigt op een slash (zoals het WebSite-schema), elke
+        // andere pagina niet (FrontendMiddleware stuurt een trailing slash weg).
+        $path = (string) parse_url($base, PHP_URL_PATH);
+        $base = $path === '' || $path === '/' ? rtrim($base, '/') . '/' : rtrim($base, '/');
 
         $page = $request->query('page');
 
@@ -29,5 +39,14 @@ class CanonicalUrl
         }
 
         return $base;
+    }
+
+    protected static function samePage(string $a, string $b): bool
+    {
+        // Alleen het pad: de host van url() kan van APP_URL komen waar het
+        // verzoek via een andere (site-)host binnenkwam.
+        $normalize = fn (string $url) => strtolower(trim((string) parse_url($url, PHP_URL_PATH), '/'));
+
+        return str_starts_with($a, 'http') && $normalize($a) === $normalize($b);
     }
 }
