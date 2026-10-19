@@ -4,12 +4,12 @@ namespace Dashed\DashedCore\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Spatie\SchemaOrg\Schema;
 use Dashed\DashedCore\Classes\Sites;
-use Dashed\DashedCore\Models\Review;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Cache;
 use Dashed\DashedCore\Models\Customsetting;
+use Dashed\DashedCore\Classes\Seo\SiteSchemas;
+use Dashed\DashedCore\Classes\Seo\BusinessProfile;
 
 class FrontendMiddleware
 {
@@ -131,120 +131,15 @@ class FrontendMiddleware
             seo()->metaData('metaImage', $siteShared['defaultMetaImageUrl']);
         }
 
-        // ---- ORGANIZATION SCHEMA ----
+        // ---- ORGANIZATION + WEBSITE SCHEMA ----
+        // Opgebouwd uit het bedrijfsprofiel (BusinessProfile), per site
+        // gecachet tot een betrokken instelling of review verandert.
 
-        $schema = Schema::organization()
-            ->identifier($request->url() . '#Organization')
-            ->legalName($siteName)
-            ->email($company['email'])
-            ->telephone($company['phone'])
-            ->logo($logo->url ?? '')
-            ->address(
-                $company['street'] . ' ' . $company['street_number'] . ', ' .
-                $company['postal_code'] . ' ' . $company['city'] . ', ' .
-                $company['country']
-            )
-            ->addProperties([
-                'address' => [
-                    'streetAddress' => $company['street'] . ' ' . $company['street_number'],
-                    'postalCode' => $company['postal_code'],
-                    'addressCountry' => $company['country'],
-                ],
-            ])
-            ->url($request->url())
-            ->contactPoint(
-                Schema::contactPoint()
-                    ->telephone($company['phone'])
-                    ->email($company['email'])
-            );
-
-        $reviewSchemas = Cache::remember(
-            "schema:reviews:site:{$siteId}:v1",
-            now()->addDay(),
-            function () use ($siteId) {
-                $reviews = Review::query()
-                    ->whereNotNull('stars')
-                    ->whereNotNull('review')
-                    ->orderBy('stars', 'desc')
-                    ->latest()
-                    ->take(10)
-                    ->get();
-
-                if ($reviews->isEmpty()) {
-                    return [];
-                }
-
-                $ratingMap = [
-                    1 => '1',
-                    2 => '2',
-                    3 => '3',
-                    4 => '4',
-                    5 => '5',
-                ];
-
-                return $reviews->map(function ($review) use ($ratingMap) {
-                    $reviewText = (string) $review->review;
-                    $reviewName = mb_strlen($reviewText) > 60
-                        ? mb_substr($reviewText, 0, 57) . '...'
-                        : $reviewText;
-
-                    return Schema::review()
-                        ->name($reviewName ?: 'Review')
-                        ->author(
-                            Schema::person()->name($review->name ?: 'Anoniem')
-                        )
-                        ->reviewBody($reviewText)
-                        ->reviewRating(
-                            Schema::rating()
-                                ->ratingValue($ratingMap[(int)$review->stars] ?? (string)$review->stars)
-                                ->bestRating('5')
-                                ->worstRating('1')
-                        );
-                })->all();
-            }
-        );
-
-        if (! empty($reviewSchemas)) {
-            $schema->addProperties([
-                'review' => $reviewSchemas,
-            ]);
-
-            foreach (Review::distinct('provider')->pluck('provider') as $provider) {
-                $amountOfReviews = Review::query()
-                    ->where('provider', $provider)
-                    ->whereNotNull('stars')
-                    ->whereNotNull('review')
-                    ->count();
-                $rating = Review::query()
-                    ->where('provider', $provider)
-                    ->whereNotNull('stars')
-                    ->whereNotNull('review')
-                    ->avg('stars');
-
-                $schema->aggregateRating(
-                    Schema::aggregateRating()
-                        ->ratingValue((int)$rating)
-                        ->bestRating(5)
-                        ->worstRating(1)
-                        ->reviewCount($amountOfReviews)
-                        ->url($provider === 'own' ? url('/') : ($provider === 'google' ? 'https://www.google.com/' : ('https://www.' . $provider . '.com/'))),
-                );
-            }
-        } else {
-            if ($googleMaps['synced']) {
-                $schema->aggregateRating(
-                    Schema::aggregateRating()
-                        ->ratingValue($googleMaps['rating'])
-                        ->bestRating(5)
-                        ->worstRating(1)
-                        ->reviewCount($googleMaps['review_count'])
-                        ->url('https://www.google.com/')
-                );
-            }
-        }
+        $profile = BusinessProfile::for($siteId, app()->getLocale());
 
         seo()->metaData('schemas', array_merge([
-            'localBusiness' => $schema,
+            'organization' => SiteSchemas::organization($profile),
+            'webSite' => SiteSchemas::webSite($profile),
         ], seo()->metaData('schemas')));
 
         // ---- VIEW SHARES ----

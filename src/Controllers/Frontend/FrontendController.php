@@ -166,24 +166,16 @@ class FrontendController extends Controller
      */
     protected function enrichSchemasWithPageMeta(): void
     {
-        $schemas = seo()->metaData('schemas');
+        // Een meta-afbeelding is vaak nog een media-id; hier wordt hij een URL.
+        // De naam en afbeelding van het organisatieschema blijven die van de
+        // site, niet van de pagina.
+        if ($metaImage = seo()->metaData('metaImage')) {
+            $media = mediaHelper()->getSingleMedia($metaImage, 'huge');
 
-        if (isset($schemas['localBusiness'])) {
-            // Naam updaten naar actuele paginatitel
-            $schemas['localBusiness']->name(seo()->metaData('metaTitle'));
-
-            // Meta image (indien numeric id / referentie) -> URL resolven en voor zowel schema als seo opslaan
-            if ($metaImage = seo()->metaData('metaImage')) {
-                $media = mediaHelper()->getSingleMedia($metaImage, 'huge');
-
-                if ($media && $media->url) {
-                    $schemas['localBusiness']->image($media->url);
-                    seo()->metaData('metaImage', $media->url);
-                }
+            if (is_object($media) && ! empty($media->url)) {
+                seo()->metaData('metaImage', $media->url);
             }
         }
-
-        seo()->metaData('schemas', $schemas);
     }
 
     /**
