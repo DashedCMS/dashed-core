@@ -54,7 +54,19 @@ class SiteSchemas
             $schema->address($postal);
         }
 
-        if (($profile['telephone'] ?? null) || ($profile['email'] ?? null)) {
+        // Een OnlineStore of Organization is geen plaats: openingstijden,
+        // prijsklasse en geo bestaan daar niet en de validator meldt ze.
+        // Uren horen daar bij de klantenservice (contactPoint.hoursAvailable).
+        $isLocal = in_array($type, BusinessProfile::LOCAL_TYPES, true);
+        $hours = ! empty($profile['openingHours']) ? array_map(
+            fn (array $rule) => Schema::openingHoursSpecification()
+                ->dayOfWeek($rule['days'])
+                ->opens($rule['opens'])
+                ->closes($rule['closes']),
+            array_values($profile['openingHours']),
+        ) : [];
+
+        if (($profile['telephone'] ?? null) || ($profile['email'] ?? null) || (! $isLocal && $hours)) {
             $contact = Schema::contactPoint()->contactType('customer service');
 
             if ($profile['telephone'] ?? null) {
@@ -65,6 +77,10 @@ class SiteSchemas
                 $contact->email($profile['email']);
             }
 
+            if (! $isLocal && $hours) {
+                $contact->hoursAvailable($hours);
+            }
+
             $schema->contactPoint($contact);
         }
 
@@ -72,21 +88,15 @@ class SiteSchemas
             $schema->sameAs(array_values($profile['sameAs']));
         }
 
-        if (! empty($profile['openingHours'])) {
-            $schema->openingHoursSpecification(array_map(
-                fn (array $rule) => Schema::openingHoursSpecification()
-                    ->dayOfWeek($rule['days'])
-                    ->opens($rule['opens'])
-                    ->closes($rule['closes']),
-                array_values($profile['openingHours']),
-            ));
+        if ($isLocal && $hours) {
+            $schema->openingHoursSpecification($hours);
         }
 
-        if ($profile['priceRange'] ?? null) {
+        if ($isLocal && ($profile['priceRange'] ?? null)) {
             $schema->priceRange($profile['priceRange']);
         }
 
-        if ($geo = $profile['geo'] ?? null) {
+        if ($isLocal && ($geo = $profile['geo'] ?? null)) {
             $schema->geo(Schema::geoCoordinates()->latitude($geo['latitude'])->longitude($geo['longitude']));
         }
 
