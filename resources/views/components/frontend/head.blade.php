@@ -1,9 +1,8 @@
 <?php
 cms()->checkModelPassword($model ?? null);
 
-if (is_numeric(seo()->metaData('metaImage'))) {
-    seo()->metaData('metaImage', mediaHelper()->getSingleMedia(seo()->metaData('metaImage'), 'original')->url ?? '');
-}
+$metaImage = \Dashed\DashedCore\Classes\Seo\MetaImage::resolve(seo()->metaData('metaImage'));
+$metaDescription = \Dashed\DashedCore\Classes\Seo\MetaDescription::for((string) seo()->metaData('metaDescription'), $model ?? null, (string) ($defaultMetaDescription ?? ''));
 ?><?php
 $tracking = $trackingSettings ?? [];
 
@@ -109,27 +108,35 @@ $ogSiteName = $siteName ?? config('app.name');
     $canonical = seo()->metaData('canonical') ?: \Dashed\DashedCore\Classes\Seo\CanonicalUrl::for(request(), $headModel);
     $robots = \Dashed\DashedCore\Classes\Seo\RobotsDecision::for(request(), $headModel, (string) \Dashed\DashedCore\Classes\Sites::getActive());
 @endphp
-<meta name="description" content="{{ seo()->metaData('metaDescription') }}">
+@if($metaDescription !== '')
+<meta name="description" content="{{ $metaDescription }}">
+@endif
 <link rel="canonical" href="{{ $canonical }}">
 <meta property="og:url" content="{{ $canonical }}">
 <meta property="og:site_name" content="{{ $ogSiteName }}">
 <meta property="og:title" content="{{ seo()->metaData('metaTitle') }}">
-<meta property="og:description" content="{{ seo()->metaData('metaDescription') }}">
+@if($metaDescription !== '')
+<meta property="og:description" content="{{ $metaDescription }}">
+@endif
 <meta property="og:type" content="{{ seo()->metaData('ogType') }}">
 <meta property="og:locale"
       content="{{ \Dashed\LaravelLocalization\Facades\LaravelLocalization::getCurrentLocaleRegional() }}">
-@if(seo()->metaData('metaImage'))
-    <meta property="og:image" content="{!! seo()->metaData('metaImage') !!}">
+@if($metaImage['url'])
+    <meta property="og:image" content="{!! $metaImage['url'] !!}">
+    @if($metaImage['width'] && $metaImage['height'])
+        <meta property="og:image:width" content="{{ $metaImage['width'] }}">
+        <meta property="og:image:height" content="{{ $metaImage['height'] }}">
+    @endif
+    <meta property="og:image:alt" content="{{ seo()->metaData('metaTitle') }}">
 @endif
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="{{ seo()->metaData('metaTitle') }}">
 
 <meta name="twitter:title" content="{{ seo()->metaData('metaTitle') }}">
-<meta name="twitter:description" content="{{ seo()->metaData('metaDescription') }}">
+@if($metaDescription !== '')
+<meta name="twitter:description" content="{{ $metaDescription }}">
+@endif
 <meta name="twitter:card" content="summary_large_image">
-@if(seo()->metaData('metaImage'))
-    <meta name="twitter:image" content="{!! seo()->metaData('metaImage') !!}">
+@if($metaImage['url'])
+    <meta name="twitter:image" content="{!! $metaImage['url'] !!}">
 @endif
 @if(seo()->metaData('twitterSite'))
     <meta name="twitter:site" content="{{ seo()->metaData('twitterSite') }}">
@@ -139,9 +146,11 @@ $ogSiteName = $siteName ?? config('app.name');
 @endif
 
 <meta itemprop="name" content="{{ seo()->metaData('metaTitle') }}">
-<meta itemprop="description" content="{{ seo()->metaData('metaDescription') }}">
-@if(seo()->metaData('metaImage'))
-    <meta itemprop="image" content="{!! seo()->metaData('metaImage') !!}">
+@if($metaDescription !== '')
+<meta itemprop="description" content="{{ $metaDescription }}">
+@endif
+@if($metaImage['url'])
+    <meta itemprop="image" content="{!! $metaImage['url'] !!}">
 @endif
 
 <meta name="robots" content="{{ $robots }}">
