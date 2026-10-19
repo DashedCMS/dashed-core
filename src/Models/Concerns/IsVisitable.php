@@ -35,8 +35,13 @@ trait IsVisitable
     use SoftDeletes;
     use HasCustomBlocks;
 
-    /** Request-scoped memo of the overview Page per using-class (FPM-safe; see plan risk note for Octane). */
-    protected static array $overviewPageCache = [];
+    /**
+     * Memo van getOverviewPage() per klasse, per verzoek. Op de
+     * request-attributen en niet als static: een static overleeft het verzoek
+     * onder Octane en de herstart tussen twee tests, en hield dan een null (of
+     * een oude pagina) vast nadat de instelling veranderde.
+     */
+    protected const OVERVIEW_PAGE_CACHE_ATTRIBUTE = 'dashed-core.overview-pages';
 
     public static function bootIsVisitable()
     {
@@ -332,13 +337,17 @@ trait IsVisitable
     public static function getOverviewPage(): ?Page
     {
         $cacheKey = static::class;
-        if (array_key_exists($cacheKey, static::$overviewPageCache)) {
-            return static::$overviewPageCache[$cacheKey];
+        $memo = request()->attributes->get(static::OVERVIEW_PAGE_CACHE_ATTRIBUTE, []);
+        if (array_key_exists($cacheKey, $memo)) {
+            return $memo[$cacheKey];
         }
 
-        return static::$overviewPageCache[$cacheKey] = Page::publicShowable()->find(
+        $memo[$cacheKey] = Page::publicShowable()->find(
             Customsetting::get(str(class_basename(static::class))->snake()->lower() . '_overview_page_id', Sites::getActive())
         );
+        request()->attributes->set(static::OVERVIEW_PAGE_CACHE_ATTRIBUTE, $memo);
+
+        return $memo[$cacheKey];
     }
 
     public function getUrl($activeLocale = null, bool $native = true)

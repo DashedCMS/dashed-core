@@ -145,13 +145,6 @@ $ogSiteName = $siteName ?? config('app.name');
     <meta name="twitter:creator" content="{{ seo()->metaData('twitterCreator') }}">
 @endif
 
-<meta itemprop="name" content="{{ seo()->metaData('metaTitle') }}">
-@if($metaDescription !== '')
-<meta itemprop="description" content="{{ $metaDescription }}">
-@endif
-@if($metaImage['url'])
-    <meta itemprop="image" content="{!! $metaImage['url'] !!}">
-@endif
 
 <meta name="robots" content="{{ $robots }}">
 
