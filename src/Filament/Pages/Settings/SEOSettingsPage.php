@@ -10,6 +10,7 @@ use Dashed\DashedCore\Classes\Sites;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Tabs;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -44,6 +45,8 @@ class SEOSettingsPage extends Page
             $formData["default_meta_data_twitter_site_{$site['id']}"] = Customsetting::get('default_meta_data_twitter_site', $site['id']);
             $formData["default_meta_data_twitter_creator_{$site['id']}"] = Customsetting::get('default_meta_data_twitter_creator', $site['id']);
             $formData["default_meta_data_image_{$site['id']}"] = Customsetting::get('default_meta_data_image', $site['id']);
+            $formData["meta_title_suffix_{$site['id']}"] = Customsetting::get('meta_title_suffix', $site['id'], '');
+            $formData["default_meta_data_description_{$site['id']}"] = Customsetting::get('default_meta_data_description', $site['id'], '');
             $formData['seo_check_models'] = Customsetting::get('seo_check_models', null, false);
             //            $formData["force_trailing_slash"] = Customsetting::get('force_trailing_slash', null, false);
         }
@@ -61,6 +64,15 @@ class SEOSettingsPage extends Page
             $newSchema = [
                 TextEntry::make("Meta data voor {$site['name']}")
                     ->state('Dit is de standaard voor meta data.'),
+                TextInput::make("meta_title_suffix_{$site['id']}")
+                    ->label(__('Titel-achtervoegsel'))
+                    ->maxLength(100)
+                    ->helperText(__('Komt achter elke paginatitel, bijvoorbeeld " | Lovora". Leeg is geen achtervoegsel.')),
+                Textarea::make("default_meta_data_description_{$site['id']}")
+                    ->label(__('Standaard meta-omschrijving'))
+                    ->rows(3)
+                    ->maxLength(300)
+                    ->helperText(__('Alleen gebruikt als een pagina geen eigen omschrijving heeft en er ook geen tekst uit de inhoud te halen is.')),
                 TextInput::make("default_meta_data_twitter_site_{$site['id']}")
                     ->label(__('Twitter site'))
                     ->maxLength(255)
@@ -107,6 +119,8 @@ class SEOSettingsPage extends Page
             Customsetting::set('default_meta_data_twitter_site', $this->form->getState()["default_meta_data_twitter_site_{$site['id']}"], $site['id']);
             Customsetting::set('default_meta_data_twitter_creator', $this->form->getState()["default_meta_data_twitter_creator_{$site['id']}"], $site['id']);
             Customsetting::set('default_meta_data_image', $this->form->getState()["default_meta_data_image_{$site['id']}"], $site['id']);
+            Customsetting::set('meta_title_suffix', $this->form->getState()["meta_title_suffix_{$site['id']}"] ?? '', $site['id']);
+            Customsetting::set('default_meta_data_description', $this->form->getState()["default_meta_data_description_{$site['id']}"] ?? '', $site['id']);
             Customsetting::set('seo_check_models', $this->form->getState()['seo_check_models'], $site['id']);
             //            Customsetting::set('force_trailing_slash', $this->form->getState()["force_trailing_slash"], $site['id']);
         }

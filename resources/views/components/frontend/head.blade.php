@@ -86,7 +86,7 @@ $ogSiteName = $siteName ?? config('app.name');
     {!! $model->metaData->head_scripts ?? '' !!}
 @endif
 
-<title>{{ seo()->metaData('metaTitle') }}</title>
+<title>{{ \Dashed\DashedCore\Classes\Seo\PageTitle::withSuffix((string) seo()->metaData('metaTitle'), (string) ($metaTitleSuffix ?? ''), (string) ($siteName ?? '')) }}</title>
 
 @isset($model)
     @php

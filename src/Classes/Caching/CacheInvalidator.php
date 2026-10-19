@@ -69,7 +69,7 @@ class CacheInvalidator
     {
         $siteId = $siteId ?? Sites::getActive();
 
-        Cache::forget('frontend:site:' . $siteId . ':shared:v1');
+        Cache::forget('frontend:site:' . $siteId . ':shared:v2');
     }
 
     /**

@@ -44,7 +44,7 @@ class FrontendMiddleware
         //   - seo()->metaData('robots'): gebruikt app()->isLocal() (ok statisch, maar seo() is request-scoped)
         //   - $reviewSchemas: heeft eigen cache (schema:reviews:site:{siteId}:v1)
         $siteShared = Cache::remember(
-            "frontend:site:{$siteId}:shared:v1",
+            "frontend:site:{$siteId}:shared:v2",
             now()->addSeconds(300),
             function () use ($siteId) {
                 $webmasterTags = [
@@ -107,6 +107,10 @@ class FrontendMiddleware
                     'extraBodyScripts' => Customsetting::get('extra_body_scripts', $siteId, ''),
                     'extraHeadScripts' => Customsetting::get('extra_scripts', $siteId, ''),
                     'defaultMetaImageUrl' => $defaultMetaImageUrl,
+                    'metaTitleSuffix' => (string) Customsetting::get('meta_title_suffix', $siteId, ''),
+                    'defaultMetaDescription' => (string) Customsetting::get('default_meta_data_description', $siteId, ''),
+                    'twitterSite' => (string) Customsetting::get('default_meta_data_twitter_site', $siteId, ''),
+                    'twitterCreator' => (string) Customsetting::get('default_meta_data_twitter_creator', $siteId, ''),
                 ];
             }
         );
@@ -131,6 +135,13 @@ class FrontendMiddleware
             seo()->metaData('metaImage', $siteShared['defaultMetaImageUrl']);
         }
 
+        if ($siteShared['twitterSite']) {
+            seo()->set('twitterSite', $siteShared['twitterSite']);
+        }
+        if ($siteShared['twitterCreator']) {
+            seo()->set('twitterCreator', $siteShared['twitterCreator']);
+        }
+
         // ---- ORGANIZATION + WEBSITE SCHEMA ----
         // Opgebouwd uit het bedrijfsprofiel (BusinessProfile), per site
         // gecachet tot een betrokken instelling of review verandert.
@@ -151,6 +162,8 @@ class FrontendMiddleware
         View::share('favicon', $favicon);
         View::share('extraHeadScripts', $extraHeadScripts);
         View::share('siteName', $siteName);
+        View::share('metaTitleSuffix', $siteShared['metaTitleSuffix']);
+        View::share('defaultMetaDescription', $siteShared['defaultMetaDescription']);
 
         $response = $next($request);
 

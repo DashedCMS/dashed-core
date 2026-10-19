@@ -53,13 +53,7 @@ class FrontendController extends Controller
         // Locale-prefix strippen (bijv. nl/slug, en/slug)
         $slug = $this->stripLocalePrefix($slug);
 
-        // Twitter / default meta image – 1x settings ophalen
-        $twitterSite = Customsetting::get('default_meta_data_twitter_site');
-        if ($twitterSite) {
-            seo()->metaData('twitterSite', $twitterSite);
-            seo()->metaData('twitterCreator', $twitterSite);
-        }
-
+        // Twitter-handles zet FrontendMiddleware, voor elke route.
         $defaultMetaImage = Customsetting::get('default_meta_data_image');
         if ($defaultMetaImage) {
             // Let op: dit is bewust de "ruwe" waarde (id / referentie),
