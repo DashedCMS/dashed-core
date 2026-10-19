@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Cache;
 use Dashed\DashedCore\Classes\Locales;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\Model;
+use Dashed\DashedCore\Classes\Seo\BusinessProfile;
 use Dashed\DashedCore\Classes\Caching\PurgeDecision;
 use Dashed\DashedCore\Classes\Caching\CacheInvalidator;
 
@@ -55,6 +56,10 @@ class Customsetting extends Model
                     // Oud per-setting cache key-pattern voor backwards compat
                     Cache::forget($customsetting->name . '-' . $site['id'] . '-' . $localeId);
                 }
+            }
+
+            if (BusinessProfile::watches($customsetting->name)) {
+                BusinessProfile::forget();
             }
 
             // Runtime cache voor deze request leegmaken
