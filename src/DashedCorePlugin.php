@@ -15,6 +15,7 @@ use Dashed\DashedCore\Filament\Resources\SentEmailResource;
 use Dashed\DashedCore\Filament\Pages\ContentQualityDashboard;
 use Dashed\DashedCore\Filament\Resources\GlobalBlockResource;
 use Dashed\DashedCore\Filament\Pages\Settings\SEOSettingsPage;
+use Dashed\DashedCore\Filament\Pages\Settings\BusinessProfileSettingsPage;
 use Dashed\DashedCore\Filament\Resources\NotFoundPageResource;
 use Dashed\DashedCore\Filament\Pages\NotificationSubscriptions;
 use Dashed\DashedCore\Filament\Resources\EmailTemplateResource;
@@ -59,6 +60,7 @@ class DashedCorePlugin implements Plugin
                 SettingsPage::class,
                 GeneralSettingsPage::class,
                 SEOSettingsPage::class,
+                BusinessProfileSettingsPage::class,
                 ImageSettingsPage::class,
                 CacheSettingsPage::class,
                 HorizonDashboardPage::class,

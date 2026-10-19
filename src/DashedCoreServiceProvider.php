@@ -97,6 +97,7 @@ use Dashed\DashedCore\Classes\RichEditorPlugins\HtmlIdPlugin;
 use Dashed\DashedCore\Commands\InvalidatePasswordResetTokens;
 use Dashed\DashedCore\Livewire\Frontend\Search\SearchResults;
 use Dashed\DashedCore\Filament\Pages\Settings\SEOSettingsPage;
+use Dashed\DashedCore\Filament\Pages\Settings\BusinessProfileSettingsPage;
 use Dashed\DashedCore\Livewire\Infolists\SEO\SEOScoreInfoList;
 use Dashed\DashedCore\Performance\Images\ImagePriorityTracker;
 use Dashed\DashedCore\Performance\Scripts\DeferredScriptStore;
@@ -1107,6 +1108,16 @@ MARKDOWN,
         );
 
         cms()->registerSettingsDocs(
+            page: BusinessProfileSettingsPage::class,
+            title: 'Bedrijfsprofiel',
+            intro: 'Elke pagina stuurt een bedrijfsschema (schema.org) mee met naam, logo, adres, contact, profielen en beoordelingen. Dat wordt automatisch gevuld uit de kaart Algemeen, de SEO-kaart, Google Maps en gekoppelde pakketten. Hier zet je alleen wat anders moet.',
+            sections: [[
+                'heading' => 'Wat kun je hier instellen?',
+                'body' => 'Het soort organisatie (bijvoorbeeld Store voor een fysieke winkel), extra profielen zoals Facebook of LinkedIn, een prijsklasse, openingstijden en de coördinaten van je vestiging. Elk veld toont wat er nu automatisch de deur uitgaat; leeg laten betekent die automatische waarde.',
+            ]],
+        );
+
+        cms()->registerSettingsDocs(
             page: \Dashed\DashedCore\Filament\Pages\Settings\ReviewSettingsPage::class,
             title: 'Reviews instellingen',
             intro: 'Bepaal op welke pagina van de website reviews getoond worden.',
@@ -1852,6 +1863,7 @@ MARKDOWN,
         cms()->registerSettingsPage(SecuritySettingsPage::class, 'Beveiliging', 'shield-check', 'IP-beperking, automatisch uitloggen, beveiligingsmeldingen en verzoeklimieten');
         cms()->registerSettingsPage(\Dashed\DashedCore\Filament\Pages\Settings\SecurityCheckPage::class, 'Beveiligingscheck', 'shield-exclamation', 'Wat er aan beveiliging aan of uit staat op deze installatie');
         cms()->registerSettingsPage(SEOSettingsPage::class, 'SEO', 'identification', 'SEO van de website');
+        cms()->registerSettingsPage(BusinessProfileSettingsPage::class, 'Bedrijfsprofiel', 'building-office', 'Hoe je bedrijf in Google en andere zoekmachines staat; leeg is automatisch');
         cms()->registerSettingsPage(ImageSettingsPage::class, 'Afbeelding', 'photo', 'Afbeelding van de website');
         cms()->registerSettingsPage(CacheSettingsPage::class, 'Cache', 'photo', 'Cache van de website');
         cms()->registerSettingsPage(SearchSettingsPage::class, 'Search', 'magnifying-glass', 'Zoek instellingen van de website');
