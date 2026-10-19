@@ -493,6 +493,10 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         // Builder-key voor packages die een sectie willen bijdragen aan de
         // admin samenvatting-mails. Initieel leeg zodat de key gevonden kan
         // worden door dump-tools en de Filament-pagina niet faalt.
+        // Pagina's die nooit in de index horen (zoeken, login, account); ec-core vult
+        // winkelwagen en afrekenen aan. Gelezen door RobotsDecision.
+        cms()->builder('noindexPageSettings', ['search_page_id', 'login_page_id', 'account_page_id']);
+
         cms()->builder('summaryContributors', []);
 
         cms()->builder('summaryContributors', [

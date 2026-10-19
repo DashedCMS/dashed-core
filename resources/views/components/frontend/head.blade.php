@@ -104,9 +104,14 @@ $ogSiteName = $siteName ?? config('app.name');
     @endif
 @endisset
 
+@php
+    $headModel = $model ?? null;
+    $canonical = seo()->metaData('canonical') ?: \Dashed\DashedCore\Classes\Seo\CanonicalUrl::for(request(), $headModel);
+    $robots = \Dashed\DashedCore\Classes\Seo\RobotsDecision::for(request(), $headModel, (string) \Dashed\DashedCore\Classes\Sites::getActive());
+@endphp
 <meta name="description" content="{{ seo()->metaData('metaDescription') }}">
-<link rel="canonical" href="{{ request()->url() }}">
-<meta property="og:url" content="{{ request()->url() }}">
+<link rel="canonical" href="{{ $canonical }}">
+<meta property="og:url" content="{{ $canonical }}">
 <meta property="og:site_name" content="{{ $ogSiteName }}">
 <meta property="og:title" content="{{ seo()->metaData('metaTitle') }}">
 <meta property="og:description" content="{{ seo()->metaData('metaDescription') }}">
@@ -139,8 +144,7 @@ $ogSiteName = $siteName ?? config('app.name');
     <meta itemprop="image" content="{!! seo()->metaData('metaImage') !!}">
 @endif
 
-<meta name="robots"
-      content="{{ (app()->isLocal() || (isset($model) && $model->metaData && $model->metaData->noindex)) ? 'noindex, nofollow' : 'index, follow' }}">
+<meta name="robots" content="{{ $robots }}">
 
 @foreach(seo()->metaData('webmasterTags') as $platform => $webmasterTag)
     @if($webmasterTag)

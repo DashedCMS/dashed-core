@@ -1,0 +1,70 @@
+<?php
+
+namespace Dashed\DashedCore\Classes\Seo;
+
+use Illuminate\Http\Request;
+use Dashed\DashedCore\Models\Customsetting;
+
+/**
+ * Eén plek voor de robots-regel. Lokaal blijft alles buiten de index (ook
+ * nofollow, zoals het was). Een zoek-, filter- of sorteerparameter, het
+ * vinkje op het model, of een pagina die via de haak noindexPageSettings als
+ * winkelwagen, afrekenen, zoeken, login of account geregistreerd staat,
+ * geeft noindex met follow: de links op zo'n pagina mogen gewoon gevolgd
+ * worden. ?page=N alleen is geen reden.
+ */
+class RobotsDecision
+{
+    public const QUERY_KEYS = ['search', 'activeFilters', 'sortBy', 'sort-by', 'order', 'pagination'];
+
+    public static function for(Request $request, ?object $model, string $siteId): string
+    {
+        if (app()->isLocal()) {
+            return 'noindex, nofollow';
+        }
+
+        if ($model && self::modelWantsNoindex($model)) {
+            return 'noindex, follow';
+        }
+
+        foreach (self::QUERY_KEYS as $key) {
+            if ($request->query->has($key)) {
+                return 'noindex, follow';
+            }
+        }
+
+        if ($model && self::isRegisteredNoindexPage($model, $siteId)) {
+            return 'noindex, follow';
+        }
+
+        return 'index, follow';
+    }
+
+    protected static function modelWantsNoindex(object $model): bool
+    {
+        try {
+            $metadata = $model->metadata ?? null;
+        } catch (\Throwable) {
+            return false;
+        }
+
+        return is_object($metadata) && (bool) ($metadata->noindex ?? false);
+    }
+
+    protected static function isRegisteredNoindexPage(object $model, string $siteId): bool
+    {
+        if (! class_exists(\Dashed\DashedPages\Models\Page::class) || ! $model instanceof \Dashed\DashedPages\Models\Page) {
+            return false;
+        }
+
+        foreach (cms()->builder('noindexPageSettings') as $setting) {
+            $pageId = Customsetting::get($setting, $siteId);
+
+            if ($pageId !== null && $pageId !== '' && (string) $pageId === (string) $model->getKey()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}

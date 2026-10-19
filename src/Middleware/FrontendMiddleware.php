@@ -125,7 +125,6 @@ class FrontendMiddleware
         // ---- SEO META ----
 
         seo()->metaData('webmasterTags', $webmasterTags);
-        seo()->metaData('robots', app()->isLocal() ? 'noindex, nofollow' : 'index, follow');
         seo()->metaData('metaTitle', $siteName);
 
         if (! seo()->metaData('metaImage') && $siteShared['defaultMetaImageUrl']) {
