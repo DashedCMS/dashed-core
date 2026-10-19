@@ -141,6 +141,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         // alphabetically - dashed-ai before dashed-core) sees the same shared
         // instance when calling cms()->registerSetting().
         $this->app->singleton(\Dashed\DashedCore\Settings\SettingsRegistry::class);
+        $this->app->scoped(\Dashed\DashedCore\SeoManager::class);
 
         // Same pattern for the webhook event-id resolver: payment-gateway
         // providers register their extractors in bootingPackage(), so the

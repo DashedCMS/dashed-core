@@ -474,7 +474,6 @@ trait IsVisitable
         }
 
         self::setSeoMetadata($model);
-        self::setAlternateUrls($model);
         self::shareViewData($model, $className, $overviewPage);
 
         return $returnForRoute;
@@ -509,21 +508,6 @@ trait IsVisitable
         if ($model->metadata && $model->metadata->image) {
             seo()->metaData('metaImage', $model->metadata->image);
         }
-    }
-
-    private static function setAlternateUrls($model)
-    {
-        $currentLocale = app()->getLocale();
-        $alternateUrls = Sites::getLocales()
-            ->reject(fn ($locale) => $locale['id'] === $currentLocale)
-            ->mapWithKeys(function ($locale) use ($model, $currentLocale) {
-                app()->setLocale($locale['id']);
-                $url = $model->getUrl();
-                app()->setLocale($currentLocale);
-
-                return [$locale['id'] => $url];
-            });
-        seo()->metaData('alternateUrls', $alternateUrls);
     }
 
     private static function shareViewData($model, $className, $overviewPage)

@@ -2,17 +2,13 @@
 
 namespace Dashed\DashedCore;
 
-use Dashed\DashedCore\Models\Customsetting;
-
+/**
+ * Per verzoek (scoped binding in DashedCoreServiceProvider). Een statische
+ * opslag lekte tussen verzoeken onder Octane en in een wachtrij-worker.
+ */
 class SeoManager
 {
-    public function __construct()
-    {
-        //        self::metaData('metaImage', app(\Dashed\Drift\UrlBuilder::class)->url('dashed', Customsetting::get('default_meta_data_image'), []));
-        //        dump(self::metaData('meteImage'));
-    }
-
-    protected static $metaData = [
+    protected const DEFAULTS = [
         'metaTitle' => '',
         'metaDescription' => '',
         'metaImage' => '',
@@ -21,18 +17,41 @@ class SeoManager
         'twitterCreator' => '',
         'webmasterTags' => [],
         'robots' => 'index, follow',
+        'canonical' => '',
         'schemas' => [],
-        'alternateUrls' => [],
     ];
 
+    protected array $metaData = self::DEFAULTS;
+
+    /**
+     * Historisch gedrag: een falsy $value leest. Een waarde op leeg zetten
+     * gaat via set().
+     */
     public function metaData(string $name, string|array|null $value = null): self|string|array
     {
         if (! $value) {
-            return static::$metaData[$name] ?? '';
+            return $this->metaData[$name] ?? '';
         }
 
-        static::$metaData[$name] = $value;
+        $this->metaData[$name] = $value;
 
         return $this;
+    }
+
+    public function set(string $name, mixed $value): static
+    {
+        $this->metaData[$name] = $value;
+
+        return $this;
+    }
+
+    public function all(): array
+    {
+        return $this->metaData;
+    }
+
+    public function reset(): void
+    {
+        $this->metaData = self::DEFAULTS;
     }
 }
