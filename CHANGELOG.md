@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.82.0 - 2026-10-19
+
+### Added
+- **Trackingscripts uitstellen** (Instellingen → Algemeen, per site, standaard uit). Met de schakelaar aan laadt de frontend Tag Manager, gtag.js, de Facebook-pixel en de scripts uit "extra scripts" pas na de eerste interactie van de bezoeker (pointer, toets, touch, scroll) of 3 seconden na `load`. De stubs (`dataLayer`, `gtag()`, `fbq()`, en wat een inline snippet zelf definieert) blijven direct beschikbaar, dus events van vóór dat moment staan in de wachtrij en gaan alsnog uit; de Purchase met `eventID` op de bedankpagina blijft zo ontdubbeld met de Conversions API. `Classes\DelayedScripts::rewrite()` zet de extra scripts om naar `type="text/plain" data-dashed-delayed` (JSON-LD en `<noscript>` blijven staan), `loader()` is het stukje script in de head dat ze activeert; `window.dashedLoadDelayedScripts()` doet dat op verzoek. Aanleiding: op lovora.nl kostten de pixels samen ruim 1 seconde blokkering op mobiel (Lighthouse, 19 oktober 2026).
+
 ## v4.80.1 - 2026-10-14
 
 ### Fixed

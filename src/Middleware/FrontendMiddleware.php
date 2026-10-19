@@ -93,6 +93,7 @@ class FrontendMiddleware
                     'enable_google_merchant_center_review_survey' => (bool) Customsetting::get('enable_google_merchant_center_review_survey', $siteId, false),
                     'enable_google_merchant_center_review_badge' => (bool) Customsetting::get('enable_google_merchant_center_review_badge', $siteId, false),
                     'google_analytics_id' => Customsetting::get('google_analytics_id', $siteId),
+                    'scripts_delayed' => (bool) Customsetting::get('tracking_scripts_delayed', $siteId, false),
                 ];
 
                 return [

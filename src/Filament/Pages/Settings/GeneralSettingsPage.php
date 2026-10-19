@@ -69,6 +69,7 @@ class GeneralSettingsPage extends Page
             $formData["facebook_pixel_site_id_{$site['id']}"] = Customsetting::get('facebook_pixel_site_id', $site['id']);
             $formData["trigger_facebook_events_{$site['id']}"] = Customsetting::get('trigger_facebook_events', $site['id']);
             $formData["trigger_tiktok_events_{$site['id']}"] = Customsetting::get('trigger_tiktok_events', $site['id']);
+            $formData["tracking_scripts_delayed_{$site['id']}"] = (bool) Customsetting::get('tracking_scripts_delayed', $site['id'], false);
             $formData["webmaster_tag_google_{$site['id']}"] = Customsetting::get('webmaster_tag_google', $site['id']);
             $formData["webmaster_tag_bing_{$site['id']}"] = Customsetting::get('webmaster_tag_bing', $site['id']);
             $formData["webmaster_tag_alexa_{$site['id']}"] = Customsetting::get('webmaster_tag_alexa', $site['id']);
@@ -225,6 +226,9 @@ class GeneralSettingsPage extends Page
                     ->label(__('Trigger Facebook events')),
                 Toggle::make("trigger_tiktok_events_{$site['id']}")
                     ->label(__('Trigger TikTok events')),
+                Toggle::make("tracking_scripts_delayed_{$site['id']}")
+                    ->label(__('Trackingscripts uitstellen'))
+                    ->helperText(__('Laadt Tag Manager, Analytics, de Facebook-pixel en de extra scripts pas na de eerste interactie van de bezoeker (of 3 seconden na het laden). Events die eerder worden gestuurd blijven in de wachtrij staan.')),
                 TextInput::make("webmaster_tag_google_{$site['id']}")
                     ->label(__('Webmaster tag Google'))
                     ->maxLength(255),
@@ -343,6 +347,7 @@ class GeneralSettingsPage extends Page
             Customsetting::set('facebook_pixel_site_id', $this->form->getState()["facebook_pixel_site_id_{$site['id']}"], $site['id']);
             Customsetting::set('trigger_facebook_events', $this->form->getState()["trigger_facebook_events_{$site['id']}"], $site['id']);
             Customsetting::set('trigger_tiktok_events', $this->form->getState()["trigger_tiktok_events_{$site['id']}"], $site['id']);
+            Customsetting::set('tracking_scripts_delayed', (bool) ($this->form->getState()["tracking_scripts_delayed_{$site['id']}"] ?? false), $site['id']);
             Customsetting::set('webmaster_tag_google', $this->form->getState()["webmaster_tag_google_{$site['id']}"], $site['id']);
             Customsetting::set('webmaster_tag_bing', $this->form->getState()["webmaster_tag_bing_{$site['id']}"], $site['id']);
             Customsetting::set('webmaster_tag_alexa', $this->form->getState()["webmaster_tag_alexa_{$site['id']}"], $site['id']);

@@ -15,9 +15,19 @@ $fbSiteId = $tracking['facebook_pixel_site_id'] ?? null;
 $facebookEnabled = !empty($fbConversionId) || !empty($fbSiteId);
 
 $extraScripts = $extraHeadScripts ?? '';
+$scriptsDelayed = (bool) ($tracking['scripts_delayed'] ?? false);
+
+if ($scriptsDelayed) {
+    $extraScripts = \Dashed\DashedCore\Classes\DelayedScripts::rewrite($extraScripts);
+}
 $ogSiteName = $siteName ?? config('app.name');
 ?>
 
+
+@if($scriptsDelayed)
+    {{-- Trackingscripts laden na de eerste interactie of 3 s na load (instelling "Trackingscripts uitstellen"). --}}
+    {!! \Dashed\DashedCore\Classes\DelayedScripts::loader() !!}
+@endif
 
 @if(app()->isProduction())
     @if($gtmId)
@@ -32,14 +42,18 @@ $ogSiteName = $siteName ?? config('app.name');
                     dl = l !== 'dataLayer' ? '&l=' + l : '';
                 j.async = true;
                 j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+                @if($scriptsDelayed)
+                (window.dashedDelayedLoaders = window.dashedDelayedLoaders || []).push(function () { f.parentNode.insertBefore(j, f); });
+                @else
                 f.parentNode.insertBefore(j, f);
+                @endif
             })(window, document, 'script', 'dataLayer', '{{ $gtmId }}');
         </script>
     @endif
 
     @if($gaId)
         <!-- Google tag (gtag.js) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id={{ $gaId }}"></script>
+        <script @if($scriptsDelayed) type="text/plain" data-dashed-delayed @endif async src="https://www.googletagmanager.com/gtag/js?id={{ $gaId }}"></script>
         <script>
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
@@ -167,7 +181,11 @@ $ogSiteName = $siteName ?? config('app.name');
             t.async = !0;
             t.src = v;
             s = b.getElementsByTagName(e)[0];
+            @if($scriptsDelayed)
+            (window.dashedDelayedLoaders = window.dashedDelayedLoaders || []).push(function () { s.parentNode.insertBefore(t, s); });
+            @else
             s.parentNode.insertBefore(t, s);
+            @endif
         }(window, document, 'script',
             'https://connect.facebook.net/en_US/fbevents.js');
 
