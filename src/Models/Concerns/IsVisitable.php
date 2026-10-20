@@ -4,7 +4,6 @@ namespace Dashed\DashedCore\Models\Concerns;
 
 use Carbon\Carbon;
 use Illuminate\Support\Str;
-use Spatie\Sitemap\Sitemap;
 use Dashed\Seo\Traits\HasSeoScore;
 use Spatie\Activitylog\LogOptions;
 use Dashed\DashedPages\Models\Page;
@@ -12,7 +11,6 @@ use Dashed\DashedCore\Classes\Sites;
 use Illuminate\Support\Facades\View;
 use Dashed\DashedCore\Classes\Locales;
 use Dashed\Seo\Jobs\ScanSpecificResult;
-use Dashed\DashedCore\Classes\UrlHelper;
 use Dashed\DashedCore\Models\UrlHistory;
 use Spatie\Translatable\HasTranslations;
 use Dashed\DashedCore\Models\Customsetting;
@@ -222,24 +220,55 @@ trait IsVisitable
         return $this->hasMany(self::class, 'parent_id');
     }
 
-    //    public static function getSitemapUrls(Sitemap $sitemap): Sitemap
-    //    {
-    //        foreach (self::publicShowable()->get() as $model) {
-    //            foreach (Locales::getLocales() as $locale) {
-    //                if (in_array($locale['id'], Sites::get()['locales'])) {
-    //                    Locales::setLocale($locale['id']);
-    //                    $url = $model->getUrl($locale['id']);
-    //                    //Todo: create another check to see if the page is okay. This is just a quick fix. Maybe do a better check if there is a slug and name available for the item
-    //                    if (UrlHelper::checkUrlResponseCode($url) !== 404) {
-    //                        $sitemap
-    //                            ->add(Url::create($url));
-    //                    }
-    //                }
-    //            }
-    //        }
-    //
-    //        return $sitemap;
-    //    }
+    /**
+     * The <lastmod> of this model in the sitemap: the latest of its own
+     * updated_at, its metadata and its custom blocks, because a changed SEO
+     * title or an extra block changes the page without touching the row.
+     * A model may override this (and sitemapPriority(), sitemapImages()).
+     */
+    public function sitemapLastModified(): ?\DateTimeInterface
+    {
+        $dates = [$this->updated_at];
+
+        if (method_exists($this, 'metadata')) {
+            $dates[] = $this->metadata?->updated_at;
+        }
+
+        if (method_exists($this, 'customBlocks')) {
+            $dates[] = $this->customBlocks?->updated_at;
+        }
+
+        $dates = array_filter($dates);
+
+        return $dates === [] ? null : max($dates);
+    }
+
+    /**
+     * Home 1.0, a page without parent 0.8, a child 0.6. Search engines treat
+     * priority as a hint at most; it mainly orders the crawl of a big site.
+     */
+    public function sitemapPriority(): ?float
+    {
+        if ($this->getAttribute('is_home')) {
+            return 1.0;
+        }
+
+        return $this->getAttribute('parent_id') ? 0.6 : 0.8;
+    }
+
+    /**
+     * Absolute image URLs for the <image:image> entries: the SEO image from
+     * the metadata, then the model's own image or images, each a media id or
+     * a pasted URL.
+     */
+    public function sitemapImages(): array
+    {
+        return \Dashed\DashedCore\Classes\Sitemap::imageUrls([
+            method_exists($this, 'metadata') ? $this->metadata?->image : null,
+            $this->getAttribute('image'),
+            $this->getAttribute('images'),
+        ]);
+    }
 
     public function getStatusAttribute(): bool
     {
