@@ -6,6 +6,7 @@ use Dashed\DashedCore\Classes\Sites;
 use Dashed\DashedCore\Models\Review;
 use Illuminate\Support\Facades\Cache;
 use Dashed\DashedCore\Classes\Locales;
+use Illuminate\Support\Facades\Schema;
 use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedCore\Classes\Caching\CacheInvalidator;
 
@@ -65,7 +66,11 @@ class BusinessProfile
 
     public static function for(string $siteId, string $locale): array
     {
-        return Cache::rememberForever(static::cacheKey($siteId, $locale), fn () => static::build($siteId, $locale, withOverrides: true));
+        // Een dag en niet voor altijd: een nieuw logobestand onder hetzelfde
+        // media-id en een verlopen start- of einddatum van de overzichtspagina
+        // raken geen enkele bewaakte instelling, en zouden anders nooit meer
+        // in het profiel doordringen.
+        return Cache::remember(static::cacheKey($siteId, $locale), now()->addDay(), fn () => static::build($siteId, $locale, withOverrides: true));
     }
 
     public static function cacheKey(string $siteId, string $locale): string
@@ -119,6 +124,7 @@ class BusinessProfile
             'id' => $url . '#organization',
             'name' => (string) Customsetting::get('site_name', $siteId),
             'url' => $url,
+            'localizedUrl' => static::localizedUrl($url, $locale),
             'logo' => static::logo($siteId),
             'telephone' => static::stringOrNull(Customsetting::get('company_phone_number', $siteId)),
             'email' => static::stringOrNull(Customsetting::get('site_to_email', $siteId)),
@@ -128,7 +134,7 @@ class BusinessProfile
             'priceRange' => static::stringOrNull($get('business_price_range')),
             'geo' => static::geo($get('business_geo_lat'), $get('business_geo_lng')),
             'rating' => static::rating($siteId),
-            'reviews' => static::reviews(),
+            'reviews' => static::reviews($siteId),
             'searchUrl' => static::firstFromHook('siteSearchUrl', $siteId),
             'locale' => $locale,
         ];
@@ -178,7 +184,7 @@ class BusinessProfile
         $urls = [];
 
         if ($handle = static::stringOrNull(Customsetting::get('default_meta_data_twitter_site', $siteId))) {
-            $urls[] = str_starts_with($handle, 'https://') ? $handle : 'https://x.com/' . ltrim($handle, '@');
+            $urls[] = static::profileUrl($handle);
         }
 
         if ($placeId = static::stringOrNull(Customsetting::get('google_maps_places_id', $siteId))) {
@@ -242,9 +248,67 @@ class BusinessProfile
         return ['latitude' => (float) $lat, 'longitude' => (float) $lng];
     }
 
+    /**
+     * De root van de site in deze taal: zonder prefix voor de eerste taal,
+     * anders met (/en/).
+     */
+    protected static function localizedUrl(string $url, string $locale): string
+    {
+        $first = Locales::getFirstLocale()['id'] ?? $locale;
+
+        return $locale === $first ? $url : rtrim($url, '/') . '/' . $locale . '/';
+    }
+
+    /**
+     * Een Twitter/X-handle als `@lovora`, `lovora`, `twitter.com/lovora` of
+     * een volledige URL; alles wordt een https-profiel-URL.
+     */
+    protected static function profileUrl(string $handle): string
+    {
+        $handle = trim($handle);
+
+        if (preg_match('#^https?://#i', $handle)) {
+            return preg_replace('#^http://#i', 'https://', $handle);
+        }
+
+        if (preg_match('#^(?:www\.)?(?:twitter\.com|x\.com)/#i', $handle)) {
+            return 'https://' . preg_replace('#^www\.#i', '', $handle);
+        }
+
+        return 'https://x.com/' . ltrim($handle, '@/');
+    }
+
+    /**
+     * Reviews van deze site, of zonder site (de providers kennen geen site,
+     * dus die rijen gelden voor elke site). De kolom kwam er in oktober
+     * 2026 bij; zonder de kolom tellen alle reviews.
+     */
+    protected static function reviewQuery(string $siteId)
+    {
+        $query = Review::query()->whereNotNull('stars');
+
+        if (static::reviewsHaveSite()) {
+            $query->where(fn ($q) => $q->whereNull('site_id')->orWhere('site_id', $siteId));
+        }
+
+        return $query;
+    }
+
+    protected static function reviewsHaveSite(): bool
+    {
+        static $has = null;
+
+        return $has ??= rescue(fn () => Schema::hasColumn((new Review())->getTable(), 'site_id'), false, false);
+    }
+
+    /**
+     * Het cijfer telt elke beoordeling met sterren, ook zonder tekst: een
+     * klant die alleen sterren gaf heeft wel beoordeeld. Alleen de getoonde
+     * Review-items (reviews()) eisen tekst.
+     */
     protected static function rating(string $siteId): ?array
     {
-        $query = Review::query()->whereNotNull('stars')->whereNotNull('review');
+        $query = static::reviewQuery($siteId);
         $count = (int) $query->count();
 
         if ($count > 0) {
@@ -262,10 +326,9 @@ class BusinessProfile
     }
 
     /** @return array<int, array{name: string, body: string, stars: int}> */
-    protected static function reviews(): array
+    protected static function reviews(string $siteId): array
     {
-        return Review::query()
-            ->whereNotNull('stars')
+        return static::reviewQuery($siteId)
             ->whereNotNull('review')
             ->orderByDesc('stars')
             ->latest()

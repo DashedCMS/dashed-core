@@ -17,6 +17,12 @@ class PageTitle
             return $title;
         }
 
+        // Een achtervoegsel als "| Lovora" zonder voorloopspatie plakt anders
+        // aan de titel: "Over ons| Lovora".
+        if (! preg_match('/^\s/u', $suffix)) {
+            $suffix = ' ' . $suffix;
+        }
+
         if ($title === trim($siteName) || str_ends_with($title, $suffix)) {
             return $title;
         }

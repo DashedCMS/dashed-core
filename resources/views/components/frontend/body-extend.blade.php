@@ -206,6 +206,3 @@
     @endforeach
 @endif
 
-@if(isset($model) && $model && method_exists($model, 'breadcrumbs'))
-    <x-dashed-core::frontend.breadcrumbs.schema :breadcrumbs="$model->breadcrumbs()" />
-@endif

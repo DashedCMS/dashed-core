@@ -11,7 +11,7 @@ use Dashed\DashedCore\Models\CustomStructuredData;
  * Everything the head prints as JSON-LD for the current page, in order: the
  * schemas pushed during the request (organization, webSite, product), the
  * model's own schemas (`seoSchemas()`, e.g. Article or ProfilePage), one
- * FAQPage from its FAQ blocks, and the structured data a beheerder applied
+ * FAQPage from its FAQ blocks, its BreadcrumbList, and the structured data a beheerder applied
  * from the AI audit (CustomStructuredData). An applied suggestion whose
  * type is already on the page is skipped: the AI suggests FAQPage, Article
  * and Organization often, and the generated schema is the one that stays
@@ -48,6 +48,15 @@ class ModelSchemas
             if ($faq) {
                 $schemas['faq'] = $faq;
                 $types[] = 'faqpage';
+            }
+        }
+
+        if (! array_key_exists('breadcrumbs', $schemas) && ! in_array('breadcrumblist', $types, true)) {
+            $breadcrumbs = BreadcrumbSchema::for($model);
+
+            if ($breadcrumbs) {
+                $schemas['breadcrumbs'] = $breadcrumbs;
+                $types[] = 'breadcrumblist';
             }
         }
 

@@ -111,6 +111,12 @@ class Sitemap
                 continue;
             }
 
+            // A product without overview page resolves to the root; only the
+            // homepage itself belongs at the root in the sitemap.
+            if (trim((string) parse_url($url, PHP_URL_PATH), '/') === '' && ! ($model->is_home ?? false)) {
+                continue;
+            }
+
             // Absolute here and not via url() in the template: url('/') drops
             // the trailing slash, and the homepage canonical keeps it.
             $urls[$locale['id']] = str_starts_with($url, '/') ? rtrim(url('/'), '/') . $url : $url;

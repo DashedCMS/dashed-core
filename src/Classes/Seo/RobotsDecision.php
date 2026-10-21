@@ -37,6 +37,10 @@ class RobotsDecision
             return 'noindex, follow';
         }
 
+        if (self::isRegisteredNoindexPath($request)) {
+            return 'noindex, follow';
+        }
+
         return 'index, follow';
     }
 
@@ -49,6 +53,32 @@ class RobotsDecision
         }
 
         return is_object($metadata) && (bool) ($metadata->noindex ?? false);
+    }
+
+    /**
+     * Routes zonder paginamodel (retourstatus, proforma, betaallink) melden
+     * zich met een padprefix via de haak noindexPaths; een taalprefix
+     * ervoor telt niet mee.
+     */
+    protected static function isRegisteredNoindexPath(Request $request): bool
+    {
+        $segments = array_values(array_filter(explode('/', trim($request->path(), '/'))));
+
+        if ($segments !== [] && array_key_exists($segments[0], (array) config('laravellocalization.supportedLocales', []))) {
+            array_shift($segments);
+        }
+
+        $path = implode('/', $segments);
+
+        foreach (cms()->builder('noindexPaths') as $prefix) {
+            $prefix = trim((string) $prefix, '/');
+
+            if ($prefix !== '' && ($path === $prefix || str_starts_with($path, $prefix . '/'))) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected static function isRegisteredNoindexPage(object $model, string $siteId): bool

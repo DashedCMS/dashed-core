@@ -129,7 +129,9 @@ class SiteSchemas
         $schema = Schema::webSite();
         $schema->setProperty('@id', rtrim($profile['url'], '/') . '/#website');
         $schema->name($profile['name']);
-        $schema->url($profile['url']);
+        // De url volgt de taal (/en/ op de Engelse site), het @id blijft de
+        // taalneutrale root: één WebSite, meerdere talen.
+        $schema->url($profile['localizedUrl'] ?? $profile['url']);
         $schema->inLanguage($profile['locale']);
         $schema->publisher(['@id' => $profile['id']]);
 

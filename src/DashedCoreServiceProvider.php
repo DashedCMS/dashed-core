@@ -495,7 +495,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         // worden door dump-tools en de Filament-pagina niet faalt.
         // Pagina's die nooit in de index horen (zoeken, login, account); ec-core vult
         // winkelwagen en afrekenen aan. Gelezen door RobotsDecision.
-        cms()->builder('noindexPageSettings', ['search_page_id', 'login_page_id', 'account_page_id']);
+        cms()->builder('noindexPageSettings', ['search_page_id', 'login_page_id', 'account_page_id', 'forgot_password_page_id', 'reset_password_page_id', 'password_protection_page_id', 'not_found_page_id']);
 
         cms()->builder('summaryContributors', []);
 
@@ -1263,6 +1263,10 @@ MARKDOWN,
         $this->app->booted(function () {
             $schedule = app(Schedule::class);
             $schedule->command(CreateSitemap::class)->daily();
+            // Het bedrijfsprofiel leeft een dag in de cache (zie BusinessProfile::for);
+            // deze ronde laat een verlopen start- of einddatum van de
+            // overzichtspagina en een vervangen logo op een vast moment doordringen.
+            $schedule->call(fn () => \Dashed\DashedCore\Classes\Seo\BusinessProfile::forget())->dailyAt('00:10')->name('dashed:business-profile-refresh');
             $schedule->command(InvalidatePasswordResetTokens::class)->everyFifteenMinutes();
             $schedule->command(\Dashed\DashedCore\Commands\RetryWebhooksCommand::class)->everyMinute()->withoutOverlapping();
             $schedule->command(CleanupExpiredRedirects::class)->daily();
