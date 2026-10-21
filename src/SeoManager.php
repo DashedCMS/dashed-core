@@ -19,6 +19,7 @@ class SeoManager
         'robots' => 'index, follow',
         'canonical' => '',
         'schemas' => [],
+        'customStructuredData' => [],
     ];
 
     protected array $metaData = self::DEFAULTS;

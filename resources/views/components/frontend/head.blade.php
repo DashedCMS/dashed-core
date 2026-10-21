@@ -154,7 +154,7 @@ $ogSiteName = $siteName ?? config('app.name');
     @endif
 @endforeach
 
-@foreach(seo()->metaData('schemas') as $schema)
+@foreach(\Dashed\DashedCore\Classes\Seo\ModelSchemas::for($headModel ?? null, (array) seo()->metaData('schemas')) as $schema)
     {!! $schema !!}
 @endforeach
 

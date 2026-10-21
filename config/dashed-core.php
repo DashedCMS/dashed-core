@@ -30,6 +30,12 @@ return [
         'max_per_user' => (int) env('DASHED_NOTIFICATIONS_MAX_PER_USER', 50),
     ],
 
+    'seo' => [
+        // Blocktypes waarvan de vragen in de FAQPage van de pagina komen
+        // (FaqSchema); dashed-marketing leest dezelfde lijst voor zijn audit.
+        'faq_block_types' => ['faq'],
+    ],
+
     'blocks' => [
         'disable_caching' => env('DISABLE_BLOCK_CACHING', false),
         'caching_disabled' => [
