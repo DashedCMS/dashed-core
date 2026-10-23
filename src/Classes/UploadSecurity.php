@@ -60,6 +60,36 @@ class UploadSecurity
         }
 
         config(['livewire.temporary_file_upload.rules' => static::rulesWithGuard(config('livewire.temporary_file_upload.rules'))]);
+
+        static::silenceStartUploadProbes();
+    }
+
+    /**
+     * Scanners pakken de eerste Livewire-snapshot op een publieke pagina (vaak
+     * `notifications`) en roepen daar `_startUpload` op aan, op zoek naar een
+     * plek om een bestand neer te zetten. Livewire weigert dat al met
+     * MissingFileUploadsTraitException; zonder deze mapping werd elke poging
+     * een 500 en een Flare-melding (6000 op dashed.nl). Geen echte browser
+     * doet dit: onze uploads gaan altijd naar het eigen component. Laravel
+     * mapt vóór het rapporteren, en een HttpException wordt nooit
+     * gerapporteerd, dus dit ene punt dekt zowel de melding als de 500.
+     */
+    protected static function silenceStartUploadProbes(): void
+    {
+        if (! class_exists(\Livewire\Features\SupportFileUploads\MissingFileUploadsTraitException::class)) {
+            return;
+        }
+
+        $handler = app(\Illuminate\Contracts\Debug\ExceptionHandler::class);
+
+        if (! method_exists($handler, 'map')) {
+            return;
+        }
+
+        $handler->map(
+            \Livewire\Features\SupportFileUploads\MissingFileUploadsTraitException::class,
+            fn () => new \Symfony\Component\HttpKernel\Exception\HttpException(400, 'Bad Request'),
+        );
     }
 
     /**
