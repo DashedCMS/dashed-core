@@ -1,6 +1,8 @@
 @props([
     'definition',
     'health',
+    'failures' => 0,
+    'lastFailure' => null,
 ])
 
 @php
@@ -31,13 +33,27 @@
                 </h3>
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
                     @if($health->lastSuccessAt)
-                        Laatst geslaagd {{ $health->lastSuccessAt->diffForHumans() }}
+                        {{ __('Laatst geslaagd :tijd', ['tijd' => $health->lastSuccessAt->diffForHumans()]) }}
                     @else
-                        Nog niet getest
+                        {{ __('Nog niet getest') }}
                     @endif
                 </p>
                 @if($health->message)
                     <p class="mt-1 text-xs" style="color: #be123c;">{{ $health->message }}</p>
+                @endif
+                @if($failures > 0)
+                    <p class="mt-1 text-xs" style="color: #be123c;" data-integration-failures>
+                        {{ trans_choice(':aantal fout in de laatste 24 uur|:aantal fouten in de laatste 24 uur', $failures, ['aantal' => $failures]) }}@if($lastFailure?->message): {{ \Illuminate\Support\Str::limit($lastFailure->message, 140) }}@endif
+                    </p>
+                @endif
+                @if(($days = $health->daysUntilExpiry()) !== null)
+                    <p class="mt-1 text-xs" style="color: {{ $days <= 3 ? '#be123c' : ($days <= 14 ? '#b45309' : '#6b7280') }};" data-integration-expiry>
+                        @if($days < 0)
+                            {{ __('Toegang is verlopen, koppel opnieuw.') }}
+                        @else
+                            {{ trans_choice('Toegang verloopt over :dagen dag|Toegang verloopt over :dagen dagen', $days, ['dagen' => $days]) }}
+                        @endif
+                    </p>
                 @endif
             </div>
         </div>

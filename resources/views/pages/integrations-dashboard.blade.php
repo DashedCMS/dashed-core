@@ -22,6 +22,8 @@
                     <x-dashed-core::integration-card
                         :definition="$row['definition']"
                         :health="$row['health']"
+                        :failures="$row['failures'] ?? 0"
+                        :last-failure="$row['lastFailure'] ?? null"
                     />
                 @endforeach
             </div>

@@ -78,6 +78,8 @@ class IntegrationsDashboard extends Page
                 $rows[] = [
                     'definition' => $def,
                     'health' => $runner->run($def),
+                    'failures' => \Dashed\DashedCore\Integrations\IntegrationEvents::failuresSince($def->slug),
+                    'lastFailure' => \Dashed\DashedCore\Integrations\IntegrationEvents::lastFailure($def->slug),
                 ];
             }
             $out[$category] = $rows;

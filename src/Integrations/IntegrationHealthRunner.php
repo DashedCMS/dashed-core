@@ -43,6 +43,18 @@ class IntegrationHealthRunner
 
         $this->persistHeartbeat($def->slug, $siteId, $result);
 
+        if ($result->status === IntegrationStatus::Failing) {
+            IntegrationEvents::failed($def->slug, $result->message, $siteId);
+        }
+
+        // Een health check die zelf geen moment van laatste contact meegeeft
+        // krijgt het jongste van de opgeslagen hartslag en de laatste gemelde
+        // gelukte synchronisatie; anders staat er "Nog niet getest" bij een
+        // koppeling die elke dag werkt.
+        if ($result->lastSuccessAt === null) {
+            $result = $result->withLastSuccess($this->lastSuccess($def->slug, $siteId));
+        }
+
         return $result;
     }
 
@@ -59,6 +71,17 @@ class IntegrationHealthRunner
             // Heartbeat persistence is best-effort; failure here must not
             // sink the health-check result.
         }
+    }
+
+    protected function lastSuccess(string $slug, ?string $siteId): ?Carbon
+    {
+        $heartbeat = rescue(fn () => Customsetting::get("integration_{$slug}_last_success_at", $siteId), null, false);
+        $heartbeat = $heartbeat ? rescue(fn () => Carbon::parse($heartbeat), null, false) : null;
+        $event = IntegrationEvents::lastSuccess($slug, $siteId);
+
+        // Een gemelde synchronisatie zegt meer dan de hartslag van een health
+        // check die vaak alleen kijkt of de instellingen gevuld zijn.
+        return $event ?? $heartbeat;
     }
 
     protected function cacheKey(string $slug, ?string $siteId): string

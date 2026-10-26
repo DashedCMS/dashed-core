@@ -18,7 +18,28 @@ final readonly class IntegrationHealth
         public IntegrationStatus $status,
         public ?string $message = null,
         public ?CarbonInterface $lastSuccessAt = null,
+        public ?CarbonInterface $expiresAt = null,
     ) {
+    }
+
+    /**
+     * Dezelfde uitkomst met een vervaldatum van het token of de sleutel erbij,
+     * voor koppelingen waarvan de toegang na een tijd vanzelf verloopt.
+     */
+    public function withExpiry(?CarbonInterface $expiresAt): self
+    {
+        return new self($this->status, $this->message, $this->lastSuccessAt, $expiresAt);
+    }
+
+    public function withLastSuccess(?CarbonInterface $lastSuccessAt): self
+    {
+        return new self($this->status, $this->message, $lastSuccessAt, $this->expiresAt);
+    }
+
+    /** Dagen tot de toegang verloopt, afgerond naar beneden; null zonder vervaldatum. */
+    public function daysUntilExpiry(): ?int
+    {
+        return $this->expiresAt === null ? null : (int) floor(now()->diffInDays($this->expiresAt, false));
     }
 
     public static function ok(?CarbonInterface $at = null): self

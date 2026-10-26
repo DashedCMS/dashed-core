@@ -1475,6 +1475,18 @@ MARKDOWN,
         );
 
         cms()->registerRetention(
+            Retention::make('integration_events')
+                ->label(__('Synchronisaties van koppelingen'))
+                ->pakket('dashed-core', __('Systeem'))
+                ->tabel('dashed__integration_events')
+                ->termijn(
+                    Termijn::make('integration_events', 30, 'created_at')
+                        ->label(__('Synchronisaties van koppelingen bewaren (dagen)'))
+                        ->uitleg(__('Gelukte en mislukte synchronisaties per koppeling, voor het scherm Koppelingen. Standaard: 30 dagen.'))
+                )
+        );
+
+        cms()->registerRetention(
             Retention::make('webhook_deliveries')
                 ->label(__('Webhook-bezorgingen'))
                 ->pakket('dashed-core', __('Systeem'))

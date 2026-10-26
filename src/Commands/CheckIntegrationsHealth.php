@@ -50,6 +50,7 @@ class CheckIntegrationsHealth extends Command
                     $runner->forget($def->slug, $siteId);
                     $health = $runner->run($def, $siteId);
                     $this->processResult($def, $siteId, $health);
+                    $this->processExpiry($def, $siteId, $health);
                 } catch (Throwable $e) {
                     Log::warning('integration-health: probe failed', [
                         'slug' => $def->slug,
@@ -99,6 +100,16 @@ class CheckIntegrationsHealth extends Command
             return;
         }
 
+        // De bel krijgt dezelfde transities als de mail, ook als er geen
+        // mailadressen zijn ingesteld.
+        $this->notifyAdmins(
+            $nowConnected
+                ? __(':koppeling werkt weer', ['koppeling' => $def->label])
+                : __(':koppeling werkt niet meer', ['koppeling' => $def->label]),
+            $health->message,
+            $nowConnected ? 'success' : 'danger',
+        );
+
         $recipients = Mails::getAdminNotificationEmails();
         if (empty($recipients)) {
             return;
@@ -123,6 +134,57 @@ class CheckIntegrationsHealth extends Command
                     'error' => $e->getMessage(),
                 ]);
             }
+        }
+    }
+
+    /**
+     * Toegang die vanzelf verloopt (een refresh-token van Exact): één melding
+     * bij veertien dagen en één bij drie dagen, en één als hij verlopen is.
+     * Per vervaldatum en drempel één keer, zodat een vernieuwd token weer
+     * opnieuw meetelt.
+     */
+    protected function processExpiry(IntegrationDefinition $def, ?string $siteId, IntegrationHealth $health): void
+    {
+        $days = $health->daysUntilExpiry();
+
+        if ($days === null) {
+            return;
+        }
+
+        $threshold = collect([0, 3, 14])->first(fn (int $limit) => $days <= $limit);
+
+        if ($threshold === null) {
+            return;
+        }
+
+        $key = 'integration_' . $def->slug . '_expiry_notified';
+        $marker = $health->expiresAt->toDateString() . ':' . $threshold;
+
+        if (Customsetting::get($key, $siteId) === $marker) {
+            return;
+        }
+
+        Customsetting::set($key, $marker, $siteId);
+
+        $title = $days < 0
+            ? __('De toegang van :koppeling is verlopen', ['koppeling' => $def->label])
+            : trans_choice('De toegang van :koppeling verloopt over :dagen dag|De toegang van :koppeling verloopt over :dagen dagen', max(0, $days), ['koppeling' => $def->label, 'dagen' => max(0, $days)]);
+
+        $this->notifyAdmins($title, __('Koppel :koppeling opnieuw bij Instellingen om te voorkomen dat de synchronisatie stopt.', ['koppeling' => $def->label]), $days <= 3 ? 'danger' : 'warning');
+
+        foreach (Mails::getAdminNotificationEmails() as $email) {
+            rescue(fn () => \Illuminate\Support\Facades\Mail::to($email)->send(new \Dashed\DashedCore\Mail\NotificationMail($title, $title)), report: false);
+        }
+    }
+
+    protected function notifyAdmins(string $title, ?string $body, string $status): void
+    {
+        foreach (\Dashed\DashedCore\Models\User::query()->whereIn('role', ['admin', 'superadmin'])->get() as $admin) {
+            rescue(fn () => \Filament\Notifications\Notification::make()
+                ->title($title)
+                ->body($body)
+                ->status($status)
+                ->sendToDatabase($admin), report: false);
         }
     }
 }
