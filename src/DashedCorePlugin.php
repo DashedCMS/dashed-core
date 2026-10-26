@@ -68,6 +68,7 @@ class DashedCorePlugin implements Plugin
                 \Dashed\DashedCore\Filament\Pages\TrashPage::class,
                 \Dashed\DashedCore\Filament\Pages\MyTasksPage::class,
                 \Dashed\DashedCore\Filament\Pages\CampaignCalendarPage::class,
+                \Dashed\DashedCore\Filament\Pages\LaunchChecklistPage::class,
                 ContentQualityDashboard::class,
                 AccountSettingsPage::class,
                 SecuritySettingsPage::class,

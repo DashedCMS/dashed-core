@@ -436,6 +436,24 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             },
         );
 
+        // Livegang-checklist op het dashboard, tot de livegang is afgerond.
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::PAGE_START,
+            function (array $scopes = []): string {
+                $pageClass = $scopes[0] ?? null;
+                if (! is_string($pageClass) || ! is_a($pageClass, \Filament\Pages\Dashboard::class, true)
+                    || ! \Dashed\DashedCore\Filament\Pages\LaunchChecklistPage::canAccess()
+                    || \Dashed\DashedCore\Classes\Launch\LaunchChecklist::launchedAt()) {
+                    return '';
+                }
+
+                return rescue(fn () => view('dashed-core::filament.launch-banner', [
+                    'progress' => \Dashed\DashedCore\Classes\Launch\LaunchChecklist::progress(),
+                    'url' => \Dashed\DashedCore\Filament\Pages\LaunchChecklistPage::getUrl(),
+                ])->render(), '', report: false);
+            },
+        );
+
         // "78% compleet" bovenaan de bewerkpagina van een record waarvoor een
         // pakket regels heeft aangemeld (zie Completeness).
         FilamentView::registerRenderHook(
