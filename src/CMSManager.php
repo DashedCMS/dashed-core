@@ -592,6 +592,11 @@ class CMSManager
                 \Filament\View\PanelsRenderHook::BODY_END,
                 fn () => auth()->check() ? view('dashed-core::filament.navigation-search') : '',
             )
+            // Modal voor een opslagconflict op een bewerkpagina (zie SaveConflictGuard).
+            ->renderHook(
+                \Filament\View\PanelsRenderHook::BODY_END,
+                fn () => auth()->check() ? view('dashed-core::filament.save-conflict-modal') : '',
+            )
             // Systeembalk: scheduler, wachtrij, migraties en productie-
             // instellingen, alleen voor superadmins (zie SystemHealth).
             ->renderHook(

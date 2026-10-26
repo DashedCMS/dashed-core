@@ -1264,6 +1264,8 @@ MARKDOWN,
         Livewire::component('search.search-results', SearchResults::class);
         Livewire::component('protection.password-protection', PasswordProtection::class);
         Livewire::component('dashed.dashed-core.livewire.admin.editing-presence-banner', EditingPresenceBanner::class);
+        // Opslagconflict op elke Filament-bewerkpagina, ook in klantprojecten.
+        Livewire::componentHook(\Dashed\DashedCore\Livewire\Hooks\SaveConflictGuard::class);
 
         // Widgets
         Livewire::component('not-found-page-stats', NotFoundPageStats::class);
