@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.95.1 - 2026-10-26
+
+### Fixed
+- **Winkelreviews in de JSON-LD van het OnlineStore-blok zijn schoon.** De naam van een review was de eerste 57 tekens van de tekst, met regeleinden en dubbele spaties en midden in een woord afgekapt; nu één regel, afgekapt op een woordgrens (`SiteSchemas::cleanText()`/`reviewTitle()`). De auteursnaam is ook schoon, en eigen reviews (`provider` own) krijgen `datePublished`; gesynchroniseerde Google-reviews niet, want daar is `created_at` de syncdatum.
+
 ## v4.82.0 - 2026-10-19
 
 ### Added

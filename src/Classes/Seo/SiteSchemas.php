@@ -111,17 +111,45 @@ class SiteSchemas
         }
 
         if (! empty($profile['reviews'])) {
-            $schema->review(array_map(
-                fn (array $review) => Schema::review()
-                    ->name(mb_strlen($review['body']) > 60 ? mb_substr($review['body'], 0, 57) . '...' : ($review['body'] ?: 'Review'))
-                    ->author(Schema::person()->name($review['name'] ?: 'Anoniem'))
-                    ->reviewBody($review['body'])
-                    ->reviewRating(Schema::rating()->ratingValue((int) $review['stars'])->bestRating(5)->worstRating(1)),
-                array_values($profile['reviews']),
-            ));
+            $schema->review(array_map(function (array $review) {
+                $body = static::cleanText($review['body'] ?? '');
+                $node = Schema::review()
+                    ->name(static::reviewTitle($body))
+                    ->author(Schema::person()->name(static::cleanText($review['name'] ?? '') ?: 'Anoniem'))
+                    ->reviewBody($body)
+                    ->reviewRating(Schema::rating()->ratingValue((int) $review['stars'])->bestRating(5)->worstRating(1));
+
+                if (! empty($review['date'])) {
+                    $node->datePublished($review['date']);
+                }
+
+                return $node;
+            }, array_values($profile['reviews'])));
         }
 
         return $schema;
+    }
+
+    /** Eén regel zonder dubbele spaties: een review-tekst bevat vaak regeleinden. */
+    public static function cleanText(string $text): string
+    {
+        return trim(preg_replace('/\s+/u', ' ', $text));
+    }
+
+    /** De eerste 60 tekens van de review, afgekapt op een woordgrens. */
+    public static function reviewTitle(string $body): string
+    {
+        if ($body === '') {
+            return 'Review';
+        }
+        if (mb_strlen($body) <= 60) {
+            return $body;
+        }
+
+        $cut = mb_substr($body, 0, 57);
+        $space = mb_strrpos($cut, ' ');
+
+        return rtrim($space > 30 ? mb_substr($cut, 0, $space) : $cut, " ,.;:-") . '...';
     }
 
     public static function webSite(array $profile): BaseType

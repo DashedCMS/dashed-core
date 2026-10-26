@@ -325,7 +325,7 @@ class BusinessProfile
         return null;
     }
 
-    /** @return array<int, array{name: string, body: string, stars: int}> */
+    /** @return array<int, array{name: string, body: string, stars: int, date: ?string}> */
     protected static function reviews(string $siteId): array
     {
         return static::reviewQuery($siteId)
@@ -339,6 +339,8 @@ class BusinessProfile
                 'name' => (string) ($review->name ?: 'Anoniem'),
                 'body' => (string) $review->review,
                 'stars' => (int) $review->stars,
+                // Alleen eigen reviews: bij een gesynchroniseerde (Google) is created_at de syncdatum.
+                'date' => ($review->provider ?: 'own') === 'own' ? $review->created_at?->toDateString() : null,
             ])
             ->all();
     }
