@@ -436,6 +436,37 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             },
         );
 
+        // "Herinner mij" in de kop van elke bewerk- en weergavepagina van een
+        // record (zie ReminderButton en Reminder).
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::PAGE_HEADER_ACTIONS_BEFORE,
+            function (array $scopes = []): string {
+                $pageClass = $scopes[0] ?? null;
+                if (! is_string($pageClass) || ! (is_a($pageClass, EditRecord::class, true) || is_a($pageClass, \Filament\Resources\Pages\ViewRecord::class, true))) {
+                    return '';
+                }
+
+                $page = \Livewire\Livewire::current();
+                $record = is_object($page) && method_exists($page, 'getRecord') ? $page->getRecord() : null;
+                if (! $record instanceof \Illuminate\Database\Eloquent\Model || ! $record->getKey()) {
+                    return '';
+                }
+
+                $resource = $page::getResource();
+                $title = rescue(fn () => (string) $resource::getRecordTitle($record), '', report: false);
+                $label = trim($resource::getModelLabel().': '.($title !== '' ? $title : '#'.$record->getKey()));
+
+                return \Illuminate\Support\Facades\Blade::render('<livewire:dashed.dashed-core.livewire.admin.reminder-button :model-class="$modelClass" :record-key="$recordKey" :label="$label" :url="$url" :key="$key" />', [
+                    'modelClass' => $record::class,
+                    'recordKey' => (string) $record->getKey(),
+                    'label' => \Illuminate\Support\Str::limit(ucfirst($label), 240),
+                    // Niet request()->url(): bij een Livewire-update is dat /livewire/update.
+                    'url' => rescue(fn () => $pageClass::getUrl(['record' => $record]), request()->url(), report: false),
+                    'key' => 'reminder-button-'.sha1($record::class.':'.$record->getKey()),
+                ]);
+            },
+        );
+
         // Verwijderen van iets dat nog gebruikt wordt: de lijst in de
         // bevestiging, en de keuze om de oude URL door te sturen.
         \Dashed\DashedCore\Classes\Usage\UsageDeleteGuard::configure();
@@ -1295,6 +1326,7 @@ MARKDOWN,
         Livewire::component('dashed.dashed-core.livewire.admin.editing-presence-banner', EditingPresenceBanner::class);
         Livewire::component('dashed.dashed-core.livewire.admin.usage-notice', \Dashed\DashedCore\Livewire\Admin\UsageNotice::class);
         Livewire::component('dashed.dashed-core.livewire.admin.background-tasks', \Dashed\DashedCore\Livewire\Admin\BackgroundTasks::class);
+        Livewire::component('dashed.dashed-core.livewire.admin.reminder-button', \Dashed\DashedCore\Livewire\Admin\ReminderButton::class);
         // Opslagconflict op elke Filament-bewerkpagina, ook in klantprojecten.
         Livewire::componentHook(\Dashed\DashedCore\Livewire\Hooks\SaveConflictGuard::class);
 
@@ -1350,6 +1382,7 @@ MARKDOWN,
             $schedule->call(fn () => \Dashed\DashedCore\Classes\SystemHealth::dispatchQueueBeat())->everyFiveMinutes()->name('dashed:queue-heartbeat');
             // Een taak die niets meer van zich laat horen, staat anders eeuwig als bezig in de topbalk.
             $schedule->call(fn () => \Dashed\DashedCore\Models\BackgroundTask::markStale())->everyFifteenMinutes()->name('dashed:background-tasks-stale');
+            $schedule->call(fn () => \Dashed\DashedCore\Classes\Reminders\ReminderSender::sendDue())->everyMinute()->name('dashed:send-reminders');
         });
 
         // Na elke migrate staat de telling van openstaande migraties meteen
@@ -1545,6 +1578,18 @@ MARKDOWN,
                     Termijn::make('background_tasks', 30, 'updated_at')
                         ->label(__('Achtergrondtaken bewaren (dagen)'))
                         ->uitleg(__('Afgelopen exports, vertalingen en andere taken uit het takenicoon in de topbalk. Standaard: 30 dagen.'))
+                )
+        );
+
+        cms()->registerRetention(
+            Retention::make('reminders')
+                ->label(__('Afgeronde herinneringen'))
+                ->pakket('dashed-core', __('Systeem'))
+                ->tabel('dashed__reminders')
+                ->termijn(
+                    Termijn::make('reminders', 180, 'completed_at')
+                        ->label(__('Afgeronde herinneringen bewaren (dagen)'))
+                        ->uitleg(__('Herinneringen en taken die op afgerond staan. Open taken blijven altijd staan. Standaard: 180 dagen.'))
                 )
         );
 
