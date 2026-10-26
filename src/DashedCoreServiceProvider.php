@@ -1251,6 +1251,7 @@ MARKDOWN,
         ]);
 
         cms()->registerRolePermissions('Overige', [
+            'view_trash' => 'Prullenbak bekijken en terugzetten',
             'view_horizon' => 'Horizon bekijken',
             'view_exports' => 'Exports bekijken',
         ]);
@@ -1266,6 +1267,16 @@ MARKDOWN,
         Livewire::component('dashed.dashed-core.livewire.admin.editing-presence-banner', EditingPresenceBanner::class);
         // Opslagconflict op elke Filament-bewerkpagina, ook in klantprojecten.
         Livewire::componentHook(\Dashed\DashedCore\Livewire\Hooks\SaveConflictGuard::class);
+
+        // Prullenbak: welke modellen erin vallen, en "Ongedaan maken" na elke
+        // verwijdering van zo'n model in het paneel.
+        \Dashed\DashedCore\Classes\Trash\Trash::registerDefaults();
+        $this->app->terminating(fn () => \Dashed\DashedCore\Classes\Trash\TrashUndo::reset());
+        \Illuminate\Support\Facades\Event::listen('eloquent.deleted: *', function (string $event, array $payload): void {
+            if (($payload[0] ?? null) instanceof \Illuminate\Database\Eloquent\Model) {
+                rescue(fn () => \Dashed\DashedCore\Classes\Trash\TrashUndo::deleted($payload[0]), report: false);
+            }
+        });
 
         // Widgets
         Livewire::component('not-found-page-stats', NotFoundPageStats::class);
@@ -1473,6 +1484,20 @@ MARKDOWN,
                     Termijn::make('login_attempts', 180, 'created_at')
                         ->label(__('Inlogpogingen bewaren (dagen)'))
                         ->uitleg(__('Elke gelukte, mislukte en geweigerde inlogpoging op het CMS, met IP-adres. Standaard: 180 dagen.'))
+                )
+        );
+
+        cms()->registerRetention(
+            Retention::make('trash')
+                ->label(__('Prullenbak'))
+                ->pakket('dashed-core', __('Systeem'))
+                // Geen tabel: de opruimer loopt alle modellen in de prullenbak
+                // af met purge aan, via het model (zie PrullenbakOpruimer).
+                ->opruimer(new \Dashed\DashedCore\Retention\PrullenbakOpruimer())
+                ->termijn(
+                    Termijn::make('trash', \Dashed\DashedCore\Classes\Trash\Trash::PURGE_DAYS, 'deleted_at')
+                        ->label(__('Prullenbak legen na (dagen)'))
+                        ->uitleg(__('Verwijderde pagina\'s, artikelen, menu\'s, globale blokken en doorverwijzingen gaan daarna definitief weg. Producten, kortingscodes, formulieren en popups blijven staan. Standaard: 30 dagen.'))
                 )
         );
 

@@ -508,6 +508,10 @@ class CMSManager
             // uit de componentnaam terugvinden, en zonder aanmelding eindigt
             // dat sinds Livewire 3.8 in een 419 (release-token mismatch).
             ->livewireComponents([MfaReverify::class])
+            // "Ongedaan maken" uit de melding na verwijderen (zie TrashUndo).
+            ->authenticatedRoutes(function (): void {
+                Route::get('/prullenbak/ongedaan-maken/{token}', \Dashed\DashedCore\Http\Controllers\TrashUndoController::class)->name('trash.undo');
+            })
             ->routes(function (\Filament\Panel $routePanel) {
                 Route::get('/mfa-bevestigen', MfaReverify::class)->name(MfaReverify::ROUTE);
 

@@ -65,6 +65,7 @@ class DashedCorePlugin implements Plugin
                 CacheSettingsPage::class,
                 HorizonDashboardPage::class,
                 IntegrationsDashboard::class,
+                \Dashed\DashedCore\Filament\Pages\TrashPage::class,
                 ContentQualityDashboard::class,
                 AccountSettingsPage::class,
                 SecuritySettingsPage::class,
