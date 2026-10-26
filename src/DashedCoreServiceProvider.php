@@ -1471,6 +1471,10 @@ MARKDOWN,
         cms()->registerContentQualityCheck(new \Dashed\DashedCore\ContentQuality\Checks\MetaTruncatedCheck());
 
         self::registreerBewaartermijnen();
+
+        // Ingeplande pagina's en artikelen op de campagnekalender; de andere
+        // bronnen melden hun eigen pakket aan (zie CampaignCalendar).
+        \Dashed\DashedCore\Classes\Calendar\CampaignCalendar::registerScheduledContent();
         self::registreerVertaalbaren();
     }
 
