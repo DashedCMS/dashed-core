@@ -592,6 +592,12 @@ class CMSManager
                 \Filament\View\PanelsRenderHook::BODY_END,
                 fn () => auth()->check() ? view('dashed-core::filament.navigation-search') : '',
             )
+            // Systeembalk: scheduler, wachtrij, migraties en productie-
+            // instellingen, alleen voor superadmins (zie SystemHealth).
+            ->renderHook(
+                \Filament\View\PanelsRenderHook::BODY_START,
+                fn () => auth()->user()?->role === 'superadmin' ? view('dashed-core::filament.system-health-banner') : '',
+            )
             ->renderHook(
                 \Filament\View\PanelsRenderHook::SIDEBAR_NAV_START,
                 fn () => view('dashed-core::filament.navigation-search-trigger'),

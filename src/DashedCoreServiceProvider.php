@@ -897,6 +897,26 @@ MARKDOWN,
         );
 
         cms()->registerSettingsDocs(
+            page: \Dashed\DashedCore\Filament\Pages\Settings\SystemStatusPage::class,
+            title: 'Systeemstatus',
+            intro: 'Wat er op deze installatie stil kan falen zonder dat iemand het merkt. Superadmins zien een probleem ook als rode of oranje balk bovenin elk scherm.',
+            sections: [
+                [
+                    'heading' => 'Wat wordt er gecontroleerd?',
+                    'body' => <<<MARKDOWN
+- **Scheduler**: elke minuut zet `schedule:run` een hartslag. Is die er tien minuten niet, dan draait de cron niet, en dan staan offertes, betaalherinneringen, Bol-retouren, webhooks en de nachtronde stil.
+- **Wachtrij**: elke vijf minuten gaat er een kleine job de wachtrij in. Wordt die een kwartier niet verwerkt, dan staat de worker stil; moest hij langer dan tien minuten wachten, dan loopt de wachtrij achter.
+- **Migraties**: migraties die na een update nog niet gedraaid zijn.
+- **Productie**: debug-modus aan, een mailer op `log` of `array`, en betaalproviders in testmodus.
+- **APP_URL**: het paneel draait op een ander domein dan `APP_URL` of de site-URL.
+
+Scheduler en wachtrij worden lokaal niet gecontroleerd.
+MARKDOWN,
+                ],
+            ],
+        );
+
+        cms()->registerSettingsDocs(
             page: \Dashed\DashedCore\Filament\Pages\Settings\CacheSettingsPage::class,
             title: 'Cache instellingen',
             intro: 'Met deze pagina leeg je in een klik de volledige cache van de website. Dat dwingt het systeem af om alles opnieuw op te bouwen.',
@@ -1278,7 +1298,18 @@ MARKDOWN,
             $schedule->command(\Dashed\DashedCore\Commands\CheckIntegrationsHealth::class)
                 ->hourly()
                 ->withoutOverlapping();
+            // Hartslagen voor de systeembalk: zonder deze twee ziet niemand dat
+            // schedule:run of de queue-worker stilstaat (zie SystemHealth).
+            $schedule->call(fn () => \Dashed\DashedCore\Classes\SystemHealth::beatScheduler())->everyMinute()->name('dashed:scheduler-heartbeat');
+            $schedule->call(fn () => \Dashed\DashedCore\Classes\SystemHealth::dispatchQueueBeat())->everyFiveMinutes()->name('dashed:queue-heartbeat');
         });
+
+        // Na elke migrate staat de telling van openstaande migraties meteen
+        // goed, in plaats van tot tien minuten later.
+        \Illuminate\Support\Facades\Event::listen(
+            \Illuminate\Database\Events\MigrationsEnded::class,
+            fn () => \Dashed\DashedCore\Classes\SystemHealth::forgetMigrations(),
+        );
 
         if (! $this->app->environment('production')) {
             Mail::alwaysFrom('info@dashed.nl');
@@ -1871,6 +1902,7 @@ MARKDOWN,
         cms()->registerSettingsPage(AccountSettingsPage::class, 'Account', 'user', 'Account instellingen van de website');
         cms()->registerSettingsPage(SecuritySettingsPage::class, 'Beveiliging', 'shield-check', 'IP-beperking, automatisch uitloggen, beveiligingsmeldingen en verzoeklimieten');
         cms()->registerSettingsPage(\Dashed\DashedCore\Filament\Pages\Settings\SecurityCheckPage::class, 'Beveiligingscheck', 'shield-exclamation', 'Wat er aan beveiliging aan of uit staat op deze installatie');
+        cms()->registerSettingsPage(\Dashed\DashedCore\Filament\Pages\Settings\SystemStatusPage::class, 'Systeemstatus', 'heart', 'Scheduler, wachtrij, migraties en productie-instellingen');
         cms()->registerSettingsPage(SEOSettingsPage::class, 'SEO', 'identification', 'SEO van de website');
         cms()->registerSettingsPage(BusinessProfileSettingsPage::class, 'Bedrijfsprofiel', 'building-office', 'Hoe je bedrijf in Google en andere zoekmachines staat; leeg is automatisch');
         cms()->registerSettingsPage(ImageSettingsPage::class, 'Afbeelding', 'photo', 'Afbeelding van de website');
