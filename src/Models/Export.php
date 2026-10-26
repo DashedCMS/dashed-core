@@ -107,5 +107,27 @@ class Export extends Model
         static::deleting(function (Export $export) {
             $export->deleteFile();
         });
+
+        // Gespiegeld naar het takenicoon in de topbalk. Zonder eigen melding:
+        // de exportjobs sturen die al met de downloadlink erin.
+        static::saved(function (Export $export) {
+            BackgroundTask::mirror($export, [
+                'type' => 'export',
+                'label' => $export->label ?: __('Export'),
+                'user_id' => $export->user_id,
+                'notify' => false,
+                'status' => match ($export->status) {
+                    self::STATUS_COMPLETED => BackgroundTask::STATUS_COMPLETED,
+                    self::STATUS_FAILED => BackgroundTask::STATUS_FAILED,
+                    self::STATUS_PROCESSING => BackgroundTask::STATUS_RUNNING,
+                    default => BackgroundTask::STATUS_QUEUED,
+                },
+                'message' => $export->status === self::STATUS_FAILED ? $export->error_message : null,
+                'result_url' => $export->status === self::STATUS_COMPLETED
+                    ? rescue(fn () => \Dashed\DashedCore\Filament\Resources\ExportResource::getUrl(), null, report: false)
+                    : null,
+                'result_label' => $export->status === self::STATUS_COMPLETED ? __('Naar exports') : null,
+            ]);
+        });
     }
 }

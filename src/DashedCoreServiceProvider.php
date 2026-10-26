@@ -1294,6 +1294,7 @@ MARKDOWN,
         Livewire::component('protection.password-protection', PasswordProtection::class);
         Livewire::component('dashed.dashed-core.livewire.admin.editing-presence-banner', EditingPresenceBanner::class);
         Livewire::component('dashed.dashed-core.livewire.admin.usage-notice', \Dashed\DashedCore\Livewire\Admin\UsageNotice::class);
+        Livewire::component('dashed.dashed-core.livewire.admin.background-tasks', \Dashed\DashedCore\Livewire\Admin\BackgroundTasks::class);
         // Opslagconflict op elke Filament-bewerkpagina, ook in klantprojecten.
         Livewire::componentHook(\Dashed\DashedCore\Livewire\Hooks\SaveConflictGuard::class);
 
@@ -1347,6 +1348,8 @@ MARKDOWN,
             // schedule:run of de queue-worker stilstaat (zie SystemHealth).
             $schedule->call(fn () => \Dashed\DashedCore\Classes\SystemHealth::beatScheduler())->everyMinute()->name('dashed:scheduler-heartbeat');
             $schedule->call(fn () => \Dashed\DashedCore\Classes\SystemHealth::dispatchQueueBeat())->everyFiveMinutes()->name('dashed:queue-heartbeat');
+            // Een taak die niets meer van zich laat horen, staat anders eeuwig als bezig in de topbalk.
+            $schedule->call(fn () => \Dashed\DashedCore\Models\BackgroundTask::markStale())->everyFifteenMinutes()->name('dashed:background-tasks-stale');
         });
 
         // Na elke migrate staat de telling van openstaande migraties meteen
@@ -1530,6 +1533,18 @@ MARKDOWN,
                     Termijn::make('trash', \Dashed\DashedCore\Classes\Trash\Trash::PURGE_DAYS, 'deleted_at')
                         ->label(__('Prullenbak legen na (dagen)'))
                         ->uitleg(__('Verwijderde pagina\'s, artikelen, menu\'s, globale blokken en doorverwijzingen gaan daarna definitief weg. Producten, kortingscodes, formulieren en popups blijven staan. Standaard: 30 dagen.'))
+                )
+        );
+
+        cms()->registerRetention(
+            Retention::make('background_tasks')
+                ->label(__('Achtergrondtaken'))
+                ->pakket('dashed-core', __('Systeem'))
+                ->tabel('dashed__background_tasks')
+                ->termijn(
+                    Termijn::make('background_tasks', 30, 'updated_at')
+                        ->label(__('Achtergrondtaken bewaren (dagen)'))
+                        ->uitleg(__('Afgelopen exports, vertalingen en andere taken uit het takenicoon in de topbalk. Standaard: 30 dagen.'))
                 )
         );
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Dashed\DashedCore\Commands;
 
 use Illuminate\Console\Command;
+use Dashed\DashedCore\Models\BackgroundTask;
 use Dashed\DashedCore\Retention\PruneRunner;
 use Dashed\DashedCore\Retention\RetentionRegistry;
 
@@ -39,9 +40,20 @@ class PruneCommand extends Command
             return self::FAILURE;
         }
 
-        $uitkomst = $runner->draai($alleen, max(1, (int) $this->option('chunk')), $droog);
+        // In het takenicoon van de superadmins, zonder melding in de bel: dit
+        // draait elke nacht en heeft geen starter.
+        $taak = $droog ? null : BackgroundTask::begin('prune', __('Logboeken opruimen'), notify: false);
+
+        try {
+            $uitkomst = $runner->draai($alleen, max(1, (int) $this->option('chunk')), $droog);
+        } catch (\Throwable $e) {
+            $taak?->fail($e);
+
+            throw $e;
+        }
 
         if ($uitkomst === []) {
+            $taak?->finish();
             $this->warn(__('Er staat niets in het bewaartermijnenregister.'));
 
             return self::SUCCESS;
@@ -81,6 +93,9 @@ class PruneCommand extends Command
         }
 
         $this->info(collect($uitkomst)->sum('aantal') . ($droog ? ' rijen zouden verdwijnen.' : ' rijen verwijderd.'));
+
+        $samenvatting = __(':aantal rijen verwijderd.', ['aantal' => collect($uitkomst)->sum('aantal')]);
+        $fouten > 0 ? $taak?->fail($samenvatting) : $taak?->finish($samenvatting);
 
         return $fouten > 0 ? self::FAILURE : self::SUCCESS;
     }

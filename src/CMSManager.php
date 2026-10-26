@@ -607,6 +607,11 @@ class CMSManager
                 \Filament\View\PanelsRenderHook::BODY_START,
                 fn () => auth()->user()?->role === 'superadmin' ? view('dashed-core::filament.system-health-banner') : '',
             )
+            // Takenicoon met lopende en recente achtergrondtaken (zie BackgroundTask).
+            ->renderHook(
+                \Filament\View\PanelsRenderHook::USER_MENU_BEFORE,
+                fn () => auth()->check() ? \Illuminate\Support\Facades\Blade::render('<livewire:dashed.dashed-core.livewire.admin.background-tasks />') : '',
+            )
             ->renderHook(
                 \Filament\View\PanelsRenderHook::SIDEBAR_NAV_START,
                 fn () => view('dashed-core::filament.navigation-search-trigger'),
