@@ -412,6 +412,34 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             },
         );
 
+        // "Wordt gebruikt op N plekken" op de bewerkpagina van een pagina,
+        // product, categorie of formulier (zie UsageFinder).
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::PAGE_START,
+            function (array $scopes = []): string {
+                $pageClass = $scopes[0] ?? null;
+                if (! is_string($pageClass) || ! is_a($pageClass, EditRecord::class, true)) {
+                    return '';
+                }
+
+                $page = \Livewire\Livewire::current();
+                $record = is_object($page) && method_exists($page, 'getRecord') ? $page->getRecord() : null;
+                if (! $record instanceof \Illuminate\Database\Eloquent\Model || ! $record->getKey() || ! \Dashed\DashedCore\Classes\Usage\UsageFinder::supports($record)) {
+                    return '';
+                }
+
+                return \Illuminate\Support\Facades\Blade::render('<livewire:dashed.dashed-core.livewire.admin.usage-notice :model-class="$modelClass" :record-key="$recordKey" :key="$key" />', [
+                    'modelClass' => $record::class,
+                    'recordKey' => (string) $record->getKey(),
+                    'key' => 'usage-notice-'.sha1($record::class.':'.$record->getKey()),
+                ]);
+            },
+        );
+
+        // Verwijderen van iets dat nog gebruikt wordt: de lijst in de
+        // bevestiging, en de keuze om de oude URL door te sturen.
+        \Dashed\DashedCore\Classes\Usage\UsageDeleteGuard::configure();
+
         \Dashed\DashedCore\Notifications\NotificationChannels::register('mail', 'E-mail');
         \Dashed\DashedCore\Notifications\NotificationChannels::register('telegram', 'Telegram');
 
@@ -1265,13 +1293,17 @@ MARKDOWN,
         Livewire::component('search.search-results', SearchResults::class);
         Livewire::component('protection.password-protection', PasswordProtection::class);
         Livewire::component('dashed.dashed-core.livewire.admin.editing-presence-banner', EditingPresenceBanner::class);
+        Livewire::component('dashed.dashed-core.livewire.admin.usage-notice', \Dashed\DashedCore\Livewire\Admin\UsageNotice::class);
         // Opslagconflict op elke Filament-bewerkpagina, ook in klantprojecten.
         Livewire::componentHook(\Dashed\DashedCore\Livewire\Hooks\SaveConflictGuard::class);
 
         // Prullenbak: welke modellen erin vallen, en "Ongedaan maken" na elke
         // verwijdering van zo'n model in het paneel.
         \Dashed\DashedCore\Classes\Trash\Trash::registerDefaults();
-        $this->app->terminating(fn () => \Dashed\DashedCore\Classes\Trash\TrashUndo::reset());
+        $this->app->terminating(function (): void {
+            \Dashed\DashedCore\Classes\Trash\TrashUndo::reset();
+            \Dashed\DashedCore\Classes\Usage\UsageDeleteGuard::flush();
+        });
         \Illuminate\Support\Facades\Event::listen('eloquent.deleted: *', function (string $event, array $payload): void {
             if (($payload[0] ?? null) instanceof \Illuminate\Database\Eloquent\Model) {
                 rescue(fn () => \Dashed\DashedCore\Classes\Trash\TrashUndo::deleted($payload[0]), report: false);
