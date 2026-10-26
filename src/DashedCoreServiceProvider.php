@@ -436,6 +436,28 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             },
         );
 
+        // "78% compleet" bovenaan de bewerkpagina van een record waarvoor een
+        // pakket regels heeft aangemeld (zie Completeness).
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::PAGE_START,
+            function (array $scopes = []): string {
+                $pageClass = $scopes[0] ?? null;
+                if (! is_string($pageClass) || ! is_a($pageClass, EditRecord::class, true)) {
+                    return '';
+                }
+
+                $page = \Livewire\Livewire::current();
+                $record = is_object($page) && method_exists($page, 'getRecord') ? $page->getRecord() : null;
+                if (! $record instanceof \Illuminate\Database\Eloquent\Model || ! $record->getKey() || ! \Dashed\DashedCore\Classes\Completeness\Completeness::supports($record)) {
+                    return '';
+                }
+
+                return view('dashed-core::filament.completeness-bar', [
+                    'result' => \Dashed\DashedCore\Classes\Completeness\Completeness::check($record),
+                ])->render();
+            },
+        );
+
         // "Herinner mij" in de kop van elke bewerk- en weergavepagina van een
         // record (zie ReminderButton en Reminder).
         FilamentView::registerRenderHook(
