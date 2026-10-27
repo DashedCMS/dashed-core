@@ -4,11 +4,14 @@ namespace Dashed\DashedCore\Livewire\Frontend\Protection;
 
 use Exception;
 use Livewire\Component;
+use Livewire\Attributes\Locked;
+use Dashed\DashedCore\Classes\RateLimits;
 use Illuminate\Support\Facades\Crypt;
 use Dashed\DashedTranslations\Models\Translation;
 
 class PasswordProtection extends Component
 {
+    #[Locked]
     public $model;
     public ?string $password = '';
 
@@ -50,7 +53,16 @@ class PasswordProtection extends Component
             return;
         }
 
-        if ($this->password != $this->model->metadata->password) {
+        // Tegen raden: per pagina per IP, met de limiter van de inlogformulieren.
+        $seconds = RateLimits::hit('dashed-frontend-auth', sprintf('password-protection:%s:%s|%s', $this->model::class, $this->model->getKey(), request()->ip()));
+
+        if ($seconds !== null) {
+            $this->addError('password', Translation::get('too-many-attempts', 'password-protection', 'Te veel pogingen, probeer het over :seconds: seconden opnieuw.', 'text', ['seconds' => $seconds]));
+
+            return;
+        }
+
+        if (! hash_equals((string) $this->model->metadata->password, (string) $this->password)) {
             $this->addError('password', Translation::get('wrong-password', 'password-protection', 'Wachtwoord is onjuist'));
 
             return;

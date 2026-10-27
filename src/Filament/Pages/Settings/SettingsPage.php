@@ -65,7 +65,15 @@ class SettingsPage extends Page
             ->filter(function ($page) use ($user) {
                 $permission = $page['permission'] ?? null;
 
-                return ! $permission || $user->can($permission);
+                if ($permission && ! $user->can($permission)) {
+                    return false;
+                }
+
+                // Een pagina kan strenger zijn dan zijn recht (Beveiliging is
+                // alleen voor superadmins); dan hoort hij ook niet in de lijst.
+                $class = $page['page'] ?? null;
+
+                return ! is_string($class) || ! method_exists($class, 'canAccess') || $class::canAccess();
             })
             ->filter(fn ($page) => static::heeftRoute($page))
             ->map(fn (array $page) => [

@@ -38,12 +38,23 @@ class Login extends Component
     }
 
     /**
+     * Factor op de limiet per IP over alle e-mailadressen heen. Ruimer dan de
+     * grens per e-mailadres, zodat een kantoor achter één adres niet meteen
+     * vastloopt, maar wel een grens tegen het afgaan van een lijst adressen.
+     */
+    public const PER_IP_FACTOR = 3;
+
+    /**
      * Per IP en per e-mailadres, met het aantal uit Instellingen, Beveiliging
-     * (limiter dashed-frontend-auth). Staat die op 0, dan telt hier niets.
+     * (limiter dashed-frontend-auth), en daarnaast per IP over alle
+     * e-mailadressen heen. Staat de limiter op 0, dan telt hier niets.
      */
     private function ensureNotRateLimited(string $action, string $field): void
     {
-        $seconds = RateLimits::hit('dashed-frontend-auth', $action . '|' . request()->ip());
+        $kind = strtok($action, ':');
+
+        $seconds = RateLimits::hit('dashed-frontend-auth', $kind . ':ip|' . request()->ip(), self::PER_IP_FACTOR)
+            ?? RateLimits::hit('dashed-frontend-auth', $action . '|' . request()->ip());
 
         if ($seconds !== null) {
             throw ValidationException::withMessages([

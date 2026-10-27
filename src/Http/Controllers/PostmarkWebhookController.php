@@ -16,10 +16,27 @@ class PostmarkWebhookController extends Controller
     {
         $secret = config('dashed-core.sent_emails.postmark_webhook_secret');
 
-        if ($secret && ! $this->authorized($request, $secret)) {
+        // Zonder geheim kan iedereen bounces en klachten insturen, en die zetten
+        // adressen op de blokkadelijst. Alleen lokaal en in tests mag dat.
+        if (! $secret) {
+            if (app()->environment('local', 'testing')) {
+                return $this->handle($request, $handler);
+            }
+
+            Log::warning('Postmark webhook geweigerd: POSTMARK_WEBHOOK_SECRET is niet ingesteld.', ['ip' => $request->ip()]);
+
+            return response()->json(['message' => 'Webhook secret not configured'], 403);
+        }
+
+        if (! $this->authorized($request, $secret)) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
+        return $this->handle($request, $handler);
+    }
+
+    protected function handle(Request $request, PostmarkEventHandler $handler): JsonResponse
+    {
         try {
             $handler->handle($request->all());
         } catch (\Throwable $e) {

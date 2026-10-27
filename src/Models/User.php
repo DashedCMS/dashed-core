@@ -139,6 +139,39 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasAppAut
         return $this->role !== 'customer' || $this->roles()->exists();
     }
 
+    /**
+     * Mag $actor dit account overnemen (impersonate) of verwijderen?
+     *
+     * Nooit jezelf. Een account met toegang tot de beheeromgeving (dus ook
+     * een superadmin) alleen door een superadmin: wie een beheerder kan
+     * overnemen of weghalen, heeft zijn rechten. Een gewone klant blijft
+     * voor iedereen met gebruikersrechten te beheren.
+     */
+    public function mayBeManagedBy(?self $actor): bool
+    {
+        if (! $actor || $actor->is($this)) {
+            return false;
+        }
+
+        return $actor->role === 'superadmin' || ! $this->mustLoginViaPanel();
+    }
+
+    /**
+     * Voor stechstudio/filament-impersonate (en lab404): de ingelogde
+     * gebruiker is de actor.
+     */
+    public function canBeImpersonated(): bool
+    {
+        $actor = auth()->user();
+
+        return $actor instanceof self && $this->mayBeManagedBy($actor);
+    }
+
+    public function canImpersonate(): bool
+    {
+        return $this->mustLoginViaPanel();
+    }
+
     public function getFilamentName(): string
     {
         return $this->name;

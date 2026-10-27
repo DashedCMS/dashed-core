@@ -39,6 +39,18 @@ class SecuritySettingsPage extends Page implements HasSchemas
 
     public array $data = [];
 
+    /**
+     * Alleen superadmins. Hier staan de IP-lijst, de sessieduur, wie de
+     * beveiligingsmeldingen krijgt en of beheerders hun wachtwoord mogen
+     * resetten: een beheerder met alleen instellingenrechten zou daarmee
+     * de bewaking rond zijn eigen account kunnen uitzetten. Filament toetst
+     * canAccess() bij het openen en bij elk Livewire-verzoek, dus ook submit().
+     */
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->role === 'superadmin';
+    }
+
     public function mount(): void
     {
         $fill = [
@@ -191,6 +203,8 @@ class SecuritySettingsPage extends Page implements HasSchemas
 
     public function submit()
     {
+        abort_unless(static::canAccess(), 403);
+
         $entries = CmsIpAllowlist::normalize(array_values((array) ($this->form->getState()['cms_allowed_ips'] ?? [])));
 
         $invalid = CmsIpAllowlist::invalidEntries($entries);

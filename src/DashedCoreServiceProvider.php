@@ -1332,6 +1332,7 @@ MARKDOWN,
             'view_redirect' => 'Redirects bekijken',
             'edit_redirect' => 'Redirects bewerken',
             'delete_redirect' => 'Redirects verwijderen',
+            'view_content_quality' => 'Content-kwaliteit bekijken en verbeteren',
         ]);
 
         cms()->registerRolePermissions('Reviews', [

@@ -2,8 +2,9 @@
 
 namespace Dashed\DashedCore\Livewire\Frontend\Account;
 
-use App\Models\User;
 use Livewire\Component;
+use Livewire\Attributes\Locked;
+use Dashed\DashedCore\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Filament\Notifications\Notification;
 use Illuminate\Validation\Rules\Password;
@@ -12,6 +13,7 @@ use Dashed\DashedTranslations\Models\Translation;
 
 class Account extends Component
 {
+    #[Locked]
     public ?User $user = null;
 
     public ?string $email = '';
@@ -19,6 +21,8 @@ class Account extends Component
     public ?string $firstName = '';
 
     public ?string $lastName = '';
+
+    public ?string $currentPassword = '';
 
     public ?string $password = '';
 
@@ -60,7 +64,7 @@ class Account extends Component
         $this->city = $this->user->city;
         $this->country = $this->user->country;
 
-        $this->isCompany = $this->user->is_company;
+        $this->isCompany = (bool) $this->user->is_company;
         $this->company = $this->user->company;
         $this->taxId = $this->user->tax_id;
 
@@ -83,6 +87,10 @@ class Account extends Component
             'lastName' => [
                 'max:255',
             ],
+            'currentPassword' => [
+                'nullable',
+                'max:255',
+            ],
             'password' => [
                 'nullable',
                 Password::defaults(),
@@ -99,7 +107,41 @@ class Account extends Component
 
     public function submit()
     {
+        // Altijd de ingelogde gebruiker, nooit wat er in de snapshot staat.
+        $this->user = auth()->user();
+
+        if (! $this->user) {
+            return redirect(AccountHelper::getLoginUrl());
+        }
+
         $this->validate();
+
+        if ($this->password) {
+            // Een beheeraccount wijzigt zijn wachtwoord in het paneel, waar
+            // MFA, de IP-lijst en de beveiligingsmeldingen omheen staan.
+            if ($this->user->mustLoginViaPanel()) {
+                $this->addError('password', Translation::get('password-change-via-panel', 'account', 'Change the password of this account in the CMS.'));
+
+                return;
+            }
+
+            // Met alleen een overgenomen sessie mag het wachtwoord niet om.
+            // Een account zonder wachtwoord (aangemaakt zonder er een te
+            // kiezen) heeft niets om mee te bevestigen en mag er een zetten.
+            if (filled($this->user->password)) {
+                if (blank($this->currentPassword)) {
+                    $this->addError('currentPassword', Translation::get('current-password-required', 'account', 'Enter your current password to set a new password.'));
+
+                    return;
+                }
+
+                if (! Hash::check((string) $this->currentPassword, (string) $this->user->password)) {
+                    $this->addError('currentPassword', Translation::get('current-password-incorrect', 'account', 'Your current password is incorrect.'));
+
+                    return;
+                }
+            }
+        }
 
         // Basic
         $this->user->first_name = $this->firstName;
@@ -129,7 +171,7 @@ class Account extends Component
 
         $this->user->save();
 
-        $this->reset(['password', 'passwordConfirmation']);
+        $this->reset(['currentPassword', 'password', 'passwordConfirmation']);
 
         Notification::make()
             ->title(Translation::get('account-updated-message', 'account', 'Your account has been updated'))

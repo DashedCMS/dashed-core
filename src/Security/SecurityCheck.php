@@ -309,6 +309,16 @@ class SecurityCheck
             );
         }
 
+        $postmarkSecret = (bool) config('dashed-core.sent_emails.postmark_webhook_secret');
+        $items[] = self::item(
+            'postmark_webhook_secret',
+            __('Postmark-webhook beveiligd'),
+            $postmarkSecret ? self::OK : (config('mail.default') === 'postmark' && ! $isLocal ? self::WARNING : self::INFO),
+            $postmarkSecret
+                ? __('POSTMARK_WEBHOOK_SECRET is ingesteld.')
+                : __('POSTMARK_WEBHOOK_SECRET is niet ingesteld. De webhook weigert dan elk verzoek (behalve lokaal), dus bezorging, bounces en klachten komen niet binnen.')
+        );
+
         foreach (self::$extensions as $extension) {
             foreach ((array) $extension() as $item) {
                 $items[] = $item;

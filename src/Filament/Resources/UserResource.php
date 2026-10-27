@@ -101,6 +101,31 @@ class UserResource extends Resource
     }
 
     /**
+     * Mag $actor het e-mailadres en wachtwoord van $target wijzigen?
+     *
+     * Een account met toegang tot de beheeromgeving (superadmin, de oude
+     * admin-rol of gekoppelde rollen) is een overname waard: wie zijn e-mail
+     * of wachtwoord kan zetten, logt als hem in. Dus alleen een superadmin,
+     * of de gebruiker zelf. Een gewone klant blijft voor edit_user te beheren.
+     */
+    public static function canChangeCredentials(?\Dashed\DashedCore\Models\User $actor, ?\Dashed\DashedCore\Models\User $target): bool
+    {
+        if (! $actor) {
+            return false;
+        }
+
+        if (! $target || ! $target->exists) {
+            return true;
+        }
+
+        if ($actor->role === 'superadmin' || $actor->is($target)) {
+            return true;
+        }
+
+        return ! $target->mustLoginViaPanel();
+    }
+
+    /**
      * Of het rollen-veld zichtbaar is bij deze combinatie.
      *
      * Het veld hing aan role === 'admin', en die rol wordt sinds de
@@ -142,6 +167,8 @@ class UserResource extends Resource
                         TextInput::make('email')
                             ->label(__('Email'))
                             ->unique('users', 'email', fn ($record) => $record)
+                            ->disabled(fn ($record) => ! static::canChangeCredentials(auth()->user(), $record))
+                            ->helperText(fn ($record) => static::canChangeCredentials(auth()->user(), $record) ? null : __('Alleen een superadmin of de gebruiker zelf kan het e-mailadres en wachtwoord van een beheerder wijzigen.'))
                             ->required()
                             ->email()
                             ->maxLength(255),
@@ -171,6 +198,7 @@ class UserResource extends Resource
 
                         TextInput::make('password')
                             ->label(__('Wachtwoord'))
+                            ->visible(fn ($record) => static::canChangeCredentials(auth()->user(), $record))
                             ->nullable()
                             ->password()
                             ->confirmed()
@@ -182,6 +210,7 @@ class UserResource extends Resource
 
                         TextInput::make('password_confirmation')
                             ->label(__('Wachtwoord herhalen'))
+                            ->visible(fn ($record) => static::canChangeCredentials(auth()->user(), $record))
                             ->required(fn (Get $get) => $get('password'))
                             ->password()
                             ->maxLength(255)
@@ -336,11 +365,14 @@ class UserResource extends Resource
                 EditAction::make()
                     ->button(),
                 \Dashed\DashedCore\Filament\Resources\UserResource\Actions\ResetMfaAction::make(),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->visible(fn ($record) => $record->mayBeManagedBy(auth()->user())),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    // Per record getoetst: beheerders en jezelf worden overgeslagen.
+                    DeleteBulkAction::make()
+                        ->authorizeIndividualRecords(fn ($record) => $record->mayBeManagedBy(auth()->user())),
                 ]),
             ]);
     }

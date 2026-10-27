@@ -144,10 +144,14 @@ class RateLimits
      * Voor code die zelf telt (Livewire-componenten, waar geen routemiddleware
      * tussen zit). Geeft het aantal seconden tot de volgende poging, of null
      * als het verzoek door mag; telt het verzoek dan meteen mee.
+     *
+     * $factor vermenigvuldigt het ingestelde aantal, voor een ruimere grens op
+     * een bredere sleutel (bijvoorbeeld alleen het IP-adres) naast de krappe
+     * grens per e-mailadres.
      */
-    public static function hit(string $name, string $key): ?int
+    public static function hit(string $name, string $key, int $factor = 1): ?int
     {
-        $perMinute = self::perMinute($name);
+        $perMinute = self::perMinute($name) * max(1, $factor);
 
         if ($perMinute <= 0) {
             return null;

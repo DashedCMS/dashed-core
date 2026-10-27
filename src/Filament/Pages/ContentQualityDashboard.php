@@ -4,13 +4,17 @@ namespace Dashed\DashedCore\Filament\Pages;
 
 use UnitEnum;
 use BackedEnum;
+use Livewire\Attributes\Locked;
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\Gate;
 use Dashed\DashedAi\Facades\Ai;
 use Illuminate\Support\Collection;
 use Dashed\DashedCore\Classes\Sites;
 use Dashed\DashedAi\Enums\AiCapability;
 use Dashed\DashedAi\Jobs\CreateAltTextForMediaItem;
+use Dashed\DashedCore\ContentQuality\QualityIssue;
 use Dashed\DashedCore\ContentQuality\MetaFieldGenerator;
+use Dashed\DashedCore\ContentQuality\ContentQualityRegistry;
 use Dashed\DashedCore\ContentQuality\ContentQualityScanner;
 use RalphJSmit\Filament\MediaLibrary\Models\MediaLibraryItem;
 use Dashed\DashedCore\ContentQuality\Jobs\GenerateMetaFieldForModel;
@@ -35,6 +39,11 @@ class ContentQualityDashboard extends Page
 
     public ?string $selectedCheck = null;
 
+    /**
+     * Wat er inline bewerkt wordt. Alleen editInline() zet dit, na de controle
+     * in authorizedIssue(); vanuit de browser is het niet te wijzigen.
+     */
+    #[Locked]
     public array $inlineTarget = [];
 
     public array $inlineValues = [];
@@ -47,7 +56,100 @@ class ContentQualityDashboard extends Page
 
     public static function canAccess(): bool
     {
-        return (bool) auth()->user();
+        return (bool) auth()->user()?->can('view_content_quality');
+    }
+
+    /**
+     * Zoekt het item op in de lijst die de scanner voor de actieve site
+     * oplevert, en geeft het alleen terug als de gebruiker het mag bewerken.
+     *
+     * Alles wat de browser meestuurt (klasse, id, veld, afbeelding) is alleen
+     * een zoeksleutel: wat daarna bewerkt wordt komt uit het gevonden item.
+     * Zo kan er nooit een model buiten het register, een item van een andere
+     * site of een willekeurig metadataveld geraakt worden.
+     */
+    protected function authorizedIssue(string $checkKey, ?int $mediaId, ?string $modelClass, int|string|null $modelId, ?string $field = null): ?QualityIssue
+    {
+        $issue = $mediaId
+            ? $this->missingAltIssue($checkKey, $mediaId)
+            : app(ContentQualityScanner::class)
+                ->issues(Sites::getActive(), $checkKey)
+                ->first(fn (QualityIssue $i) => $i->mediaId === null
+                    && $modelClass !== null
+                    && $i->modelClass === $modelClass
+                    && (string) $i->modelId === (string) $modelId
+                    && ($i->field ?? null) === $field);
+
+        if (! $issue || ! $this->mayEdit($issue)) {
+            return null;
+        }
+
+        return $issue;
+    }
+
+    /**
+     * Een afbeelding is alleen te bewerken zolang hij nog geen alt-tekst heeft:
+     * precies wat de controle missing_alt meldt. Een bestaande alt-tekst wordt
+     * hier dus nooit overschreven. Bewust zonder globale scopes, net als de
+     * bibliotheek zelf; afbeeldingen horen niet bij een site.
+     */
+    protected function missingAltIssue(string $checkKey, int $mediaId): ?QualityIssue
+    {
+        if ($checkKey !== 'missing_alt' || ! app(ContentQualityRegistry::class)->check($checkKey)) {
+            return null;
+        }
+
+        $item = MediaLibraryItem::withoutGlobalScopes()->find($mediaId);
+        if (! $item || filled($item->alt_text)) {
+            return null;
+        }
+
+        return new QualityIssue(checkKey: $checkKey, title: (string) ($item->caption ?: '#' . $item->id), mediaId: $item->id);
+    }
+
+    protected function mayEdit(QualityIssue $issue): bool
+    {
+        $user = auth()->user();
+        if (! $user) {
+            return false;
+        }
+
+        if ($issue->mediaId) {
+            $item = MediaLibraryItem::withoutGlobalScopes()->find($issue->mediaId);
+            if (! $item) {
+                return false;
+            }
+
+            // De mediabibliotheek kent zelf geen rechten zolang er geen policy
+            // is; dan geldt hier hetzelfde als in de bibliotheek.
+            return Gate::getPolicyFor(MediaLibraryItem::class) === null
+                || $user->can('update', $item);
+        }
+
+        $registered = collect(app(ContentQualityRegistry::class)->models())
+            ->first(fn ($model) => $model->modelClass === $issue->modelClass);
+        if (! $registered) {
+            return false;
+        }
+
+        $model = $registered->modelClass::find($issue->modelId);
+        if (! $model) {
+            return false;
+        }
+
+        if (method_exists($registered->resourceClass, 'canEdit')) {
+            return $registered->resourceClass::canEdit($model);
+        }
+
+        return Gate::getPolicyFor($model) !== null && $user->can('update', $model);
+    }
+
+    protected function refuse(): void
+    {
+        \Filament\Notifications\Notification::make()
+            ->title(__('Dit item kun je hier niet bewerken.'))
+            ->danger()
+            ->send();
     }
 
     public function getCardsProperty(): array
@@ -77,16 +179,25 @@ class ContentQualityDashboard extends Page
 
     public function editInline(string $checkKey, ?int $mediaId, ?string $modelClass, int|string|null $modelId, ?string $field = null): void
     {
-        $this->inlineTarget = [
-            'checkKey' => $checkKey,
-            'mediaId' => $mediaId,
-            'modelClass' => $modelClass,
-            'modelId' => $modelId,
-            'field' => $field,
-        ];
+        $this->inlineTarget = [];
         $this->inlineValues = [];
 
-        if ($mediaId) {
+        $issue = $this->authorizedIssue($checkKey, $mediaId, $modelClass, $modelId, $field);
+        if (! $issue) {
+            $this->refuse();
+
+            return;
+        }
+
+        $this->inlineTarget = [
+            'checkKey' => $issue->checkKey,
+            'mediaId' => $issue->mediaId,
+            'modelClass' => $issue->modelClass,
+            'modelId' => $issue->modelId,
+            'field' => $issue->field,
+        ];
+
+        if ($issue->mediaId) {
             $this->inlineValues = ['alt' => ''];
 
             return;
@@ -94,11 +205,10 @@ class ContentQualityDashboard extends Page
 
         // Seed one input per affected locale for the targeted meta field;
         // for length checks start from the current text so it can be trimmed.
-        $issue = $this->findIssue($checkKey, $modelClass, $modelId, $field);
-        $metadata = $modelClass && in_array($checkKey, self::REWRITE_CHECKS, true)
-            ? $modelClass::find($modelId)?->metadata
+        $metadata = in_array($issue->checkKey, self::REWRITE_CHECKS, true)
+            ? $issue->modelClass::find($issue->modelId)?->metadata
             : null;
-        $metaField = $this->fieldForCheck($checkKey, $field);
+        $metaField = $this->fieldForCheck($issue->checkKey, $issue->field);
         foreach (($issue?->missingLocales ?? []) as $locale) {
             $this->inlineValues[$locale] = $metadata
                 ? (string) $metadata->getTranslation($metaField, $locale, false)
@@ -109,21 +219,40 @@ class ContentQualityDashboard extends Page
     public function saveInline(bool $openNext = false): void
     {
         $target = $this->inlineTarget;
+        if (! isset($target['checkKey'])) {
+            return;
+        }
+
         $position = $this->issues->search(fn ($i) => $this->isTarget($i, $target));
 
-        if ($target['mediaId'] ?? null) {
-            $item = MediaLibraryItem::withoutGlobalScopes()->find($target['mediaId']);
+        // Opnieuw toetsen: rechten kunnen ingetrokken zijn sinds het openen.
+        $issue = $this->authorizedIssue($target['checkKey'], $target['mediaId'] ?? null, $target['modelClass'] ?? null, $target['modelId'] ?? null, $target['field'] ?? null);
+        if (! $issue) {
+            $this->inlineTarget = [];
+            $this->inlineValues = [];
+            $this->refuse();
+
+            return;
+        }
+
+        if ($issue->mediaId) {
+            $item = MediaLibraryItem::withoutGlobalScopes()->find($issue->mediaId);
             if ($item) {
                 $item->alt_text = trim((string) ($this->inlineValues['alt'] ?? ''));
                 $item->save();
             }
         } else {
-            $modelClass = $target['modelClass'];
-            $model = $modelClass::find($target['modelId']);
+            $model = $issue->modelClass::find($issue->modelId);
             if ($model) {
                 $metadata = $model->metadata ?: $model->metadata()->make();
-                $field = $this->fieldForCheck($target['checkKey'], $target['field'] ?? null);
+                $field = $this->fieldForCheck($issue->checkKey, $issue->field);
+                // Alleen de talen die het item mist; een meegestuurde extra
+                // sleutel wordt geen nieuwe vertaling.
+                $locales = $issue->missingLocales;
                 foreach ($this->inlineValues as $locale => $value) {
+                    if (! in_array($locale, $locales, true)) {
+                        continue;
+                    }
                     $metadata->setTranslation($field, $locale, trim((string) $value));
                 }
                 $model->metadata()->save($metadata);
@@ -166,16 +295,6 @@ class ContentQualityDashboard extends Page
             && ($issue->field ?? null) === ($target['field'] ?? null);
     }
 
-    protected function findIssue(string $checkKey, ?string $modelClass, int|string|null $modelId, ?string $field)
-    {
-        return $this->issues->first(
-            fn ($i) => $i->modelClass === $modelClass
-                && (string) $i->modelId === (string) $modelId
-                && $i->checkKey === $checkKey
-                && ($field === null || $i->field === $field)
-        );
-    }
-
     protected function fieldForCheck(string $checkKey, ?string $field = null): string
     {
         if ($field) {
@@ -192,8 +311,15 @@ class ContentQualityDashboard extends Page
 
     public function aiFix(string $checkKey, ?int $mediaId, ?string $modelClass, int|string|null $modelId, ?string $field = null): void
     {
-        if ($mediaId) {
-            $item = MediaLibraryItem::withoutGlobalScopes()->find($mediaId);
+        $issue = $this->authorizedIssue($checkKey, $mediaId, $modelClass, $modelId, $field);
+        if (! $issue) {
+            $this->refuse();
+
+            return;
+        }
+
+        if ($issue->mediaId) {
+            $item = MediaLibraryItem::withoutGlobalScopes()->find($issue->mediaId);
             if ($item) {
                 CreateAltTextForMediaItem::dispatch($item);
             }
@@ -201,18 +327,13 @@ class ContentQualityDashboard extends Page
             return;
         }
 
-        if (! $modelClass) {
-            return;
-        }
-
-        $model = $modelClass::find($modelId);
+        $model = $issue->modelClass::find($issue->modelId);
         if (! $model) {
             return;
         }
 
-        $issue = $this->findIssue($checkKey, $modelClass, $modelId, $field);
-        $field = $this->fieldForCheck($checkKey, $field);
-        $missing = $issue?->missingLocales ?? [];
+        $field = $this->fieldForCheck($issue->checkKey, $issue->field);
+        $missing = $issue->missingLocales;
 
         $generator = app(MetaFieldGenerator::class);
         $generated = in_array($checkKey, self::REWRITE_CHECKS, true)
@@ -240,6 +361,11 @@ class ContentQualityDashboard extends Page
         $rewrite = in_array($this->selectedCheck, self::REWRITE_CHECKS, true);
 
         foreach ($this->issues as $issue) {
+            // Wat de gebruiker niet los mag bewerken, slaat de bulkactie over.
+            if (! $this->mayEdit($issue)) {
+                continue;
+            }
+
             if ($issue->mediaId) {
                 $item = MediaLibraryItem::withoutGlobalScopes()->find($issue->mediaId);
                 if ($item) {
