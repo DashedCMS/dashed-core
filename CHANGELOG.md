@@ -2,6 +2,12 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.96.1 - 2026-10-27
+
+### Fixed
+- **Overzichtspagina's met een productoverzicht stonden op noindex.** `RobotsDecision` keek naar `$request->query`, maar het productoverzicht (Livewire, `#[Url]`) schrijft bij het renderen zijn standaardwaarden (`search`, `sortBy`, `activeFilters`) daarin. Elke categoriepagina kreeg zo `noindex, follow`, ook zonder parameters in de URL (sinds v4.83.0, 19 oktober 2026). Nu telt alleen de query-string die de bezoeker stuurde, en een lege waarde (`?search=`) is geen filter.
+- **De homepage had twee keer dezelfde broodkruimel.** `breadcrumbs()` laat een kruimel weg als die dezelfde URL heeft als de vorige (homepage zelf, of een overzichtspagina die de homepage is).
+
 ## v4.95.1 - 2026-10-26
 
 ### Fixed

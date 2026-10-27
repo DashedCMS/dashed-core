@@ -360,7 +360,18 @@ trait IsVisitable
             'url' => $this->getUrl(),
         ];
 
-        return $breadcrumbs;
+        // De homepage zelf (of een overzichtspagina die ook de homepage is)
+        // gaf anders twee keer dezelfde kruimel.
+        $unique = [];
+        foreach ($breadcrumbs as $breadcrumb) {
+            $previous = end($unique);
+            if ($previous && $previous['url'] === $breadcrumb['url']) {
+                continue;
+            }
+            $unique[] = $breadcrumb;
+        }
+
+        return $unique;
     }
 
     public static function getOverviewPage(): ?Page

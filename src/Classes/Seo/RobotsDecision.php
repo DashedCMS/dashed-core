@@ -27,10 +27,8 @@ class RobotsDecision
             return 'noindex, follow';
         }
 
-        foreach (self::QUERY_KEYS as $key) {
-            if ($request->query->has($key)) {
-                return 'noindex, follow';
-            }
+        if (self::hasFilterQuery($request)) {
+            return 'noindex, follow';
         }
 
         if ($model && self::isRegisteredNoindexPage($model, $siteId)) {
@@ -42,6 +40,28 @@ class RobotsDecision
         }
 
         return 'index, follow';
+    }
+
+    /**
+     * Alleen de query-string zoals de bezoeker hem stuurde telt. Een
+     * Livewire-component met #[Url]-eigenschappen (het productoverzicht)
+     * schrijft bij het renderen zijn standaardwaarden in $request->query,
+     * waardoor elke overzichtspagina zonder parameters noindex kreeg. Een
+     * lege waarde (?search=) is geen filter.
+     */
+    protected static function hasFilterQuery(Request $request): bool
+    {
+        parse_str((string) $request->server->get('QUERY_STRING', ''), $query);
+
+        foreach (self::QUERY_KEYS as $key) {
+            $value = $query[$key] ?? null;
+
+            if ($value !== null && $value !== '' && $value !== []) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected static function modelWantsNoindex(object $model): bool
