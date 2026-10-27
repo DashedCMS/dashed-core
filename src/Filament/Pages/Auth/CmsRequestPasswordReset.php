@@ -3,6 +3,7 @@
 namespace Dashed\DashedCore\Filament\Pages\Auth;
 
 use Dashed\DashedCore\Classes\Sites;
+use Dashed\DashedCore\Models\LoginAttempt;
 use Illuminate\Support\Facades\Password;
 use Dashed\DashedCore\Classes\CmsPasswordReset;
 use Filament\Auth\Pages\PasswordReset\RequestPasswordReset;
@@ -16,9 +17,12 @@ use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
  * TrustedHosts houdt vreemde hosts al buiten de deur; dit is de tweede laag
  * voor als die uitstaat.
  *
- * En voor een paneelaccount gaat er altijd een beveiligingsmelding uit, en
- * met de schakelaar uit geen resetlink; wat de aanvrager ziet is in beide
- * gevallen de gewone "verstuurd"-melding. Zie CmsPasswordReset.
+ * Voor een paneelaccount met de schakelaar uit gaat er geen resetlink en ook
+ * geen beveiligingsmelding uit, alleen een regel in het inloglogboek: er is
+ * niets gebeurd, en bots die het formulier aflopen leverden anders een mail
+ * per poging op. Gaat de link wel de deur uit, dan volgt de melding. Wat de
+ * aanvrager ziet is in beide gevallen de gewone "verstuurd"-melding. Zie
+ * CmsPasswordReset.
  */
 class CmsRequestPasswordReset extends RequestPasswordReset
 {
@@ -35,7 +39,7 @@ class CmsRequestPasswordReset extends RequestPasswordReset
                 return;
             }
 
-            CmsPasswordReset::notifyRequested($panelUser, linkSent: false);
+            LoginAttempt::record(LoginAttempt::RESULT_RESET_REFUSED, $panelUser->email, $panelUser);
 
             $this->getSentNotification(Password::RESET_LINK_SENT)?->send();
             $this->form->fill();

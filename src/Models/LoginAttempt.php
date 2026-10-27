@@ -34,6 +34,8 @@ class LoginAttempt extends Model
 
     public const RESULT_REMEMBER_REJECTED = 'remember_rejected';
 
+    public const RESULT_RESET_REFUSED = 'reset_refused';
+
     protected $table = 'dashed__login_attempts';
 
     protected $guarded = [];
@@ -57,6 +59,7 @@ class LoginAttempt extends Model
             self::RESULT_IDLE_LOGOUT => __('Automatisch uitgelogd'),
             self::RESULT_SESSION_EXPIRED => __('Sessie verlopen'),
             self::RESULT_REMEMBER_REJECTED => __('Onthoud-mij geweigerd'),
+            self::RESULT_RESET_REFUSED => __('Wachtwoord-reset geweigerd'),
         ];
     }
 
@@ -71,6 +74,7 @@ class LoginAttempt extends Model
             self::RESULT_IDLE_LOGOUT => 'gray',
             self::RESULT_SESSION_EXPIRED => 'gray',
             self::RESULT_REMEMBER_REJECTED => 'warning',
+            self::RESULT_RESET_REFUSED => 'gray',
         ];
     }
 

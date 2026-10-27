@@ -1028,6 +1028,7 @@
     "Wachtwoord van deze pagina": "Password for this page",
     "Wachtwoord vergeten": "Forgot password",
     "Wachtwoord vergeten pagina": "Forgot password page",
+    "Wachtwoord-reset geweigerd": "Password reset refused",
     "Wanneer": "When",
     "Wat er aan beveiliging aan of uit staat op deze installatie": "Which security measures are on or off on this installation",
     "Wat er aan beveiliging aan of uit staat op deze installatie, gelezen op het moment dat je deze pagina opent. Een probleem of aandachtspunt hier is meestal een instelling op de server (.env) of bij Instellingen, Beveiliging.": "Which security measures are on or off on this installation, read at the moment you open this page. A problem or point of attention here is usually a setting on the server (.env) or under Settings, Security.",

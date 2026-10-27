@@ -14,9 +14,11 @@ use Dashed\DashedCore\Mail\CmsPasswordResetRequestedMail;
  * aan zodat een uitrol niemand buitensluit): beheerders resetten dan via een
  * collega-superadmin of `dashed:set-password`.
  *
- * Los daarvan geeft elk reset-verzoek op een paneelaccount een
- * beveiligingsmelding aan de ontvangers van SecurityAlerts, zonder de link
- * erin: die mail is een signaal, geen tweede weg naar het wachtwoord. Wat
+ * Gaat er een resetlink naar een paneelaccount, dan krijgen de ontvangers
+ * van SecurityAlerts een beveiligingsmelding, zonder de link erin: die mail
+ * is een signaal, geen tweede weg naar het wachtwoord. Met de schakelaar uit
+ * gaat er geen link en dus ook geen melding; het verzoek staat dan alleen in
+ * het inloglogboek. Wat
  * de aanvrager ziet is in beide gevallen hetzelfde, anders verraadt de
  * pagina welke adressen een beheerder zijn.
  *
