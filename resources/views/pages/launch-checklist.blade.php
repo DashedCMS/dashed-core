@@ -16,6 +16,11 @@
         .dsh-launch__label { font-weight: 500; }
         .dsh-launch__detail { font-size: .85rem; opacity: .7; margin-top: .15rem; overflow-wrap: anywhere; }
         .dsh-launch__tag { font-size: .7rem; padding: 0 .4rem; border-radius: 999px; border: 1px solid rgb(127 127 127 / .35); margin-left: .35rem; opacity: .75; }
+        .dsh-launch__owner { font-size: .8rem; margin-top: .3rem; }
+        .dsh-launch__owner strong { font-weight: 600; }
+        .dsh-launch__problems { margin: .4rem 0 0; padding: .5rem .75rem .5rem 1.75rem; border-radius: .5rem; background: rgb(220 38 38 / .08); color: #b91c1c; font-size: .85rem; list-style: disc; }
+        .dark .dsh-launch__problems { color: #fca5a5; background: rgb(220 38 38 / .15); }
+        .dsh-launch__checked-by { font-size: .8rem; opacity: .7; margin-top: .3rem; }
         .dsh-launch__link { color: #2563eb; text-decoration: underline; font-size: .85rem; white-space: nowrap; }
     </style>
 
@@ -39,6 +44,19 @@
                     </div>
                     @if ($item['detail'])
                         <div class="dsh-launch__detail">{{ $item['detail'] }}</div>
+                    @endif
+                    @if ($item['owner'])
+                        <div class="dsh-launch__owner"><strong>{{ __('Wie regelt dit:') }}</strong> {{ $item['owner'] }}</div>
+                    @endif
+                    @if ($item['problems'])
+                        <ul class="dsh-launch__problems" data-launch-problems="{{ $item['key'] }}">
+                            @foreach ($item['problems'] as $problem)
+                                <li>{{ $problem }}</li>
+                            @endforeach
+                        </ul>
+                    @endif
+                    @if ($item['checked_by'])
+                        <div class="dsh-launch__checked-by">{{ __('Afgevinkt door :wie op :wanneer', ['wie' => $item['checked_by']['name'], 'wanneer' => \Illuminate\Support\Carbon::parse($item['checked_by']['at'])->format('d-m-Y H:i')]) }}</div>
                     @endif
                 </div>
                 @if ($item['url'])
