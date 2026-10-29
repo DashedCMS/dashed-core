@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.97.1 - 2026-10-29
+
+### Fixed
+- **hreflang wees naar een relatief pad en soms naar een andere pagina.** De alternatieven in de head waren `getUrl($locale, false)` van het model: bij een productgroep een relatief pad (Google negeert relatieve hrefs), en op een variantpagina van een product met "alleen hoofdproduct tonen" de URL van de groep, terwijl de canonical de variant zelf is. `Classes\Seo\HreflangUrls::for()` volgt nu dezelfde regel als de canonical: de URL van het model telt alleen als hij de pagina van het verzoek is (anders de eigen URL, `getUrl($locale, true)`; past geen van beide, dan geen alternatieven), altijd als volledige URL, de homepage met slash. Een taal zonder slug krijgt geen alternatief; x-default is de standaardtaal. Vereist voor producten ec-core ≥ v4.177.1 (`Product::getUrl()` zette daarvoor de taal van het verzoek voor elke URL).
+
 ## v4.96.1 - 2026-10-27
 
 ### Fixed

@@ -87,21 +87,9 @@ $ogSiteName = $siteName ?? config('app.name');
 
 <title>{{ \Dashed\DashedCore\Classes\Seo\PageTitle::withSuffix((string) seo()->metaData('metaTitle'), (string) ($metaTitleSuffix ?? ''), (string) ($siteName ?? '')) }}</title>
 
-@isset($model)
-    @php
-        $hreflangLocales = \Dashed\DashedCore\Classes\Locales::getLocales();
-    @endphp
-    @if(count($hreflangLocales) > 1)
-        <link rel="alternate" hreflang="x-default"
-              href="{{ $model->getUrl($hreflangLocales[0]['id'], false) }}"/>
-        @foreach($hreflangLocales as $locale)
-            @php
-                $hreflangCode = !empty($locale['regional']) ? str_replace('_', '-', $locale['regional']) : $locale['id'];
-            @endphp
-            <link rel="alternate" hreflang="{{ $hreflangCode }}" href="{{ $model->getUrl($locale['id'], false) }}"/>
-        @endforeach
-    @endif
-@endisset
+@foreach(\Dashed\DashedCore\Classes\Seo\HreflangUrls::for(request(), $model ?? null, \Dashed\DashedCore\Classes\Locales::getLocales(), app()->getLocale()) as $hreflangCode => $hreflangUrl)
+    <link rel="alternate" hreflang="{{ $hreflangCode }}" href="{{ $hreflangUrl }}"/>
+@endforeach
 
 @php
     $headModel = $model ?? null;
