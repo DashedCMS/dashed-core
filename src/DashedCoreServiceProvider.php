@@ -172,6 +172,32 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         $this->app->extend('mail.manager', fn ($manager, $app) => new \Dashed\DashedCore\Mail\ContentLocaleMailManager($app));
     }
 
+    /**
+     * Postmark met de tracking-headers als echte API-velden. In de registerfase:
+     * een provider kan de mailer tijdens het booten al aanmaken, en dan is een
+     * extend() daarna te laat.
+     */
+    public function packageRegistered()
+    {
+        $this->callAfterResolving('mail.manager', function (\Illuminate\Mail\MailManager $manager): void {
+            $manager->extend('postmark', function (array $config) {
+                $options = isset($config['message_stream_id']) ? ['message_stream' => $config['message_stream_id']] : [];
+
+                return (new \Symfony\Component\Mailer\Bridge\Postmark\Transport\PostmarkTransportFactory(
+                    null,
+                    new \Dashed\DashedCore\Mail\PostmarkTrackingClient(\Symfony\Component\HttpClient\HttpClient::create()),
+                ))->create(new \Symfony\Component\Mailer\Transport\Dsn(
+                    'postmark+api',
+                    'default',
+                    $config['token'] ?? $config['key'] ?? config('services.postmark.token') ?? config('services.postmark.key'),
+                    null,
+                    null,
+                    $options,
+                ));
+            });
+        });
+    }
+
     public function packageBooted()
     {
         // Vreemde Host-headers buiten de deur, vóór alles wat een URL uit het
@@ -304,6 +330,12 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             \Illuminate\Mail\Events\MessageSending::class,
             \Dashed\DashedCore\Listeners\EnablePostmarkTracking::class,
         );
+
+        \Illuminate\Support\Facades\Event::listen(
+            \Illuminate\Mail\Events\MessageSending::class,
+            \Dashed\DashedCore\Listeners\TrackMailLocally::class,
+        );
+
 
         // Uitloggen uit het CMS in het inloglogboek. Alleen via de uitlogroute
         // van het paneel: de front-end deelt de guard maar hoort hier niet.

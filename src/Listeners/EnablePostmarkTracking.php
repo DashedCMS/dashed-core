@@ -3,16 +3,17 @@
 namespace Dashed\DashedCore\Listeners;
 
 use Illuminate\Mail\Events\MessageSending;
+use Dashed\DashedCore\Classes\MailTracking;
 
 /**
  * Zet de Postmark open-/link-tracking headers per mail, gestuurd door config.
- * Per site uit te zetten via dashed-core.sent_emails.track_opens_clicks.
+ * Alleen als dashed-core.sent_emails.tracking op postmark staat.
  */
 class EnablePostmarkTracking
 {
     public function handle(MessageSending $event): void
     {
-        if (! config('dashed-core.sent_emails.track_opens_clicks', true)) {
+        if (MailTracking::mode() !== MailTracking::MODE_POSTMARK) {
             return;
         }
 

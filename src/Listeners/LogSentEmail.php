@@ -5,6 +5,7 @@ namespace Dashed\DashedCore\Listeners;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Mime\Address;
 use Dashed\DashedCore\Classes\Sites;
+use Dashed\DashedCore\Classes\MailTracking;
 use Dashed\DashedCore\Models\SentEmail;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Mail\Events\MessageSent;
@@ -33,10 +34,19 @@ class LogSentEmail
 
             [$subjectType, $subjectId] = $this->resolveSubject($event->data);
             $withhold = SentEmailScrubber::withholdsBody($event->data);
+            $trackingId = $message->getHeaders()->get(MailTracking::ID_HEADER)?->getBodyAsString();
+            $htmlBody = $message->getHtmlBody();
+
+            // Het logboek bewaart de echte links: anders telt een klik in het
+            // CMS-voorbeeld als een klik van de klant.
+            if ($trackingId && is_string($htmlBody)) {
+                $htmlBody = MailTracking::strip($htmlBody, $trackingId);
+            }
 
             SentEmail::create([
                 'site_id' => $this->currentSiteId(),
                 'message_id' => $event->sent?->getMessageId(),
+                'tracking_id' => $trackingId,
                 'mailable_class' => SentEmailScrubber::classFor($event->data),
                 'from_email' => $from[0]['email'] ?? null,
                 'from_name' => $from[0]['name'] ?? null,
@@ -47,7 +57,7 @@ class LogSentEmail
                     'bcc' => array_column($bcc, 'email'),
                 ],
                 'subject' => (string) ($message->getSubject() ?? ''),
-                'html_body' => $withhold ? SentEmailScrubber::WITHHELD : SentEmailScrubber::scrub($message->getHtmlBody(), $event->data),
+                'html_body' => $withhold ? SentEmailScrubber::WITHHELD : SentEmailScrubber::scrub($htmlBody, $event->data),
                 'text_body' => $withhold ? SentEmailScrubber::WITHHELD : SentEmailScrubber::scrub($message->getTextBody(), $event->data),
                 'attachments' => $this->attachments($message),
                 'subject_type' => $subjectType,

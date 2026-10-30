@@ -13,6 +13,7 @@ use Dashed\DashedCore\Controllers\Frontend\AccountController;
 use Dashed\DashedCore\Controllers\Frontend\FrontendController;
 use Dashed\DashedCore\Controllers\OAuth\GoogleOAuthController;
 use Dashed\DashedCore\Controllers\Frontend\CsrfTokenController;
+use Dashed\DashedCore\Controllers\Frontend\MailTrackingController;
 use Dashed\DashedCore\Middleware\AddLivewireReferrerToFlareMiddleware;
 use Dashed\LaravelLocalization\Middleware\LaravelLocalizationViewPath;
 use Dashed\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter;
@@ -22,6 +23,17 @@ use Dashed\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter;
 Route::get('/dashed/csrf-token', CsrfTokenController::class)
     ->middleware(['web'])
     ->name('dashed.frontend.csrf-token');
+
+// Kliks en opens uit mails: buiten de web-groep, want een pixel of redirect
+// heeft geen sessie nodig. De paden bevatten bewust geen woorden als "track" of
+// "pixel", die op de filterlijsten van adblockers staan.
+Route::get('/m/k/{id}', [MailTrackingController::class, 'click'])
+    ->where('id', '[A-Za-z0-9]{32}')
+    ->name('dashed.frontend.mail.click');
+
+Route::get('/m/p/{id}.gif', [MailTrackingController::class, 'open'])
+    ->where('id', '[A-Za-z0-9]{32}')
+    ->name('dashed.frontend.mail.open');
 
 if (config('dashed-core.default_auth_pages_enabled', true)) {
 

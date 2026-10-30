@@ -8,6 +8,8 @@ return [
         'enabled' => env('DASHED_SENT_EMAILS_ENABLED', true),
         'retention_days' => (int) env('DASHED_SENT_EMAILS_RETENTION_DAYS', 90),
         'track_opens_clicks' => env('DASHED_SENT_EMAILS_TRACK', true),
+        // eigen = meten op het eigen domein, postmark = via track.pstmrk.it, uit = niet meten.
+        'tracking' => env('DASHED_MAIL_TRACKING', 'eigen'),
         'postmark_webhook_secret' => env('POSTMARK_WEBHOOK_SECRET'),
         // Mails waarvan de body nooit in het logboek komt (alleen metadata):
         // ze bevatten per definitie een wachtwoord, code of inloglink.
