@@ -6,6 +6,7 @@ use Throwable;
 use Illuminate\Bus\Queueable;
 use Dashed\DashedCore\Classes\Sites;
 use Dashed\DashedCore\Classes\Locales;
+use Dashed\DashedCore\Classes\Seo\HreflangUrls;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -79,6 +80,11 @@ class SyncModelUrlHistoryJob implements ShouldQueue, ShouldBeUnique
             $localeId = $locale['id'];
 
             if (! in_array($localeId, $allowedLocales, true)) {
+                continue;
+            }
+
+            // Geen slug in die taal = geen pagina: geen geschiedenis en dus ook geen redirect naar het overzicht.
+            if (! HreflangUrls::hasSlug($model, $localeId)) {
                 continue;
             }
 

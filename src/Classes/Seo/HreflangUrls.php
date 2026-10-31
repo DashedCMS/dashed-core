@@ -76,7 +76,7 @@ class HreflangUrls
      * Een vertaalbare slug zonder waarde in die taal geeft een kapotte URL
      * (bijvoorbeeld het overzicht zelf); die taal krijgt geen alternatief.
      */
-    protected static function hasSlug(object $model, string $locale): bool
+    public static function hasSlug(object $model, string $locale): bool
     {
         if (! method_exists($model, 'isTranslatableAttribute') || ! $model->isTranslatableAttribute('slug')) {
             return true;

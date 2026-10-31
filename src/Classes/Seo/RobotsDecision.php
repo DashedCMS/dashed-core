@@ -101,7 +101,7 @@ class RobotsDecision
         return false;
     }
 
-    protected static function isRegisteredNoindexPage(object $model, string $siteId): bool
+    public static function isRegisteredNoindexPage(object $model, string $siteId): bool
     {
         if (! class_exists(\Dashed\DashedPages\Models\Page::class) || ! $model instanceof \Dashed\DashedPages\Models\Page) {
             return false;

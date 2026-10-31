@@ -4,6 +4,7 @@ namespace Dashed\DashedCore\Models\Concerns;
 
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use Dashed\DashedCore\Classes\Seo\SlugMaker;
 use Dashed\Seo\Traits\HasSeoScore;
 use Spatie\Activitylog\LogOptions;
 use Dashed\DashedPages\Models\Page;
@@ -45,11 +46,11 @@ trait IsVisitable
     {
         static::saving(function ($model) {
             foreach (Locales::getLocales() as $locale) {
-                $slug = Str::slug($model->getTranslation('slug', $locale['id']) ?: $model->getTranslation('name', $locale['id']));
-
-                while (self::where('id', '!=', $model->id ?? 0)->where('slug->' . $locale['id'], $slug)->count()) {
-                    $slug .= Str::random(1);
-                }
+                // Geen terugval op een andere taal: een taal zonder slug en naam is geen pagina (zie SlugMaker).
+                $slug = SlugMaker::uniek(
+                    SlugMaker::bron($model->getTranslation('slug', $locale['id'], false), $model->getTranslation('name', $locale['id'], false)),
+                    fn (string $kandidaat) => self::where('id', '!=', $model->id ?? 0)->where('slug->' . $locale['id'], $kandidaat)->exists(),
+                );
 
                 $model->setTranslation('slug', $locale['id'], $slug);
             }

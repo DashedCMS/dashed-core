@@ -5,6 +5,8 @@ namespace Dashed\DashedCore\Classes;
 use DateTimeInterface;
 use Spatie\Sitemap\Tags\Url;
 use Spatie\Sitemap\SitemapIndex;
+use Dashed\DashedCore\Classes\Seo\HreflangUrls;
+use Dashed\DashedCore\Classes\Seo\RobotsDecision;
 
 class Sitemap
 {
@@ -70,6 +72,11 @@ class Sitemap
                     continue;
                 }
 
+                // Winkelwagen, afrekenen, login en account staan op noindex (RobotsDecision) en horen er niet in.
+                if (RobotsDecision::isRegisteredNoindexPage($model, (string) Sites::getActive())) {
+                    continue;
+                }
+
                 foreach (static::urlsFor($model, $locales) as $tag) {
                     $sitemap->add($tag);
                 }
@@ -104,6 +111,11 @@ class Sitemap
 
         $urls = [];
         foreach ($locales as $locale) {
+            // Zonder eigen slug heeft het model in die taal geen pagina; getUrl() gaf dan het overzicht.
+            if (! HreflangUrls::hasSlug($model, $locale['id'])) {
+                continue;
+            }
+
             Locales::setLocale($locale['id']);
             $url = (string) $model->getUrl($locale['id']);
 

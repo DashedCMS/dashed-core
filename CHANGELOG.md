@@ -2,6 +2,13 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.99.0 - 2026-10-31
+
+### Fixed
+- **Een taal zonder naam kreeg een slug van willekeurige tekens.** `IsVisitable` maakte de slug uit de naam in die taal; bij een lege naam botste de lege slug met andere lege slugs en kreeg hij er een willekeurig teken bij tot hij uniek was. Zo ontstonden adressen als `/en/m`, `/en/blogs/1idw` en `/en/producten/ps` met een pagina zonder inhoud, die Google massaal vond (Lovora, Search Console 30-10-2026). Nieuw: `Classes\Seo\SlugMaker`. Een taal zonder slug en zonder naam krijgt geen slug (dus geen pagina in die taal), en een botsing krijgt `-2`, `-3` in plaats van een willekeurig teken; ook bij "Dupliceren" in het CMS. Bestaande slugs blijven staan: opruimen is per project een migratie.
+- **De sitemap bevatte winkelwagen, afrekenen, login en account.** `Sitemap::build()` slaat de pagina's over die via `noindexPageSettings` op noindex staan (`RobotsDecision::isRegisteredNoindexPage()`, nu publiek), en `urlsFor()` slaat een taal zonder slug over (`HreflangUrls::hasSlug()`, nu publiek); `getUrl()` gaf daar het overzicht terug.
+- **Een taal zonder slug kreeg een URL-geschiedenis** en dus bij een wijziging een redirect naar het overzicht. `SyncModelUrlHistoryJob` slaat die taal nu over.
+
 ## v4.97.1 - 2026-10-29
 
 ### Fixed

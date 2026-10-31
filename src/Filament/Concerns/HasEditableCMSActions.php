@@ -3,7 +3,6 @@
 namespace Dashed\DashedCore\Filament\Concerns;
 
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -288,10 +287,10 @@ trait HasEditableCMSActions
 
         if (in_array('slug', $this->record->translatable)) {
             foreach (Locales::getLocales() as $locale) {
-                $newModel->setTranslation('slug', $locale['id'], $newModel->getTranslation('slug', $locale['id']));
-                while ($this->record::class::where('slug->'.$locale['id'], $newModel->getTranslation('slug', $locale['id']))->count()) {
-                    $newModel->setTranslation('slug', $locale['id'], $newModel->getTranslation('slug', $locale['id']).Str::random(1));
-                }
+                $newModel->setTranslation('slug', $locale['id'], \Dashed\DashedCore\Classes\Seo\SlugMaker::uniek(
+                    (string) $newModel->getTranslation('slug', $locale['id'], false),
+                    fn (string $kandidaat) => $this->record::class::where('slug->'.$locale['id'], $kandidaat)->exists(),
+                ));
             }
         }
 
