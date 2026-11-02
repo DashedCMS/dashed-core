@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.99.1 - 2026-11-02
+
+### Fixed
+- **robots.txt blokkeerde `/livewire/` en daarmee `livewire.min.js`.** Elke pagina laadt dat script; Google kon het niet ophalen bij het renderen. Alleen de update-, upload- en previewroutes staan nog op Disallow.
+
 ## v4.99.0 - 2026-10-31
 
 ### Fixed

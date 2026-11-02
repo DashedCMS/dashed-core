@@ -378,7 +378,10 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             $cmsPath,
             $cmsPath . '/',
             '/horizon',
-            '/livewire/',
+            // Niet de hele /livewire/: daar staat ook livewire.min.js, dat Google nodig heeft om een pagina te renderen.
+            '/livewire/update',
+            '/livewire/upload-file',
+            '/livewire/preview-file/',
             '/storage/dashed/invoices/',
             '/storage/dashed/packing-slips/',
             '/storage/livewire-tmp/',
