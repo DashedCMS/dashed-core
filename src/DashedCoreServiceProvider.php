@@ -391,6 +391,9 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         // project. Zie UploadSecurity.
         \Dashed\DashedCore\Classes\UploadSecurity::apply();
 
+        // Sessie hoogstens een week, API-tokens standaard een jaar. Zie SessionSecurity.
+        \Dashed\DashedCore\Classes\SessionSecurity::apply();
+
         // IP en user-agent op elke activity-regel, en bewaking van de
         // beheeracties die de verdediging van het CMS bepalen. Zie
         // ActivityLogForensics en AdminActionMonitor.

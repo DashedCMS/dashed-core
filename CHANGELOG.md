@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.101.0 - 2026-11-02
+
+### Changed
+- **Sessies leven hoogstens een week, API-tokens standaard een jaar.** Nieuw: `Classes\SessionSecurity`, bij elke boot net als `UploadSecurity`. `session.lifetime` wordt afgetopt op `SecurityCheck::MAX_SESSION_LIFETIME_MINUTES` (10080); een kortere waarde van een project blijft staan. Lovora stond op 1.200.000 minuten, dus een gestolen sessiecookie bleef ruim twee jaar bruikbaar. `sanctum.expiration` wordt 525600 (een jaar) als het project niets gezet heeft; een eigen waarde blijft. Let op: Sanctum rekent vanaf het aanmaken van een token, dus een token dat ouder is dan een jaar werkt na deze versie niet meer (printers, mobiele app: opnieuw koppelen).
+
 ## v4.99.1 - 2026-11-02
 
 ### Fixed
