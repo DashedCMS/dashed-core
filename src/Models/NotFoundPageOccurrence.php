@@ -22,6 +22,22 @@ class NotFoundPageOccurrence extends Model
         });
     }
 
+    /**
+     * Verwijzers op de eigen site. De host komt uit het lopende verzoek, zodat
+     * elke domeinnaam waarop het paneel draait zijn eigen hits herkent.
+     */
+    public function scopeReferredFromOwnSite($query, string $host)
+    {
+        return $query->where('referer', 'like', '%://' . $host . '%');
+    }
+
+    public function scopeReferredFromElsewhere($query, string $host)
+    {
+        return $query->whereNotNull('referer')
+            ->where('referer', '!=', '')
+            ->where('referer', 'not like', '%://' . $host . '%');
+    }
+
     public function notFoundPage(): BelongsTo
     {
         return $this->belongsTo(NotFoundPage::class, 'not_found_page_id')

@@ -23,11 +23,13 @@ use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Section;
 use Illuminate\Database\Eloquent\Builder;
 use Dashed\DashedCore\Models\NotFoundPage;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Actions\ForceDeleteBulkAction;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Dashed\DashedCore\Filament\Resources\NotFoundPageResource\Pages\ListNotFoundPage;
 use Dashed\DashedCore\Filament\Resources\NotFoundPageResource\Pages\ViewNotFoundPage;
+use Dashed\DashedCore\Filament\Resources\NotFoundPageResource\RelationManagers\OccurrencesRelationManager;
 
 class NotFoundPageResource extends Resource
 {
@@ -77,7 +79,10 @@ class NotFoundPageResource extends Resource
 
     public static function table(Table $table): Table
     {
+        $host = request()->getHost();
+
         return $table
+            ->modifyQueryUsing(fn (Builder $query) => $query->with('latestOccurrence'))
             ->columns([
                 TextColumn::make('link')
                     ->url(fn ($record) => url($record->link))
@@ -94,6 +99,16 @@ class NotFoundPageResource extends Resource
                 TextColumn::make('total_occurrences')
                     ->label(__('Aantal keer voorgekomen'))
                     ->sortable(),
+                TextColumn::make('latestOccurrence.referer')
+                    ->label(__('Laatste verwijzer'))
+                    ->placeholder(__('Geen verwijzer'))
+                    ->url(fn ($record) => $record->latestOccurrence?->referer ?: null)
+                    ->openUrlInNewTab()
+                    ->limit(40)
+                    ->tooltip(fn ($record) => strlen((string) $record->latestOccurrence?->referer) > 40 ? $record->latestOccurrence->referer : null)
+                    ->badge(fn ($record) => (bool) $record->latestOccurrence?->referer)
+                    ->color(fn ($record) => str_contains((string) $record->latestOccurrence?->referer, '://' . $host) ? 'warning' : 'gray')
+                    ->searchable(),
                 IconColumn::make('hasRedirect')
                     ->label(__('Heeft een redirect'))
                     ->trueIcon('heroicon-o-check-circle')
@@ -101,7 +116,15 @@ class NotFoundPageResource extends Resource
             ])
             ->filters([
                 TrashedFilter::make(),
-                // ...
+                TernaryFilter::make('own_site_referer')
+                    ->label(__('Verwijzer op eigen site'))
+                    ->placeholder(__('Alle pagina\'s'))
+                    ->trueLabel(__('Met een hit vanaf eigen site'))
+                    ->falseLabel(__('Alleen hits van buiten of zonder verwijzer'))
+                    ->queries(
+                        true: fn (Builder $query) => $query->whereHas('occurrences', fn (Builder $q) => $q->referredFromOwnSite($host)),
+                        false: fn (Builder $query) => $query->whereDoesntHave('occurrences', fn (Builder $q) => $q->referredFromOwnSite($host)),
+                    ),
             ])
             ->recordActions([
                 \Filament\Actions\ViewAction::make()
@@ -166,7 +189,7 @@ class NotFoundPageResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            OccurrencesRelationManager::class,
         ];
     }
 

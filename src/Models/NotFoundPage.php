@@ -4,6 +4,7 @@ namespace Dashed\DashedCore\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class NotFoundPage extends Model
@@ -15,6 +16,11 @@ class NotFoundPage extends Model
     public function occurrences(): HasMany
     {
         return $this->hasMany(NotFoundPageOccurrence::class, 'not_found_page_id');
+    }
+
+    public function latestOccurrence(): HasOne
+    {
+        return $this->hasOne(NotFoundPageOccurrence::class, 'not_found_page_id')->latestOfMany();
     }
 
     public static function saveOccurrence($link, $statusCode, $referer, $userAgent, $ipAddress, $site, $locale): void
