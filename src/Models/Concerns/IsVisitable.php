@@ -4,7 +4,6 @@ namespace Dashed\DashedCore\Models\Concerns;
 
 use Carbon\Carbon;
 use Illuminate\Support\Str;
-use Dashed\DashedCore\Classes\Seo\SlugMaker;
 use Dashed\Seo\Traits\HasSeoScore;
 use Spatie\Activitylog\LogOptions;
 use Dashed\DashedPages\Models\Page;
@@ -17,8 +16,10 @@ use Spatie\Translatable\HasTranslations;
 use Dashed\DashedCore\Models\Customsetting;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Dashed\DashedCore\Classes\FragmentCache;
+use Dashed\DashedCore\Classes\Seo\SlugMaker;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Dashed\DashedCore\Jobs\SyncModelUrlHistoryJob;
+use Illuminate\Support\Facades\Schema;
 use Dashed\DashedCore\Jobs\ClearContentBlocksCache;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -626,6 +627,13 @@ trait IsVisitable
     public function clearContentBlockCache(array $blocks): void
     {
         foreach (cms()->builder('routeModels') as $routeModel) {
+            // Een klantproject kan een routemodel zonder contentblokken
+            // registreren (AutoXL: Car), en dan is er niets te vergeten.
+            $instance = new $routeModel['class'];
+            if (! Schema::connection($instance->getConnectionName())->hasColumn($instance->getTable(), 'content')) {
+                continue;
+            }
+
             $routeModel['class']::select('id', 'content', 'updated_at')->chunk(1000, function ($results) use ($routeModel, $blocks) {
                 foreach ($results as $result) {
                     foreach (Locales::getLocales() as $locale) {
