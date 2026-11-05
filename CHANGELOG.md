@@ -2,6 +2,14 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.102.0 - 2026-11-05
+
+### Added
+- **Foutpagina's in de stijl van de site.** Elke 403, 404, 419, 429, 500 en 503 komt nu uit `Classes\ErrorPages\ErrorPageRenderer`, als `renderable` op Laravels exception handler, in plaats van Laravels kale `errors::`-views. Volgorde: een eigen view in het project (`<thema>.errors.<code>`, dan `<thema>.errors.show`), dan `dashed-core::errors.themed` in de `<x-master>` van het project, en als laatste de losse `dashed-core::errors.standalone` zonder layout of database. Beheerverzoeken en een 503 bij onderhoud krijgen direct de losse pagina. JSON-verzoeken en een echte fout in debug-modus blijven bij Laravel. Teksten per code aan te passen via Vertalingen (groep `errors`).
+
+### Fixed
+- **v4.101.1: contentblok-cache legen sloeg stuk op een routemodel zonder `content`-kolom** (AutoXL: `Car`).
+
 ## v4.101.0 - 2026-11-02
 
 ### Changed

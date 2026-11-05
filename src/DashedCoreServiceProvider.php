@@ -314,6 +314,18 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             }
         }
 
+        // Elke foutpagina (404, 403, 419, 429, 500, 503) in de stijl van de site in
+        // plaats van Laravels standaardpagina. Als renderable, zodat een project dat
+        // in bootstrap/app.php zelf iets registreert vóór ons aan de beurt is
+        // (die callbacks hangen via afterResolving aan de handler en zijn dus al
+        // toegevoegd zodra wij hem hier uit de container halen). De renderer geeft
+        // null terug voor JSON, debug-modus en alles wat Laravel zelf afhandelt.
+        if (method_exists($exceptionHandler, 'renderable')) {
+            $exceptionHandler->renderable(
+                fn (\Throwable $e, $request) => app(\Dashed\DashedCore\Classes\ErrorPages\ErrorPageRenderer::class)->render($e, $request),
+            );
+        }
+
         // Content Studio: schrijf gegenereerde AI-beelden terug in de
         // pagina-blokken zodra dashed-files de generatie heeft afgerond.
         \Illuminate\Support\Facades\Event::listen(
