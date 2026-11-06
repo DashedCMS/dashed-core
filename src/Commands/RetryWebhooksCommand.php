@@ -42,6 +42,19 @@ class RetryWebhooksCommand extends Command
      * staan, een job die halverwege stierf op sending. Na een uur telt die als
      * vastgelopen.
      */
+    /**
+     * Snelle controle voor de scheduler: zonder werk start er geen eigen
+     * artisan-proces. Lukt de query niet, dan draait het commando gewoon.
+     */
+    public static function hasWork(): bool
+    {
+        return rescue(
+            fn () => WebhookDelivery::query()->where(fn ($query) => self::aanDeBeurt($query))->exists(),
+            true,
+            false,
+        );
+    }
+
     private static function aanDeBeurt($query)
     {
         return $query

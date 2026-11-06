@@ -1457,7 +1457,10 @@ MARKDOWN,
             // overzichtspagina en een vervangen logo op een vast moment doordringen.
             $schedule->call(fn () => \Dashed\DashedCore\Classes\Seo\BusinessProfile::forget())->dailyAt('00:10')->name('dashed:business-profile-refresh');
             $schedule->command(InvalidatePasswordResetTokens::class)->everyFifteenMinutes();
-            $schedule->command(\Dashed\DashedCore\Commands\RetryWebhooksCommand::class)->everyMinute()->withoutOverlapping();
+            $schedule->command(\Dashed\DashedCore\Commands\RetryWebhooksCommand::class)
+                ->everyMinute()
+                ->when(fn () => \Dashed\DashedCore\Commands\RetryWebhooksCommand::hasWork())
+                ->withoutOverlapping();
             $schedule->command(CleanupExpiredRedirects::class)->daily();
             $schedule->command(\Dashed\DashedCore\Commands\PruneCommand::class)
                 ->dailyAt('03:00')

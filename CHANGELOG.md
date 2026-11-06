@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.102.1 - 2026-11-06
+
+### Changed
+- `dashed:webhooks:retry` start alleen nog een eigen artisan-proces als er een bezorging aan de beurt is.
+
 ## v4.102.0 - 2026-11-05
 
 ### Added
