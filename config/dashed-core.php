@@ -131,6 +131,25 @@ return [
         'font_self_hosted' => env('DASHED_PERF_FONT_SELF', false),
     ],
 
+    // Verzoeken die nooit een pagina zijn krijgen via de fallback een kale 404,
+    // na één controle op een bestaande redirect (RejectNonPageRequests). Bewust
+    // niet erbij: html, pdf en txt. Dat zijn echte oude links die een beheerder
+    // in het 404-logboek wil zien en wil kunnen doorverwijzen.
+    'non_page_requests' => [
+        'enabled' => env('DASHED_NON_PAGE_REQUESTS', true),
+        'extensions' => [
+            'php', 'php3', 'php4', 'php5', 'php7', 'phtml', 'phar', 'asp', 'aspx', 'jsp', 'cgi',
+            'env', 'ini', 'conf', 'cfg', 'yml', 'yaml', 'log', 'git',
+            'sql', 'zip', 'tar', 'gz', 'tgz', 'rar', '7z', 'bak', 'old', 'orig', 'swp',
+            'json', 'map', 'xml', 'js', 'mjs', 'css',
+            'png', 'jpg', 'jpeg', 'gif', 'webp', 'avif', 'svg', 'ico', 'woff', 'woff2', 'ttf', 'eot',
+        ],
+        'path_prefixes' => [
+            'wp-admin', 'wp-content', 'wp-includes', 'wp-json',
+            'node_modules', 'cgi-bin', 'phpmyadmin',
+        ],
+    ],
+
     // Taal van de beheeromgeving. Bewust los van APP_LOCALE: dat is de taal
     // van de inhoud, en een project als rechargehamster heeft daar 'en'.
     'admin_locale' => env('DASHED_ADMIN_LOCALE', 'nl'),

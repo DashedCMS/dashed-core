@@ -45,6 +45,19 @@ class PurgeDecision
         // opslaan op het scherm Opschonen ze per site wegschrijft: zonder deze
         // regel is elke aanpassing een volledige zone-purge per site.
         '*_retention_days',
+
+        // OAuth-tokens en synchronisatiestanden van koppelingen. Bol ververst
+        // zijn token bij bijna elke sync, dus zonder deze regels verloor zo'n
+        // site ongeveer elke minuut zijn paginacache. Geen van deze waarden
+        // staat op een pagina (nagelopen in alle pakketten, november 2026).
+        '*_access_token',
+        '*_refresh_token',
+        '*_token_expires_at',
+        '*_access_token_expires_at',
+        '*_refresh_token_at',
+        '*_last_sync_at',
+        '*_min_created_after',
+        '*_oauth_*',
     ];
 
     public static function isOperationalSetting(string $name): bool

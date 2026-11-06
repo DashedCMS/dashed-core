@@ -15,6 +15,42 @@ class Redirect extends Model
         'delete_redirect_after' => 'date',
     ];
 
+    /**
+     * Alle vormen waarin een pad in `from` kan staan, met en zonder slashes.
+     *
+     * @param  array<int, string|null>  $slugs
+     * @return list<string>
+     */
+    public static function candidatesFor(array $slugs): array
+    {
+        $candidates = [];
+
+        foreach ($slugs as $slug) {
+            $slug = trim($slug ?? '', '/');
+
+            if ($slug === '') {
+                continue;
+            }
+
+            $candidates[] = $slug;
+            $candidates[] = '/' . $slug;
+            $candidates[] = $slug . '/';
+            $candidates[] = '/' . $slug . '/';
+        }
+
+        return array_values(array_unique($candidates));
+    }
+
+    /**
+     * @param  array<int, string|null>  $slugs
+     */
+    public static function findForSlugs(array $slugs): ?self
+    {
+        $candidates = self::candidatesFor($slugs);
+
+        return $candidates === [] ? null : self::query()->whereIn('from', $candidates)->first();
+    }
+
     public static function handleSlugChangeForFilamentModel($record, string $locale, string $newSlug)
     {
         app()->setLocale($locale);

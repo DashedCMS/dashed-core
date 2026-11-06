@@ -2,6 +2,16 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.103.0 - 2026-11-06
+
+### Changed
+- **Tokens en synchronisatiestanden legen de paginacache niet meer.** `bol_access_token` en dergelijke tellen als operationeel, anders leegde elke Bol-sync de cache van elke site.
+- **Snelle 404.** `RejectNonPageRequests` geeft op de fallback-route een kale 404 voor verzoeken die geen pagina zijn (.php, .env, .json, wp-admin en dergelijke) na één redirectcontrole, zonder sessie of thema. `GET /livewire/update` krijgt 405. Uitzetten met `DASHED_NON_PAGE_REQUESTS=false`.
+- Index op `dashed__not_found_pages` (`link`, `site`, `locale`): de opzoeking scande de hele tabel.
+- Plugins worden per klasse ontdubbeld (129 werden er 35).
+- Belletje ververst elke 120 seconden. `GlobalBlock` leegt bij opslaan de sitecache in plaats van `cache:clear`.
+- Resettokens opruimen is uurlijks en draait binnen `schedule:run`; samenvattingsmails uurlijks en alleen als er iets klaarstaat.
+
 ## v4.102.1 - 2026-11-06
 
 ### Changed

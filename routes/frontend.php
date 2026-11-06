@@ -91,6 +91,7 @@ Route::get('/robots.txt', \Dashed\DashedCore\Controllers\Frontend\RobotsTxtContr
     ->name('dashed.frontend.robots');
 
 Route::fallback([FrontendController::class, 'index'])
-    ->middleware(array_merge(['web', ResponseCache::class, FrontendMiddleware::class, AddLivewireReferrerToFlareMiddleware::class, \Dashed\DashedCore\Middleware\LocaleSessionRedirect::class, LaravelLocalizationRedirectFilter::class, LaravelLocalizationViewPath::class], cms()->builder('frontendMiddlewares')))
+    // Als eerste, vóór de sessie: zie RejectNonPageRequests.
+    ->middleware(array_merge([\Dashed\DashedCore\Middleware\RejectNonPageRequests::class, 'web', ResponseCache::class, FrontendMiddleware::class, AddLivewireReferrerToFlareMiddleware::class, \Dashed\DashedCore\Middleware\LocaleSessionRedirect::class, LaravelLocalizationRedirectFilter::class, LaravelLocalizationViewPath::class], cms()->builder('frontendMiddlewares')))
     ->name('dashed.frontend.general.index')
     ->where('slug', '.*');

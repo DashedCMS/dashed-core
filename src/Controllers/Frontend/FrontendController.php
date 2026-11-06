@@ -178,44 +178,12 @@ class FrontendController extends Controller
      */
     protected function findRedirectResponse(string $slug, string $originalSlug)
     {
-        $candidates = $this->buildRedirectCandidates($slug, $originalSlug);
-
-        if (empty($candidates)) {
-            return null;
-        }
-
-        $redirect = Redirect::query()
-            ->whereIn('from', $candidates)
-            ->first();
+        $redirect = Redirect::findForSlugs([$slug, $originalSlug]);
 
         if (! $redirect) {
             return null;
         }
 
         return redirect($redirect->to, $redirect->sort);
-    }
-
-    /**
-     * Maakt alle mogelijke "from" varianten voor zowel slug als originalSlug.
-     */
-    protected function buildRedirectCandidates(string $slug, string $originalSlug): array
-    {
-        $candidates = [];
-
-        foreach ([$slug, $originalSlug] as $s) {
-            $s = trim($s ?? '', '/');
-
-            if ($s === '') {
-                continue;
-            }
-
-            $candidates[] = $s;
-            $candidates[] = '/' . $s;
-            $candidates[] = $s . '/';
-            $candidates[] = '/' . $s . '/';
-        }
-
-        // Duplicaten eruit
-        return array_values(array_unique($candidates));
     }
 }

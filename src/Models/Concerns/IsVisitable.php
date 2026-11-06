@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\View;
 use Dashed\DashedCore\Classes\Locales;
 use Dashed\Seo\Jobs\ScanSpecificResult;
 use Dashed\DashedCore\Models\UrlHistory;
+use Dashed\DashedCore\Models\GlobalBlock;
 use Spatie\Translatable\HasTranslations;
 use Dashed\DashedCore\Models\Customsetting;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -621,7 +622,11 @@ trait IsVisitable
         $locale = $locale ?: app()->getLocale();
         $updatedAt = $this->updated_at->timestamp;
 
-        return "block_{$iteration}_{$block}_{$this->id}_{$updatedAt}_{$locale}";
+        // De versie omdat een blok ook uit een globaal blok kan komen, en dat
+        // verzet updated_at van deze pagina niet.
+        $globalBlocks = GlobalBlock::contentVersion();
+
+        return "block_{$iteration}_{$block}_{$this->id}_{$updatedAt}_{$locale}_g{$globalBlocks}";
     }
 
     public function clearContentBlockCache(array $blocks): void

@@ -39,6 +39,17 @@ class InvalidatePasswordResetTokens extends Command
      */
     public function handle()
     {
+        self::invalidate();
+
+        return self::SUCCESS;
+    }
+
+    /**
+     * Alleen opruimen: een token ouder dan een uur wordt bij het gebruik al
+     * geweigerd (ResetPassword::userForToken), hoe laat deze ronde ook draait.
+     */
+    public static function invalidate(): void
+    {
         User::where('password_reset_requested', '<', Carbon::now()->subHour())->update([
             'password_reset_token' => null,
             'password_reset_requested' => null,

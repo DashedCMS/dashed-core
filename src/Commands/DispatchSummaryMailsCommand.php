@@ -19,7 +19,7 @@ use Dashed\DashedCore\Services\Summary\Contracts\SummaryContributorInterface;
 /**
  * Verstuurt openstaande admin samenvatting-mails.
  *
- * Wordt elke 15 minuten via de scheduler aangeroepen en pakt alleen
+ * Wordt elk uur via de scheduler aangeroepen en pakt alleen
  * subscriptions waarvan next_send_at leeg of verlopen is. Per user
  * worden alle openstaande secties in één mail gebundeld zodat een
  * gebruiker met meerdere subscriptions niet 5 losse mails krijgt.
@@ -127,6 +127,26 @@ class DispatchSummaryMailsCommand extends Command
         $this->info("Verzonden: {$sent}, overgeslagen: {$skipped}.");
 
         return self::SUCCESS;
+    }
+
+    /**
+     * Snelle controle voor de scheduler: zonder werk start er geen eigen
+     * artisan-proces. Een abonnement op een verdwenen bijdrage of van een
+     * verdwenen gebruiker blijft eeuwig due, want handle() slaat het over
+     * zonder next_send_at te verzetten; dat telt hier dus niet als werk.
+     * Lukt de query niet, dan draait het commando gewoon.
+     */
+    public static function hasWork(): bool
+    {
+        return rescue(
+            fn () => SummarySubscription::query()
+                ->due()
+                ->whereIn('contributor_key', array_keys(SummaryContributorRegistry::map()))
+                ->whereHas('user', fn ($query) => $query->whereNotNull('email')->where('email', '!=', ''))
+                ->exists(),
+            true,
+            false,
+        );
     }
 
     protected function periodFor(string $frequency): ?SummaryPeriod

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * Per-user per-contributor abonnement op de admin samenvatting-mails.
  * Eén rij per (user_id, contributor_key) combinatie. De scheduler-command
- * leest deze tabel uit om elke 15 minuten te bepalen welke samenvattings
+ * leest deze tabel uit om elk uur te bepalen welke samenvattings
  * verstuurd moeten worden.
  */
 class SummarySubscription extends Model

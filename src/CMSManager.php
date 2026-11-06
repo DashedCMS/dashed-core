@@ -551,6 +551,8 @@ class CMSManager
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages($pages)
             ->databaseNotifications()
+            // Filament pollt standaard elke 30 seconden per open tabblad.
+            ->databaseNotificationsPolling('120s')
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([])
             ->middleware([
@@ -692,7 +694,18 @@ class CMSManager
                 })()),
         ];
 
+        // Een pakket dat de builder-lijst zelf nog eens samenvoegt, levert elke
+        // plugin meerdere keren op, en elke register() kost queries bij de boot.
+        $seen = [SpatieTranslatablePlugin::class => true];
+
         foreach (cms()->builder('plugins') as $plugin) {
+            $class = is_object($plugin) ? $plugin::class : (string) $plugin;
+
+            if (isset($seen[$class])) {
+                continue;
+            }
+
+            $seen[$class] = true;
             $plugins[] = $plugin;
         }
 

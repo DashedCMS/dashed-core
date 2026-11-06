@@ -675,11 +675,13 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             ],
         ]);
 
-        // Scheduler voor de samenvatting-mails (elke 15 minuten).
-        $this->app->booted(function () {
-            $schedule = app(\Illuminate\Console\Scheduling\Schedule::class);
+        // Scheduler voor de samenvatting-mails. next_send_at valt op een heel
+        // uur, dus vaker kijken levert niets op. Via callAfterResolving, want
+        // een webverzoek heeft de planning niet nodig.
+        $this->callAfterResolving(Schedule::class, function (Schedule $schedule): void {
             $schedule->command(DispatchSummaryMailsCommand::class)
-                ->everyFifteenMinutes()
+                ->hourly()
+                ->when(fn () => DispatchSummaryMailsCommand::hasWork())
                 ->withoutOverlapping();
         });
 
@@ -1449,14 +1451,14 @@ MARKDOWN,
         Livewire::component('dashed.dashed-core.filament.widgets.horizon.horizon-wait-time-chart', HorizonWaitTimeChart::class);
         Livewire::component('dashed.dashed-core.filament.widgets.horizon.horizon-failed-jobs-table', HorizonFailedJobsTable::class);
 
-        $this->app->booted(function () {
-            $schedule = app(Schedule::class);
+        $this->callAfterResolving(Schedule::class, function (Schedule $schedule): void {
             $schedule->command(CreateSitemap::class)->daily();
             // Het bedrijfsprofiel leeft een dag in de cache (zie BusinessProfile::for);
             // deze ronde laat een verlopen start- of einddatum van de
             // overzichtspagina en een vervangen logo op een vast moment doordringen.
             $schedule->call(fn () => \Dashed\DashedCore\Classes\Seo\BusinessProfile::forget())->dailyAt('00:10')->name('dashed:business-profile-refresh');
-            $schedule->command(InvalidatePasswordResetTokens::class)->everyFifteenMinutes();
+            // Alleen opruimen, zonder eigen proces: een verlopen token wordt bij gebruik al geweigerd.
+            $schedule->call(fn () => InvalidatePasswordResetTokens::invalidate())->hourly()->name('dashed:invalidate-password-reset-tokens');
             $schedule->command(\Dashed\DashedCore\Commands\RetryWebhooksCommand::class)
                 ->everyMinute()
                 ->when(fn () => \Dashed\DashedCore\Commands\RetryWebhooksCommand::hasWork())
