@@ -17,6 +17,7 @@ use Dashed\DashedForms\Classes\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Dashed\DashedCore\Classes\Locales;
+use Dashed\DashedCore\Classes\ScheduleSpread;
 use Dashed\DashedCore\Models\Redirect;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
@@ -1452,7 +1453,7 @@ MARKDOWN,
         Livewire::component('dashed.dashed-core.filament.widgets.horizon.horizon-failed-jobs-table', HorizonFailedJobsTable::class);
 
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule): void {
-            $schedule->command(CreateSitemap::class)->daily();
+            $schedule->command(CreateSitemap::class)->dailyAt(ScheduleSpread::at('00:00', 'create-sitemap'));
             // Het bedrijfsprofiel leeft een dag in de cache (zie BusinessProfile::for);
             // deze ronde laat een verlopen start- of einddatum van de
             // overzichtspagina en een vervangen logo op een vast moment doordringen.
@@ -1463,14 +1464,14 @@ MARKDOWN,
                 ->everyMinute()
                 ->when(fn () => \Dashed\DashedCore\Commands\RetryWebhooksCommand::hasWork())
                 ->withoutOverlapping();
-            $schedule->command(CleanupExpiredRedirects::class)->daily();
+            $schedule->command(CleanupExpiredRedirects::class)->dailyAt(ScheduleSpread::at('00:00', 'cleanup-expired-redirects'));
             $schedule->command(\Dashed\DashedCore\Commands\PruneCommand::class)
-                ->dailyAt('03:00')
+                ->dailyAt(ScheduleSpread::at('03:00', 'prune'))
                 ->withoutOverlapping();
             $schedule->command(SyncGoogleReviews::class)->twiceDaily();
             //            $schedule->command(SeoScan::class)->daily();
             $schedule->command(\Dashed\DashedCore\Commands\CheckIntegrationsHealth::class)
-                ->hourly()
+                ->hourlyAt(ScheduleSpread::minute('check-integrations-health'))
                 ->withoutOverlapping();
             // Hartslagen voor de systeembalk: zonder deze twee ziet niemand dat
             // schedule:run of de queue-worker stilstaat (zie SystemHealth).

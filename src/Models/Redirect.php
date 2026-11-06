@@ -51,6 +51,11 @@ class Redirect extends Model
         return $candidates === [] ? null : self::query()->whereIn('from', $candidates)->first();
     }
 
+    public function pointsToItself(): bool
+    {
+        return url($this->from) == url($this->to);
+    }
+
     public static function handleSlugChangeForFilamentModel($record, string $locale, string $newSlug)
     {
         app()->setLocale($locale);
@@ -82,9 +87,11 @@ class Redirect extends Model
             $redirect->save();
         }
 
-        Redirect::whereColumn('from', 'to')->delete();
-        foreach (Redirect::get() as $redirect) {
-            if (url($redirect->from) == url($redirect->to)) {
+        // Alleen rijen met `to` = de nieuwe slug zijn hierboven geraakt, dus alleen
+        // die kunnen nu naar zichzelf wijzen. Oude lussen van elders ruimt
+        // CleanupExpiredRedirects dagelijks op.
+        foreach (Redirect::where('to', $newSlug)->get() as $redirect) {
+            if ($redirect->pointsToItself()) {
                 $redirect->delete();
             }
         }

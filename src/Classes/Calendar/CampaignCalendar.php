@@ -94,13 +94,13 @@ class CampaignCalendar
 
             foreach (cms()->builder('routeModels') as $routeModel) {
                 $class = $routeModel['class'] ?? null;
-                if (! $class || ! class_exists($class) || ! \Illuminate\Support\Facades\Schema::hasColumn((new $class())->getTable(), 'start_date')) {
+                if (! $class || ! class_exists($class) || ! \Dashed\DashedCore\Classes\SchemaColumns::has((new $class())->getTable(), 'start_date')) {
                     continue;
                 }
 
                 $class::query()
                     ->where(fn ($q) => $q->whereBetween('start_date', [$from, $to])->orWhereBetween('end_date', [$from, $to])->orWhere(fn ($q) => $q->where('start_date', '<', $from)->where('end_date', '>', $to)))
-                    ->when($siteId && \Illuminate\Support\Facades\Schema::hasColumn((new $class())->getTable(), 'site_ids'), fn ($q) => $q->where('site_ids', 'LIKE', '%"'.$siteId.'"%'))
+                    ->when($siteId && \Dashed\DashedCore\Classes\SchemaColumns::has((new $class())->getTable(), 'site_ids'), fn ($q) => $q->where('site_ids', 'LIKE', '%"'.$siteId.'"%'))
                     ->limit(100)
                     ->get()
                     ->each(function ($model) use (&$events, $routeModel) {

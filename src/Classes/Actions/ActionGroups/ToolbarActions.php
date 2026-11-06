@@ -4,9 +4,9 @@ namespace Dashed\DashedCore\Classes\Actions\ActionGroups;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Illuminate\Support\Facades\Schema;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ForceDeleteBulkAction;
+use Dashed\DashedCore\Classes\SchemaColumns;
 use Dashed\DashedCore\Classes\Actions\SetPublicAction;
 use Dashed\DashedCore\Classes\Actions\TranslateAction;
 use Dashed\DashedCore\Classes\Actions\SetNotPublicAction;
@@ -59,7 +59,7 @@ class ToolbarActions
                     $modelClass = $livewire->getModel();
                     $model = app($modelClass);
 
-                    return Schema::hasColumn($model->getTable(), 'public');
+                    return SchemaColumns::has($model->getTable(), 'public');
                 })
                 ->icon('heroicon-o-eye')
                 ->label(__('Status')),

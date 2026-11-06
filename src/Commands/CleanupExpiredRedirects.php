@@ -32,6 +32,16 @@ class CleanupExpiredRedirects extends Command
 
         $this->info("Deleted {$count} expired redirect(s).");
 
+        // Vangnet voor lussen die niet via een slugwijziging ontstonden; de
+        // slugwijziging zelf ruimt alleen de eigen rijen op.
+        Redirect::select('id', 'from', 'to')->chunkById(1000, function ($redirects) {
+            foreach ($redirects as $redirect) {
+                if ($redirect->pointsToItself()) {
+                    $redirect->delete();
+                }
+            }
+        });
+
         return self::SUCCESS;
     }
 }

@@ -2,6 +2,13 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.104.0 - 2026-11-06
+
+### Changed
+- `ScheduleSpread` geeft taken zonder beloofde kloktijd per site een eigen minuut, zodat 49 sites niet tegelijk starten.
+- `SchemaColumns` onthoudt kolomcontroles; elke `Schema::hasColumn` maakte een tijdelijke tabel op schijf.
+- Redirectlussen worden bij een slugwijziging alleen voor die slug gecontroleerd.
+
 ## v4.103.0 - 2026-11-06
 
 ### Changed
