@@ -2,6 +2,15 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.105.0 - 2026-11-11
+
+### Changed
+- **Google-reviews via "Places API (New)".** `SyncGoogleReviews` vraagt cijfer en aantal reviews eerst op bij de nieuwe Places API (`places.googleapis.com`) en valt terug op de oude, zodat een project met een oude key blijft werken tot die is vervangen (`Classes\GooglePlaces`). Welke API antwoordde staat in `google_maps_places_api`, de laatste fout in `google_maps_places_error`.
+
+### Added
+- Instellingen → Algemeen: knop **Test reviews syncen** bij de Google Maps Places key (test de ingevulde key en ID zonder op te slaan en meldt wat Google antwoordt) en **Verkrijg een key** opent een venster met de stappen en links naar Google Cloud.
+- Migratie die in productie per site controleert of de key op de nieuwe API werkt en anders de beheerders één keer mailt dat de key vernieuwd moet worden (`GooglePlacesKeyCheck`).
+
 ## v4.104.0 - 2026-11-06
 
 ### Changed

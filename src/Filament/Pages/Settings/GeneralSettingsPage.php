@@ -17,6 +17,7 @@ use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Tabs\Tab;
 use Dashed\DashedCore\Models\Customsetting;
 use Filament\Infolists\Components\TextEntry;
+use Dashed\DashedCore\Classes\GooglePlaces;
 use Dashed\DashedCore\Jobs\SyncGoogleReviews;
 use Filament\Schemas\Components\Utilities\Get;
 use Dashed\DashedCore\Traits\HasSettingsPermission;
@@ -201,10 +202,17 @@ class GeneralSettingsPage extends Page
                     ->label(__('Google Maps Places key'))
                     ->helperText(__('Deze key is nodig om de Google Maps Reviews te syncen'))
                     ->hintActions([
-                        Action::make('retrieveKey')
+                        Action::make("retrieveKey_{$site['id']}")
                             ->label(__('Verkrijg een key'))
-                            ->url('https://developers.google.com/maps/documentation/places/web-service/get-api-key')
-                            ->openUrlInNewTab(),
+                            ->icon('heroicon-o-question-mark-circle')
+                            ->modalHeading(__('Een Google Maps Places key aanmaken'))
+                            ->modalContent(fn () => view('dashed-core::settings.google-places-key-help'))
+                            ->modalSubmitAction(false)
+                            ->modalCancelActionLabel(__('Sluiten')),
+                        Action::make("testReviewsSync_{$site['id']}")
+                            ->label(__('Test reviews syncen'))
+                            ->icon('heroicon-o-play')
+                            ->action(fn () => $this->testGoogleReviews((string) $site['id'])),
                     ])
                     ->maxLength(255),
                 TextInput::make("google_maps_places_id_{$site['id']}")
@@ -212,7 +220,7 @@ class GeneralSettingsPage extends Page
                     ->hintActions([
                         Action::make('retrieveId')
                             ->label(__('Zoek Google Place ID'))
-                            ->url('https://developers.google.com/maps/documentation/javascript/examples/places-placeid-finder')
+                            ->url(GooglePlaces::PLACE_ID_FINDER_URL)
                             ->openUrlInNewTab(),
                     ])
                     ->maxLength(255),
@@ -318,6 +326,49 @@ class GeneralSettingsPage extends Page
 
         return $schema->schema($tabGroups)
             ->statePath('data');
+    }
+
+    /**
+     * Vraagt het cijfer op met de key en het ID die nu in het formulier staan
+     * (ook als ze nog niet zijn opgeslagen) en meldt wat Google antwoordt.
+     * Slaat niets op.
+     */
+    public function testGoogleReviews(string $siteId): void
+    {
+        $result = GooglePlaces::rating(
+            $this->data["google_maps_places_key_{$siteId}"] ?? null,
+            $this->data["google_maps_places_id_{$siteId}"] ?? null,
+        );
+
+        if (! $result['ok']) {
+            Notification::make()
+                ->title(__('Reviews syncen lukt niet'))
+                ->body($result['error'] . ' ' . __('Klik op "Verkrijg een key" voor de stappen.'))
+                ->danger()
+                ->persistent()
+                ->send();
+
+            return;
+        }
+
+        $summary = trim(($result['name'] ? $result['name'] . ': ' : '') . number_format((float) $result['rating'], 1, ',', '.') . ' ' . __('uit') . ' ' . $result['count'] . ' reviews.');
+
+        if ($result['api'] === GooglePlaces::API_LEGACY) {
+            Notification::make()
+                ->title(__('Het werkt, maar deze key is verouderd'))
+                ->body($summary . ' ' . __('De key werkt alleen nog op de oude Places API, die Google uitzet. Maak een nieuwe key voor "Places API (New)". Melding van Google:') . ' ' . $result['new_error'])
+                ->warning()
+                ->persistent()
+                ->send();
+
+            return;
+        }
+
+        Notification::make()
+            ->title(__('Reviews syncen werkt'))
+            ->body($summary)
+            ->success()
+            ->send();
     }
 
     public function submit()

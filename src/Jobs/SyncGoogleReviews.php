@@ -4,8 +4,8 @@ namespace Dashed\DashedCore\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Queue\SerializesModels;
+use Dashed\DashedCore\Classes\GooglePlaces;
 use Illuminate\Queue\InteractsWithQueue;
 use Dashed\DashedCore\Models\Customsetting;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -31,67 +31,34 @@ class SyncGoogleReviews implements ShouldQueue
 
         if (! $key || ! $placeId) {
             // netjes: als config mist, markeer als niet gesynced
-            Customsetting::set('google_maps_rating', null);
-            Customsetting::set('google_maps_review_count', null);
-            Customsetting::set('google_maps_reviews_synced', 0);
+            $this->markFailed(null);
 
             return;
         }
 
-        $url = 'https://maps.googleapis.com/maps/api/place/details/json';
+        $result = GooglePlaces::rating($key, $placeId);
 
-        try {
-            $response = Http::timeout(15)
-                ->retry(2, 500) // 2 retries, 0.5s delay
-                ->get($url, [
-                    'place_id' => $placeId,
-                    'key' => $key,
-                    'fields' => 'rating,user_ratings_total,reviews',
-                ]);
+        if (! $result['ok']) {
+            $this->markFailed($result['error']);
+            Log::warning('SyncGoogleReviews: Google Places gaf geen cijfer', ['error' => $result['error']]);
 
-            if (! $response->ok()) {
-                $this->markFailed();
-                Log::warning('SyncGoogleReviews: non-200 response', [
-                    'status' => $response->status(),
-                    'body' => $response->body(),
-                ]);
-
-                return;
-            }
-
-            $json = $response->json();
-
-            $status = $json['status'] ?? null;
-
-            if ($status !== 'OK') {
-                // Google statuses: ZERO_RESULTS, OVER_QUERY_LIMIT, REQUEST_DENIED, INVALID_REQUEST, UNKNOWN_ERROR
-                $this->markFailed();
-                Log::warning('SyncGoogleReviews: Google API status not OK', [
-                    'status' => $status,
-                    'error_message' => $json['error_message'] ?? null,
-                ]);
-
-                return;
-            }
-
-            $result = $json['result'] ?? [];
-
-            Customsetting::set('google_maps_rating', $result['rating'] ?? 0);
-            Customsetting::set('google_maps_review_count', $result['user_ratings_total'] ?? 0);
-            Customsetting::set('google_maps_reviews_synced', 1);
-        } catch (\Throwable $e) {
-            $this->markFailed();
-            Log::error('SyncGoogleReviews: exception', [
-                'message' => $e->getMessage(),
-                'class' => get_class($e),
-            ]);
+            return;
         }
+
+        Customsetting::set('google_maps_rating', $result['rating'] ?? 0);
+        Customsetting::set('google_maps_review_count', $result['count'] ?? 0);
+        Customsetting::set('google_maps_reviews_synced', 1);
+        Customsetting::set(GooglePlaces::SETTING_API, $result['api']);
+        // Werkt alleen de oude API nog, dan is dit de reden dat de nieuwe weigerde.
+        Customsetting::set(GooglePlaces::SETTING_ERROR, $result['api'] === GooglePlaces::API_LEGACY ? $result['new_error'] : null);
     }
 
-    protected function markFailed(): void
+    protected function markFailed(?string $error = null): void
     {
         Customsetting::set('google_maps_rating', null);
         Customsetting::set('google_maps_review_count', null);
         Customsetting::set('google_maps_reviews_synced', 0);
+        Customsetting::set(GooglePlaces::SETTING_API, null);
+        Customsetting::set(GooglePlaces::SETTING_ERROR, $error);
     }
 }
