@@ -13,7 +13,6 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Forms\Components\RichEditor\EditorCommand;
 use Filament\Forms\Components\RichEditor\RichEditorTool;
-use RalphJSmit\Filament\MediaLibrary\Filament\Forms\Components\MediaPicker;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
 
 class MediaEmbedPlugin implements RichContentPlugin
@@ -94,6 +93,9 @@ class MediaEmbedPlugin implements RichContentPlugin
                     $payload = [
                         'mediaId' => $mediaId,
                         'src' => $src,
+                        // De alt-tekst van het bestand zelf: zonder dit kreeg
+                        // een ingevoegde afbeelding er nooit een.
+                        'alt' => $mediaId ? ($this->resolveMediaAlt((string) $mediaId) ?? '') : '',
                         'widthUnit' => $widthUnit,
                         'width' => $width,
                         'height' => $height,
@@ -170,5 +172,12 @@ class MediaEmbedPlugin implements RichContentPlugin
     protected function resolveMediaUrl(string $mediaId): ?string
     {
         return mediaHelper()->getSingleMedia($mediaId)->url ?? null;
+    }
+
+    protected function resolveMediaAlt(string $mediaId): ?string
+    {
+        $alt = mediaHelper()->getSingleMedia($mediaId)->altText ?? null;
+
+        return filled($alt) ? (string) $alt : null;
     }
 }

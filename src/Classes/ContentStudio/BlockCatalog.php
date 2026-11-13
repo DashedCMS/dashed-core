@@ -202,6 +202,8 @@ class BlockCatalog
     {
         $class = $component::class;
 
-        return str_contains($class, 'MediaPicker') || str_contains($class, 'FileUpload');
+        // MediaField is het veld van de eigen mediabibliotheek, MediaPicker
+        // dat van het pakket; beide bewaren media-id's.
+        return str_contains($class, 'MediaPicker') || str_contains($class, 'MediaField') || str_contains($class, 'FileUpload');
     }
 }

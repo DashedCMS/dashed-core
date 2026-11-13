@@ -115,8 +115,21 @@ class MediaExtension extends Node
     public function renderHTML($node, $HTMLAttributes = []): array
     {
         $src = $HTMLAttributes['src'] ?? '';
+        // Blijft null: tiptap-php geeft hier de gerenderde attributen, dus
+        // `mediaId` bestaat er niet. Breedte, hoogte en stijl hieronder hangen
+        // aan dezelfde eigenaardigheid (`widthUnit` is hier altijd `%`) en
+        // blijven bewust zoals ze waren: dit is de uitvoer van de publieke site.
         $mediaId = $HTMLAttributes['mediaId'] ?? null;
         $alt = $HTMLAttributes['alt'] ?? '';
+
+        // Het id van de node zelf, alleen voor de wrapper, het adres en de alt-tekst.
+        $nodeMediaId = isset($node->attrs) && is_object($node->attrs) ? ($node->attrs->mediaId ?? null) : null;
+        $nodeMediaId = is_scalar($nodeMediaId) && $nodeMediaId !== '' && $nodeMediaId !== false ? (string) $nodeMediaId : ($HTMLAttributes['data-media-id'] ?? null);
+        $nodeMediaId = is_scalar($nodeMediaId) && (string) $nodeMediaId !== '' ? (string) $nodeMediaId : null;
+
+        if ($nodeMediaId !== null && ($src === '' || $src === null || $alt === '' || $alt === null || $this->pointsToOwnDisk((string) $src))) {
+            [$src, $alt] = $this->fromLibrary($nodeMediaId, (string) $src, (string) $alt);
+        }
         $widthUnit = $HTMLAttributes['widthUnit'] ?? '%';
         $width = $HTMLAttributes['width'] ?? ($widthUnit === '%' ? '100' : null);
         $height = $HTMLAttributes['height'] ?? null;
@@ -125,7 +138,7 @@ class MediaExtension extends Node
         $wrapperAttrs = [
             'class' => 'responsive-image',
             'data-image' => 'true',
-            'data-media-id' => $mediaId ?? '',
+            'data-media-id' => $nodeMediaId ?? '',
             'data-src' => $src ?? '',
             'data-alt' => $alt ?? '',
             'data-width-unit' => $widthUnit,
@@ -168,5 +181,103 @@ class MediaExtension extends Node
             $wrapperAttrs,
             ['img', $imgAttrs],
         ];
+    }
+
+    /**
+     * Het adres en de alt-tekst uit de bibliotheek. De alt-tekst alleen als de
+     * node er zelf geen heeft. Het adres alleen als de node er geen heeft, of
+     * als het opgeslagen adres naar de eigen schijf wijst en dezelfde
+     * bestandsnaam draagt als het bestand dat nu bij dit id hoort: inhoud uit
+     * een import of een gekopieerde site kan een id dragen dat hier bij een
+     * ander bestand hoort, en dan blijft het opgeslagen adres staan.
+     *
+     * @return array{0: string, 1: string}
+     */
+    protected function fromLibrary(string $mediaId, string $src, string $alt): array
+    {
+        if (! function_exists('mediaHelper') || ! ctype_digit($mediaId)) {
+            return [$src, $alt];
+        }
+
+        $media = rescue(fn () => mediaHelper()->getSingleMedia($mediaId, 'medium'), null, false);
+
+        if (! is_object($media) || blank($media->url ?? null)) {
+            return [$src, $alt];
+        }
+
+        $url = (string) $media->url;
+        $sameFile = false;
+
+        if ($src !== '') {
+            $name = $this->fileNameOf($src);
+            $sameFile = $name !== '' && in_array($name, [$this->fileNameOf((string) ($media->path ?? '')), $this->fileNameOf($url)], true);
+
+            // Het bestand van dit item is vervangen en de tekst draagt nog het
+            // oude adres. Dat oude bestand verdwijnt na de bewaartermijn; als
+            // het adres aantoonbaar bij een eerder bestand van HETZELFDE item
+            // hoort, telt het als hetzelfde bestand en volgt het huidige adres.
+            // Alleen gevraagd als de naam niet al overeenkwam.
+            if (! $sameFile && $this->pointsToOwnDisk($src) && $this->isReplacedFileOf($mediaId, $src)) {
+                $sameFile = true;
+            }
+        }
+
+        if ($alt === '' && ($src === '' || $sameFile) && filled($media->altText ?? null)) {
+            $alt = (string) $media->altText;
+        }
+
+        if ($src === '' || ($sameFile && $this->pointsToOwnDisk($src))) {
+            $src = $url;
+        }
+
+        return [$src, $alt];
+    }
+
+    /**
+     * Of het adres naar een bewaard, vervangen bestand van dit item wijst: de
+     * map in het pad is de uuid van een mediarij van dit item in de collectie
+     * met vervangen bestanden. Eén query per adres, per verzoek onthouden.
+     */
+    protected function isReplacedFileOf(string $mediaId, string $src): bool
+    {
+        $item = 'Dashed\\DashedFiles\\Models\\MediaItem';
+
+        if (! class_exists($item) || ! defined($item . '::COLLECTION_REPLACED')
+            || ! preg_match('~/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/~i', $src, $match)) {
+            return false;
+        }
+
+        $key = $mediaId . '|' . strtolower($match[1]);
+        $request = app()->bound('request') ? request() : null;
+        $memo = $request ? (array) $request->attributes->get('dashed-core.media-embed-replaced', []) : [];
+
+        if (! array_key_exists($key, $memo)) {
+            $memo[$key] = (bool) rescue(fn () => \Illuminate\Support\Facades\DB::table('media')
+                ->where('uuid', $match[1])
+                ->where('model_id', (int) $mediaId)
+                ->whereIn('model_type', [$item::MORPH_ALIAS, $item::LEGACY_CLASS])
+                ->where('collection_name', $item::COLLECTION_REPLACED)
+                ->exists(), false, false);
+
+            $request?->attributes->set('dashed-core.media-embed-replaced', $memo);
+        }
+
+        return $memo[$key];
+    }
+
+    protected function pointsToOwnDisk(string $src): bool
+    {
+        if ($src === '') {
+            return false;
+        }
+
+        $base = rescue(fn () => (string) \Illuminate\Support\Facades\Storage::disk('dashed')->url(''), '', false);
+
+        return strlen($base) >= 2 && str_starts_with($src, $base);
+    }
+
+    protected function fileNameOf(string $address): string
+    {
+        return basename(rawurldecode((string) preg_split('/[?#]/', $address, 2)[0]));
     }
 }

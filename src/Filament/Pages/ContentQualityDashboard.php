@@ -10,13 +10,15 @@ use Illuminate\Support\Facades\Gate;
 use Dashed\DashedAi\Facades\Ai;
 use Illuminate\Support\Collection;
 use Dashed\DashedCore\Classes\Sites;
+use Dashed\DashedCore\Classes\Locales;
+use Dashed\DashedFiles\Models\MediaItem;
+use Dashed\DashedFiles\Classes\MediaLibrary;
 use Dashed\DashedAi\Enums\AiCapability;
 use Dashed\DashedAi\Jobs\CreateAltTextForMediaItem;
 use Dashed\DashedCore\ContentQuality\QualityIssue;
 use Dashed\DashedCore\ContentQuality\MetaFieldGenerator;
 use Dashed\DashedCore\ContentQuality\ContentQualityRegistry;
 use Dashed\DashedCore\ContentQuality\ContentQualityScanner;
-use RalphJSmit\Filament\MediaLibrary\Models\MediaLibraryItem;
 use Dashed\DashedCore\ContentQuality\Jobs\GenerateMetaFieldForModel;
 
 class ContentQualityDashboard extends Page
@@ -88,10 +90,12 @@ class ContentQualityDashboard extends Page
     }
 
     /**
-     * Een afbeelding is alleen te bewerken zolang hij nog geen alt-tekst heeft:
-     * precies wat de controle missing_alt meldt. Een bestaande alt-tekst wordt
-     * hier dus nooit overschreven. Bewust zonder globale scopes, net als de
-     * bibliotheek zelf; afbeeldingen horen niet bij een site.
+     * Een afbeelding is alleen te bewerken zolang hij in minstens één taal
+     * van de actieve site geen alt-tekst heeft: precies wat de controle
+     * missing_alt meldt. Alleen die ontbrekende talen zijn te vullen; een
+     * bestaande alt-tekst wordt hier dus nooit overschreven. Bewust zonder
+     * globale scopes, net als de bibliotheek zelf; afbeeldingen horen niet
+     * bij een site.
      */
     protected function missingAltIssue(string $checkKey, int $mediaId): ?QualityIssue
     {
@@ -99,12 +103,43 @@ class ContentQualityDashboard extends Page
             return null;
         }
 
-        $item = MediaLibraryItem::withoutGlobalScopes()->find($mediaId);
-        if (! $item || filled($item->alt_text)) {
+        $item = $this->mediaItem($mediaId);
+        if (! $item) {
             return null;
         }
 
-        return new QualityIssue(checkKey: $checkKey, title: (string) ($item->caption ?: '#' . $item->id), mediaId: $item->id);
+        $missing = $this->missingAltLocales($item);
+        if ($missing === []) {
+            return null;
+        }
+
+        return new QualityIssue(checkKey: $checkKey, title: (string) ($item->caption ?: '#' . $item->id), mediaId: $item->id, missingLocales: $missing);
+    }
+
+    /**
+     * De talen van de actieve site waarin de alt-tekst ontbreekt. Een oudere
+     * dashed-files kent geen talen: dan telt alleen de ene kolom.
+     *
+     * @return array<int, string>
+     */
+    protected function missingAltLocales(MediaItem $item): array
+    {
+        if (! method_exists($item, 'missingAltLocales') || ! class_exists(\Dashed\DashedFiles\Classes\MediaTexts::class)) {
+            return filled($item->alt_text) ? [] : [(string) Locales::getFirstLocale()['id']];
+        }
+
+        return $item->missingAltLocales(\Dashed\DashedFiles\Classes\MediaTexts::localesForSite(Sites::getActive()));
+    }
+
+    // dashed-files is geen harde eis van dit pakket: zonder de bibliotheek
+    // bestaat er geen media-item en valt elke mediatak stil weg.
+    protected function mediaItem(int|string|null $id): ?MediaItem
+    {
+        if (! class_exists(MediaLibrary::class)) {
+            return null;
+        }
+
+        return app(MediaLibrary::class)->find($id, includeWithoutFile: true);
     }
 
     protected function mayEdit(QualityIssue $issue): bool
@@ -115,15 +150,14 @@ class ContentQualityDashboard extends Page
         }
 
         if ($issue->mediaId) {
-            $item = MediaLibraryItem::withoutGlobalScopes()->find($issue->mediaId);
+            $item = $this->mediaItem($issue->mediaId);
             if (! $item) {
                 return false;
             }
 
             // De mediabibliotheek kent zelf geen rechten zolang er geen policy
             // is; dan geldt hier hetzelfde als in de bibliotheek.
-            return Gate::getPolicyFor(MediaLibraryItem::class) === null
-                || $user->can('update', $item);
+            return app(MediaLibrary::class)->canUpdate($user, $item);
         }
 
         $registered = collect(app(ContentQualityRegistry::class)->models())
@@ -198,7 +232,11 @@ class ContentQualityDashboard extends Page
         ];
 
         if ($issue->mediaId) {
-            $this->inlineValues = ['alt' => ''];
+            // Eén invoer per ontbrekende taal. Bij een site met één taal de
+            // ene invoer `alt`, zoals het altijd was.
+            $this->inlineValues = count(Locales::getLocalesForSite(Sites::getActive())) > 1
+                ? array_fill_keys($issue->missingLocales, '')
+                : ['alt' => ''];
 
             return;
         }
@@ -236,10 +274,46 @@ class ContentQualityDashboard extends Page
         }
 
         if ($issue->mediaId) {
-            $item = MediaLibraryItem::withoutGlobalScopes()->find($issue->mediaId);
+            $item = $this->mediaItem($issue->mediaId);
             if ($item) {
-                $item->alt_text = trim((string) ($this->inlineValues['alt'] ?? ''));
-                $item->save();
+                $library = app(MediaLibrary::class);
+                // Een oudere dashed-files negeert de taal en schrijft altijd de ene
+                // kolom: dan alleen de ene invoer, zoals het was.
+                $perLocale = method_exists($library, 'setTexts');
+                $missing = $issue->missingLocales;
+
+                // Alleen de talen die het item mist; een meegestuurde extra
+                // sleutel wordt geen nieuwe vertaling en overschrijft niets.
+                foreach ($this->inlineValues as $key => $value) {
+                    $value = trim((string) $value);
+
+                    if ($value === '') {
+                        continue;
+                    }
+
+                    if ($key === 'alt') {
+                        // De ene invoer van een site met één taal: de taal die
+                        // daar ontbreekt. Dat is de taal van de actieve site, en
+                        // niet per se de eerste taal van de installatie.
+                        $locale = count($missing) === 1 ? $missing[0] : (string) Locales::getFirstLocale()['id'];
+                    } elseif ($perLocale && in_array((string) $key, $missing, true)) {
+                        $locale = (string) $key;
+                    } else {
+                        continue;
+                    }
+
+                    try {
+                        $library->setText($item, 'alt_text', $locale, $value);
+                    } catch (\InvalidArgumentException $exception) {
+                        // Te lang voor de kolom: melden in plaats van een foutpagina.
+                        \Filament\Notifications\Notification::make()
+                            ->title(__('De alt-tekst is te lang. Maximaal 255 tekens.'))
+                            ->danger()
+                            ->send();
+
+                        return;
+                    }
+                }
             }
         } else {
             $model = $issue->modelClass::find($issue->modelId);
@@ -319,9 +393,9 @@ class ContentQualityDashboard extends Page
         }
 
         if ($issue->mediaId) {
-            $item = MediaLibraryItem::withoutGlobalScopes()->find($issue->mediaId);
+            $item = $this->mediaItem($issue->mediaId);
             if ($item) {
-                CreateAltTextForMediaItem::dispatch($item);
+                $this->dispatchAltText($item->id, $issue->missingLocales);
             }
 
             return;
@@ -367,9 +441,9 @@ class ContentQualityDashboard extends Page
             }
 
             if ($issue->mediaId) {
-                $item = MediaLibraryItem::withoutGlobalScopes()->find($issue->mediaId);
+                $item = $this->mediaItem($issue->mediaId);
                 if ($item) {
-                    CreateAltTextForMediaItem::dispatch($item);
+                    $this->dispatchAltText($item->id, $issue->missingLocales ?: $this->missingAltLocales($item));
                 }
 
                 continue;
@@ -390,6 +464,48 @@ class ContentQualityDashboard extends Page
             ->title(__('AI-taken gestart. De resultaten verschijnen zodra de wachtrij ze heeft verwerkt.'))
             ->success()
             ->send();
+    }
+
+    /**
+     * Eén taak per afbeelding, die alle ontbrekende talen in één AI-aanroep
+     * vult. Een oudere dashed-ai kent alleen de taak voor de eerste taal, en
+     * een nog oudere verwacht daar het model in plaats van het id.
+     *
+     * @param  array<int, string>  $locales
+     */
+    protected function dispatchAltText(int $mediaId, array $locales): void
+    {
+        $job = 'Dashed\\DashedAi\\Jobs\\GenerateMediaAltText';
+
+        if (class_exists($job)) {
+            dispatch(new $job($mediaId, $locales === [] ? null : array_values($locales)));
+
+            return;
+        }
+
+        if (! class_exists(CreateAltTextForMediaItem::class)) {
+            return;
+        }
+
+        CreateAltTextForMediaItem::dispatch(static::acceptsId(CreateAltTextForMediaItem::class) ? $mediaId : $this->mediaItem($mediaId));
+    }
+
+    /** Of de constructor van een taak een id (int) als eerste argument aanneemt. */
+    protected static function acceptsId(string $job): bool
+    {
+        try {
+            $type = (new \ReflectionMethod($job, '__construct'))->getParameters()[0]?->getType();
+        } catch (\Throwable) {
+            return false;
+        }
+
+        if ($type === null) {
+            return true;
+        }
+
+        $names = $type instanceof \ReflectionNamedType ? [$type->getName()] : array_map(fn ($inner) => $inner instanceof \ReflectionNamedType ? $inner->getName() : '', method_exists($type, 'getTypes') ? $type->getTypes() : []);
+
+        return in_array('int', $names, true) || in_array('mixed', $names, true);
     }
 
     public function aiAvailable(?string $checkKey = null): bool
