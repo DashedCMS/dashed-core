@@ -4,12 +4,11 @@ namespace Dashed\DashedCore\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Dashed\DashedCore\Classes\CacheProfile;
-use Dashed\DashedCore\Classes\FragmentCache;
 use Symfony\Component\HttpFoundation\Response;
 use Dashed\DashedCore\Classes\Caching\CacheDecision;
 use Dashed\DashedCore\Classes\Caching\CloudflareConfig;
+use Dashed\DashedCore\Classes\Caching\ResponseCacheStore;
 
 class ResponseCache
 {
@@ -50,11 +49,9 @@ class ResponseCache
         $cacheKey = $decision->cacheKey();
         $tags = $decision->tags();
 
-        $storedHtml = FragmentCache::supportsTags()
-            ? Cache::tags($tags)->get($cacheKey)
-            : Cache::get($cacheKey);
+        $storedHtml = ResponseCacheStore::get($tags, $cacheKey);
 
-        if ($storedHtml !== null) {
+        if (is_string($storedHtml)) {
             $html = $this->injectCacheHitMeta($storedHtml);
 
             $hitResponse = response($html, 200)
@@ -76,11 +73,7 @@ class ResponseCache
         if ($safeToStore) {
             $html = $response->getContent();
 
-            if (FragmentCache::supportsTags()) {
-                Cache::tags($tags)->put($cacheKey, $html, $decision->ttl());
-            } else {
-                Cache::put($cacheKey, $html, $decision->ttl());
-            }
+            ResponseCacheStore::put($tags, $cacheKey, $html, $decision->ttl());
         }
 
         $response->headers->set('X-Dashed-Cache', 'MISS');

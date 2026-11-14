@@ -2,6 +2,16 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.107.0 - 2026-11-14
+
+### Fixed
+- **Responsecache op een store zonder tags (file, database).** Daar deed `FragmentCache::flushTag()` niets, dus na een product-, prijs- of paginawijziging bleef de oude pagina tot de TTL staan. De pagina's staan nu in een eigen file-store (`Classes\Caching\ResponseCacheStore`, map `storage/framework/cache/responsecache`) die in één keer leeg gaat bij elke flush van een response-tag (`CacheInvalidator::flushSite()`/`flushAll()`), bij `cache:clear` (dus ook `optimize:clear` en een deploy) en elke nacht om 04:35. Met tags (redis) blijft alles in de standaardstore zoals voorheen.
+
+### Added
+- `ResponseCacheStore` (`get`, `put`, `flush`, `usesTags`) voor projecten met een eigen responsecache-middleware. Pagina's staan gecomprimeerd opgeslagen.
+- Config `dashed-core.response_cache_store` (`auto`, `tags`, `own`; env `RESPONSE_CACHE_STORE`) en `response_cache_path` (env `RESPONSE_CACHE_PATH`).
+- Commando `dashed:clear-response-cache`.
+
 ## v4.105.0 - 2026-11-11
 
 ### Changed

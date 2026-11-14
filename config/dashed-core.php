@@ -55,6 +55,12 @@ return [
 
     'response_cache_enabled' => env('RESPONSE_CACHE_ENABLED', false),
 
+    // Waar de pagina's van de responsecache staan (Classes\Caching\ResponseCacheStore). 'auto': met
+    // cache-tags (redis) in de standaardstore; zonder tags (file, database) in een eigen file-store
+    // die in één keer leeg gaat bij elke flush, bij cache:clear en elke nacht. 'tags' of 'own' dwingt af.
+    'response_cache_store' => env('RESPONSE_CACHE_STORE', 'auto'),
+    'response_cache_path' => env('RESPONSE_CACHE_PATH'),
+
     'edge_purge' => [
         // Minimaal aantal seconden tussen twee Cloudflare zone-purges per site.
         // Binnen een venster gaat de eerste purge meteen door en volgt er hooguit

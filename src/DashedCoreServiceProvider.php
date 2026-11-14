@@ -180,6 +180,9 @@ class DashedCoreServiceProvider extends PackageServiceProvider
      */
     public function packageRegistered()
     {
+        // Eigen file-store voor de pagina's van de responsecache als de standaardstore geen tags kent.
+        \Dashed\DashedCore\Classes\Caching\ResponseCacheStore::registerStore();
+
         $this->callAfterResolving('mail.manager', function (\Illuminate\Mail\MailManager $manager): void {
             $manager->extend('postmark', function (array $config) {
                 $options = isset($config['message_stream_id']) ? ['message_stream' => $config['message_stream_id']] : [];
@@ -1452,12 +1455,26 @@ MARKDOWN,
         Livewire::component('dashed.dashed-core.filament.widgets.horizon.horizon-wait-time-chart', HorizonWaitTimeChart::class);
         Livewire::component('dashed.dashed-core.filament.widgets.horizon.horizon-failed-jobs-table', HorizonFailedJobsTable::class);
 
+        // `cache:clear` (ook via optimize:clear en een deploy) leegt alleen de standaardstore; de
+        // pagina's in de eigen map van de responsecache moeten mee, anders blijft oude HTML staan.
+        \Illuminate\Support\Facades\Event::listen('cache:cleared', function ($store = null): void {
+            if ($store !== \Dashed\DashedCore\Classes\Caching\ResponseCacheStore::STORE) {
+                rescue(fn () => \Dashed\DashedCore\Classes\Caching\ResponseCacheStore::flush(), null, false);
+            }
+        });
+
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule): void {
             $schedule->command(CreateSitemap::class)->dailyAt(ScheduleSpread::at('00:00', 'create-sitemap'));
             // Het bedrijfsprofiel leeft een dag in de cache (zie BusinessProfile::for);
             // deze ronde laat een verlopen start- of einddatum van de
             // overzichtspagina en een vervangen logo op een vast moment doordringen.
             $schedule->call(fn () => \Dashed\DashedCore\Classes\Seo\BusinessProfile::forget())->dailyAt('00:10')->name('dashed:business-profile-refresh');
+            // De file-store ruimt verlopen pagina's van de responsecache niet zelf op.
+            $schedule->call(function (): void {
+                if (! \Dashed\DashedCore\Classes\Caching\ResponseCacheStore::usesTags()) {
+                    \Dashed\DashedCore\Classes\Caching\ResponseCacheStore::flush();
+                }
+            })->dailyAt('04:35')->name('dashed:response-cache-cleanup');
             // Alleen opruimen, zonder eigen proces: een verlopen token wordt bij gebruik al geweigerd.
             $schedule->call(fn () => InvalidatePasswordResetTokens::invalidate())->hourly()->name('dashed:invalidate-password-reset-tokens');
             $schedule->command(\Dashed\DashedCore\Commands\RetryWebhooksCommand::class)
@@ -2178,6 +2195,7 @@ MARKDOWN,
                 CmsIpAllowlistCommand::class,
                 \Dashed\DashedCore\Commands\LockUserCommand::class,
                 \Dashed\DashedCore\Commands\SetPasswordCommand::class,
+                \Dashed\DashedCore\Commands\ClearResponseCacheCommand::class,
                 InstallCommand::class,
                 UpdateCommand::class,
                 InvalidatePasswordResetTokens::class,

@@ -5,6 +5,7 @@ namespace Dashed\DashedCore\Classes;
 use Closure;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
+use Dashed\DashedCore\Classes\Caching\ResponseCacheStore;
 
 class FragmentCache
 {
@@ -38,7 +39,17 @@ class FragmentCache
     {
         if (static::supportsTags()) {
             Cache::tags([$tag])->flush();
+        }
 
+        // Pagina's van de responsecache staan zonder tags in een eigen map (ResponseCacheStore):
+        // elke response-tag leegt die map in zijn geheel (grofmazig, net als flushSite zelf).
+        if (str_starts_with($tag, 'response') && ! ResponseCacheStore::usesTags()) {
+            ResponseCacheStore::flush();
+
+            return;
+        }
+
+        if (static::supportsTags()) {
             return;
         }
 
