@@ -102,7 +102,12 @@
 
             if (tracking.facebook && typeof fbq !== 'undefined') {
                 setTimeout(() => {
-                    fbq('track', 'Contact');
+                    // Zelfde event-ID als het server-event (dashed-ecommerce-core), zodat Meta ontdubbelt.
+                    if (payload && payload.metaEventId) {
+                        fbq('track', 'Contact', {}, { eventID: payload.metaEventId });
+                    } else {
+                        fbq('track', 'Contact');
+                    }
                 }, 1000);
             }
 

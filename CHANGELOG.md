@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.107.1 - 2026-11-15
+
+### Changed
+- `body-extend`: de pixel krijgt bij `formSubmitted` het `metaEventId` uit de payload mee als `eventID` bij `Contact`, zodat Meta browser- en server-event ontdubbelt.
+
 ## v4.107.0 - 2026-11-14
 
 ### Fixed
