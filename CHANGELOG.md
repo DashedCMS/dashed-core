@@ -2,6 +2,12 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.108.0 - 2026-11-15
+
+- Uploadbeleid voor bezoekers zonder paneelrechten (`Security\Uploads`): de uploadpoort laat `_startUpload`/`_finishUpload` alleen toe bij componenten met `acceptsGuestUpload()` of in `dashed-core.uploads.guest_components`; typelijst `guest_mimes`; svg/html/xml/js/uitvoerbaar voor gasten altijd geweigerd; benoemde limiter `dashed-livewire-upload` per IP en per gebruiker. Modus `dashed-core.uploads.guard_mode` (`DASHED_UPLOAD_GUARD`): standaard `log` (alleen loggen), `enforce` blokkeert, `off` doet niets.
+- `SafeUploadedFile` doorzoekt het hele bestand, niet alleen de eerste 64 kB (GIF met PHP-code daarachter kwam erdoor).
+- `dashed:uploads-sweep`, zelf ingepland (elk uur recent, 04:10 alles): ruimt `livewire-tmp` op en zet bestanden met PHP-inhoud in `storage/app/upload-quarantine`, met de nieuwe beveiligingsmelding "Verdachte upload" (gaat ook bij uitgezette hoofdschakelaar als er ontvangers in `.env` staan).
+
 ## v4.107.1 - 2026-11-15
 
 ### Changed

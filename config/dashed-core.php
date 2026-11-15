@@ -109,6 +109,32 @@ return [
     // bedoeld, delen alle bezoekers een verzoeklimiet, en is elke link http.
     'trusted_proxies' => array_values(array_filter(array_map('trim', explode(',', (string) env('DASHED_TRUSTED_PROXIES', ''))))),
 
+    // Uploads door bezoekers zonder paneelrechten (Security\Uploads\UploadPolicy).
+    // guard_mode: off | log (alleen loggen welke componenten en types gasten
+    // gebruiken) | enforce (niet-aangemelde componenten 403, alleen guest_mimes).
+    // svg/html/xml/js/uitvoerbaar is voor gasten altijd geweigerd behalve in "off".
+    // dashed:uploads-sweep ruimt livewire-tmp op en zet bestanden met PHP-inhoud
+    // in storage/app/upload-quarantine (melding 'Verdachte upload'); mappen
+    // relatief aan storage/app.
+    'uploads' => [
+        'guard_mode' => env('DASHED_UPLOAD_GUARD', 'log'),
+        'guest_mimes' => ['jpg', 'jpeg', 'png', 'webp', 'gif', 'heic', 'heif', 'avif', 'pdf', 'doc', 'docx', 'xls', 'xlsx'],
+        'guest_blocked_extensions' => \Dashed\DashedCore\Security\Uploads\UploadPolicy::DEFAULT_GUEST_BLOCKED_EXTENSIONS,
+        'guest_max_kb' => null,
+        // Componenten zonder AcceptsGuestUploads die gasten toch mogen gebruiken (class-names).
+        'guest_components' => [],
+        'rate_limit' => [
+            'guest_per_minute' => 30,
+            'panel_per_minute' => 120,
+        ],
+        'sweep' => [
+            'enabled' => env('DASHED_UPLOAD_SWEEP', true),
+            'directories' => ['livewire-tmp', 'public'],
+            'tmp_max_age_hours' => 24,
+            'recent_hours' => 3,
+        ],
+    ],
+
     // Ontvangers van beveiligingsmeldingen (login vanaf nieuw IP, mislukte
     // inlogpoging op een beheerdersaccount). Gezet in .env, komma-gescheiden:
     // dan gaan die meldingen uitsluitend hierheen en telt de lijst bij

@@ -140,7 +140,7 @@ class SafeUploadedFile implements ValidationRule
     {
         $path = $file->getRealPath();
 
-        return $path ? static::pathLooksLikeServerCode($path) : false;
+        return $path ? static::pathLooksLikeServerCode($path, (string) $file->getMimeType()) : false;
     }
 
     /**
@@ -154,7 +154,7 @@ class SafeUploadedFile implements ValidationRule
      */
     public static function pathLooksLikeServerCode(string $path, ?string $mimeType = null): bool
     {
-        if (! is_readable($path)) {
+        if (! is_file($path) || ! is_readable($path)) {
             return false;
         }
 
@@ -163,24 +163,66 @@ class SafeUploadedFile implements ValidationRule
             return false;
         }
 
-        $head = (string) fread($handle, 64 * 1024);
-        fclose($handle);
+        $binary = static::isBinaryMediaType((string) $mimeType);
 
-        if (preg_match('/<\?php\b/i', $head) === 1 || str_starts_with($head, '#!')) {
+        try {
+            $head = (string) fread($handle, 64 * 1024);
+
+            if (str_starts_with($head, '#!') || static::chunkLooksLikeServerCode($head, $binary)) {
+                return true;
+            }
+
+            // Het hele bestand, niet alleen het begin: een GIF met de PHP-code
+            // ná de eerste 64 kB kwam er tot v4.108 doorheen (rechargehamster,
+            // 15-11-2026). De overlap vangt een tag op de grens van twee blokken.
+            $carry = substr($head, -256);
+            while (! feof($handle)) {
+                $chunk = (string) fread($handle, 1024 * 1024);
+                if ($chunk === '') {
+                    break;
+                }
+
+                if (static::chunkLooksLikeServerCode($carry . $chunk, $binary)) {
+                    return true;
+                }
+
+                $carry = substr($chunk, -256);
+            }
+        } finally {
+            fclose($handle);
+        }
+
+        return false;
+    }
+
+    /**
+     * Handige naam voor wie een pad heeft maar geen mime-type (de sweep);
+     * het type wordt dan gesnoven.
+     */
+    public static function fileLooksLikeServerCode(string $path): bool
+    {
+        $mimeType = is_file($path) ? (string) (@mime_content_type($path) ?: '') : '';
+
+        return static::pathLooksLikeServerCode($path, $mimeType);
+    }
+
+    protected static function chunkLooksLikeServerCode(string $chunk, bool $binary): bool
+    {
+        if (preg_match('/<\?php\b/i', $chunk) === 1) {
             return true;
         }
 
-        if (! static::isBinaryMediaType((string) $mimeType)) {
-            return str_contains($head, '<?=');
+        if (! $binary) {
+            return str_contains($chunk, '<?=');
         }
 
         // In binaire data: alleen als er leesbare code op volgt. Acht leesbare
         // tekens na de drie van de tag komt bij toeval ruwweg eens per miljoen
-        // bestanden voor; een echte payload (`<?= system($_GET[1]);`) haalt het altijd.
+        // blokken voor; een echte payload (`<?= system($_GET[1]);`) haalt het altijd.
         // Of een korte, leesbare uitdrukking die netjes met de sluittag eindigt.
         // De sluittag staat hieronder in twee stukken: aaneen geschreven beëindigt
         // hij zelfs binnen een string of commentaar de PHP-modus van dit bestand.
-        return preg_match('/<\?=(?:[\x09\x0a\x0d\x20-\x7e]{8,}|[\x09\x0a\x0d\x20-\x7e]{0,200}?\?'.'>)/', $head) === 1;
+        return preg_match('/<\?=(?:[\x09\x0a\x0d\x20-\x7e]{8,}|[\x09\x0a\x0d\x20-\x7e]{0,200}?\?'.'>)/', $chunk) === 1;
     }
 
     protected static function isBinaryMediaType(string $mimeType): bool

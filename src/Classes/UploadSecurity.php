@@ -84,7 +84,77 @@ class UploadSecurity
 
         config(['livewire.temporary_file_upload.rules' => static::rulesWithGuard(config('livewire.temporary_file_upload.rules'))]);
 
+        static::applyGuestPolicy();
+
         static::silenceStartUploadProbes();
+        static::registerSweep();
+    }
+
+    /**
+     * Uploadbeleid voor bezoekers zonder paneelrechten (zie
+     * Security\Uploads\UploadPolicy): typeregel en limiet op de uploadroute,
+     * en de poort op _startUpload/_finishUpload via Livewire's call-hook.
+     */
+    protected static function applyGuestPolicy(): void
+    {
+        \Dashed\DashedCore\Security\Uploads\GuestUploadRule::register();
+        \Dashed\DashedCore\Security\Uploads\UploadRateLimits::register();
+
+        config(['livewire.temporary_file_upload.middleware' => static::middlewareWithPolicy(config('livewire.temporary_file_upload.middleware'))]);
+
+        if (function_exists('Livewire\\on')) {
+            \Livewire\on('call', function ($component, $method, $params) {
+                \Dashed\DashedCore\Security\Uploads\UploadGate::check($component, (string) $method, (array) $params);
+            });
+        }
+    }
+
+    /**
+     * Eigen middleware van een project blijft staan. Zonder eigen throttle
+     * komt onze benoemde limiter erbij in plaats van Livewire's standaard
+     * throttle:60,1 (die alleen per IP telt).
+     *
+     * @return array<int, string>
+     */
+    public static function middlewareWithPolicy(mixed $middleware): array
+    {
+        $middleware = array_values(array_filter(is_string($middleware) ? explode('|', $middleware) : (array) $middleware));
+
+        $hasThrottle = collect($middleware)->contains(fn ($entry) => is_string($entry) && str_starts_with($entry, 'throttle:'));
+        if (! $hasThrottle) {
+            array_unshift($middleware, 'throttle:' . \Dashed\DashedCore\Security\Uploads\UploadRateLimits::LIVEWIRE);
+        }
+
+        if (! in_array(\Dashed\DashedCore\Http\Middleware\ApplyUploadPolicy::class, $middleware, true)) {
+            $middleware[] = \Dashed\DashedCore\Http\Middleware\ApplyUploadPolicy::class;
+        }
+
+        return $middleware;
+    }
+
+    /**
+     * dashed:uploads-sweep in elk project, zonder dat een project hem zelf
+     * hoeft in te plannen: elk uur recent gewijzigde bestanden, 's nachts
+     * alles. Uit te zetten met dashed-core.uploads.sweep.enabled.
+     */
+    protected static function registerSweep(): void
+    {
+        if (! app()->runningInConsole()) {
+            return;
+        }
+
+        \Illuminate\Console\Application::starting(function ($artisan): void {
+            $artisan->resolve(\Dashed\DashedCore\Commands\SweepUploadsCommand::class);
+        });
+
+        if (! config('dashed-core.uploads.sweep.enabled', true)) {
+            return;
+        }
+
+        app()->afterResolving(\Illuminate\Console\Scheduling\Schedule::class, function ($schedule): void {
+            $schedule->command('dashed:uploads-sweep')->hourlyAt(50)->withoutOverlapping()->onOneServer();
+            $schedule->command('dashed:uploads-sweep', ['--full'])->dailyAt('04:10')->withoutOverlapping()->onOneServer();
+        });
     }
 
     /**

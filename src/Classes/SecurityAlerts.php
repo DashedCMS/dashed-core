@@ -63,6 +63,9 @@ class SecurityAlerts
 
     public const TYPE_IP_ALLOWLIST = 'ip_allowlist';
 
+    /** Een bestand met servercode (PHP) gevonden in een uploadmap; zie SweepUploadsCommand. */
+    public const TYPE_UPLOAD_THREAT = 'upload_threat';
+
     /**
      * De soorten meldingen, elk apart aan of uit te zetten en met eigen
      * ontvangers (Instellingen, Beveiliging). Sleutel => [label, uitleg].
@@ -78,6 +81,7 @@ class SecurityAlerts
             self::TYPE_ADMIN_ACTION => [__('Beheeracties'), __('Gewijzigde beveiligingsinstellingen, betaalmethodes, te veel handmatige betalingen, foute pincodes.')],
             self::TYPE_PRICE_CHANGE => [__('Prijswijzigingen'), __('Een beheerder wijzigt een prijs, inkoopprijs of btw-tarief van een product; een drastische verlaging wordt apart genoemd.')],
             self::TYPE_IP_ALLOWLIST => [__('IP-lijst gewijzigd'), __('Elke wijziging van de IP-lijst, ook vanaf de commandoregel.')],
+            self::TYPE_UPLOAD_THREAT => [__('Verdachte upload'), __('Een bestand met PHP-code in een uploadmap. Het bestand is al in quarantaine gezet. Gaat ook als de hoofdschakelaar uit staat, zodra er ontvangers in .env staan.')],
         ];
     }
 
@@ -153,6 +157,26 @@ class SecurityAlerts
     public static function send(string $type, callable $mail, bool $force = false): void
     {
         if ($force ? ! self::enabled() : ! self::typeEnabled($type)) {
+            return;
+        }
+
+        foreach (self::recipientsFor($type) as $recipient) {
+            Mail::to($recipient)->queue($mail());
+        }
+    }
+
+    /**
+     * Voor meldingen die nooit stil mogen blijven (verdachte upload): ook als
+     * de hoofdschakelaar uit staat, zolang er ontvangers in .env staan. De
+     * schakelaar van de soort zelf telt wel.
+     */
+    public static function sendCritical(string $type, callable $mail): void
+    {
+        if (! self::typeSwitchOn($type)) {
+            return;
+        }
+
+        if (! self::enabled() && ! self::recipientsLockedByEnv()) {
             return;
         }
 
