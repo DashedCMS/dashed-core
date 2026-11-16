@@ -50,6 +50,20 @@ class PrivateUploads
     /** Mag de browser tonen; de rest wordt altijd als download geserveerd. */
     public const INLINE_TYPES = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'avif', 'pdf'];
 
+    /**
+     * Extra types die moveIntoPrivate() alleen voor bestaande bestanden
+     * meeneemt (oude uploads van vóór de typelijst, bijv. AML-video's), met
+     * de extensie waaronder ze privé komen. Nieuwe uploads (store()) blijven
+     * op CONTENT_TYPES; deze worden altijd als download geserveerd.
+     *
+     * @var array<string, string>
+     */
+    public const LEGACY_MOVE_TYPES = [
+        'jfif' => 'jpg', 'jpe' => 'jpg', 'pjpeg' => 'jpg',
+        'tif' => 'tif', 'tiff' => 'tiff', 'bmp' => 'bmp',
+        'mp4' => 'mp4', 'm4v' => 'm4v', 'mov' => 'mov', '3gp' => '3gp', 'webm' => 'webm',
+    ];
+
     public static function diskName(): string
     {
         if ($configured = config('dashed-core.uploads.private_disk')) {
@@ -135,7 +149,8 @@ class PrivateUploads
 
         $extension = strtolower(pathinfo($sourcePath, PATHINFO_EXTENSION));
         $extension = $extension === 'jpeg' ? 'jpg' : $extension;
-        if (! array_key_exists($extension, static::CONTENT_TYPES)) {
+        $extension = static::LEGACY_MOVE_TYPES[$extension] ?? $extension;
+        if (! array_key_exists($extension, static::CONTENT_TYPES) && ! in_array($extension, static::LEGACY_MOVE_TYPES, true)) {
             return null;
         }
 

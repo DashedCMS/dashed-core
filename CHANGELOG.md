@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.113.1 - 2026-11-16
+
+### Fixed
+- `PrivateUploads::moveIntoPrivate()` neemt bij het verhuizen van bestaande bestanden ook oude types mee die niet op de uploadlijst staan: `jfif`/`jpe`/`pjpeg` (als `jpg`), `tif`, `bmp` en video (`mp4`, `m4v`, `mov`, `3gp`, `webm`). Die bleven anders publiek staan. Nieuwe uploads (`store()`) houden de strikte lijst; deze types gaan altijd als download.
+
 ## v4.113.0 - 2026-11-16
 
 ### Added
