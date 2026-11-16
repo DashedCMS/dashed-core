@@ -24,6 +24,14 @@ Route::get('/dashed/csrf-token', CsrfTokenController::class)
     ->middleware(['web'])
     ->name('dashed.frontend.csrf-token');
 
+// Privé uploads van bezoekers (formulieren, product-extra's, livechat): alleen
+// voor paneelgebruikers of met een tijdelijke gesigneerde link. Bewust niet
+// onder /dashed: die prefix staat op sommige servers dicht voor vreemde IP's.
+Route::get('/private-uploads/{path}', \Dashed\DashedCore\Http\Controllers\PrivateUploadController::class)
+    ->where('path', '[a-z0-9-]+/[0-9a-f-]{36}\.[a-z0-9]{2,5}')
+    ->middleware(['web'])
+    ->name(\Dashed\DashedCore\Security\Uploads\PrivateUploads::ROUTE);
+
 // Kliks en opens uit mails: buiten de web-groep, want een pixel of redirect
 // heeft geen sessie nodig. De paden bevatten bewust geen woorden als "track" of
 // "pixel", die op de filterlijsten van adblockers staan.

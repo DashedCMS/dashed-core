@@ -123,13 +123,16 @@ return [
         'guest_max_kb' => null,
         // Componenten zonder AcceptsGuestUploads die gasten toch mogen gebruiken (class-names).
         'guest_components' => [],
+        // Privé opslag voor bestanden van bezoekers (Security\Uploads\PrivateUploads).
+        // Leeg: de DigitalOcean/S3-disk "dashed" of "spaces" als die er is, anders "local".
+        'private_disk' => env('DASHED_PRIVATE_UPLOAD_DISK'),
         'rate_limit' => [
             'guest_per_minute' => 30,
             'panel_per_minute' => 120,
         ],
         'sweep' => [
             'enabled' => env('DASHED_UPLOAD_SWEEP', true),
-            'directories' => ['livewire-tmp', 'public'],
+            'directories' => ['livewire-tmp', 'public', 'private-uploads'],
             'tmp_max_age_hours' => 24,
             'recent_hours' => 3,
         ],

@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.109.0 - 2026-11-16
+
+- `Security\Uploads\PrivateUploads`: één privé opslag voor bestanden van bezoekers. Op de DigitalOcean/S3-disk (`dashed`, of `spaces` als de media lokaal staan) als privé object, anders `storage/app/private-uploads`; altijd een gegenereerde naam. Ophalen via `/private-uploads/{map}/{uuid}.{ext}` (route `dashed.private-upload`): alleen paneelgebruikers of een tijdelijke gesigneerde link. Instelbaar met `dashed-core.uploads.private_disk`.
+- De upload-sweep doorzoekt ook `private-uploads`.
+
 ## v4.108.0 - 2026-11-15
 
 - Uploadbeleid voor bezoekers zonder paneelrechten (`Security\Uploads`): de uploadpoort laat `_startUpload`/`_finishUpload` alleen toe bij componenten met `acceptsGuestUpload()` of in `dashed-core.uploads.guest_components`; typelijst `guest_mimes`; svg/html/xml/js/uitvoerbaar voor gasten altijd geweigerd; benoemde limiter `dashed-livewire-upload` per IP en per gebruiker. Modus `dashed-core.uploads.guard_mode` (`DASHED_UPLOAD_GUARD`): standaard `log` (alleen loggen), `enforce` blokkeert, `off` doet niets.

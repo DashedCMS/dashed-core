@@ -51,7 +51,7 @@ class SweepUploadsCommand extends Command
      */
     public static function directories(): array
     {
-        return array_values(array_unique((array) config('dashed-core.uploads.sweep.directories', ['livewire-tmp', 'public'])));
+        return array_values(array_unique((array) config('dashed-core.uploads.sweep.directories', ['livewire-tmp', 'public', 'private-uploads'])));
     }
 
     protected function cleanupTemporaryUploads(bool $dryRun): int
