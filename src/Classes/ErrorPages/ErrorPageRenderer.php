@@ -30,7 +30,7 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
  *     sitenaam, logo en huisstijlkleur, zonder enige afhankelijkheid van de
  *     database of de layout van het project.
  *
- * Een verzoek aan het beheer (en een 503 bij onderhoud) slaat 1 en 2 over.
+ * Een verzoek aan het beheer slaat 1 en 2 over.
  * Mislukt een render (de database ligt eruit, de layout zelf is kapot), dan
  * valt hij door naar de volgende; mislukt alles, dan krijgt Laravel hem terug.
  */
@@ -115,20 +115,18 @@ class ErrorPageRenderer
         $theme = config('dashed-core.site_theme', 'dashed');
         $views = [];
 
+        // Ook bij onderhoud (503) eerst de themaversies: de database kan
+        // halverwege een migratie zijn, maar dan klapt de render en valt hij
+        // vanzelf door naar de losse pagina hieronder.
         if (! $isCms) {
             $views[] = "{$theme}.errors.{$status}";
+            $views[] = "{$theme}.errors.show";
 
-            // Bij onderhoud is de database mogelijk halverwege een migratie;
-            // een uitdrukkelijke 503-view van het project mag, de rest niet.
-            if ($status !== 503) {
-                $views[] = "{$theme}.errors.show";
-
-                if ($status === 404) {
-                    $views[] = "{$theme}.not-found.show";
-                }
-
-                $views[] = 'dashed-core::errors.themed';
+            if ($status === 404) {
+                $views[] = "{$theme}.not-found.show";
             }
+
+            $views[] = 'dashed-core::errors.themed';
         }
 
         $views[] = 'dashed-core::errors.standalone';
@@ -201,11 +199,16 @@ class ErrorPageRenderer
      * tekst (abort(403, 'Je adres staat niet op de lijst')) gaat voor de
      * standaardtekst. Bij andere codes is de melding technisch ("CSRF token
      * mismatch", "No query results for model") en hoort hij niet op het scherm.
+     *
+     * De Engelse statustekst zelf telt niet als meegegeven tekst: Laravels
+     * onderhoudsmodus gooit altijd een 503 met "Service Unavailable".
      */
     protected function messageFor(Throwable $e, int $status): string
     {
-        if ($e instanceof HttpExceptionInterface && in_array($status, [403, 503], true) && trim($e->getMessage()) !== '') {
-            return $e->getMessage();
+        $message = $e instanceof HttpExceptionInterface ? trim($e->getMessage()) : '';
+
+        if (in_array($status, [403, 503], true) && $message !== '' && $message !== (Response::$statusTexts[$status] ?? null)) {
+            return $message;
         }
 
         return ErrorPageTexts::message($status);

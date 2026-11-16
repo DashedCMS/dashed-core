@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.113.3 - 2026-11-16
+
+### Fixed
+- Onderhoudsmodus (`php artisan down`): de 503-pagina toonde Laravels Engelse "Service Unavailable" in plaats van de Nederlandse tekst, en was altijd de kale losse pagina. Een melding gelijk aan de Engelse statustekst telt niet meer als meegegeven tekst, en een 503 probeert nu eerst de themaversies in de master van de site; klapt die render (database halverwege een migratie), dan valt hij terug op de losse pagina.
+
 ## v4.113.2 - 2026-11-16
 
 ### Fixed
