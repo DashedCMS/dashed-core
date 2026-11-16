@@ -2,6 +2,13 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.113.0 - 2026-11-16
+
+### Added
+- Het taakcentrum (het tabje Bezig) toont nu het bouwen van de sitemap, het herbouwen van de zoekindex (met totaal), meta genereren per model en de bewaartermijnen opruimen.
+- Alt-teksten in bulk vanaf het content-kwaliteitsdashboard lopen via één taak.
+- Vertaalsleutels voor de uploadbeveiliging (melding verdachte upload, upload-sweep) in `resources/lang`.
+
 ## v4.112.0 - 2026-11-16
 
 - Instellingen, Geblokkeerde e-mailadressen (`EmailSuppressionsPage`, alleen superadmins): de blokkadelijst van Postmark per stream inzien en adressen heractiveren, los of als selectie. `Classes\Mail\PostmarkSuppressions` gebruikt het server-token van de mailer. Spamklachten kan Postmark niet opheffen en worden overgeslagen. Elke heractivering krijgt een activity-regel en een melding via `AdminActionMonitor`, en vuurt `EmailSuppressionReactivated`.

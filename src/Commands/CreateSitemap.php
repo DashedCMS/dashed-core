@@ -4,6 +4,7 @@ namespace Dashed\DashedCore\Commands;
 
 use Illuminate\Console\Command;
 use Dashed\DashedCore\Classes\Sitemap;
+use Dashed\DashedCore\Models\BackgroundTask;
 
 class CreateSitemap extends Command
 {
@@ -38,6 +39,18 @@ class CreateSitemap extends Command
      */
     public function handle()
     {
-        Sitemap::create();
+        // In het takenicoon van de superadmins, zonder melding in de bel: dit
+        // draait elke nacht en heeft geen starter.
+        $task = BackgroundTask::begin('sitemap', __('Sitemap genereren'), notify: false);
+
+        try {
+            Sitemap::create();
+        } catch (\Throwable $e) {
+            $task->fail($e);
+
+            throw $e;
+        }
+
+        $task->finish();
     }
 }

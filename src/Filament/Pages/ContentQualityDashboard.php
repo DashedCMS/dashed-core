@@ -4,21 +4,22 @@ namespace Dashed\DashedCore\Filament\Pages;
 
 use UnitEnum;
 use BackedEnum;
-use Livewire\Attributes\Locked;
 use Filament\Pages\Page;
-use Illuminate\Support\Facades\Gate;
 use Dashed\DashedAi\Facades\Ai;
+use Livewire\Attributes\Locked;
 use Illuminate\Support\Collection;
 use Dashed\DashedCore\Classes\Sites;
+use Illuminate\Support\Facades\Gate;
 use Dashed\DashedCore\Classes\Locales;
-use Dashed\DashedFiles\Models\MediaItem;
-use Dashed\DashedFiles\Classes\MediaLibrary;
 use Dashed\DashedAi\Enums\AiCapability;
-use Dashed\DashedAi\Jobs\CreateAltTextForMediaItem;
+use Dashed\DashedFiles\Models\MediaItem;
+use Dashed\DashedCore\Models\BackgroundTask;
+use Dashed\DashedFiles\Classes\MediaLibrary;
 use Dashed\DashedCore\ContentQuality\QualityIssue;
+use Dashed\DashedAi\Jobs\CreateAltTextForMediaItem;
 use Dashed\DashedCore\ContentQuality\MetaFieldGenerator;
-use Dashed\DashedCore\ContentQuality\ContentQualityRegistry;
 use Dashed\DashedCore\ContentQuality\ContentQualityScanner;
+use Dashed\DashedCore\ContentQuality\ContentQualityRegistry;
 use Dashed\DashedCore\ContentQuality\Jobs\GenerateMetaFieldForModel;
 
 class ContentQualityDashboard extends Page
@@ -433,6 +434,13 @@ class ContentQualityDashboard extends Page
         }
 
         $rewrite = in_array($this->selectedCheck, self::REWRITE_CHECKS, true);
+        $metaJobs = [];
+        $altJobs = [];
+        // Met een dashed-ai die het kent gaan de alt-teksten als één taak
+        // naar het takenicoon; anders job voor job zoals voorheen.
+        $altJob = 'Dashed\\DashedAi\\Jobs\\GenerateMediaAltText';
+        $grouped = 'Dashed\\DashedAi\\Media\\MediaTask';
+        $groupAlt = class_exists($altJob) && class_exists($grouped) && method_exists($grouped, 'dispatchGrouped');
 
         foreach ($this->issues as $issue) {
             // Wat de gebruiker niet los mag bewerken, slaat de bulkactie over.
@@ -443,21 +451,47 @@ class ContentQualityDashboard extends Page
             if ($issue->mediaId) {
                 $item = $this->mediaItem($issue->mediaId);
                 if ($item) {
-                    $this->dispatchAltText($item->id, $issue->missingLocales ?: $this->missingAltLocales($item));
+                    $locales = $issue->missingLocales ?: $this->missingAltLocales($item);
+
+                    if ($groupAlt) {
+                        $altJobs[] = new $altJob((int) $item->id, $locales === [] ? null : array_values($locales));
+                    } else {
+                        $this->dispatchAltText($item->id, $locales);
+                    }
                 }
 
                 continue;
             }
 
             if ($issue->modelClass) {
-                GenerateMetaFieldForModel::dispatch(
+                $metaJobs[] = [
                     $issue->modelClass,
                     $issue->modelId,
                     $this->fieldForCheck($this->selectedCheck, $issue->field),
                     $issue->missingLocales,
                     $rewrite,
-                );
+                ];
             }
+        }
+
+        // De hele ronde als één taak in het takenicoon; elke job telt er een
+        // af. Met melding in de bel: de melding hieronder zegt alleen dat het
+        // gestart is.
+        if ($metaJobs !== []) {
+            $task = BackgroundTask::begin(
+                GenerateMetaFieldForModel::TASK_TYPE,
+                $rewrite ? __('Metagegevens herschrijven met AI') : __('Metagegevens genereren met AI'),
+                count($metaJobs),
+                auth()->user(),
+            );
+
+            foreach ($metaJobs as $arguments) {
+                GenerateMetaFieldForModel::dispatch(...[...$arguments, $task->getKey()]);
+            }
+        }
+
+        if ($altJobs !== []) {
+            $grouped::dispatchGrouped(__('Alt teksten genereren'), $altJobs, auth()->user());
         }
 
         \Filament\Notifications\Notification::make()

@@ -7,9 +7,11 @@ namespace Dashed\DashedCore\Jobs;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Dashed\DashedCore\Models\BackgroundTask;
 use Dashed\DashedCore\Retention\PruneRunner;
 
 /**
@@ -44,7 +46,26 @@ class PruneAllRetentionsJob implements ShouldQueue
 
     public function handle(PruneRunner $runner): void
     {
-        foreach ($runner->draai($this->alleen, 1000, false) as $regel) {
+        // In het takenicoon van de superadmins, zonder melding in de bel: een
+        // migratie zet dit klaar en er is geen starter. Kan op een grote
+        // installatie lang lopen, dus wel zichtbaar. Op een synchrone
+        // wachtrij draait dit midden in `migrate`, mogelijk vóór de tabel van
+        // de taken bestaat: dan geen taak in plaats van een fout in de log.
+        $taak = rescue(fn () => Schema::hasTable('dashed__background_tasks')
+            ? BackgroundTask::begin('prune', __('Logboeken opruimen'), notify: false)
+            : null, null, report: false);
+
+        try {
+            $uitkomst = $runner->draai($this->alleen, 1000, false);
+        } catch (\Throwable $e) {
+            $taak?->fail($e);
+
+            throw $e;
+        }
+
+        $taak?->finish();
+
+        foreach ($uitkomst as $regel) {
             if ($regel['fout'] !== null) {
                 Log::warning('Opruimronde: ' . $regel['label'] . ' faalde: ' . $regel['fout']);
 
