@@ -2,6 +2,10 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.112.0 - 2026-11-16
+
+- Instellingen, Geblokkeerde e-mailadressen (`EmailSuppressionsPage`, alleen superadmins): de blokkadelijst van Postmark per stream inzien en adressen heractiveren, los of als selectie. `Classes\Mail\PostmarkSuppressions` gebruikt het server-token van de mailer. Spamklachten kan Postmark niet opheffen en worden overgeslagen. Elke heractivering krijgt een activity-regel en een melding via `AdminActionMonitor`, en vuurt `EmailSuppressionReactivated`.
+
 ## v4.111.0 - 2026-11-16
 
 - Redirects: nooit meer een lus of keten. `Redirect::resolveFor()` (via `Classes\Redirects\RedirectChain`) zoekt eerst het pad met taalprefix en pas daarna zonder, volgt een keten in één stap naar het eindadres en geeft niets terug als het pad naar zichzelf terugleidt (ook bij alleen een hoofdletterverschil). Gebruikt in `FrontendController` en `RejectNonPageRequests`. Oorzaak bij Lovora: `/producten/x -> /de/producten/x` matchte ook op `/de/producten/x`.

@@ -74,6 +74,7 @@ class DashedCorePlugin implements Plugin
                 SecuritySettingsPage::class,
                 \Dashed\DashedCore\Filament\Pages\Settings\SecurityCheckPage::class,
                 \Dashed\DashedCore\Filament\Pages\Settings\SystemStatusPage::class,
+                \Dashed\DashedCore\Filament\Pages\Settings\EmailSuppressionsPage::class,
                 SearchSettingsPage::class,
                 ReviewSettingsPage::class,
                 ExportSettingsPage::class,
