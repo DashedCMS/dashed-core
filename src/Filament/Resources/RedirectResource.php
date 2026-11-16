@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore\Filament\Resources;
 
+use Filament\Schemas\Components\Utilities\Get;
 use UnitEnum;
 use BackedEnum;
 use Filament\Forms;
@@ -53,16 +54,40 @@ class RedirectResource extends Resource
                                     ->label(__('Vanaf welke URL moet er een redirect komen?'))
                                     ->helperText(__('Bijv: /dit-is-een-oude-url')),
                                 Forms\Components\TextInput::make('to')
-                                    ->required()
+                                    ->required(fn (Get $get) => (string) $get('sort') !== '410')
+                                    ->hidden(fn (Get $get) => (string) $get('sort') === '410')
+                                    ->dehydrateStateUsing(fn ($state) => (string) $state)
                                     ->label(__('Naar welke URL moet deze redirect verwijzen?'))
-                                    ->helperText(__('Bijv: /dit-is-een-nieuwe-url of https://dashed.com/wij-programmeren-kei-goed')),
+                                    ->helperText(__('Bijv: /dit-is-een-nieuwe-url of https://dashed.com/wij-programmeren-kei-goed'))
+                                    ->rules([
+                                        fn (Get $get, ?Redirect $record) => function (string $attribute, $value, \Closure $fail) use ($get, $record) {
+                                            if ((string) $get('sort') === '410' || blank($value)) {
+                                                return;
+                                            }
+
+                                            $probe = new Redirect();
+                                            $probe->from = (string) $get('from');
+                                            $probe->to = (string) $value;
+                                            $probe->sort = (int) $get('sort');
+                                            if ($record) {
+                                                $probe->id = $record->id;
+                                                $probe->exists = true;
+                                            }
+
+                                            if ($probe->guardAgainstLoops() === false) {
+                                                $fail(__('Deze redirect zou naar zichzelf terugleiden.'));
+                                            }
+                                        },
+                                    ]),
                                 Forms\Components\Select::make('sort')
                                     ->required()
+                                    ->live()
                                     ->label(__('Type redirect'))
                                     ->default('301')
                                     ->options([
                                         '301' => __('Permanente redirect'),
                                         '302' => __('Tijdelijke redirect'),
+                                        '410' => __('Verwijderd (410, geen bestemming)'),
                                     ]),
                                 Forms\Components\DatePicker::make('delete_redirect_after')
                                     ->label(__('Verwijder redirect na een datum'))

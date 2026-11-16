@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Dashed\DashedCore\Classes\Locales;
 use Dashed\DashedCore\Models\Redirect;
+use Dashed\DashedCore\Classes\Redirects\RedirectChain;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -36,10 +37,14 @@ class RejectNonPageRequests
 
         // Een bestaande redirect gaat voor, ook op een pad als /oud.php. Valt de
         // database weg, dan is een 404 nog steeds het juiste antwoord.
-        $redirect = rescue(fn () => Redirect::findForSlugs([$withoutLocale, $path]), null, false);
+        $redirect = rescue(fn () => Redirect::resolveFor('/' . $path), null, false);
+
+        if ($redirect && $redirect['status'] === RedirectChain::GONE) {
+            return response('Gone', Response::HTTP_GONE, ['Content-Type' => 'text/plain; charset=UTF-8']);
+        }
 
         if ($redirect) {
-            return new RedirectResponse(url($redirect->to), $redirect->sort);
+            return new RedirectResponse(url($redirect['to']), $redirect['status']);
         }
 
         return response('Not found', Response::HTTP_NOT_FOUND, ['Content-Type' => 'text/plain; charset=UTF-8']);

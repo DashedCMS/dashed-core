@@ -20,6 +20,7 @@ use Dashed\DashedCore\Classes\FragmentCache;
 use Dashed\DashedCore\Classes\Seo\SlugMaker;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Dashed\DashedCore\Jobs\SyncModelUrlHistoryJob;
+use Dashed\DashedCore\Jobs\RedirectDeletedModelUrlsJob;
 use Illuminate\Support\Facades\Schema;
 use Dashed\DashedCore\Jobs\ClearContentBlocksCache;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
@@ -92,7 +93,32 @@ trait IsVisitable
             FragmentCache::flushTag('breadcrumbs');
         });
 
-        static::deleted(fn () => FragmentCache::flushTag('breadcrumbs'));
+        static::deleted(function ($model) {
+            FragmentCache::flushTag('breadcrumbs');
+
+            if (config('dashed-core.redirects.on_delete', true)) {
+                // De adressen nu vastleggen: na een harde verwijdering is het model weg.
+                $urls = $model->urlHistories()->where('method', 'getUrl')->pluck('url', 'locale')->filter()->all();
+
+                if ($urls !== []) {
+                    dispatch(new RedirectDeletedModelUrlsJob($model::class, $model->getKey(), $urls))->afterCommit();
+                }
+            }
+        });
+
+        // Weer terug: een 410 van de verwijdering mag de pagina niet meer in de weg zitten.
+        if (method_exists(static::class, 'restored')) {
+            static::restored(function ($model) {
+                $urls = $model->urlHistories()->where('method', 'getUrl')->pluck('url')->filter()->all();
+
+                if ($urls !== []) {
+                    \Dashed\DashedCore\Models\Redirect::query()
+                        ->whereIn('from', \Dashed\DashedCore\Models\Redirect::candidatesFor(array_map(fn ($url) => (string) parse_url($url, PHP_URL_PATH), $urls)))
+                        ->where('sort', 410)
+                        ->delete();
+                }
+            });
+        }
     }
 
     public function getActivitylogOptions(): LogOptions

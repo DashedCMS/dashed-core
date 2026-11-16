@@ -169,6 +169,14 @@ return [
         'font_self_hosted' => env('DASHED_PERF_FONT_SELF', false),
     ],
 
+    // Een verwijderde pagina krijgt per taal een 301 naar een opvolger of anders een 410
+    // (RedirectDeletedModelUrlsJob). after_delete: [Modelklasse => invokable klasse met
+    // __invoke(Model $model, string $locale): ?string] voor de opvolger.
+    'redirects' => [
+        'on_delete' => env('DASHED_REDIRECTS_ON_DELETE', true),
+        'after_delete' => [],
+    ],
+
     // Verzoeken die nooit een pagina zijn krijgen via de fallback een kale 404,
     // na één controle op een bestaande redirect (RejectNonPageRequests). Bewust
     // niet erbij: html, pdf en txt. Dat zijn echte oude links die een beheerder

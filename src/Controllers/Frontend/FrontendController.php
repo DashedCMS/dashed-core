@@ -8,6 +8,7 @@ use Dashed\DashedCore\Classes\Sites;
 use Illuminate\Support\Facades\View;
 use Dashed\DashedCore\Classes\Locales;
 use Dashed\DashedCore\Models\Redirect;
+use Dashed\DashedCore\Classes\Redirects\RedirectChain;
 use Dashed\DashedCore\Models\NotFoundPage;
 use Dashed\DashedCore\Models\Customsetting;
 
@@ -178,12 +179,44 @@ class FrontendController extends Controller
      */
     protected function findRedirectResponse(string $slug, string $originalSlug)
     {
-        $redirect = Redirect::findForSlugs([$slug, $originalSlug]);
+        // Het gevraagde pad met taalprefix; Redirect::lookup valt zelf terug op het pad zonder prefix. Het eindadres
+        // komt in één stap en wijst nooit terug naar dit pad.
+        $resolved = Redirect::resolveFor('/' . ltrim($originalSlug !== '' ? $originalSlug : $slug, '/'));
 
-        if (! $redirect) {
+        if (! $resolved) {
             return null;
         }
 
-        return redirect($redirect->to, $redirect->sort);
+        if ($resolved['status'] === RedirectChain::GONE) {
+            return $this->pageGone();
+        }
+
+        return redirect($resolved['to'], $resolved['status']);
+    }
+
+    /**
+     * 410: de pagina is bewust weg. Zelfde nette pagina als bij een 404, zodat Google het adres sneller loslaat.
+     */
+    public function pageGone()
+    {
+        NotFoundPage::saveOccurrence(
+            str(request()->fullUrl())->replace(request()->root(), ''),
+            410,
+            request()->header('referer'),
+            request()->userAgent(),
+            request()->ip(),
+            Sites::getActive(),
+            app()->getLocale()
+        );
+
+        seo()->metaData('metaTitle', 'Pagina niet gevonden');
+
+        if (View::exists(config('dashed-core.site_theme', 'dashed') . '.not-found.show')) {
+            return response()
+                ->view(config('dashed-core.site_theme', 'dashed') . '.not-found.show')
+                ->setStatusCode(410);
+        }
+
+        abort(410);
     }
 }

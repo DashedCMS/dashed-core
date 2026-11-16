@@ -2,6 +2,13 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.111.0 - 2026-11-16
+
+- Redirects: nooit meer een lus of keten. `Redirect::resolveFor()` (via `Classes\Redirects\RedirectChain`) zoekt eerst het pad met taalprefix en pas daarna zonder, volgt een keten in één stap naar het eindadres en geeft niets terug als het pad naar zichzelf terugleidt (ook bij alleen een hoofdletterverschil). Gebruikt in `FrontendController` en `RejectNonPageRequests`. Oorzaak bij Lovora: `/producten/x -> /de/producten/x` matchte ook op `/de/producten/x`.
+- Opslaan van een redirect die naar zichzelf of via een keten terug wijst wordt tegengehouden (model en Filament-validatie); een doel dat zelf doorverwijst wordt het eindadres en eerdere redirects naar het vertrekadres gaan mee.
+- `handleSlugChange()`: geen redirect meer tussen talen (een oud adres zonder taalprefix naar het adres met prefix) en geen vervaldatum van drie maanden meer op automatische 301's.
+- Status 410: redirecttype "Verwijderd (410)", `Redirect::markGone()`. Een verwijderd visitable model krijgt per taal een 301 naar een opvolger of anders een 410 (`RedirectDeletedModelUrlsJob`, config `dashed-core.redirects.on_delete` en `after_delete`); terugzetten haalt de 410 weg.
+
 ## v4.110.0 - 2026-11-16
 
 - `PrivateUploads::moveIntoPrivate()`: veilig verhuizen van een bestaand bestand naar de privé opslag (kopiëren, grootte controleren, dan pas het origineel weg). `PrivateUploads::privatizeOnMigrate()` / `dashed-core.uploads.privatize_existing_on_migrate`: verhuis-migraties draaien standaard alleen in productie.

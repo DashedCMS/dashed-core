@@ -3,7 +3,9 @@
 namespace Dashed\DashedCore\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Dashed\DashedCore\Classes\Locales;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Dashed\DashedCore\Classes\Redirects\RedirectChain;
 
 class Redirect extends Model
 {
@@ -14,6 +16,140 @@ class Redirect extends Model
     protected $casts = [
         'delete_redirect_after' => 'date',
     ];
+
+    protected static function booted(): void
+    {
+        // Een redirect die naar zichzelf wijst of via een keten terugkomt wordt niet opgeslagen; een doel dat zelf
+        // doorverwijst wordt meteen het eindadres (Lovora, 16-11-2026: 44 lussen in Search Console).
+        static::saving(function (Redirect $redirect) {
+            if ($redirect->isGone()) {
+                $redirect->to = (string) $redirect->to;
+
+                return null;
+            }
+
+            return $redirect->guardAgainstLoops();
+        });
+
+        static::saved(fn (Redirect $redirect) => $redirect->pointEarlierRedirectsHere());
+    }
+
+    public function isGone(): bool
+    {
+        return (int) $this->sort === RedirectChain::GONE;
+    }
+
+    /**
+     * Het eindadres voor een verzoek op dit pad, in één stap: ['to' => ..., 'status' => 301|302|410], of null
+     * als er geen redirect is of als die naar zichzelf terug zou leiden.
+     *
+     * @return array{to: string|null, status: int}|null
+     */
+    public static function resolveFor(string $path, ?int $exceptId = null): ?array
+    {
+        return RedirectChain::resolve(
+            $path,
+            fn (string $current) => self::lookup($current, $exceptId),
+            parse_url((string) url('/'), PHP_URL_HOST) ?: null,
+        );
+    }
+
+    /**
+     * Eén stap: eerst het pad precies zoals gevraagd, pas daarna het pad zonder taalprefix. Vroeger telden beide
+     * even zwaar, waardoor /de/producten/x de NL-redirect /producten/x -> /de/producten/x vond.
+     *
+     * @return array{to: string|null, status: int}|null
+     */
+    public static function lookup(string $path, ?int $exceptId = null): ?array
+    {
+        $redirect = self::findForSlugs([$path], $exceptId);
+
+        if (! $redirect && ($withoutLocale = RedirectChain::withoutLocalePrefix($path, self::localeIds())) !== null) {
+            $redirect = self::findForSlugs([$withoutLocale], $exceptId);
+        }
+
+        return $redirect ? ['to' => $redirect->to, 'status' => (int) $redirect->sort] : null;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function localeIds(): array
+    {
+        return array_values(array_filter(array_map(fn ($locale) => $locale['id'] ?? null, rescue(fn () => Locales::getLocales(), [], false))));
+    }
+
+    /**
+     * Markeert een adres als definitief weg (410), tenzij er al een redirect vanaf staat.
+     */
+    public static function markGone(string $from): ?self
+    {
+        $from = RedirectChain::normalize($from);
+
+        if ($from === '/' || self::findForSlugs([$from])) {
+            return null;
+        }
+
+        $redirect = new self();
+        $redirect->from = $from;
+        $redirect->to = '';
+        $redirect->sort = RedirectChain::GONE;
+        $redirect->save();
+
+        return $redirect;
+    }
+
+    /**
+     * @return false|null  false houdt het opslaan tegen
+     */
+    public function guardAgainstLoops(): ?bool
+    {
+        $host = parse_url((string) url('/'), PHP_URL_HOST) ?: null;
+
+        if (! RedirectChain::isInternal($this->to, $host)) {
+            return null;
+        }
+
+        if (RedirectChain::same($this->from, $this->to)) {
+            return false;
+        }
+
+        $final = self::resolveFor($this->to, $this->exists ? (int) $this->getKey() : null);
+
+        if ($final === null || $final['to'] === null) {
+            return null;
+        }
+
+        if (RedirectChain::isInternal($final['to'], $host) && RedirectChain::same($final['to'], $this->from)) {
+            return false;
+        }
+
+        $this->to = $final['to'];
+
+        return null;
+    }
+
+    /**
+     * Redirects die naar het vertrekadres van deze wezen gaan meteen naar het eindadres, zodat er geen keten
+     * ontstaat. Een redirect die daardoor naar zichzelf zou wijzen verdwijnt.
+     */
+    public function pointEarlierRedirectsHere(): void
+    {
+        if ($this->isGone() || ! RedirectChain::isInternal($this->to, parse_url((string) url('/'), PHP_URL_HOST) ?: null)) {
+            return;
+        }
+
+        foreach (self::query()->whereIn('to', self::candidatesFor([$this->from]))->whereKeyNot($this->getKey())->get() as $earlier) {
+            if (RedirectChain::same($earlier->from, $this->to)) {
+                $earlier->deleteQuietly();
+
+                continue;
+            }
+
+            $earlier->to = $this->to;
+            $earlier->saveQuietly();
+        }
+    }
 
     /**
      * Alle vormen waarin een pad in `from` kan staan, met en zonder slashes.
@@ -44,11 +180,19 @@ class Redirect extends Model
     /**
      * @param  array<int, string|null>  $slugs
      */
-    public static function findForSlugs(array $slugs): ?self
+    public static function findForSlugs(array $slugs, ?int $exceptId = null): ?self
     {
         $candidates = self::candidatesFor($slugs);
 
-        return $candidates === [] ? null : self::query()->whereIn('from', $candidates)->first();
+        if ($candidates === []) {
+            return null;
+        }
+
+        return self::query()
+            ->whereIn('from', $candidates)
+            ->when($exceptId, fn ($query) => $query->whereKeyNot($exceptId))
+            ->orderBy('id')
+            ->first();
     }
 
     public function pointsToItself(): bool
@@ -70,6 +214,13 @@ class Redirect extends Model
             return;
         }
 
+        // Een oud adres in een andere taal is geen slugwijziging. Zo ontstond /producten/x -> /de/producten/x toen
+        // de Duitse URL zijn taalprefix kreeg: de NL-pagina verdween achter een redirect naar het Duits.
+        $locales = self::localeIds();
+        if (RedirectChain::localePrefix($oldSlug, $locales) !== RedirectChain::localePrefix($newSlug, $locales)) {
+            return;
+        }
+
         if (! str($newSlug)->startsWith('/')) {
             $newSlug = '/' . $newSlug;
         }
@@ -83,7 +234,8 @@ class Redirect extends Model
             $redirect->from = $oldSlug;
             $redirect->to = $newSlug;
             $redirect->sort = '301';
-            $redirect->delete_redirect_after = now()->addMonths(3);
+            // Geen vervaldatum: na drie maanden gaf het oude adres weer een 404, terwijl Google en oude links het
+            // nog jaren gebruiken.
             $redirect->save();
         }
 
