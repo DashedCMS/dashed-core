@@ -45,11 +45,18 @@ class Redirect extends Model
      *
      * @return array{to: string|null, status: int}|null
      */
-    public static function resolveFor(string $path, ?int $exceptId = null): ?array
+    public static function resolveFor(string $path, ?int $exceptId = null, bool $requested = true): ?array
     {
+        // Alleen het opgevraagde adres mag via het pad zonder taalprefix matchen. Een tussenstap is een adres dat
+        // een redirect zelf noemt: /en/producten/x kan een live EN-pagina zijn, en de NL-redirect /producten/x
+        // erachter stuurde EN-bezoekers dan naar een NL-pagina.
+        $hop = $requested ? 0 : 1;
+
         return RedirectChain::resolve(
             $path,
-            fn (string $current) => self::lookup($current, $exceptId),
+            function (string $current) use ($exceptId, &$hop) {
+                return self::lookup($current, $exceptId, $hop++ === 0);
+            },
             parse_url((string) url('/'), PHP_URL_HOST) ?: null,
         );
     }
@@ -60,11 +67,11 @@ class Redirect extends Model
      *
      * @return array{to: string|null, status: int}|null
      */
-    public static function lookup(string $path, ?int $exceptId = null): ?array
+    public static function lookup(string $path, ?int $exceptId = null, bool $withoutLocaleFallback = true): ?array
     {
         $redirect = self::findForSlugs([$path], $exceptId);
 
-        if (! $redirect && ($withoutLocale = RedirectChain::withoutLocalePrefix($path, self::localeIds())) !== null) {
+        if (! $redirect && $withoutLocaleFallback && ($withoutLocale = RedirectChain::withoutLocalePrefix($path, self::localeIds())) !== null) {
             $redirect = self::findForSlugs([$withoutLocale], $exceptId);
         }
 
@@ -114,7 +121,7 @@ class Redirect extends Model
             return false;
         }
 
-        $final = self::resolveFor($this->to, $this->exists ? (int) $this->getKey() : null);
+        $final = self::resolveFor($this->to, $this->exists ? (int) $this->getKey() : null, false);
 
         if ($final === null || $final['to'] === null) {
             return null;

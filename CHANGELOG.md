@@ -2,6 +2,12 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.113.2 - 2026-11-16
+
+### Fixed
+- Redirects: alleen het opgevraagde adres valt nog terug op het pad zonder taalprefix. Een tussenstap in een keten matcht precies, zodat een live EN-pagina (`/en/producten/x`) niet via de NL-redirect `/producten/x` alsnog naar een NL-pagina werd doorgestuurd. Ook de lusbeveiliging bij opslaan volgt het doel zo.
+- `CacheDecisionAssetsTest` faalde bij een willekeurige volgorde: de Vite-facade-mock bleef tussen tests hangen.
+
 ## v4.113.1 - 2026-11-16
 
 ### Fixed

@@ -18,6 +18,13 @@ use Dashed\DashedCore\Classes\Caching\CacheDecision;
  * build levert vanzelf nieuwe sleutels op en de oude HTML wordt nooit meer
  * gevonden.
  */
+/**
+ * Zonder Laravel-TestCase ruimt niemand de facade-mock op: de onbeperkte verwachting uit een eerdere test
+ * ving dan bij een willekeurige volgorde ook deze aanroepen op ('zelfde-build').
+ */
+beforeEach(fn () => Vite::clearResolvedInstances());
+afterEach(fn () => Mockery::close());
+
 it('geeft dezelfde pagina een andere sleutel na een nieuwe assetbuild', function () {
     // once(): anders vangt de eerste verwachting ook de tweede aanroep op en
     // meet de test niets.
