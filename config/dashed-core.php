@@ -126,6 +126,9 @@ return [
         // Privé opslag voor bestanden van bezoekers (Security\Uploads\PrivateUploads).
         // Leeg: de DigitalOcean/S3-disk "dashed" of "spaces" als die er is, anders "local".
         'private_disk' => env('DASHED_PRIVATE_UPLOAD_DISK'),
+        // Bestaande publieke bestanden (formulieren, product-extra's, chat) bij de
+        // migraties verhuizen naar de privé opslag; standaard alleen in productie.
+        'privatize_existing_on_migrate' => env('DASHED_PRIVATIZE_UPLOADS_ON_MIGRATE', env('APP_ENV') === 'production'),
         'rate_limit' => [
             'guest_per_minute' => 30,
             'panel_per_minute' => 120,

@@ -119,6 +119,65 @@ class PrivateUploads
         return static::store(new UploadedFile($absolutePath, $originalName ?? basename($absolutePath), null, null, true), $directory);
     }
 
+    /**
+     * Verhuist een bestaand (publiek) bestand naar de privé opslag: kopiëren,
+     * controleren dat de kopie even groot is, en pas dan het origineel
+     * verwijderen. Null als het bron-bestand ontbreekt, het type niet mag of
+     * de kopie niet klopt; het origineel blijft dan staan.
+     */
+    public static function moveIntoPrivate(string $sourceDisk, string $sourcePath, string $directory, bool $deleteSource = true): ?string
+    {
+        $source = Storage::disk($sourceDisk);
+
+        if (static::isPrivate($sourcePath) || ! $source->exists($sourcePath)) {
+            return null;
+        }
+
+        $extension = strtolower(pathinfo($sourcePath, PATHINFO_EXTENSION));
+        $extension = $extension === 'jpeg' ? 'jpg' : $extension;
+        if (! array_key_exists($extension, static::CONTENT_TYPES)) {
+            return null;
+        }
+
+        $target = static::PREFIX . trim(Str::slug($directory) ?: 'files', '/') . '/' . Str::uuid() . '.' . $extension;
+        $size = (int) $source->size($sourcePath);
+
+        $stream = $source->readStream($sourcePath);
+        if (! $stream) {
+            return null;
+        }
+
+        try {
+            $ok = static::disk()->writeStream($target, $stream, ['visibility' => 'private']);
+        } finally {
+            if (is_resource($stream)) {
+                fclose($stream);
+            }
+        }
+
+        if (! $ok || ! static::disk()->exists($target) || (int) static::disk()->size($target) !== $size) {
+            rescue(fn () => static::disk()->delete($target), null, false);
+
+            return null;
+        }
+
+        if ($deleteSource) {
+            rescue(fn () => $source->delete($sourcePath), null, false);
+        }
+
+        return $target;
+    }
+
+    /**
+     * Verhuizen van bestaande bestanden bij een migratie: standaard alleen in
+     * productie. Lokaal draaien migraties vaak op een kopie van de
+     * productiedatabase met de echte DigitalOcean-disk erachter.
+     */
+    public static function privatizeOnMigrate(): bool
+    {
+        return (bool) config('dashed-core.uploads.privatize_existing_on_migrate', app()->isProduction());
+    }
+
     public static function extensionFor(UploadedFile $file): ?string
     {
         $extension = strtolower((string) $file->guessExtension());

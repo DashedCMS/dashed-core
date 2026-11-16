@@ -2,6 +2,10 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.110.0 - 2026-11-16
+
+- `PrivateUploads::moveIntoPrivate()`: veilig verhuizen van een bestaand bestand naar de privé opslag (kopiëren, grootte controleren, dan pas het origineel weg). `PrivateUploads::privatizeOnMigrate()` / `dashed-core.uploads.privatize_existing_on_migrate`: verhuis-migraties draaien standaard alleen in productie.
+
 ## v4.109.0 - 2026-11-16
 
 - `Security\Uploads\PrivateUploads`: één privé opslag voor bestanden van bezoekers. Op de DigitalOcean/S3-disk (`dashed`, of `spaces` als de media lokaal staan) als privé object, anders `storage/app/private-uploads`; altijd een gegenereerde naam. Ophalen via `/private-uploads/{map}/{uuid}.{ext}` (route `dashed.private-upload`): alleen paneelgebruikers of een tijdelijke gesigneerde link. Instelbaar met `dashed-core.uploads.private_disk`.
