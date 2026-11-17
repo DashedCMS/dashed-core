@@ -69,7 +69,10 @@ class ErrorPageRenderer
             }
 
             try {
-                if ($view !== 'dashed-core::errors.standalone') {
+                // Onderhoudspagina's staan los van de layout en hebben de gedeelde
+                // frontendvariabelen niet nodig; de middleware zou tijdens een
+                // migratie juist de database raken.
+                if ($status !== 503 && $view !== 'dashed-core::errors.standalone') {
                     $this->shareFrontendVariables($request);
                 }
 
@@ -115,9 +118,21 @@ class ErrorPageRenderer
         $theme = config('dashed-core.site_theme', 'dashed');
         $views = [];
 
-        // Ook bij onderhoud (503) eerst de themaversies: de database kan
-        // halverwege een migratie zijn, maar dan klapt de render en valt hij
-        // vanzelf door naar de losse pagina hieronder.
+        // Onderhoud (503) krijgt een eigen losse kaart in de huisstijl, niet de
+        // master van de site: tijdens een deploy kan de database halverwege een
+        // migratie zijn of de Vite-build ontbreken. Een project kan hem wel
+        // overschrijven met <thema>.errors.503.
+        if ($status === 503) {
+            if (! $isCms) {
+                $views[] = "{$theme}.errors.503";
+            }
+
+            $views[] = 'dashed-core::errors.maintenance';
+            $views[] = 'dashed-core::errors.standalone';
+
+            return $views;
+        }
+
         if (! $isCms) {
             $views[] = "{$theme}.errors.{$status}";
             $views[] = "{$theme}.errors.show";
@@ -219,7 +234,7 @@ class ErrorPageRenderer
      * wordt ook getoond als de database niet bereikbaar is, en dan moet er nog
      * steeds iets herkenbaars op het scherm komen.
      *
-     * @return array{siteName: string, logoUrl: ?string, primaryColor: string}
+     * @return array{siteName: string, logoUrl: ?string, primaryColor: string, onPrimaryColor: string, contactEmail: ?string}
      */
     public function branding(): array
     {
@@ -230,11 +245,20 @@ class ErrorPageRenderer
             return $logoId ? (mediaHelper()->getSingleMedia($logoId)->url ?? null) : null;
         }, null, false);
         $primaryColor = rescue(fn () => (string) Customsetting::get('mail_primary_color'), '', false);
+        $onPrimaryColor = rescue(fn () => (string) Customsetting::get('mail_text_color'), '', false);
+        $contactEmail = rescue(fn () => trim((string) Customsetting::get('site_to_email')), '', false);
 
         return [
             'siteName' => $siteName !== '' ? $siteName : (string) config('app.name', ''),
             'logoUrl' => $logoUrl ?: null,
-            'primaryColor' => preg_match('/^#[0-9a-f]{3,8}$/i', $primaryColor) ? $primaryColor : MailBranding::DEFAULT_PRIMARY_COLOR,
+            'primaryColor' => $this->isHexColor($primaryColor) ? $primaryColor : MailBranding::DEFAULT_PRIMARY_COLOR,
+            'onPrimaryColor' => $this->isHexColor($onPrimaryColor) ? $onPrimaryColor : '#ffffff',
+            'contactEmail' => filter_var($contactEmail, FILTER_VALIDATE_EMAIL) ? $contactEmail : null,
         ];
+    }
+
+    protected function isHexColor(string $color): bool
+    {
+        return (bool) preg_match('/^#[0-9a-f]{3,8}$/i', $color);
     }
 }

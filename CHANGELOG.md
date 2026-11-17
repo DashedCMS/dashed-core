@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.114.0 - 2026-11-17
+
+### Added
+- Onderhoudspagina (503, `php artisan down`) als losse kaart in de huisstijl van de site: logo, gekleurde band en knop in de hoofdkleur (`mail_primary_color`, tekst in `mail_text_color`), "We zijn zo terug" met een knop om opnieuw te proberen en het contactadres (`site_to_email`). Geen layout, database of Vite-build nodig. Een project overschrijft hem met `<thema>.errors.503`; de master van de site wordt voor een 503 niet meer geprobeerd.
+
 ## v4.113.3 - 2026-11-16
 
 ### Fixed

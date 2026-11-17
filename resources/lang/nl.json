@@ -1227,5 +1227,9 @@
     "Verplaatst naar storage/app/:map (niet publiek)": "Verplaatst naar storage/app/:map (niet publiek)",
     "Server": "Server",
     "PHP-inhoud gevonden in uploadmappen": "PHP-inhoud gevonden in uploadmappen",
-    "Uploaden is hier niet toegestaan.": "Uploaden is hier niet toegestaan."
+    "Uploaden is hier niet toegestaan.": "Uploaden is hier niet toegestaan.",
+    "Even onderhoud": "Even onderhoud",
+    "We zijn zo terug": "We zijn zo terug",
+    "Probeer het opnieuw": "Probeer het opnieuw",
+    "Vragen? Mail ons op": "Vragen? Mail ons op"
 }
