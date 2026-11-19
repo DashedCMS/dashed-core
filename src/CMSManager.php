@@ -391,6 +391,11 @@ class CMSManager
             $block->label(fn (?array $state = null, ?int $index = null): string => BlockHeaderLabel::for($base, $state, $index));
         }
 
+        // A/B-tests: het test-id in de blokdata moet een geopend blok overleven.
+        foreach ($blocks as $block) {
+            \Dashed\DashedCore\Classes\AbTests\AbTestBlockAction::attachHiddenField($block);
+        }
+
         $globalBlocks = GlobalBlock::all()->mapWithKeys(fn ($block) => [$block->id => $block->name]);
 
         return ContentBuilder::make($name)
@@ -427,6 +432,9 @@ class CMSManager
             ->collapsible(true)
             ->blockIcons()
             ->blockNumbers(false)
+            ->extraItemActions([
+                \Dashed\DashedCore\Classes\AbTests\AbTestBlockAction::make(),
+            ])
             ->blockPickerColumns(3)
             ->blockLabels()
             ->cloneable()
@@ -830,6 +838,26 @@ class CMSManager
     public function registerRetention(\Dashed\DashedCore\Retention\Retention $retention): self
     {
         $this->retentionRegistry()->registreer($retention);
+
+        return $this;
+    }
+
+    public function personalDataRegistry(): \Dashed\DashedCore\PersonalData\PersonalDataRegistry
+    {
+        return app(\Dashed\DashedCore\PersonalData\PersonalDataRegistry::class);
+    }
+
+    /**
+     * Meld een pakket aan bij de AVG-verzoeken (inzage en verwijdering per
+     * e-mailadres). Een klassenaam, pas bij gebruik geïnstantieerd. Aanroepen
+     * achter method_exists(cms(), 'registerPersonalDataProvider'), zodat het
+     * pakket ook met een oudere dashed-core boot.
+     *
+     * @param  class-string<\Dashed\DashedCore\PersonalData\PersonalDataProvider>|\Dashed\DashedCore\PersonalData\PersonalDataProvider  $provider
+     */
+    public function registerPersonalDataProvider(string|\Dashed\DashedCore\PersonalData\PersonalDataProvider $provider): self
+    {
+        $this->personalDataRegistry()->register($provider);
 
         return $this;
     }

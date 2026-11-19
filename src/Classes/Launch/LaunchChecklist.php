@@ -240,6 +240,40 @@ class LaunchChecklist
                 'problems' => fn () => array_values(array_filter([(string) ($health['scheduler']['detail'] ?? '')])),
             ],
             [
+                'key' => 'queue',
+                'label' => __('Wachtrij draait'),
+                'detail' => __('Een queue-worker of Horizon die de wachtrij verwerkt. Zonder worker blijven mails, exports en koppelingen liggen.'),
+                'owner' => __('De ontwikkelaar, op de server'),
+                'url' => $settingsUrl(\Dashed\DashedCore\Filament\Pages\Settings\SystemStatusPage::class),
+                // Pas klaar met een echte hartslag: "nog geen hartslag, er
+                // wordt gekeken" is op de Systeemstatus in orde, hier niet.
+                'check' => fn () => config('queue.default') === 'sync'
+                    || (($health['queue']['status'] ?? null) === SystemHealth::OK && \Illuminate\Support\Facades\Cache::has(SystemHealth::QUEUE_KEY)),
+                'problems' => fn () => array_values(array_filter([
+                    ($health['queue']['status'] ?? SystemHealth::OK) !== SystemHealth::OK ? (string) ($health['queue']['detail'] ?? '') : null,
+                    \Illuminate\Support\Facades\Cache::has(SystemHealth::QUEUE_KEY) ? null : __('Nog geen hartslag van de wachtrij gezien; die komt pas als de scheduler en een worker draaien.'),
+                ])),
+            ],
+            [
+                'key' => 'mail_transport',
+                'label' => __('Mails gaan echt de deur uit (Postmark)'),
+                'detail' => __('MAIL_MAILER staat op een echte mailer, en bij Postmark is het servertoken ingevuld. Met log of array gaat er geen enkele mail weg, ook geen orderbevestiging.'),
+                'owner' => __('De ontwikkelaar, op de server'),
+                'check' => fn () => static::mailTransportProblems() === [],
+                'problems' => fn () => static::mailTransportProblems(),
+            ],
+            [
+                'key' => 'cookie_banner',
+                'label' => __('Cookiebanner aan'),
+                'detail' => __('Zodra de site analytische of marketingcookies plaatst, moet een bezoeker eerst toestemming geven. De cookiebanner staat per site bij Instellingen, Cookies.'),
+                'owner' => __('Een beheerder, in het CMS'),
+                'url' => static::cookieSettingsUrl(),
+                'check' => fn () => static::cookieBannerActive($siteId),
+                'problems' => fn () => [class_exists(\Dashed\DashedCookies\Classes\CookieSettings::class)
+                    ? __('De cookiebanner staat uit voor de eerste site.')
+                    : __('Er is geen cookiebanner geïnstalleerd (pakket dashed-cookies).')],
+            ],
+            [
                 'key' => 'sitemap_submitted',
                 'label' => __('Sitemap ingediend bij Google Search Console'),
                 'detail' => __('Dien :url in bij Search Console.', ['url' => url('sitemap.xml')]),
@@ -254,6 +288,42 @@ class LaunchChecklist
                 'manual' => true,
             ],
         ];
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    protected static function mailTransportProblems(): array
+    {
+        $mailer = (string) config('mail.default');
+
+        if (in_array($mailer, ['log', 'array'], true)) {
+            return [__('MAIL_MAILER staat op :mailer.', ['mailer' => $mailer])];
+        }
+
+        if ($mailer === 'postmark' && blank(config('services.postmark.token') ?: config('mail.mailers.postmark.token'))) {
+            return [__('MAIL_MAILER staat op postmark, maar POSTMARK_TOKEN is leeg.')];
+        }
+
+        return [];
+    }
+
+    protected static function cookieBannerActive(?string $siteId): bool
+    {
+        if (class_exists(\Dashed\DashedCookies\Classes\CookieSettings::class)) {
+            return (bool) \Dashed\DashedCookies\Classes\CookieSettings::enabled($siteId);
+        }
+
+        // Een andere cookiebanner kan zich als ConsentProvider aanmelden.
+        return class_exists(\Dashed\DashedCore\Classes\Consent\ConsentGate::class)
+            && \Dashed\DashedCore\Classes\Consent\ConsentGate::active();
+    }
+
+    protected static function cookieSettingsUrl(): ?string
+    {
+        $class = 'Dashed\\DashedCookies\\Filament\\Pages\\Settings\\CookieSettingsPage';
+
+        return class_exists($class) ? rescue(fn () => $class::getUrl(), null, report: false) : null;
     }
 
     protected static function panelUserQuery()

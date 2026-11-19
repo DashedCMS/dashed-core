@@ -132,6 +132,18 @@ class NotFoundPageResource extends Resource
                 \Filament\Actions\Action::make('createRedirect')
                     ->label(__('Maak redirect aan'))
                     ->button()
+                    // Weet de url-historie waar deze pagina nu staat, dan staat
+                    // dat adres al ingevuld. Pas bij het openen opgezocht, niet
+                    // per rij in de lijst: dat zou een query per rij zijn.
+                    ->fillForm(fn (NotFoundPage $record): array => [
+                        'url_type' => 'normal',
+                        'url_url' => self::suggestedRedirect($record),
+                        'sort' => '301',
+                        'delete_redirect_after' => now()->addMonths(3),
+                    ])
+                    ->modalDescription(fn (NotFoundPage $record): ?string => ($suggestion = self::suggestedRedirect($record))
+                        ? __('Voorstel uit de url-historie: deze pagina staat nu op :url.', ['url' => $suggestion])
+                        : null)
                     ->schema([
                         linkHelper()->field(required: true),
                         //                        Forms\Components\TextInput::make('to')
@@ -155,7 +167,7 @@ class NotFoundPageResource extends Resource
                                 Action::make('emptyDate')
                                     ->label(__('Leeg datum'))
                                     ->icon('heroicon-o-clock')
-                                    ->action(function (Forms\Set $set) {
+                                    ->action(function (\Filament\Schemas\Components\Utilities\Set $set) {
                                         $set('delete_redirect_after', null);
                                     })
                             ),
@@ -199,5 +211,31 @@ class NotFoundPageResource extends Resource
             'index' => ListNotFoundPage::route('/'),
             'view' => ViewNotFoundPage::route('/{record}/edit'),
         ];
+    }
+
+    /**
+     * Het huidige pad van de pagina die ooit op dit 404-adres stond, volgens
+     * de url-historie. Via MovedUrlResolver uit dashed-seo, dezelfde bron als
+     * de sitescanfixer "Redirect voor verdwenen pagina", achter class_exists
+     * omdat core dat pakket niet kent.
+     */
+    public static function suggestedRedirect(NotFoundPage $record): ?string
+    {
+        $resolver = \Dashed\DashedSeo\Fixes\Links\MovedUrlResolver::class;
+
+        if (! class_exists($resolver) || ! $record->link) {
+            return null;
+        }
+
+        $from = '/' . ltrim((string) parse_url((string) $record->link, PHP_URL_PATH), '/');
+        $url = rescue(fn () => $resolver::currentUrlFor($from, (string) $record->site, $record->locale ?: null), null, report: false);
+
+        if (! is_string($url) || $url === '') {
+            return null;
+        }
+
+        $to = '/' . ltrim((string) parse_url($url, PHP_URL_PATH), '/');
+
+        return rtrim($to, '/') === rtrim($from, '/') ? null : $to;
     }
 }

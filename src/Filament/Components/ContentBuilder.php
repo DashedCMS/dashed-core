@@ -71,7 +71,16 @@ class ContentBuilder extends Builder
         // Een kloon van een ongemoeid blok erft de markering en dus ook de
         // databasevorm van zijn data; openItem() ontsluit en vult hem.
         $this->addAction($openLastItem);
-        $this->cloneAction($openLastItem);
+        // Een kloon is geen deel van de A/B-test van het origineel.
+        $this->cloneAction(fn (Action $action): Action => $action->after(function (ContentBuilder $component): void {
+            $items = $component->getRawState() ?? [];
+            $last = array_key_last($items);
+            if ($last !== null && isset($items[$last]['data'][\Dashed\DashedCore\Models\AbTest::BLOCK_KEY])) {
+                unset($items[$last]['data'][\Dashed\DashedCore\Models\AbTest::BLOCK_KEY]);
+                $component->rawState($items);
+            }
+            $component->openItem((string) $last);
+        }));
 
         // De bewerkknop (alleen bij blokvoorbeelden) leest het schema van het
         // item; een ongemoeid item heeft er geen, dus eerst ontsluiten. Gelijk

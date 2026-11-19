@@ -367,6 +367,7 @@ class UserResource extends Resource
                 \Dashed\DashedCore\Filament\Resources\UserResource\Actions\ResetMfaAction::make(),
                 DeleteAction::make()
                     ->visible(fn ($record) => $record->mayBeManagedBy(auth()->user())),
+                ...static::extraRecordActions(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
@@ -375,6 +376,23 @@ class UserResource extends Resource
                         ->authorizeIndividualRecords(fn ($record) => $record->mayBeManagedBy(auth()->user())),
                 ]),
             ]);
+    }
+
+    /**
+     * Acties die andere pakketten aan een gebruiker hangen, zoals het
+     * klantprofiel uit ec-core: cms()->builder('userResourceRecordActions',
+     * ['sleutel' => fn () => Action::make(...)]). Een closure, zodat de
+     * actie pas bij het renderen gebouwd wordt en niet bij de boot.
+     *
+     * @return array<int, \Filament\Actions\Action>
+     */
+    protected static function extraRecordActions(): array
+    {
+        return collect(cms()->builder('userResourceRecordActions'))
+            ->map(fn ($action) => is_callable($action) ? $action() : $action)
+            ->filter(fn ($action) => $action instanceof \Filament\Actions\Action)
+            ->values()
+            ->all();
     }
 
     public static function getRelations(): array

@@ -61,6 +61,9 @@
     </div>
 @endif
 
+{{-- Actiebalken bovenaan de pagina; leeg zolang ze per site uit staan. Zie AnnouncementBars. --}}
+{!! \Dashed\DashedCore\Classes\AnnouncementBars\AnnouncementBars::render($model ?? null) !!}
+
 @php
     $tracking = $trackingSettings ?? [];
 

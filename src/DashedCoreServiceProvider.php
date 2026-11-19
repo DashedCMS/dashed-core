@@ -162,6 +162,10 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         // cms()->registerRetention(...) in bootingPackage().
         $this->app->singleton(\Dashed\DashedCore\Retention\RetentionRegistry::class);
 
+        // AVG-verzoeken: elk pakket meldt zijn persoonsgegevens aan via
+        // cms()->registerPersonalDataProvider(...).
+        $this->app->singleton(\Dashed\DashedCore\PersonalData\PersonalDataRegistry::class);
+
         $this->app->singleton(\Dashed\DashedCore\Webhooks\Outgoing\WebhookEventRegistry::class);
 
         // Mails altijd in de inhoudstaal, ook als een Engelse beheerder op de
@@ -394,6 +398,7 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             $cmsPath,
             $cmsPath . '/',
             '/horizon',
+            '/cms-preview/',
             // Niet de hele /livewire/: daar staat ook livewire.min.js, dat Google nodig heeft om een pagina te renderen.
             '/livewire/update',
             '/livewire/upload-file',
@@ -401,6 +406,8 @@ class DashedCoreServiceProvider extends PackageServiceProvider
             '/storage/dashed/invoices/',
             '/storage/dashed/packing-slips/',
             '/storage/livewire-tmp/',
+            // Korte campagnelinks: doorverwijzingen, geen pagina's.
+            '/' . \Dashed\DashedCore\Classes\ShortLinks\ShortLinks::PREFIX . '/',
         ]);
 
         // Tijdelijke uploads prive en de wachter op de uploadroute, voor elk
@@ -670,6 +677,18 @@ class DashedCoreServiceProvider extends PackageServiceProvider
                 'label' => 'Koppelingen-status',
                 'width' => 2,
                 'sort' => 20,
+            ],
+            'satisfaction-chart' => [
+                'widget' => \Dashed\DashedCore\Filament\Widgets\SatisfactionChartWidget::class,
+                'label' => 'Klanttevredenheid',
+                'width' => 'full',
+                'sort' => 60,
+            ],
+            'satisfaction-low' => [
+                'widget' => \Dashed\DashedCore\Filament\Widgets\LowSatisfactionWidget::class,
+                'label' => 'Lage tevredenheidsscores',
+                'width' => 'full',
+                'sort' => 61,
             ],
             'horizon-overview' => [
                 'widget' => \Dashed\DashedCore\Filament\Widgets\Horizon\HorizonOverviewStats::class,
@@ -1369,16 +1388,32 @@ MARKDOWN,
         });
 
         Gate::policy(GlobalBlock::class, GlobalBlockPolicy::class);
+        Gate::policy(\Dashed\DashedCore\Models\PageTemplate::class, \Dashed\DashedCore\Policies\PageTemplatePolicy::class);
         Gate::policy(NotFoundPage::class, NotFoundPagePolicy::class);
         Gate::policy(Redirect::class, RedirectPolicy::class);
+        Gate::policy(\Dashed\DashedCore\Models\ShortLink::class, \Dashed\DashedCore\Policies\ShortLinkPolicy::class);
+        Gate::policy(\Dashed\DashedCore\Models\AnnouncementBar::class, \Dashed\DashedCore\Policies\AnnouncementBarPolicy::class);
         Gate::policy(Review::class, ReviewPolicy::class);
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(Role::class, RolePolicy::class);
+        Gate::policy(\Dashed\DashedCore\Models\ScheduledChange::class, \Dashed\DashedCore\Policies\ScheduledChangePolicy::class);
+        Gate::policy(\Dashed\DashedCore\Models\BulkEditRun::class, \Dashed\DashedCore\Policies\BulkEditRunPolicy::class);
+        Gate::policy(\Dashed\DashedCore\Models\Report::class, \Dashed\DashedCore\Policies\ReportPolicy::class);
+        Gate::policy(\Dashed\DashedCore\Models\PersonalDataRequest::class, \Dashed\DashedCore\Policies\PersonalDataRequestPolicy::class);
 
         cms()->registerRolePermissions('Inhoud', [
+            'approve_content' => 'Inhoud goedkeuren en publiceren',
             'view_global_block' => 'Globale blokken bekijken',
             'edit_global_block' => 'Globale blokken bewerken',
             'delete_global_block' => 'Globale blokken verwijderen',
+            'view_page_template' => 'Paginasjablonen bekijken',
+            'edit_page_template' => 'Paginasjablonen bewerken',
+            'delete_page_template' => 'Paginasjablonen verwijderen',
+            'view_scheduled_change' => 'Geplande wijzigingen bekijken',
+            'edit_scheduled_change' => 'Geplande wijzigingen uitvoeren, terugdraaien en annuleren',
+            'delete_scheduled_change' => 'Geplande wijzigingen verwijderen',
+            'view_bulk_edit_run' => 'Bulkbewerkingen bekijken',
+            'edit_bulk_edit_run' => 'Bulkbewerkingen ongedaan maken',
         ]);
 
         cms()->registerRolePermissions('SEO', [
@@ -1389,6 +1424,15 @@ MARKDOWN,
             'edit_redirect' => 'Redirects bewerken',
             'delete_redirect' => 'Redirects verwijderen',
             'view_content_quality' => 'Content-kwaliteit bekijken en verbeteren',
+        ]);
+
+        cms()->registerRolePermissions('Marketing', [
+            'view_short_link' => 'Campagnelinks bekijken',
+            'edit_short_link' => 'Campagnelinks bewerken',
+            'delete_short_link' => 'Campagnelinks verwijderen',
+            'view_announcement_bar' => 'Actiebalken bekijken',
+            'edit_announcement_bar' => 'Actiebalken bewerken',
+            'delete_announcement_bar' => 'Actiebalken verwijderen',
         ]);
 
         cms()->registerRolePermissions('Reviews', [
@@ -1404,6 +1448,25 @@ MARKDOWN,
             'view_role' => 'Rollen bekijken',
             'edit_role' => 'Rollen bewerken',
             'delete_role' => 'Rollen verwijderen',
+        ]);
+
+        Gate::policy(\Dashed\DashedCore\Models\AbTest::class, \Dashed\DashedCore\Policies\AbTestPolicy::class);
+        cms()->registerRolePermissions('Marketing', [
+            'view_ab_test' => 'A/B-tests bekijken',
+            'edit_ab_test' => 'A/B-tests bewerken',
+            'delete_ab_test' => 'A/B-tests verwijderen',
+        ]);
+        self::registreerAbTestKoppelingen();
+        cms()->registerRolePermissions('Rapportages', [
+            'view_report' => 'Rapporten bekijken',
+            'edit_report' => 'Rapporten samenstellen en inplannen',
+            'delete_report' => 'Rapporten verwijderen',
+            'view_satisfaction' => 'Klanttevredenheid bekijken',
+        ]);
+        cms()->registerRolePermissions('Gebruikers', [
+            'view_personal_data_request' => 'AVG-verzoeken bekijken en exports downloaden',
+            'edit_personal_data_request' => 'AVG-verzoeken aanmaken en inzage uitvoeren',
+            'erase_personal_data' => 'Persoonsgegevens definitief verwijderen (AVG)',
         ]);
 
         cms()->registerRolePermissions('Overige', [
@@ -1424,6 +1487,15 @@ MARKDOWN,
         Livewire::component('dashed.dashed-core.livewire.admin.usage-notice', \Dashed\DashedCore\Livewire\Admin\UsageNotice::class);
         Livewire::component('dashed.dashed-core.livewire.admin.background-tasks', \Dashed\DashedCore\Livewire\Admin\BackgroundTasks::class);
         Livewire::component('dashed.dashed-core.livewire.admin.reminder-button', \Dashed\DashedCore\Livewire\Admin\ReminderButton::class);
+        Livewire::component('dashed.dashed-core.livewire.admin.record-history', \Dashed\DashedCore\Livewire\Admin\RecordHistory::class);
+
+        // Goedkeuringsstroom: een nieuw item van een redacteur zonder
+        // publiceerrecht staat offline tot het concept is goedgekeurd.
+        \Illuminate\Support\Facades\Event::listen('eloquent.creating: *', function (string $event, array $payload) {
+            if (($model = $payload[0] ?? null) instanceof \Illuminate\Database\Eloquent\Model) {
+                \Dashed\DashedCore\Classes\Revisions\ContentApproval::guardCreate($model);
+            }
+        });
         // Opslagconflict op elke Filament-bewerkpagina, ook in klantprojecten.
         Livewire::componentHook(\Dashed\DashedCore\Livewire\Hooks\SaveConflictGuard::class);
 
@@ -1477,11 +1549,17 @@ MARKDOWN,
             })->dailyAt('04:35')->name('dashed:response-cache-cleanup');
             // Alleen opruimen, zonder eigen proces: een verlopen token wordt bij gebruik al geweigerd.
             $schedule->call(fn () => InvalidatePasswordResetTokens::invalidate())->hourly()->name('dashed:invalidate-password-reset-tokens');
+            $schedule->command(\Dashed\DashedCore\Commands\SendScheduledReportsCommand::class)
+                ->dailyAt(ScheduleSpread::at('07:00', 'send-scheduled-reports'))
+                ->when(fn () => \Dashed\DashedCore\Commands\SendScheduledReportsCommand::hasWork())
+                ->withoutOverlapping();
             $schedule->command(\Dashed\DashedCore\Commands\RetryWebhooksCommand::class)
                 ->everyMinute()
                 ->when(fn () => \Dashed\DashedCore\Commands\RetryWebhooksCommand::hasWork())
                 ->withoutOverlapping();
             $schedule->command(CleanupExpiredRedirects::class)->dailyAt(ScheduleSpread::at('00:00', 'cleanup-expired-redirects'));
+            // Een actiebalk die begint of eindigt staat in gecachte HTML; leeg dan de cache van die site.
+            $schedule->command(\Dashed\DashedCore\Commands\RefreshAnnouncementBarCacheCommand::class)->everyMinute()->withoutOverlapping();
             $schedule->command(\Dashed\DashedCore\Commands\PruneCommand::class)
                 ->dailyAt(ScheduleSpread::at('03:00', 'prune'))
                 ->withoutOverlapping();
@@ -1497,6 +1575,12 @@ MARKDOWN,
             // Een taak die niets meer van zich laat horen, staat anders eeuwig als bezig in de topbalk.
             $schedule->call(fn () => \Dashed\DashedCore\Models\BackgroundTask::markStale())->everyFifteenMinutes()->name('dashed:background-tasks-stale');
             $schedule->call(fn () => \Dashed\DashedCore\Classes\Reminders\ReminderSender::sendDue())->everyMinute()->name('dashed:send-reminders');
+            // Ingeplande wijzigingen (prijs voor Black Friday, een pagina op een
+            // tijdstip live) uitvoeren en terugdraaien. Zie ScheduledChangeRunner.
+            $schedule->command(\Dashed\DashedCore\Commands\RunScheduledChangesCommand::class)
+                ->everyMinute()
+                ->when(fn () => \Dashed\DashedCore\Classes\Changes\ScheduledChangeRunner::hasWork())
+                ->withoutOverlapping();
         });
 
         // Na elke migrate staat de telling van openstaande migraties meteen
@@ -1563,6 +1647,7 @@ MARKDOWN,
         cms()->registerContentQualityCheck(new \Dashed\DashedCore\ContentQuality\Checks\MetaTruncatedCheck());
 
         self::registreerBewaartermijnen();
+        cms()->registerPersonalDataProvider(\Dashed\DashedCore\PersonalData\Providers\CorePersonalDataProvider::class);
 
         // Ingeplande pagina's en artikelen op de campagnekalender; de andere
         // bronnen melden hun eigen pakket aan (zie CampaignCalendar).
@@ -1605,8 +1690,73 @@ MARKDOWN,
      * mogen niet in registeringPackage() staan: die fase draait voordat de
      * vertaalservice klaarstaat en zou de hele boot laten klappen.
      */
+    /**
+     * A/B-tests op blokken: het toewijzingscookie wordt door JavaScript gezet
+     * en dus niet versleuteld, en bestellingen en formulieren van andere
+     * pakketten tellen als doel. Geen harde afhankelijkheid: alleen als de
+     * klassen bestaan.
+     */
+    public static function registreerAbTestKoppelingen(): void
+    {
+        if (method_exists(\Illuminate\Cookie\Middleware\EncryptCookies::class, 'except')) {
+            \Illuminate\Cookie\Middleware\EncryptCookies::except([\Dashed\DashedCore\Classes\AbTests\AbTests::COOKIE]);
+        }
+
+        if (class_exists(\Dashed\DashedForms\Events\FormSubmitted::class)) {
+            \Illuminate\Support\Facades\Event::listen(\Dashed\DashedForms\Events\FormSubmitted::class, function ($event): void {
+                rescue(function () use ($event) {
+                    $input = \Dashed\DashedForms\Models\FormInput::find($event->form_input_id);
+                    if ($input) {
+                        \Dashed\DashedCore\Classes\AbTests\AbTests::recordGoal(\Dashed\DashedCore\Models\AbTest::GOAL_FORM, $input);
+                    }
+                }, report: false);
+            });
+        }
+
+        if (class_exists(\Dashed\DashedEcommerceCore\Events\Orders\OrderCreatedEvent::class)) {
+            // Bij het afrekenen is de browser er nog: dan de toewijzing vastleggen.
+            \Illuminate\Support\Facades\Event::listen(\Dashed\DashedEcommerceCore\Events\Orders\OrderCreatedEvent::class, function ($event): void {
+                rescue(fn () => \Dashed\DashedCore\Classes\AbTests\AbTests::recordGoal(\Dashed\DashedCore\Models\AbTest::GOAL_ORDER, $event->order, converted: false), report: false);
+            });
+        }
+
+        if (class_exists(\Dashed\DashedEcommerceCore\Events\Orders\OrderMarkedAsPaidEvent::class)) {
+            // De betaling komt vaak via een webhook, zonder browser: dan pas tellen.
+            \Illuminate\Support\Facades\Event::listen(\Dashed\DashedEcommerceCore\Events\Orders\OrderMarkedAsPaidEvent::class, function ($event): void {
+                rescue(fn () => \Dashed\DashedCore\Classes\AbTests\AbTests::markConverted($event->order), report: false);
+            });
+        }
+    }
+
     public static function registreerBewaartermijnen(): void
     {
+        // Revisies van pagina's, artikelen en andere CMS-items. Open concepten
+        // en de nieuwste live revisie per record blijven altijd staan.
+        cms()->registerRetention(
+            Retention::make('revisions')
+                ->label(__('Versies van inhoud'))
+                ->pakket('dashed-core', __('Systeem'))
+                ->tabel('dashed__revisions')
+                ->opruimer(new \Dashed\DashedCore\Retention\RevisiesOpruimer())
+                ->termijn(
+                    Termijn::make('revisions', 365, 'created_at')
+                        ->label(__('Versies bewaren (dagen)'))
+                        ->uitleg(__('Oudere versies worden verwijderd, behalve open concepten en de nieuwste live versie per item. Daarnaast blijven per item hooguit de nieuwste :aantal versies staan. Standaard: 365 dagen.', ['aantal' => (int) config('dashed-core.revisions.max_per_record', \Dashed\DashedCore\Retention\RevisiesOpruimer::STANDAARD_MAXIMUM)]))
+                )
+        );
+
+        cms()->registerRetention(
+            Retention::make('ab_test_conversions')
+                ->label(__('Koppelingen van A/B-tests aan bestellingen en formulieren'))
+                ->pakket('dashed-core', __('Algemeen'))
+                ->tabel('dashed__ab_test_conversions')
+                ->termijn(
+                    Termijn::make('ab_test_conversions', 180, 'created_at')
+                        ->label(__('A/B-testkoppelingen bewaren (dagen)'))
+                        ->uitleg(__('Welke bestelling of inzending bij welke variant hoorde. De tellers van een test blijven staan. Standaard: 180 dagen.'))
+                )
+        );
+
         cms()->registerRetention(
             Retention::make('activity_log')
                 ->label(__('Activiteitenlogboek'))
@@ -1766,6 +1916,21 @@ MARKDOWN,
         );
 
         cms()->registerRetention(
+            Retention::make('personal_data_exports')
+                ->label(__('AVG-exportbestanden'))
+                ->pakket('dashed-core', __('Systeem'))
+                ->tabel('dashed__personal_data_requests')
+                // Alleen het bestand gaat weg; het verzoek zelf blijft staan
+                // als bewijs dat de inzage is gegeven.
+                ->opruimer(new \Dashed\DashedCore\Retention\PersonalDataExportsOpruimer())
+                ->termijn(
+                    Termijn::make('personal_data_exports', 14, 'completed_at')
+                        ->label(__('AVG-exportbestanden bewaren (dagen)'))
+                        ->uitleg(__('Het ZIP-bestand van een inzageverzoek. Daarna wordt het bestand verwijderd; het verzoek blijft staan. Standaard: 14 dagen.'))
+                )
+        );
+
+        cms()->registerRetention(
             Retention::make('failed_jobs')
                 ->label(__('Mislukte taken'))
                 ->pakket('dashed-core', __('Systeem'))
@@ -1775,6 +1940,45 @@ MARKDOWN,
                     Termijn::make('failed_jobs', 30, 'failed_at')
                         ->label(__('Mislukte taken bewaren (dagen)'))
                         ->uitleg(__('Taken die definitief zijn mislukt. Na deze termijn is de foutmelding weg, dus zet hem niet te kort als je nog wilt kunnen uitzoeken wat er misging. Standaard: 30 dagen.'))
+                )
+        );
+
+        cms()->registerRetention(
+            Retention::make('scheduled_changes')
+                ->label(__('Afgeronde geplande wijzigingen'))
+                ->pakket('dashed-core', __('Systeem'))
+                ->tabel('dashed__scheduled_changes')
+                ->termijn(
+                    Termijn::make('scheduled_changes', 180, 'updated_at')
+                        ->label(__('Afgeronde geplande wijzigingen bewaren (dagen)'))
+                        ->uitleg(__('Uitgevoerde, teruggedraaide en geannuleerde wijzigingen. Wat nog gepland staat, nog terug moet of mislukt is, blijft altijd staan. Standaard: 180 dagen.'))
+                        ->filter(fn ($query) => $query
+                            ->whereIn('status', ['reverted', 'cancelled', 'applied'])
+                            ->where(fn ($query) => $query->where('status', '!=', 'applied')->orWhereNull('revert_at')))
+                )
+        );
+
+        cms()->registerRetention(
+            Retention::make('bulk_edit_runs')
+                ->label(__('Bulkbewerkingen'))
+                ->pakket('dashed-core', __('Systeem'))
+                ->tabel('dashed__bulk_edit_runs')
+                ->termijn(
+                    Termijn::make('bulk_edit_runs', 90, 'created_at')
+                        ->label(__('Bulkbewerkingen bewaren (dagen)'))
+                        ->uitleg(__('Bulkbewerkingen met de oude waarden per record. Na deze termijn kan een bulkbewerking niet meer ongedaan gemaakt worden. Standaard: 90 dagen.'))
+                )
+        );
+
+        cms()->registerRetention(
+            Retention::make('short_link_clicks')
+                ->label(__('Kliks op campagnelinks'))
+                ->pakket('dashed-core', __('Systeem'))
+                ->tabel('dashed__short_link_clicks')
+                ->termijn(
+                    Termijn::make('short_link_clicks', 730, 'date')
+                        ->label(__('Kliks per dag op campagnelinks bewaren (dagen)'))
+                        ->uitleg(__('Het aantal kliks per campagnelink per dag. Het totaal op de link zelf blijft staan. Standaard: 730 dagen.'))
                 )
         );
     }
@@ -2149,6 +2353,7 @@ MARKDOWN,
 
         cms()->registerSettingsPage(GeneralSettingsPage::class, 'Algemeen', 'cog', 'Algemene informatie van de website');
         cms()->registerSettingsPage(AccountSettingsPage::class, 'Account', 'user', 'Account instellingen van de website');
+        cms()->registerSettingsPage(\Dashed\DashedCore\Filament\Pages\Settings\AbTestSettingsPage::class, 'A/B-tests', 'beaker', 'Varianten van blokken tegen elkaar testen');
         cms()->registerSettingsPage(SecuritySettingsPage::class, 'Beveiliging', 'shield-check', 'IP-beperking, automatisch uitloggen, beveiligingsmeldingen en verzoeklimieten');
         cms()->registerSettingsPage(\Dashed\DashedCore\Filament\Pages\Settings\SecurityCheckPage::class, 'Beveiligingscheck', 'shield-exclamation', 'Wat er aan beveiliging aan of uit staat op deze installatie');
         cms()->registerSettingsPage(\Dashed\DashedCore\Filament\Pages\Settings\SystemStatusPage::class, 'Systeemstatus', 'heart', 'Scheduler, wachtrij, migraties en productie-instellingen');
@@ -2165,6 +2370,9 @@ MARKDOWN,
         cms()->registerSettingsPage(NotificationSubscriptions::class, 'Mijn samenvattingen', 'envelope-open', 'Beheer welke periodieke samenvatting-mails je wilt ontvangen.');
         cms()->registerSettingsPage(\Dashed\DashedCore\Filament\Pages\Settings\NotificationSettingsPage::class, 'Notificaties', 'bell', 'Telegram kanaal voor admin notificaties');
         cms()->registerSettingsPage(ReviewSettingsPage::class, 'Review', 'star', 'Review instellingen van de website');
+        cms()->registerSettingsPage(\Dashed\DashedCore\Filament\Pages\Settings\ContentApprovalSettingsPage::class, 'Goedkeuring', 'check-badge', 'Goedkeuringsstroom voor pagina\'s en artikelen per site');
+        cms()->registerSettingsPage(\Dashed\DashedCore\Filament\Pages\Settings\AnnouncementBarSettingsPage::class, 'Actiebalken', 'megaphone', 'Actiebalken met countdown bovenaan de site aan- of uitzetten');
+        cms()->registerSettingsPage(\Dashed\DashedCore\Filament\Pages\Settings\SatisfactionSettingsPage::class, 'Klanttevredenheid', 'face-smile', 'Eén vraag na een chatgesprek en na levering, standaard uit');
 
         $package
             ->name(static::$name)
@@ -2197,6 +2405,7 @@ MARKDOWN,
                 \Dashed\DashedCore\Commands\LockUserCommand::class,
                 \Dashed\DashedCore\Commands\SetPasswordCommand::class,
                 \Dashed\DashedCore\Commands\ClearResponseCacheCommand::class,
+                \Dashed\DashedCore\Commands\RefreshAnnouncementBarCacheCommand::class,
                 InstallCommand::class,
                 UpdateCommand::class,
                 InvalidatePasswordResetTokens::class,
@@ -2222,6 +2431,8 @@ MARKDOWN,
                 \Dashed\DashedCore\Commands\PruneNotificationsCommand::class,
                 \Dashed\DashedCore\Commands\PruneCommand::class,
                 \Dashed\DashedCore\Commands\RetryWebhooksCommand::class,
+                \Dashed\DashedCore\Commands\RunScheduledChangesCommand::class,
+                \Dashed\DashedCore\Commands\SendScheduledReportsCommand::class,
             ]);
 
     }

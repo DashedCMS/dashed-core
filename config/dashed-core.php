@@ -32,6 +32,13 @@ return [
         'max_per_user' => (int) env('DASHED_NOTIFICATIONS_MAX_PER_USER', 50),
     ],
 
+    'revisions' => [
+        // Hoeveel gesloten versies er per item (pagina, artikel) blijven
+        // staan; dashed:prune haalt de oudste daarboven weg. Open concepten
+        // en de nieuwste live versie tellen niet mee. 0 = geen grens.
+        'max_per_record' => (int) env('DASHED_REVISIONS_MAX_PER_RECORD', 50),
+    ],
+
     'seo' => [
         // Blocktypes waarvan de vragen in de FAQPage van de pagina komen
         // (FaqSchema); dashed-marketing leest dezelfde lijst voor zijn audit.
@@ -67,6 +74,13 @@ return [
         // één naloper, zodat de laatste wijziging alsnog landt. Op 0 zetten
         // schakelt de throttle uit; elke wijziging purgt dan weer de hele zone.
         'window_seconds' => (int) env('DASHED_EDGE_PURGE_WINDOW_SECONDS', 300),
+    ],
+
+    // Korte campagnelinks (/k/{code}) sturen alleen door naar de eigen site:
+    // de hosts van TrustedHosts. Andere hosts, bijvoorbeeld een webshop op
+    // een eigen domein, komen hier expliciet bij, komma-gescheiden en exact.
+    'short_links' => [
+        'allowed_hosts' => array_values(array_filter(array_map('trim', explode(',', (string) env('DASHED_SHORT_LINK_HOSTS', ''))))),
     ],
 
     // Welke Host-headers dit systeem mogen aanspreken, naast de host van

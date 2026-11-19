@@ -2,6 +2,20 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.116.0 - 2026-11-19
+
+### Added
+- Revisies per CMS-item met vergelijken en terugzetten, een goedkeuringsstroom (standaard uit) met het recht `approve_content`, en een tijdlijn met wijzigingen per record uit de activitylog.
+- Paginasjablonen, voorvertoning van de onopgeslagen staat (telefoon, tablet, desktop), een contentkalender met bronnen per pakket, en interne-linksuggesties in de editor.
+- Ingeplande wijzigingen (met terugdraaien) en bulkbewerken met voorbeeld en ongedaan maken, met velden per model via `ChangeFields`.
+- Campagnelinks `/k/{code}` met QR en omzet per link, actiebalken met countdown (standaard uit), en A/B-tests op content-blokken (standaard uit, verdeling in de browser, met cookietoestemming).
+- Klanttevredenheid na chat en levering (standaard uit), een rapportbouwer met ingeplande rapportmails, en extra controles in `SystemHealth` en de livegangchecklist.
+- AVG-verzoeken: inzage (ZIP-export) en verwijdering per e-mailadres via een provider-registry per pakket.
+- Google OAuth-flows per koppeling (`GoogleOAuthFlows`) voor Search Console, en een actie voor het klantprofiel op de gebruikerslijst.
+
+### Fixed
+- "Maak redirect aan" in de 404-lijst vult het doel voor uit de url-historie; "Leeg datum" gebruikte een Filament 3-klasse.
+
 ## v4.115.0 - 2026-11-19
 
 ### Added

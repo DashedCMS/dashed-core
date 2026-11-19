@@ -92,6 +92,7 @@ class SystemHealth
         $items = [
             ...self::schedulerItems(),
             self::migrationsItem(),
+            self::failedJobsItem(),
             ...self::productionItems(),
             self::appUrlItem($request),
         ];
@@ -251,6 +252,55 @@ class SystemHealth
             trans_choice(':aantal migratie staat nog open (:namen). Draai php artisan migrate op de server.|:aantal migraties staan nog open (:namen). Draai php artisan migrate op de server.', count($pending), [
                 'aantal' => count($pending),
                 'namen' => $shown.(count($pending) > 3 ? ', ...' : ''),
+            ]),
+        );
+    }
+
+    /**
+     * Mislukte jobs van het afgelopen etmaal. Een job die mislukt komt niet
+     * vanzelf terug: een mail, export of synchronisatie is dan gewoon niet
+     * gebeurd. Zonder tabel (niet elk project heeft hem) zwijgt deze regel.
+     *
+     * @return array{key: string, label: string, status: string, detail: string}|null
+     */
+    protected static function failedJobsItem(): ?array
+    {
+        $table = (string) config('queue.failed.table', 'failed_jobs');
+
+        $counts = rescue(function () use ($table) {
+            if (! \Illuminate\Support\Facades\Schema::hasTable($table)) {
+                return null;
+            }
+
+            $row = \Illuminate\Support\Facades\DB::table($table)
+                ->selectRaw('COUNT(*) as total, SUM(CASE WHEN failed_at >= ? THEN 1 ELSE 0 END) as recent', [now()->subDay()])
+                ->first();
+
+            return ['total' => (int) ($row->total ?? 0), 'recent' => (int) ($row->recent ?? 0)];
+        }, null, false);
+
+        if ($counts === null) {
+            return null;
+        }
+
+        if ($counts['recent'] === 0) {
+            return self::item(
+                'failed_jobs',
+                __('Mislukte jobs'),
+                self::OK,
+                $counts['total'] > 0
+                    ? __('Geen mislukte jobs in het afgelopen etmaal (:aantal ouder).', ['aantal' => $counts['total']])
+                    : __('Geen mislukte jobs.'),
+            );
+        }
+
+        return self::item(
+            'failed_jobs',
+            __('Mislukte jobs'),
+            self::WARNING,
+            trans_choice(':aantal job is het afgelopen etmaal mislukt (:totaal in totaal). Bekijk ze in Horizon of met php artisan queue:failed, en probeer ze opnieuw met php artisan queue:retry.|:aantal jobs zijn het afgelopen etmaal mislukt (:totaal in totaal). Bekijk ze in Horizon of met php artisan queue:failed, en probeer ze opnieuw met php artisan queue:retry.', $counts['recent'], [
+                'aantal' => $counts['recent'],
+                'totaal' => $counts['total'],
             ]),
         );
     }

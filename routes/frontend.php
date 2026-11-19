@@ -24,6 +24,13 @@ Route::get('/dashed/csrf-token', CsrfTokenController::class)
     ->middleware(['web'])
     ->name('dashed.frontend.csrf-token');
 
+// A/B-tests op blokken: vertoningen en kliks. Buiten de web-groep (geen
+// sessie, geen CSRF): de pagina komt uit de responscache. Niet onder /dashed,
+// die prefix staat op sommige servers dicht.
+Route::post('/ab-test/event', \Dashed\DashedCore\Controllers\Frontend\AbTestEventController::class)
+    ->middleware('throttle:60,1')
+    ->name('dashed.ab-tests.event');
+
 // Privé uploads van bezoekers (formulieren, product-extra's, livechat): alleen
 // voor paneelgebruikers of met een tijdelijke gesigneerde link. Bewust niet
 // onder /dashed: die prefix staat op sommige servers dicht voor vreemde IP's.
@@ -42,6 +49,13 @@ Route::get('/m/k/{id}', [MailTrackingController::class, 'click'])
 Route::get('/m/p/{id}.gif', [MailTrackingController::class, 'open'])
     ->where('id', '[A-Za-z0-9]{32}')
     ->name('dashed.frontend.mail.open');
+
+// Korte campagnelinks uit de UTM-linkbouwer. Eén letter als prefix zodat de
+// link op drukwerk kort blijft; buiten de web-groep, want een doorverwijzing
+// heeft geen sessie nodig en mag nooit uit de responscache komen.
+Route::get('/' . \Dashed\DashedCore\Classes\ShortLinks\ShortLinks::PREFIX . '/{code}', \Dashed\DashedCore\Controllers\Frontend\ShortLinkController::class)
+    ->where('code', \Dashed\DashedCore\Classes\ShortLinks\ShortLinks::CODE_PATTERN)
+    ->name('dashed.frontend.short-link');
 
 if (config('dashed-core.default_auth_pages_enabled', true)) {
 
@@ -93,6 +107,19 @@ Route::get('/oauth/google/callback', [GoogleOAuthController::class, 'callback'])
 Route::match(['GET', 'POST'], '/dashed/security/not-me/{user}', \Dashed\DashedCore\Controllers\Frontend\NotMeController::class)
     ->middleware(['web', 'signed', 'throttle:10,1'])
     ->name('dashed.security.not-me');
+
+// Voorvertoning van een bewerkpagina (EditorPreview): ondertekend, alleen
+// voor de ingelogde beheerder die hem opende, buiten de responsecache.
+Route::get('/cms-preview/{token}', \Dashed\DashedCore\Controllers\Frontend\EditorPreviewController::class)
+    ->where('token', '[a-f0-9]{40}')
+    ->middleware(['web', 'signed', FrontendMiddleware::class])
+    ->name('dashed.editor.preview');
+// Tevredenheidsvraag uit een mail: ondertekend, onder /dashed/ zodat de
+// responsecache hem overslaat. GET toont, POST slaat op.
+Route::match(['GET', 'POST'], '/dashed/feedback/{token}/{score}', \Dashed\DashedCore\Controllers\Frontend\SatisfactionController::class)
+    ->where(['token' => '[A-Za-z0-9]{40}', 'score' => '[1-5]'])
+    ->middleware(['web', 'signed', 'throttle:20,1'])
+    ->name(\Dashed\DashedCore\Satisfaction\Satisfaction::ROUTE_SHOW);
 
 // Een fysiek public/robots.txt gaat op de webserver voor deze route.
 Route::get('/robots.txt', \Dashed\DashedCore\Controllers\Frontend\RobotsTxtController::class)
