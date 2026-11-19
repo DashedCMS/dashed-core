@@ -1698,5 +1698,12 @@
     "AVG-exportbestanden bewaren (dagen)": "Keep GDPR export files (days)",
     "Het ZIP-bestand van een inzageverzoek. Daarna wordt het bestand verwijderd; het verzoek blijft staan. Standaard: 14 dagen.": "The ZIP file of an access request. After this the file is deleted; the request itself is kept. Default: 14 days.",
     "AVG-verzoeken": "GDPR requests",
-    "AVG-verzoek": "GDPR request"
+    "AVG-verzoek": "GDPR request",
+    "Beheer": "Admin",
+    "Wat je hier beheert": "What you manage here",
+    "Webshop": "Web shop",
+    "Bestellingen en producten": "Orders and products",
+    "Pagina's, artikelen en media": "Pages, articles and media",
+    "Marketing": "Marketing",
+    "Nieuwsbrieven en campagnes": "Newsletters and campaigns"
 }

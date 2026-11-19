@@ -169,6 +169,10 @@ return [
         // Op false: geen wachtwoord-vergeten in het CMS-panel (routes en link
         // op het loginscherm verdwijnen; er gaan geen resetmails meer uit).
         'password_reset_enabled' => env('DASHED_CMS_PASSWORD_RESET_ENABLED', true),
+        // 'dashed' is de Dashed-huisstijl (donkere zijbalk met merkblok, kleur
+        // in tegels en tabs, eigen inlogpagina); 'classic' is de kale
+        // Filament-stijl.
+        'layout' => env('DASHED_CMS_LAYOUT', 'dashed'),
     ],
 
     'site_theme' => env('SITE_THEME', 'dashed'),

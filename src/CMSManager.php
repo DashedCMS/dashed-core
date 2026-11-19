@@ -625,7 +625,10 @@ class CMSManager
             ->renderHook(
                 \Filament\View\PanelsRenderHook::SIDEBAR_NAV_START,
                 fn () => view('dashed-core::filament.navigation-search-trigger'),
-            );
+            )
+            // Dashed-huisstijl (licht/donker, donkere zijbalk met merkblok,
+            // eigen inlogpagina). Uit met DASHED_CMS_LAYOUT=classic. Zie CmsLayout.
+            ->when(\Dashed\DashedCore\Classes\CmsLayout::enabled(), fn (Panel $p) => \Dashed\DashedCore\Classes\CmsLayout::apply($p));
 
         return $panel;
     }

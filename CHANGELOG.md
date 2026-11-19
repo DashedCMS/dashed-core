@@ -2,6 +2,13 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.117.0 - 2026-11-19
+
+### Added
+- Dashed-huisstijl voor het CMS-paneel (`CmsLayout`), standaard aan: donkere zijbalk over de volle hoogte met merkblok, accentkleur op actieve items, tabs, paginering en velden, statistiektegels met elk een eigen toonkleur, en uitgewerkte licht- en donkermodus. Alles via één stijlblok in een render hook, geen Vite-build nodig in het klantproject.
+- Eigen inlogpagina (ook voor MFA en wachtwoord vergeten): altijd donker, merk boven de kaart, tegels eronder.
+- `DASHED_CMS_LAYOUT=classic` zet de kale Filament-stijl terug.
+
 ## v4.116.0 - 2026-11-19
 
 ### Added

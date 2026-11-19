@@ -1698,5 +1698,12 @@
     "AVG-exportbestanden bewaren (dagen)": "AVG-exportbestanden bewaren (dagen)",
     "Het ZIP-bestand van een inzageverzoek. Daarna wordt het bestand verwijderd; het verzoek blijft staan. Standaard: 14 dagen.": "Het ZIP-bestand van een inzageverzoek. Daarna wordt het bestand verwijderd; het verzoek blijft staan. Standaard: 14 dagen.",
     "AVG-verzoeken": "AVG-verzoeken",
-    "AVG-verzoek": "AVG-verzoek"
+    "AVG-verzoek": "AVG-verzoek",
+    "Beheer": "Beheer",
+    "Wat je hier beheert": "Wat je hier beheert",
+    "Webshop": "Webshop",
+    "Bestellingen en producten": "Bestellingen en producten",
+    "Pagina's, artikelen en media": "Pagina's, artikelen en media",
+    "Marketing": "Marketing",
+    "Nieuwsbrieven en campagnes": "Nieuwsbrieven en campagnes"
 }
