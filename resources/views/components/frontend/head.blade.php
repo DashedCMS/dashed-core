@@ -19,9 +19,17 @@ $scriptsDelayed = (bool) ($tracking['scripts_delayed'] ?? false);
 if ($scriptsDelayed) {
     $extraScripts = \Dashed\DashedCore\Classes\DelayedScripts::rewrite($extraScripts);
 }
+
+// Na DelayedScripts: de toestemmingslader herkent een uitgesteld script en
+// laat het daarna aan de uitstellader over.
+$consentGate = \Dashed\DashedCore\Classes\Consent\ConsentGate::class;
+$consentActive = $consentGate::active();
+$extraScripts = $consentGate::rewrite($extraScripts);
 $ogSiteName = $siteName ?? config('app.name');
 ?>
 
+{{-- Cookietoestemming (Consent Mode-standaard en lader) vóór elk trackingscript. --}}
+{!! $consentGate::headStart() !!}
 
 @if($scriptsDelayed)
     {{-- Trackingscripts laden na de eerste interactie of 3 s na load (instelling "Trackingscripts uitstellen"). --}}
@@ -30,7 +38,7 @@ $ogSiteName = $siteName ?? config('app.name');
 
 @if(app()->isProduction())
     @if($gtmId)
-        <script>
+        <script {!! $consentGate::scriptAttributes(['analytics', 'marketing'], google: true) !!}>
             (function (w, d, s, l, i) {
                 w[l] = w[l] || [];
                 w[l].push({
@@ -52,7 +60,7 @@ $ogSiteName = $siteName ?? config('app.name');
 
     @if($gaId)
         <!-- Google tag (gtag.js) -->
-        <script @if($scriptsDelayed) type="text/plain" data-dashed-delayed @endif async src="https://www.googletagmanager.com/gtag/js?id={{ $gaId }}"></script>
+        <script {!! $consentGate::scriptAttributes('analytics', google: true, delayed: $scriptsDelayed) !!} async src="https://www.googletagmanager.com/gtag/js?id={{ $gaId }}"></script>
         <script>
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
@@ -82,7 +90,7 @@ $ogSiteName = $siteName ?? config('app.name');
 @endif
 
 @if(isset($model))
-    {!! $model->metaData->head_scripts ?? '' !!}
+    {!! $consentGate::rewrite($model->metaData->head_scripts ?? '') !!}
 @endif
 
 <title>{{ \Dashed\DashedCore\Classes\Seo\PageTitle::withSuffix((string) seo()->metaData('metaTitle'), (string) ($metaTitleSuffix ?? ''), (string) ($siteName ?? '')) }}</title>
@@ -158,7 +166,7 @@ $ogSiteName = $siteName ?? config('app.name');
 {!! $slot !!}
 
 @if($facebookEnabled)
-    <script>
+    <script {!! $consentGate::scriptAttributes('marketing') !!}>
         !function (f, b, e, v, n, t, s) {
             if (f.fbq) return;
             n = f.fbq = function () {
@@ -194,14 +202,15 @@ $ogSiteName = $siteName ?? config('app.name');
         fbq('track', 'PageView');
     </script>
 
-    @if($fbConversionId)
+    {{-- Zonder JavaScript is er geen toestemming te geven, dus ook geen pixel. --}}
+    @if($fbConversionId && ! $consentActive)
         <noscript>
             <img height="1" width="1" style="display:none"
                  src="https://www.facebook.com/tr?id={{ $fbConversionId }}&ev=PageView&noscript=1"/>
         </noscript>
     @endif
 
-    @if($fbSiteId)
+    @if($fbSiteId && ! $consentActive)
         <noscript>
             <img height="1" width="1" style="display:none"
                  src="https://www.facebook.com/tr?id={{ $fbSiteId }}&ev=PageView&noscript=1"/>

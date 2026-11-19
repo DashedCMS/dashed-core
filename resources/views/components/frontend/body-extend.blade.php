@@ -70,10 +70,12 @@
         || !empty($tracking['facebook_pixel_site_id'] ?? null)
         || !empty($tracking['trigger_facebook_events'] ?? false);
 
-    $extraBody = $extraBodyScripts ?? '';
+    $extraBody = \Dashed\DashedCore\Classes\Consent\ConsentGate::rewrite($extraBodyScripts ?? '');
+    $bodyConsentActive = \Dashed\DashedCore\Classes\Consent\ConsentGate::active();
 @endphp
 
-@if(app()->isProduction() && $googleTagmanagerId)
+{{-- Het noscript-iframe van GTM zet cookies zonder dat er toestemming te geven is. --}}
+@if(app()->isProduction() && $googleTagmanagerId && ! $bodyConsentActive)
     <noscript>
         <iframe
             src="https://www.googletagmanager.com/ns.html?id={{ $googleTagmanagerId }}"
@@ -87,7 +89,7 @@
 {!! $extraBody !!}
 
 @if(isset($model))
-    {!! $model->metaData->top_body_scripts ?? '' !!}
+    {!! \Dashed\DashedCore\Classes\Consent\ConsentGate::rewrite($model->metaData->top_body_scripts ?? '') !!}
 @endif
 
 <script>
@@ -191,7 +193,8 @@
     })();
 </script>
 
-{{--@include('cookie-consent::index')--}}
+{{-- Cookiebanner van het toestemmingsbeheer (dashed-cookies), leeg als dat uit staat. --}}
+{!! \Dashed\DashedCore\Classes\Consent\ConsentGate::bodyEnd() !!}
 
 @if(class_exists(\Dashed\DashedPopups\Models\Popup::class))
     @php

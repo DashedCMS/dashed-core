@@ -52,10 +52,14 @@ class DelayedScripts
     function run() {
         if (done) { return; }
         done = true;
+        window.dashedDelayedDone = true;
         events.forEach(function (e) { window.removeEventListener(e, run); });
         (window.dashedDelayedLoaders || []).forEach(function (f) { try { f(); } catch (e) {} });
         window.dashedDelayedLoaders = { push: function (f) { try { f(); } catch (e) {} } };
         document.querySelectorAll('script[data-dashed-delayed]').forEach(function (s) {
+            // Wacht dit script ook op cookietoestemming, dan zet de lader van
+            // het toestemmingsbeheer het om zodra die er is.
+            if (s.hasAttribute('data-dashed-consent')) { return; }
             var n = document.createElement('script');
             for (var i = 0; i < s.attributes.length; i++) {
                 var a = s.attributes[i];

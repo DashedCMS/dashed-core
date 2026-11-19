@@ -2,6 +2,16 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.115.0 - 2026-11-19
+
+### Added
+- `Classes/Consent/ConsentGate` en `ConsentProvider`: één contract voor cookietoestemming. Met een gebonden provider (dashed-cookies) en de banner aan wachten Google Tag Manager, gtag.js, de Meta-pixel, de extra scripts en de scripts per pagina op toestemming (`type="text/plain" data-dashed-consent`), en zet de head eerst de Google Consent Mode v2-standaard neer. De noscript-pixel en het noscript-iframe van GTM vallen dan weg. Zonder provider of met de banner uit is de uitvoer ongewijzigd.
+- `ConsentGate::allows($categorie)` voor server-side events; zonder toestemmingsbeheer altijd true.
+
+### Changed
+- De lader van "Trackingscripts uitstellen" slaat een script over dat ook op toestemming wacht; de toestemmingslader geeft het daarna door.
+- `cookies_scan_services` en `cookies_last_scan_*` tellen als operationele instellingen en purgen de cache niet.
+
 ## v4.114.0 - 2026-11-17
 
 ### Added

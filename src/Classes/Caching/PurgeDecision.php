@@ -40,6 +40,12 @@ class PurgeDecision
         'current_invoice_number',
         'cash_register_amount',
 
+        // Resultaten van de cookiescan (dashed-cookies). Die leegt de cache
+        // zelf, één keer per site, en alleen als het cookieoverzicht echt
+        // veranderde.
+        'cookies_scan_services',
+        'cookies_last_scan_*',
+
         // Bewaartermijnen. Ze sturen alleen wat er 's nachts wordt opgeruimd
         // en veranderen niets aan wat een bezoeker te zien krijgt, terwijl
         // opslaan op het scherm Opschonen ze per site wegschrijft: zonder deze
