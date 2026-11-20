@@ -39,6 +39,8 @@ class CmsLayout
             ])->render()))
             ->brandLogoHeight('2.3125rem')
             ->renderHook(PanelsRenderHook::HEAD_END, fn () => view('dashed-core::filament.cms-layout.styles'))
+            // Tellende cijfers en badges, en tegels die bij het laden inschuiven.
+            ->renderHook(PanelsRenderHook::BODY_END, fn () => auth()->check() ? view('dashed-core::filament.cms-layout.motion') : '')
             // Inlogpagina en andere losse pagina's (MFA, wachtwoord vergeten):
             // donkere achtergrond, merk boven de kaart, tegels eronder.
             ->renderHook(PanelsRenderHook::SIMPLE_LAYOUT_START, fn () => view('dashed-core::filament.cms-layout.auth-aside', [

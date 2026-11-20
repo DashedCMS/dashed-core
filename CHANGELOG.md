@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.123.0 - 2026-11-20
+
+### Added
+- Tellende cijfers in het hele paneel: stattegels, Aurora-KPI's, elementen met `data-dashed-count` en losse grote cijfers tellen op vanaf nul zodra ze in beeld komen, en schuiven bij een wijziging mee naar de nieuwe waarde met een groene of rode flits. Badges in menu, tabs en bovenbalk springen op als hun aantal verandert (`data-dashed-count="change"` voor een eigen element). Tegels schuiven bij het laden een voor een in. Alleen in de Aurora-stijl, niet met prefers-reduced-motion.
+
 ## v4.122.0 - 2026-11-20
 
 ### Added
