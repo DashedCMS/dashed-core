@@ -187,6 +187,15 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         // Eigen file-store voor de pagina's van de responsecache als de standaardstore geen tags kent.
         \Dashed\DashedCore\Classes\Caching\ResponseCacheStore::registerStore();
 
+        // Filament's own 2FA code mail sets no sender and falls back to mail.from,
+        // which is often unset (hello@example.com) and refused by Postmark. Every
+        // code mail (CMS login, mobile API, setup actions) is resolved through the
+        // container, so point the base class at ours, which uses the site sender.
+        $this->app->bind(
+            \Filament\Auth\MultiFactor\Email\Notifications\VerifyEmailAuthentication::class,
+            \Dashed\DashedCore\Notifications\MfaEmailCodeNotification::class,
+        );
+
         $this->callAfterResolving('mail.manager', function (\Illuminate\Mail\MailManager $manager): void {
             $manager->extend('postmark', function (array $config) {
                 $options = isset($config['message_stream_id']) ? ['message_stream' => $config['message_stream_id']] : [];

@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.118.1 - 2026-11-20
+
+### Fixed
+- De 2FA-codemail kwam niet aan als `MAIL_FROM_ADDRESS` niet was ingesteld: Filament's eigen codemail werd verstuurd vanaf `hello@example.com` en Postmark weigerde die. `VerifyEmailAuthentication` wordt nu in de container naar `MfaEmailCodeNotification` geleid, zodat elke codemail (CMS-login, mobiele API, instellen en uitzetten) het afzenderadres en de sitenaam uit de algemene instellingen gebruikt.
+
 ## v4.118.0 - 2026-11-20
 
 ### Changed
