@@ -2,6 +2,14 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.120.0 - 2026-11-20
+
+### Changed
+- "Mijn taken": alle tegels staan nu in één raster naast elkaar, met de groep als klein label in de tegel. Een tegel aanklikken filtert de tabel op die bron (nog eens klikken of "Alles tonen" haalt het filter weg; de keuze staat in de URL als `?bron=`). De tabel toont nu alles: de open records van elke bron plus je eigen herinneringen, oudste eerst, doorzoekbaar, en een rij aanklikken opent het record. Herinneringen hebben een eigen tegel en houden hun knoppen Afgerond, Morgen en Verwijderen.
+
+### Added
+- `TaskSource::resource(..., query: fn () => Model::query()->..., title:, description:, recordUrl:, dateColumn:)`: met `query` telt de bron die query en komen de records (max. 250 per bron) in de takentabel. Standaard titel = recordtitel van de resource, link = view- of edit-pagina, anders de lijst. `TaskSource::make(..., items:)` voor vrije bronnen; `TaskSources::items(?string $bron)` geeft de rijen. Bronnen zonder `query` blijven een tegel die naar de lijst linkt.
+
 ## v4.119.0 - 2026-11-20
 
 ### Added
