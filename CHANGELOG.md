@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.120.1 - 2026-11-20
+
+### Changed
+- "Mijn taken": een taak in de tabel openen gaat nu altijd in een nieuw tabblad, zodat de takenlijst open blijft.
+
 ## v4.120.0 - 2026-11-20
 
 ### Changed

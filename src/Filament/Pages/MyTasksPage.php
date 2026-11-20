@@ -187,6 +187,7 @@ class MyTasksPage extends Page implements HasTable
                 );
             })
             ->recordUrl(fn (array $record) => $record['url'] ?? null)
+            ->openRecordUrlInNewTab()
             ->searchable()
             ->paginated([25, 50, 100, 'all'])
             ->defaultPaginationPageOption(50)
