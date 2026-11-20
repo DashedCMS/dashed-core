@@ -8,6 +8,7 @@ use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Tables\Columns\TextColumn;
 use Dashed\DashedCore\Models\Reminder;
+use Dashed\DashedCore\Classes\Tasks\TaskSources;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Builder;
@@ -15,8 +16,9 @@ use Filament\Notifications\Notification;
 use Filament\Tables\Concerns\InteractsWithTable;
 
 /**
- * Mijn taken: de open herinneringen en taken van de ingelogde gebruiker, te
- * laat bovenaan. Ook de plek waar je herinneringen per mail aan- of uitzet;
+ * Mijn taken: bovenaan een tegel per bron met open werk (geregistreerd via
+ * TaskSources), daaronder de open herinneringen en taken van de ingelogde
+ * gebruiker, te laat bovenaan. Ook de plek waar je herinneringen per mail aan- of uitzet;
  * bel en app krijgen ze altijd.
  */
 class MyTasksPage extends Page implements HasTable
@@ -51,12 +53,22 @@ class MyTasksPage extends Page implements HasTable
             ->where('remind_at', '<=', now()->endOfDay())
             ->count(), 0, report: false);
 
+        $count += rescue(fn () => TaskSources::openCount(), 0, report: false);
+
         return $count > 0 ? (string) $count : null;
     }
 
     public static function getNavigationBadgeColor(): ?string
     {
         return 'warning';
+    }
+
+    /**
+     * @return array<int, array{key: string, label: string, count: int, url: ?string, icon: mixed, group: ?string}>
+     */
+    public function getTaskTiles(): array
+    {
+        return TaskSources::open();
     }
 
     protected function getHeaderActions(): array

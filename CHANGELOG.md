@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.119.0 - 2026-11-20
+
+### Added
+- "Mijn taken" toont bovenaan een tegel per bron met open werk (nieuwe aanvragen, ongelezen formulieren, retouren, ...), gegroepeerd, met het aantal en een link naar de lijst. Bronnen registreer je in een serviceprovider met `TaskSources::register(TaskSource::resource(SomeResource::class, 'Label', 'Groep'))`: standaard telt het menu-badge-getal van de resource en ziet alleen wie `canViewAny()` heeft de tegel. Eigen telling kan via `count:` of `TaskSource::make()`. Bronnen met 0 of een fout vallen weg. Het badge-getal achter "Mijn taken" telt de open items mee.
+
 ## v4.118.1 - 2026-11-20
 
 ### Fixed
