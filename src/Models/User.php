@@ -264,10 +264,17 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasAppAut
 
     public function hasEmailAuthentication(): bool
     {
-        // This method should return true if the user has enabled email authentication.
+        // E-mail is de standaard terugval-methode: zolang e-mail-2FA globaal aan
+        // staat (standaard ja), is hij voor iedere beheerder beschikbaar, ook
+        // zonder authenticator-app en zonder per-gebruiker opt-in. Zo wordt
+        // niemand gedwongen eerst in de CMS een app in te stellen, en raakt een
+        // beheerder zonder app niet buitengesloten. Alleen wanneer een beheerder
+        // e-mail-2FA op alle sites uitzet, valt het terug op de per-gebruiker
+        // kolom (nullable, vandaar de cast tegen een null-return).
+        if (method_exists(cms(), 'emailMfaEnabled') && cms()->emailMfaEnabled()) {
+            return true;
+        }
 
-        // Kolom is nullable; bij bestaande gebruikers is hij nog nooit gezet en
-        // zou het getypeerde bool-returntype op null klappen.
         return (bool) $this->has_email_authentication;
     }
 

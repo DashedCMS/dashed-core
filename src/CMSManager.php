@@ -647,12 +647,23 @@ class CMSManager
                 ->brandName(Customsetting::get('site_name', null, 'DashedCMS')),
         ];
 
-        if ($this->mfaSettingOnAnySite('mfa_email_enabled', default: true)) {
+        if ($this->emailMfaEnabled()) {
             $providers[] = EmailAuthentication::make()
                 ->codeNotification(MfaEmailCodeNotification::class);
         }
 
         return $providers;
+    }
+
+    /**
+     * Staat e-mail als tweede stap aan (standaard ja, op elke site)? Dit bepaalt
+     * of e-mail-2FA überhaupt een methode is; de beschikbaarheid per gebruiker
+     * hangt hier aan vast (zie User::hasEmailAuthentication), zodat e-mail de
+     * terugval is voor iedereen en niet pas na een per-gebruiker opt-in.
+     */
+    public function emailMfaEnabled(): bool
+    {
+        return $this->mfaSettingOnAnySite('mfa_email_enabled', default: true);
     }
 
     /**

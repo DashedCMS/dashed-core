@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.118.0 - 2026-11-20
+
+### Changed
+- E-mail-2FA is nu de standaard terugval-methode voor iedere beheerder, in plaats van een per-gebruiker opt-in. Zolang e-mail als tweede stap globaal aan staat (standaard ja, instelbaar per site), kan iedereen met een e-mailcode de tweestapsverificatie doen, ook zonder authenticator-app. Niemand wordt nog gedwongen eerst in de CMS een app in te stellen, en wie zijn telefoon kwijt is raakt niet buitengesloten. Alleen wanneer e-mail-2FA op alle sites wordt uitgezet, valt het terug op de oude per-gebruiker instelling. Nieuw: `CMSManager::emailMfaEnabled()`.
+
 ## v4.117.0 - 2026-11-19
 
 ### Added
