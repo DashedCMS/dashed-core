@@ -2,6 +2,13 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.121.0 - 2026-11-20
+
+### Added
+- Aurora-huisstijl voor het CMS-paneel (standaard aan, `DASHED_CMS_LAYOUT=classic` voor de kale Filament-stijl): nieuwe tokens voor licht en donker, accent uit de hoofdkleur van de site, vaste toonkleuren (blauw, paars, oranje, rood), en een Aurora-inlogpagina.
+- Gedeelde Blade-componenten `<x-dashed-core::aurora.card|stepper|kpi|priority-queue|badge|info-row|timeline>` en hulpklassen met prefix `au-`.
+- Prioriteitenregister `cms()->builder('dashboardPriorities', ...)` met de dashboardwidgets "Jouw werkdag" en "Heeft aandacht nodig".
+
 ## v4.120.1 - 2026-11-20
 
 ### Changed

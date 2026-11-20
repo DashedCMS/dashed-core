@@ -1,7 +1,7 @@
 {{--
-    Inlogpagina en de andere losse pagina's (zie CmsLayout): altijd donker, met
-    een raster en een gloed in de hoofdkleur, het merk boven de kaart en drie
-    tegels eronder. Na het inloggen bepaalt Filament het thema weer zelf.
+    Inlogpagina en de andere losse pagina's (zie CmsLayout), in Aurora: altijd
+    donker, met een raster en een gloed in de hoofdkleur, het merk boven de
+    kaart met de accentrand en drie tegels eronder. Na het inloggen bepaalt Filament het thema weer zelf.
 --}}
 <script>
     (() => {
@@ -13,15 +13,15 @@
         new MutationObserver(force).observe(html, { attributes: true, attributeFilter: ['class'] });
     })();
 </script>
-<div class="dcl-auth-backdrop" aria-hidden="true"></div>
-<div class="dcl-auth-brand">
-    <span class="dcl-auth-mark" aria-hidden="true">
-        <svg viewBox="0 0 24 24"><path d="M5 4h7a8 8 0 010 16H5z" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>
+<div class="au-auth-backdrop" aria-hidden="true"></div>
+<div class="au-auth-brand">
+    <span class="au-auth-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M5 4h7a8 8 0 010 16H5z" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>
     </span>
-    <span class="dcl-auth-name">{{ $siteName }}</span>
-    <span class="dcl-auth-line">{{ __('Beheer') }}</span>
+    <span class="au-auth-name">{{ $siteName }}</span>
+    <span class="au-auth-line">Dashed CMS · Aurora</span>
 </div>
-<ul class="dcl-auth-features" aria-label="{{ __('Wat je hier beheert') }}">
+<ul class="au-auth-features" aria-label="{{ __('Wat je hier beheert') }}">
     <li>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 8h14l-1.2 12H6.2L5 8z"/><path d="M9 8V6.5a3 3 0 016 0V8"/></svg>
         <span><strong>{{ __('Webshop') }}</strong>{{ __('Bestellingen en producten') }}</span>
@@ -35,4 +35,4 @@
         <span><strong>{{ __('Marketing') }}</strong>{{ __('Nieuwsbrieven en campagnes') }}</span>
     </li>
 </ul>
-<p class="dcl-auth-foot">&copy; {{ now()->year }} Dashed CMS</p>
+<p class="au-auth-foot">&copy; {{ now()->year }} Dashed CMS</p>

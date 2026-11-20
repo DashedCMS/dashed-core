@@ -9,8 +9,10 @@ use Filament\View\PanelsRenderHook;
 use Illuminate\Support\HtmlString;
 
 /**
- * De Dashed-huisstijl van het paneel: strak, rustig, in licht en donker. Het
- * menu en de indeling blijven die van Filament; alleen de stijl verandert.
+ * Aurora, de Dashed-huisstijl van het paneel, in licht en donker. Het menu en
+ * de indeling blijven die van Filament; alleen de stijl verandert. Gedeelde
+ * bouwstenen staan als anonieme componenten in components/aurora
+ * (<x-dashed-core::aurora.card> en verder).
  * Alles zit in één stijlblok via een render hook, zodat een klantproject er
  * geen eigen Vite-build voor nodig heeft.
  *
@@ -30,12 +32,12 @@ class CmsLayout
                 'primary' => config('dashed-core.dashed_cms.primary_color', '#00D2CD'),
                 'gray' => Color::Zinc,
             ])
-            ->font('Geist')
-            ->sidebarWidth('17.5rem')
+            ->font('Inter')
+            ->sidebarWidth('15rem')
             ->brandLogo(fn () => new HtmlString(view('dashed-core::filament.cms-layout.brand', [
                 'siteName' => Customsetting::get('site_name', null, 'Dashed'),
             ])->render()))
-            ->brandLogoHeight('2.75rem')
+            ->brandLogoHeight('2.3125rem')
             ->renderHook(PanelsRenderHook::HEAD_END, fn () => view('dashed-core::filament.cms-layout.styles'))
             // Inlogpagina en andere losse pagina's (MFA, wachtwoord vergeten):
             // donkere achtergrond, merk boven de kaart, tegels eronder.

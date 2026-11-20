@@ -12,6 +12,6 @@
     <button type="button" class="dashed-navsearch-trigger" x-on:click="$dispatch('dashed-navigation-search')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         <span>{{ __('Zoeken in menu') }}</span>
-        <kbd>/</kbd>
+        <kbd x-text="/Mac|iPhone|iPad/.test(navigator.platform) ? '⌘K' : 'Ctrl K'">/</kbd>
     </button>
 </div>

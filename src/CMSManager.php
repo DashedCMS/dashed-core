@@ -77,6 +77,7 @@ class CMSManager
         'richEditorPlugins' => [],
         'rolePermissions' => [],
         'dashboardWidgets' => [],
+        'dashboardPriorities' => [],
     ];
 
     protected static $builderBlocksActivated = [

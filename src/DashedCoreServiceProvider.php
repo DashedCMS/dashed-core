@@ -675,6 +675,20 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         // Registreer de bestaande dashed-core dashboard-widgets in de widget-registry.
         // Andere packages voegen hun eigen widgets toe via cms()->builder('dashboardWidgets', [...]).
         cms()->builder('dashboardWidgets', [
+            // Aurora: bovenaan in de standaardindeling (negatieve sort), boven de
+            // bestaande widgets. Een opgeslagen indeling zet ze onderaan.
+            'aurora-workday' => [
+                'widget' => \Dashed\DashedCore\Filament\Widgets\Aurora\WorkdayBannerWidget::class,
+                'label' => 'Werkdag in één oogopslag',
+                'width' => 'full',
+                'sort' => -50,
+            ],
+            'aurora-priorities' => [
+                'widget' => \Dashed\DashedCore\Filament\Widgets\Aurora\PriorityQueueWidget::class,
+                'label' => 'Heeft aandacht nodig',
+                'width' => 1,
+                'sort' => -25,
+            ],
             'welcome' => [
                 'widget' => \Dashed\DashedCore\Filament\Widgets\WelcomeWidget::class,
                 'label' => 'Welkom',
@@ -1528,6 +1542,8 @@ MARKDOWN,
         // Admin overview
         Livewire::component('dashed.dashed-core.filament.widgets.dashboard-grid', DashboardGrid::class);
         Livewire::component('dashed.dashed-core.filament.widgets.integration-health-widget', IntegrationHealthWidget::class);
+        Livewire::component('dashed.dashed-core.filament.widgets.aurora.workday-banner-widget', \Dashed\DashedCore\Filament\Widgets\Aurora\WorkdayBannerWidget::class);
+        Livewire::component('dashed.dashed-core.filament.widgets.aurora.priority-queue-widget', \Dashed\DashedCore\Filament\Widgets\Aurora\PriorityQueueWidget::class);
 
         // Horizon widgets
         Livewire::component('dashed.dashed-core.filament.widgets.horizon.horizon-overview-stats', HorizonOverviewStats::class);
