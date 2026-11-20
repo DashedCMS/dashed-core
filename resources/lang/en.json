@@ -1703,5 +1703,12 @@
     "Zondag": "Sunday",
     "Zonder verwijzer": "Without referrer",
     "Zo ziet de pagina eruit met wat nu in het formulier staat, ook als het nog niet is opgeslagen.": "This is how the page looks with what is in the form now, even if it has not been saved yet.",
-    "[Dashed] Webhook uitgezet: :host": "[Dashed] Webhook disabled: :host"
+    "[Dashed] Webhook uitgezet: :host": "[Dashed] Webhook disabled: :host",
+    "Menugebruik per beheerder": "Menu usage per administrator",
+    "Menugebruik bewaren (dagen)": "Keep menu usage (days)",
+    "Hoe vaak elke beheerder een menu-item opent, per dag. Het menu sorteert op de laatste 90 dagen, dus langer bewaren verandert de volgorde niet. Standaard: 90 dagen.": "How often each administrator opens a menu item, per day. The menu sorts on the last 90 days, so keeping it longer does not change the order. Default: 90 days.",
+    "Menu sorteren op mijn gebruik": "Sort the menu by my usage",
+    "Binnen elk menukopje staan vastgepinde items bovenaan, daarna wat je de laatste 90 dagen het vaakst opende. Uit: de vaste volgorde, zonder vastgepinde items.": "Within each menu heading, pinned items come first, then what you opened most often in the last 90 days. Off: the fixed order, without pinned items.",
+    "Bovenaan vastpinnen": "Pin to top",
+    "Losmaken": "Unpin"
 }

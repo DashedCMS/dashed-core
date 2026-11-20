@@ -520,6 +520,8 @@ class CMSManager
             // "Ongedaan maken" uit de melding na verwijderen (zie TrashUndo).
             ->authenticatedRoutes(function (): void {
                 Route::get('/prullenbak/ongedaan-maken/{token}', \Dashed\DashedCore\Http\Controllers\TrashUndoController::class)->name('trash.undo');
+                // Speldje naast een menu-item (zie NavigationUsage).
+                Route::post('/menu/vastpinnen', \Dashed\DashedCore\Http\Controllers\NavigationPinController::class)->name('navigation.pin');
             })
             ->routes(function (\Filament\Panel $routePanel) {
                 Route::get('/mfa-bevestigen', MfaReverify::class)->name(MfaReverify::ROUTE);
@@ -592,6 +594,8 @@ class CMSManager
                 Authenticate::class,
                 EnsureMfaIsSetUp::class,
                 EnsureMfaIsFresh::class,
+                // Na de MFA-controles: een omleiding naar een codescherm is geen bezoek.
+                \Dashed\DashedCore\Middleware\RecordNavigationUsage::class,
             ])
             // Als closures, zodat de MFA-instellingen per verzoek gelezen
             // worden en niet één keer bij de boot: een schakelaar omzetten
@@ -606,6 +610,13 @@ class CMSManager
             ->renderHook(
                 \Filament\View\PanelsRenderHook::BODY_END,
                 fn () => auth()->check() ? view('dashed-core::filament.navigation-search') : '',
+            )
+            // Speldje per menu-item om het bovenaan het kopje vast te pinnen.
+            ->renderHook(
+                \Filament\View\PanelsRenderHook::BODY_END,
+                fn () => auth()->check() && \Dashed\DashedCore\Classes\NavigationUsage::enabledFor(auth()->user())
+                    ? view('dashed-core::filament.navigation-pins', ['pinned' => \Dashed\DashedCore\Classes\NavigationUsage::pinnedKeys(auth()->user())])
+                    : '',
             )
             // Modal voor een opslagconflict op een bewerkpagina (zie SaveConflictGuard).
             ->renderHook(

@@ -1703,5 +1703,12 @@
     "Zondag": "Zondag",
     "Zonder verwijzer": "Zonder verwijzer",
     "Zo ziet de pagina eruit met wat nu in het formulier staat, ook als het nog niet is opgeslagen.": "Zo ziet de pagina eruit met wat nu in het formulier staat, ook als het nog niet is opgeslagen.",
-    "[Dashed] Webhook uitgezet: :host": "[Dashed] Webhook uitgezet: :host"
+    "[Dashed] Webhook uitgezet: :host": "[Dashed] Webhook uitgezet: :host",
+    "Menugebruik per beheerder": "Menugebruik per beheerder",
+    "Menugebruik bewaren (dagen)": "Menugebruik bewaren (dagen)",
+    "Hoe vaak elke beheerder een menu-item opent, per dag. Het menu sorteert op de laatste 90 dagen, dus langer bewaren verandert de volgorde niet. Standaard: 90 dagen.": "Hoe vaak elke beheerder een menu-item opent, per dag. Het menu sorteert op de laatste 90 dagen, dus langer bewaren verandert de volgorde niet. Standaard: 90 dagen.",
+    "Menu sorteren op mijn gebruik": "Menu sorteren op mijn gebruik",
+    "Binnen elk menukopje staan vastgepinde items bovenaan, daarna wat je de laatste 90 dagen het vaakst opende. Uit: de vaste volgorde, zonder vastgepinde items.": "Binnen elk menukopje staan vastgepinde items bovenaan, daarna wat je de laatste 90 dagen het vaakst opende. Uit: de vaste volgorde, zonder vastgepinde items.",
+    "Bovenaan vastpinnen": "Bovenaan vastpinnen",
+    "Losmaken": "Losmaken"
 }

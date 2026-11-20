@@ -217,6 +217,11 @@ class DashedCoreServiceProvider extends PackageServiceProvider
 
     public function packageBooted()
     {
+        // Menu per beheerder sorteren (vastgepind, dan meest gebruikt). In de
+        // boot en niet in register(), zodat deze binding na die van Filament
+        // komt, ongeacht de volgorde waarin de providers registreren.
+        $this->app->scoped(\Filament\Navigation\NavigationManager::class, fn () => new \Dashed\DashedCore\Navigation\UsageSortedNavigationManager());
+
         // Vreemde Host-headers buiten de deur, vóór alles wat een URL uit het
         // verzoek afleidt. Zie de klasse zelf voor het waarom.
         $kernel = $this->app->make(\Illuminate\Contracts\Http\Kernel::class);
@@ -1833,6 +1838,18 @@ MARKDOWN,
                     Termijn::make('sent_emails', fn () => (int) config('dashed-core.sent_emails.retention_days', 90), 'created_at')
                         ->label(__('Verzonden e-mails bewaren (dagen)'))
                         ->uitleg(__('Het logboek met elke verzonden mail en zijn bezorgstatus. Standaard: 90 dagen.'))
+                )
+        );
+
+        cms()->registerRetention(
+            Retention::make('navigation_visits')
+                ->label(__('Menugebruik per beheerder'))
+                ->pakket('dashed-core', __('Systeem'))
+                ->tabel('dashed__navigation_visits')
+                ->termijn(
+                    Termijn::make('navigation_visits', \Dashed\DashedCore\Classes\NavigationUsage::WINDOW_DAYS, 'date')
+                        ->label(__('Menugebruik bewaren (dagen)'))
+                        ->uitleg(__('Hoe vaak elke beheerder een menu-item opent, per dag. Het menu sorteert op de laatste 90 dagen, dus langer bewaren verandert de volgorde niet. Standaard: 90 dagen.'))
                 )
         );
 

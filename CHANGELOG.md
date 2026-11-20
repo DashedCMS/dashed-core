@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.122.0 - 2026-11-20
+
+### Added
+- Menu per beheerder gesorteerd: binnen elk menukopje staan vastgepinde items bovenaan, daarna wat de beheerder de laatste 90 dagen het vaakst opende, en verder de vaste volgorde. Vastpinnen met het speldje naast een menu-item, uitzetten met "Menu sorteren op mijn gebruik" in het profiel. Bezoeken staan per dag in `dashed__navigation_visits` (bewaartermijn `navigation_visits`, standaard 90 dagen), pins in `dashed__navigation_pins`.
+
 ## v4.121.0 - 2026-11-20
 
 ### Added

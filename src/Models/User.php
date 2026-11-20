@@ -79,6 +79,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasAppAut
             ...parent::getCasts(),
             'app_authentication_secret' => 'encrypted',
             'app_authentication_recovery_codes' => 'encrypted:array',
+            'navigation_sort_by_usage' => 'boolean',
         ];
     }
 
@@ -89,13 +90,13 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasAppAut
     }
 
     /**
-     * admin_locale moet ook opgeslagen worden in klantprojecten, waar
+     * admin_locale en navigation_sort_by_usage moeten ook opgeslagen worden in klantprojecten, waar
      * App\Models\User $fillable overschrijft met de skeletonlijst. Daarom
      * hier en niet in $fillable, zoals de MFA-casts in getCasts().
      */
     public function getFillable()
     {
-        return array_values(array_unique([...parent::getFillable(), 'admin_locale']));
+        return array_values(array_unique([...parent::getFillable(), 'admin_locale', 'navigation_sort_by_usage']));
     }
 
     public function getActivitylogOptions(): LogOptions
