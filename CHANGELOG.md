@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.123.1 - 2026-11-21
+
+### Fixed
+- Het speldje in het menu staat niet meer over de tekst van een item: de Aurora-stijl zette de padding met `!important` vast, waardoor de gereserveerde ruimte wegviel. Elk item met een speldje houdt nu rechts ruimte vrij, ook voordat het speldje bij hover verschijnt.
+
 ## v4.123.0 - 2026-11-20
 
 ### Added

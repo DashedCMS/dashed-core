@@ -21,7 +21,10 @@
     .fi-sidebar-group-items > .fi-sidebar-item:focus-within > .dashed-nav-pin,
     .dashed-nav-pinned > .dashed-nav-pin { display: flex; }
     .dashed-nav-pinned > .dashed-nav-pin { opacity: .9; }
-    .dashed-nav-pinned > .fi-sidebar-item-btn { padding-inline-end: 2.25rem; }
+    /* Ruimte voor het speldje op elk item dat er een krijgt, ook als het pas
+       bij hover verschijnt; !important omdat de Aurora-stijl de padding van
+       .fi-sidebar-item-btn met !important vastzet. */
+    .fi-sidebar-group-items > .dashed-nav-has-pin > .fi-sidebar-item-btn { padding-inline-end: 2.25rem !important; }
 </style>
 <script>
     (() => {
@@ -40,6 +43,7 @@
 
                 const isPinned = pinned.has(keyFor(link.getAttribute('href')));
                 item.classList.toggle('dashed-nav-pinned', isPinned);
+                item.classList.add('dashed-nav-has-pin');
 
                 const button = document.createElement('button');
                 button.type = 'button';
