@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.123.2 - 2026-11-23
+
+### Changed
+- De regel onder de sitenaam in de zijbalk en op de inlogpagina toont nu "Dashed CMS" in plaats van "Dashed CMS · Aurora".
+
 ## v4.123.1 - 2026-11-21
 
 ### Fixed

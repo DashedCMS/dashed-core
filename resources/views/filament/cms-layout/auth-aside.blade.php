@@ -19,7 +19,7 @@
         <svg viewBox="0 0 24 24"><path d="M5 4h7a8 8 0 010 16H5z" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>
     </span>
     <span class="au-auth-name">{{ $siteName }}</span>
-    <span class="au-auth-line">Dashed CMS · Aurora</span>
+    <span class="au-auth-line">Dashed CMS</span>
 </div>
 <ul class="au-auth-features" aria-label="{{ __('Wat je hier beheert') }}">
     <li>
