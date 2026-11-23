@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.123.3 - 2026-11-23
+
+### Fixed
+- Zoekindex: een vertaalbaar veld dat zonder locale-laag is opgeslagen (bv. builder-inhoud met uuid-keys) leverde die keys als locale op, waardoor het opslaan van het model stukliep op "Data too long for column 'locale'". Alleen echte locale-codes worden nu geïndexeerd.
+
 ## v4.123.2 - 2026-11-23
 
 ### Changed

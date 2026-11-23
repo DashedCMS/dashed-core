@@ -41,6 +41,10 @@ trait HasSearchIndex
     /**
      * Locales om te indexeren: alle locales waarvoor vertalingen bestaan,
      * plus de huidige app-locale als vangnet.
+     *
+     * Een vertaalbaar veld dat zonder locale-laag is opgeslagen (bv. builder-inhoud
+     * als {"<uuid>": {...}}) levert zijn array-keys als "locales" op. Alleen echte
+     * locale-codes doorlaten, anders loopt de insert stuk op de locale-kolom (8 tekens).
      */
     public function searchIndexLocales(): array
     {
@@ -54,7 +58,10 @@ trait HasSearchIndex
 
         $locales[] = app()->getLocale();
 
-        return array_values(array_unique(array_filter($locales)));
+        return array_values(array_unique(array_filter(
+            $locales,
+            fn ($locale) => is_string($locale) && preg_match('/^[a-z]{2,3}([_-][A-Za-z0-9]{2,4})?$/', $locale) === 1,
+        )));
     }
 
     /**
