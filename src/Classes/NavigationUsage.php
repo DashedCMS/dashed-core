@@ -23,12 +23,21 @@ use Illuminate\Contracts\Auth\Authenticatable;
  * lijst. De startpagina van het paneel telt alleen bij een exacte treffer,
  * anders zou elke pagina ook voor het dashboard tellen.
  *
+ * Daarnaast kan een beheerder een item helemaal bovenaan pinnen (zie
+ * moveTopPins()): dat item verlaat zijn kopje en staat direct onder Dashboard
+ * en Mijn taken, in de volgorde van pinnen. Zo'n pin staat in dezelfde tabel,
+ * met TOP_PREFIX voor het pad; een pad begint altijd met een slash, dus de
+ * twee soorten pins lopen nooit door elkaar.
+ *
  * Alles hier loopt via rescue(): een ontbrekende tabel midden in een uitrol
  * mag het menu niet breken, dan blijft gewoon de vaste volgorde staan.
  */
 class NavigationUsage
 {
     public const WINDOW_DAYS = 90;
+
+    /** Voorvoegsel in item_key voor een pin helemaal bovenaan. */
+    public const TOP_PREFIX = 'top:';
 
     private const MEMO = 'dashed.navigation_usage';
 
@@ -86,8 +95,110 @@ class NavigationUsage
                 $group->items(self::sortItems($items, $pins, $visits));
             }
 
-            return $groups;
+            return self::moveTopPins($groups, self::topPins($pins), self::anchorKeys());
         }, $groups, report: false);
+    }
+
+    /**
+     * Haalt de items die helemaal bovenaan vastgepind zijn uit hun kopje en
+     * zet ze in de groep zonder kopje, direct na de ankers (Dashboard en Mijn
+     * taken), in de volgorde van pinnen. Een kopje dat daardoor leeg raakt
+     * verdwijnt; bestaat er nog geen groep zonder kopje, dan komt die vooraan.
+     *
+     * @param  array<NavigationGroup>  $groups
+     * @param  array<string, int>  $topPins  sleutel => volgorde van pinnen
+     * @param  list<string>  $anchorKeys  sleutels die erboven blijven staan
+     * @return array<NavigationGroup>
+     */
+    public static function moveTopPins(array $groups, array $topPins, array $anchorKeys = []): array
+    {
+        if ($topPins === []) {
+            return $groups;
+        }
+
+        $moved = [];
+
+        foreach ($groups as $group) {
+            $items = collect($group->getItems())->values();
+
+            $keep = $items->reject(function (NavigationItem $item) use ($topPins, $anchorKeys, &$moved): bool {
+                $key = self::keyFor($item->getUrl());
+
+                if ($key === null || ! isset($topPins[$key]) || in_array($key, $anchorKeys, true) || isset($moved[$key])) {
+                    return false;
+                }
+
+                $moved[$key] = $item;
+
+                return true;
+            });
+
+            if ($keep->count() !== $items->count()) {
+                $group->items($keep->values()->all());
+            }
+        }
+
+        if ($moved === []) {
+            return $groups;
+        }
+
+        uksort($moved, fn (string $a, string $b): int => $topPins[$a] <=> $topPins[$b]);
+
+        $ungrouped = null;
+
+        foreach ($groups as $group) {
+            if (blank($group->getLabel())) {
+                $ungrouped = $group;
+
+                break;
+            }
+        }
+
+        if ($ungrouped === null) {
+            $ungrouped = NavigationGroup::make();
+            $groups = array_merge([serialize(null) => $ungrouped], $groups);
+        }
+
+        [$anchors, $rest] = collect($ungrouped->getItems())
+            ->values()
+            ->partition(fn (NavigationItem $item): bool => in_array(self::keyFor($item->getUrl()), $anchorKeys, true));
+
+        $ungrouped->items([...$anchors->all(), ...array_values($moved), ...$rest->all()]);
+
+        return array_filter($groups, fn (NavigationGroup $group): bool => filled($group->getItems()));
+    }
+
+    /**
+     * De paden die altijd boven de items helemaal bovenaan blijven staan: het
+     * dashboard (de startpagina van het paneel) en Mijn taken.
+     *
+     * @return list<string>
+     */
+    public static function anchorKeys(): array
+    {
+        $home = '/' . trim((string) Filament::getCurrentOrDefaultPanel()?->getPath(), '/');
+        $tasks = rescue(fn () => \Dashed\DashedCore\Filament\Pages\MyTasksPage::getSlug(), 'mijn-taken', report: false);
+
+        return [$home, rtrim($home, '/') . '/' . trim((string) $tasks, '/')];
+    }
+
+    /**
+     * Alleen de pins helemaal bovenaan, zonder voorvoegsel.
+     *
+     * @param  array<string, int>  $pins
+     * @return array<string, int>
+     */
+    public static function topPins(array $pins): array
+    {
+        $top = [];
+
+        foreach ($pins as $key => $order) {
+            if (str_starts_with((string) $key, self::TOP_PREFIX)) {
+                $top[substr((string) $key, strlen(self::TOP_PREFIX))] = $order;
+            }
+        }
+
+        return $top;
     }
 
     /**
@@ -202,10 +313,15 @@ class NavigationUsage
     }
 
     /**
-     * Pint vast of maakt los; geeft terug of het item nu vastgepind is.
+     * Pint vast of maakt los; geeft terug of het item nu vastgepind is. Met
+     * $top gaat het om de pin helemaal bovenaan, anders om die in het kopje.
      */
-    public static function togglePin(Authenticatable $user, string $key): bool
+    public static function togglePin(Authenticatable $user, string $key, bool $top = false): bool
     {
+        if ($top) {
+            $key = self::TOP_PREFIX . $key;
+        }
+
         $query = DB::table('dashed__navigation_pins')
             ->where('user_id', $user->getAuthIdentifier())
             ->where('item_key', $key);
@@ -229,6 +345,8 @@ class NavigationUsage
     }
 
     /**
+     * Wat de gebruiker in een kopje vastpinde.
+     *
      * @return list<string>
      */
     public static function pinnedKeys(?Authenticatable $user): array
@@ -237,7 +355,24 @@ class NavigationUsage
             return [];
         }
 
-        return rescue(fn () => array_keys(self::dataFor($user)['pins']), [], report: false);
+        return rescue(fn () => array_values(array_filter(
+            array_map('strval', array_keys(self::dataFor($user)['pins'])),
+            fn (string $key): bool => ! str_starts_with($key, self::TOP_PREFIX),
+        )), [], report: false);
+    }
+
+    /**
+     * Wat de gebruiker helemaal bovenaan vastpinde, in de volgorde van pinnen.
+     *
+     * @return list<string>
+     */
+    public static function topPinnedKeys(?Authenticatable $user): array
+    {
+        if (! $user) {
+            return [];
+        }
+
+        return rescue(fn () => array_keys(self::topPins(self::dataFor($user)['pins'])), [], report: false);
     }
 
     /**

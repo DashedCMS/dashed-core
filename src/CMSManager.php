@@ -614,11 +614,15 @@ class CMSManager
                 \Filament\View\PanelsRenderHook::BODY_END,
                 fn () => auth()->check() ? view('dashed-core::filament.navigation-search') : '',
             )
-            // Speldje per menu-item om het bovenaan het kopje vast te pinnen.
+            // Speldjes per menu-item: bovenaan het kopje of helemaal bovenaan vastpinnen.
             ->renderHook(
                 \Filament\View\PanelsRenderHook::BODY_END,
                 fn () => auth()->check() && \Dashed\DashedCore\Classes\NavigationUsage::enabledFor(auth()->user())
-                    ? view('dashed-core::filament.navigation-pins', ['pinned' => \Dashed\DashedCore\Classes\NavigationUsage::pinnedKeys(auth()->user())])
+                    ? view('dashed-core::filament.navigation-pins', [
+                        'pinned' => \Dashed\DashedCore\Classes\NavigationUsage::pinnedKeys(auth()->user()),
+                        'pinnedTop' => \Dashed\DashedCore\Classes\NavigationUsage::topPinnedKeys(auth()->user()),
+                        'anchors' => \Dashed\DashedCore\Classes\NavigationUsage::anchorKeys(),
+                    ])
                     : '',
             )
             // Modal voor een opslagconflict op een bewerkpagina (zie SaveConflictGuard).
