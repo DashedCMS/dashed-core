@@ -2,6 +2,13 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.125.0 - 2026-11-25
+
+### Added
+- Avatars voor gebruikers: kolom `users.avatar_path` (migratie `add_avatar_path_to_users_table`) met het veld Profielfoto in het gebruikersscherm. Zonder foto een ronde initialen-SVG via de publieke route `dashed.user-avatar` (`/user-avatar/{initials}`, lang cachebaar, kleuren in config `dashed-core.avatar`).
+- `User::avatar_url` (altijd een absolute URL), `User::avatar_initials` en `User::toAvatarPayload()` (`{id, name, avatar_url}` voor API's).
+- Blade-component `<x-dashed-core::user-avatar :user="$user" size="sm|md|lg" />`. De Filament-topbar toont de avatar in plaats van Gravatar.
+
 ## v4.124.0 - 2026-11-25
 
 ### Changed
