@@ -179,7 +179,7 @@ class CheckIntegrationsHealth extends Command
 
     protected function notifyAdmins(string $title, ?string $body, string $status): void
     {
-        foreach (\Dashed\DashedCore\Models\User::query()->whereIn('role', ['admin', 'superadmin'])->get() as $admin) {
+        foreach (\Dashed\DashedCore\Models\User::query()->panelUsers()->get() as $admin) {
             rescue(fn () => \Filament\Notifications\Notification::make()
                 ->title($title)
                 ->body($body)

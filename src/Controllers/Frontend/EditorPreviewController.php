@@ -20,7 +20,7 @@ class EditorPreviewController extends Controller
         $user = $request->user();
         $payload = EditorPreview::load($token);
 
-        abort_unless($user && ($user->role ?? 'customer') !== 'customer', 403);
+        abort_unless($user && method_exists($user, 'hasPanelAccess') && $user->hasPanelAccess(), 403);
         abort_unless($payload && (string) $payload['user_id'] === (string) $user->getKey(), 404);
 
         $model = EditorPreview::hydrate($payload);

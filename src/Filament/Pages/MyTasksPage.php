@@ -2,17 +2,17 @@
 
 namespace Dashed\DashedCore\Filament\Pages;
 
-use Livewire\Attributes\Url;
 use Filament\Pages\Page;
 use Filament\Tables\Table;
-use Filament\Actions\Action;
 use Illuminate\Support\Str;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\Action;
+use Livewire\Attributes\Url;
 use Dashed\DashedCore\Models\Reminder;
-use Filament\Notifications\Notification;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
-use Dashed\DashedCore\Classes\Tasks\TaskSources;
+use Filament\Notifications\Notification;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Dashed\DashedCore\Classes\Tasks\TaskSources;
 use Filament\Tables\Concerns\InteractsWithTable;
 
 /**
@@ -49,7 +49,7 @@ class MyTasksPage extends Page implements HasTable
     {
         $user = auth()->user();
 
-        return $user && ($user->role ?? 'customer') !== 'customer';
+        return $user && $user->hasPanelAccess();
     }
 
     public static function getNavigationBadge(): ?string

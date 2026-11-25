@@ -21,9 +21,9 @@ class AdminMiddleware
             return redirect('/'.config('filament.path').'/login')->with('error', 'Je moet ingelogd zijn om deze pagina te bezoeken');
         }
 
-        // Alleen back-office gebruikers (admin/superadmin of een gekoppelde rol) mogen door.
+        // Alleen back-office gebruikers (superadmin of een gekoppelde rol) mogen door.
         // Zelf-geregistreerde webshop-klanten hebben hier niets te zoeken.
-        if (! (in_array($user->role, ['superadmin', 'admin'], true) || $user->roles->isNotEmpty())) {
+        if (! (method_exists($user, 'hasPanelAccess') && $user->hasPanelAccess())) {
             abort(403);
         }
 

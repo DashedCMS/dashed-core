@@ -63,11 +63,7 @@ class UploadPolicy
             return false;
         }
 
-        if (in_array($user->role ?? null, ['superadmin', 'admin'], true)) {
-            return true;
-        }
-
-        return method_exists($user, 'roles') && $user->roles()->exists();
+        return method_exists($user, 'hasPanelAccess') && $user->hasPanelAccess();
     }
 
     /**

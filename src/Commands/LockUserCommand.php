@@ -27,8 +27,8 @@ class LockUserCommand extends Command
 
         $before = app(LockUserAction::class)->handle($user, (string) ($this->option('reason') ?: 'dashed:lock-user'));
 
-        $this->info("Gebruiker #{$user->id} ({$user->email}) is vergrendeld: wachtwoord en remember-token vervangen, rol {$before['role']} naar customer, rollen losgekoppeld.");
-        $this->line('Herstel: een superadmin zet een nieuw wachtwoord (dashed:set-password), de gebruiker stelt MFA opnieuw in en krijgt zijn rol terug.');
+        $this->info("Gebruiker #{$user->id} ({$user->email}) is vergrendeld: wachtwoord en remember-token vervangen, ".($before['is_superadmin'] ? 'superadmin uitgezet, ' : '').'rollen losgekoppeld ('.(implode(', ', $before['roles']) ?: 'geen').').');
+        $this->line('Herstel: een superadmin zet een nieuw wachtwoord (dashed:set-password), de gebruiker stelt MFA opnieuw in en krijgt zijn rollen terug.');
 
         return self::SUCCESS;
     }

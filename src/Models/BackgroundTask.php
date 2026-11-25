@@ -5,8 +5,8 @@ namespace Dashed\DashedCore\Models;
 use Throwable;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
 use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -184,7 +184,7 @@ class BackgroundTask extends Model
             return $query->whereRaw('1 = 0');
         }
 
-        if (($user->role ?? null) === 'superadmin') {
+        if ((method_exists($user, 'isSuperadmin') && $user->isSuperadmin())) {
             return $query;
         }
 

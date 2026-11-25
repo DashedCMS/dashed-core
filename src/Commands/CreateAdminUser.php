@@ -49,7 +49,7 @@ class CreateAdminUser extends Command
         $user->first_name = $firstName;
         $user->last_name = $lastName;
         $user->email = $email;
-        $user->role = 'superadmin';
+        $user->is_superadmin = true;
         $user->password = Hash::make($password);
         $user->save();
 

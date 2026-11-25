@@ -26,6 +26,12 @@ class CreateUser extends CreateRecord
 
         unset($data['password_confirmation']);
 
+        // De schakelaar is alleen voor een superadmin zichtbaar en wordt dan
+        // ook gevalideerd; dit is het vangnet als iemand de staat zelf invult.
+        if (UserResource::superadminChangeError(auth()->user(), null, (bool) ($data['is_superadmin'] ?? false)) !== null) {
+            unset($data['is_superadmin']);
+        }
+
         return $data;
     }
 
@@ -35,7 +41,10 @@ class CreateUser extends CreateRecord
             return;
         }
 
-        if (! in_array($this->record->role ?? null, ['admin', 'superadmin'], true)) {
+        // Alleen een nieuwe beheerder krijgt zijn inloggegevens gemaild. De
+        // rollen zijn op dit moment al gekoppeld (saveRelationships gaat voor
+        // afterCreate).
+        if (! $this->record->hasPanelAccess()) {
             return;
         }
 

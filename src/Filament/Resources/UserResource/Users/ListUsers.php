@@ -3,10 +3,14 @@
 namespace Dashed\DashedCore\Filament\Resources\UserResource\Users;
 
 use Filament\Actions\Action;
+use Dashed\DashedCore\Models\Role;
 use Filament\Actions\CreateAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Schemas\Components\Utilities\Get;
 use Dashed\DashedCore\Mail\NewAdminAccountMail;
 use Dashed\DashedCore\Notifications\AdminNotifier;
 use Dashed\DashedCore\Filament\Resources\UserResource;
@@ -20,11 +24,10 @@ class ListUsers extends ListRecords
         return [
             CreateAction::make(),
             Action::make('createAdminUser')
-                ->label(__('Admin user aanmaken'))
+                ->label(__('Beheerder aanmaken'))
                 ->button()
-                // Deze knop deelt de superadmin-rol uit, dus alleen een
-                // superadmin mag hem zien.
-                ->visible(fn () => UserResource::canAssignBackOfficeRole(auth()->user()?->role))
+                // Deze knop deelt toegang uit, dus alleen een superadmin mag hem zien.
+                ->visible(fn () => UserResource::canManageAccess(auth()->user()))
                 ->schema([
                     TextInput::make('first_name')
                         ->required()
@@ -37,8 +40,35 @@ class ListUsers extends ListRecords
                         ->unique('users', 'email')
                         ->email()
                         ->label(__('E-mail')),
+                    Toggle::make('is_superadmin')
+                        ->label(__('Superadmin'))
+                        ->helperText(__('Mag altijd alles. Zet dit alleen aan voor wie echt alles moet kunnen.'))
+                        ->live(),
+                    Select::make('roles')
+                        ->label(__('Rollen'))
+                        ->multiple()
+                        ->options(fn () => Role::query()->orderBy('name')->pluck('name', 'id')->all())
+                        ->visible(fn (Get $get) => ! $get('is_superadmin'))
+                        ->required(fn (Get $get) => ! $get('is_superadmin'))
+                        ->helperText(__('Kies minstens één rol, of maak deze beheerder superadmin.')),
                 ])
                 ->action(function (array $data): void {
+                    if (! UserResource::canManageAccess(auth()->user())) {
+                        abort(403);
+                    }
+
+                    $superadmin = (bool) ($data['is_superadmin'] ?? false);
+                    $roleIds = $superadmin ? [] : Role::query()->whereKey((array) ($data['roles'] ?? []))->pluck('id')->all();
+
+                    if (! $superadmin && $roleIds === []) {
+                        Notification::make()
+                            ->title(__('Kies minstens één rol, of maak deze beheerder superadmin.'))
+                            ->danger()
+                            ->send();
+
+                        return;
+                    }
+
                     $password = bin2hex(random_bytes(8));
                     $data['password'] = $password;
                     $user = \Dashed\DashedCore\Models\User::create([
@@ -46,10 +76,9 @@ class ListUsers extends ListRecords
                         'last_name' => $data['last_name'],
                         'email' => $data['email'],
                         'password' => bcrypt($data['password']),
-                        // Superadmin en niet admin: de admin-rol haalt zijn rechten
-                        // uit gekoppelde roles en kan zonder die koppeling niets.
-                        'role' => 'superadmin',
+                        'is_superadmin' => $superadmin,
                     ]);
+                    $user->roles()->sync($roleIds);
 
                     try {
                         AdminNotifier::send(new NewAdminAccountMail($user, $password), $user->email);
@@ -61,7 +90,7 @@ class ListUsers extends ListRecords
                     }
 
                     Notification::make()
-                        ->title(__('Admin gebruiker :voornaam :achternaam is aangemaakt.', ['voornaam' => $user->first_name, 'achternaam' => $user->last_name]))
+                        ->title(__('Beheerder :voornaam :achternaam is aangemaakt.', ['voornaam' => $user->first_name, 'achternaam' => $user->last_name]))
                         ->success()
                         ->send();
                 }),

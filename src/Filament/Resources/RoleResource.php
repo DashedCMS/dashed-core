@@ -46,7 +46,7 @@ class RoleResource extends Resource
     // alle rechten toekennen (privilege-escalatie).
     public static function canAccess(): bool
     {
-        return auth()->user()?->role === 'superadmin';
+        return (auth()->user()?->isSuperadmin() ?? false);
     }
 
     public static function form(Schema $schema): Schema

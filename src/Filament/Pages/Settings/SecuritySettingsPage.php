@@ -48,7 +48,7 @@ class SecuritySettingsPage extends Page implements HasSchemas
      */
     public static function canAccess(): bool
     {
-        return auth()->user()?->role === 'superadmin';
+        return (auth()->user()?->isSuperadmin() ?? false);
     }
 
     public function mount(): void

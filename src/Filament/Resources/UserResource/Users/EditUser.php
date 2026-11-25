@@ -63,6 +63,18 @@ class EditUser extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
+        // Vangnet achter de schakelaar superadmin: niet bij jezelf uit, niet
+        // bij de laatste superadmin, en alleen door een superadmin.
+        if (array_key_exists('is_superadmin', $data)) {
+            $error = UserResource::superadminChangeError(auth()->user(), $this->record, (bool) $data['is_superadmin']);
+
+            if ($error !== null) {
+                Notification::make()->title($error)->danger()->send();
+
+                $this->halt();
+            }
+        }
+
         // Het veld is uitgeschakeld of verborgen, maar dat is alleen de
         // weergave: hier wordt het afgedwongen, ook als iemand de staat zelf
         // invult.

@@ -30,7 +30,7 @@ class TrashUndo
 
         // Alleen in het paneel: een klant die op de site iets weggooit krijgt
         // geen beheermelding.
-        if (! in_array($user->role ?? null, ['admin', 'superadmin'], true) && ! (method_exists($user, 'roles') && $user->roles()->exists())) {
+        if (! (method_exists($user, 'hasPanelAccess') && $user->hasPanelAccess())) {
             return;
         }
 

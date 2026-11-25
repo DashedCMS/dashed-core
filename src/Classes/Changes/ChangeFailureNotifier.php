@@ -23,7 +23,7 @@ class ChangeFailureNotifier
         // een ander notifiable_type dan waaronder de bel hem zoekt.
         $userModel = config('auth.providers.users.model') ?: User::class;
 
-        foreach ($userModel::query()->whereIn('role', ['admin', 'superadmin'])->get() as $admin) {
+        foreach ($userModel::query()->panelUsers()->get() as $admin) {
             rescue(function () use ($admin, $title, $body, $url) {
                 $notification = Notification::make()->title($title)->body($body)->danger();
 

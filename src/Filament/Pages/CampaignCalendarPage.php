@@ -43,7 +43,7 @@ class CampaignCalendarPage extends Page
     {
         $user = auth()->user();
 
-        return $user && ($user->role ?? 'customer') !== 'customer' && CampaignCalendar::sources() !== [];
+        return $user && $user->hasPanelAccess() && CampaignCalendar::sources() !== [];
     }
 
     public function mount(): void

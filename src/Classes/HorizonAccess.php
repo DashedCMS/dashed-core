@@ -29,6 +29,6 @@ class HorizonAccess
             return Gate::forUser($user)->check('viewHorizon');
         }
 
-        return ($user->role ?? null) === 'superadmin' || $user->can('view_horizon');
+        return (method_exists($user, 'isSuperadmin') && $user->isSuperadmin()) || $user->can('view_horizon');
     }
 }

@@ -2,6 +2,20 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.124.0 - 2026-11-25
+
+### Changed
+- Toegang tot het CMS komt alleen nog uit gekoppelde rollen. De kolom `users.role` (customer/admin/superadmin) is weg; superadmin is een losse vlag `is_superadmin` die altijd alles mag. Zonder rol en zonder superadmin ben je klant.
+- Gebruikersscherm: de rol-keuze is vervangen door de schakelaar Superadmin (alleen een superadmin kan hem wijzigen, nooit bij jezelf uitzetten, nooit de laatste superadmin weghalen), plus de kolom en het filter Toegang. "Admin user aanmaken" heet nu "Beheerder aanmaken" en vraagt superadmin of minstens één rol.
+- Ontvangerlijsten, e-mailsuggesties, de welkomstmail, de launch-checklist, Mijn taken, de campagnekalender en de preview van ongepubliceerde inhoud gebruiken nu wie toegang tot het CMS heeft (superadmin of een rol), in plaats van de oude rolwaarden.
+
+### Added
+- `User::isSuperadmin()`, `hasPanelAccess()`, `accessLabel()` en de scopes `superadmins()`, `panelUsers()` en `customers()`.
+- Migratie `replace_users_role_with_is_superadmin`: superadmin wordt de vlag, een oude `admin` zonder rol wordt klant (gelogd), daarna gaat de kolom weg. Terug te draaien.
+
+### Deprecated
+- `$user->role` bestaat nog als afgeleide waarde voor oude klantcode. Schrijven van `'superadmin'` zet de vlag; elke andere waarde wordt genegeerd. Tot de migratie gedraaid heeft vallen superadmin en de scopes terug op de oude kolom.
+
 ## v4.123.4 - 2026-11-25
 
 ### Fixed

@@ -131,8 +131,7 @@ class ReminderButton extends Component implements HasActions, HasSchemas
         $model = config('auth.providers.users.model') ?: \Dashed\DashedCore\Models\User::class;
 
         return $model::query()
-            ->whereNotNull('role')
-            ->where('role', '!=', 'customer')
+            ->panelUsers()
             ->orderBy('first_name')
             ->get()
             ->mapWithKeys(fn ($user) => [$user->getKey() => $user->name ?: $user->email])

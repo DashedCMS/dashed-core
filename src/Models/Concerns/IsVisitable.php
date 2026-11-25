@@ -10,21 +10,21 @@ use Dashed\DashedPages\Models\Page;
 use Dashed\DashedCore\Classes\Sites;
 use Illuminate\Support\Facades\View;
 use Dashed\DashedCore\Classes\Locales;
+use Illuminate\Support\Facades\Schema;
 use Dashed\Seo\Jobs\ScanSpecificResult;
 use Dashed\DashedCore\Models\UrlHistory;
-use Dashed\DashedCore\Models\GlobalBlock;
 use Spatie\Translatable\HasTranslations;
+use Dashed\DashedCore\Models\GlobalBlock;
 use Dashed\DashedCore\Models\Customsetting;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Dashed\DashedCore\Classes\FragmentCache;
 use Dashed\DashedCore\Classes\Seo\SlugMaker;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Dashed\DashedCore\Jobs\SyncModelUrlHistoryJob;
-use Dashed\DashedCore\Jobs\RedirectDeletedModelUrlsJob;
-use Illuminate\Support\Facades\Schema;
 use Dashed\DashedCore\Jobs\ClearContentBlocksCache;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Dashed\DashedCore\Jobs\RedirectDeletedModelUrlsJob;
 use Dashed\DashedCore\Classes\QueryHelpers\TokenizedSearch;
 
 trait IsVisitable
@@ -158,7 +158,10 @@ trait IsVisitable
 
     public function scopePublicShowable($query)
     {
-        if (auth()->guest() || (auth()->check() && auth()->user()->role !== 'admin')) {
+        // Een beheerder (superadmin of iemand met een rol) ziet ook
+        // ongepubliceerde en ingeplande inhoud, als voorvertoning.
+        $user = auth()->user();
+        if (! $user || ! method_exists($user, 'hasPanelAccess') || ! $user->hasPanelAccess()) {
             $query->thisSite()
                 ->isPublic()
                 ->where(function ($query) {
@@ -660,7 +663,7 @@ trait IsVisitable
         foreach (cms()->builder('routeModels') as $routeModel) {
             // Een klantproject kan een routemodel zonder contentblokken
             // registreren (AutoXL: Car), en dan is er niets te vergeten.
-            $instance = new $routeModel['class'];
+            $instance = new $routeModel['class']();
             if (! Schema::connection($instance->getConnectionName())->hasColumn($instance->getTable(), 'content')) {
                 continue;
             }

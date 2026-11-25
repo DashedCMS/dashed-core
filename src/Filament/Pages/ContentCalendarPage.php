@@ -46,7 +46,7 @@ class ContentCalendarPage extends Page
     {
         $user = auth()->user();
 
-        return $user && ($user->role ?? 'customer') !== 'customer' && ContentCalendar::sources() !== [];
+        return $user && $user->hasPanelAccess() && ContentCalendar::sources() !== [];
     }
 
     public function mount(): void

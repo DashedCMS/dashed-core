@@ -170,7 +170,7 @@ class SecurityCheck
         );
 
         $withoutMfa = User::query()
-            ->where(fn ($query) => $query->whereIn('role', ['superadmin', 'admin'])->orWhereHas('roles'))
+            ->panelUsers()
             ->where(fn ($query) => $query->whereNull('app_authentication_secret')->where(fn ($q) => $q->whereNull('has_email_authentication')->orWhere('has_email_authentication', false)))
             ->pluck('email')
             ->all();

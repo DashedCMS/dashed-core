@@ -43,7 +43,7 @@ class EmailSuppressionsPage extends Page implements HasTable
 
     public static function canAccess(): bool
     {
-        return (auth()->user()?->role ?? null) === 'superadmin';
+        return (auth()->user()?->isSuperadmin() ?? false);
     }
 
     public function table(Table $table): Table

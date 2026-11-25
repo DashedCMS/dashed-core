@@ -47,7 +47,7 @@ class ResetMfaAction
         $actor = auth()->user();
 
         return $actor
-            && ($actor->role ?? null) === 'superadmin'
+            && method_exists($actor, 'isSuperadmin') && $actor->isSuperadmin()
             && (int) $actor->getKey() !== (int) $record->getKey()
             && static::hasMfa($record);
     }

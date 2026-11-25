@@ -177,12 +177,15 @@ class MeldingenOpruimer extends SleutelOpruimer
     /** Een subquery naar een andere tabel, dus geen MySQL-fout 1093. */
     protected function klantIds(): Builder
     {
-        return DB::table((new User())->getTable())->where('role', 'customer')->select('id');
+        return User::query()->customers()->select((new User())->qualifyColumn('id'))->toBase();
     }
 
     protected function kentRollen(): bool
     {
-        return Schema::hasColumn((new User())->getTable(), 'role');
+        // Zonder de vlag (migratie nog niet gedraaid) valt er niets betrouwbaar
+        // als klant aan te wijzen: dan alleen de termijnen en de grens per
+        // ontvanger, geen klantenopruiming.
+        return Schema::hasColumn((new User())->getTable(), 'is_superadmin');
     }
 
     /**

@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Dashed\DashedCore\PersonalData\Providers;
 
 use Illuminate\Support\Str;
+use Dashed\DashedCore\Models\User;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Database\QueryException;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Database\QueryException;
 use Dashed\DashedCore\PersonalData\Anonymized;
 use Dashed\DashedCore\PersonalData\PersonalDataExport;
 use Dashed\DashedCore\PersonalData\PersonalDataFinding;
@@ -21,13 +22,11 @@ use Dashed\DashedCore\PersonalData\PersonalDataProvider;
  * pakketten hun rijen eerst van het account hebben losgekoppeld.
  *
  * Een beheerdersaccount wordt nooit verwijderd: dat zou iemand uit het CMS
- * sluiten en zijn spoor wissen. Haal eerst de rol weg en doe het verzoek
+ * sluiten en zijn spoor wissen. Haal eerst de rollen (en de vlag superadmin) weg en doe het verzoek
  * opnieuw.
  */
 class CorePersonalDataProvider extends PersonalDataProvider
 {
-    public const ADMIN_ROLES = ['admin', 'superadmin'];
-
     public function key(): string
     {
         return 'dashed-core';
@@ -204,8 +203,12 @@ class CorePersonalDataProvider extends PersonalDataProvider
             return [[], []];
         }
 
-        $roles = DB::table('users')->whereIn('id', $subject->userIds())->pluck('role', 'id');
-        $admins = $roles->filter(fn ($role) => in_array($role, self::ADMIN_ROLES, true))->keys()->map(fn ($id) => (int) $id)->all();
+        $admins = User::query()
+            ->whereIn((new User())->qualifyColumn('id'), $subject->userIds())
+            ->panelUsers()
+            ->pluck('id')
+            ->map(fn ($id) => (int) $id)
+            ->all();
         $customers = array_values(array_diff($subject->userIds(), $admins));
 
         return [$customers, $admins];
@@ -234,7 +237,7 @@ class CorePersonalDataProvider extends PersonalDataProvider
             'last_name' => null,
             'password' => bcrypt(Str::random(40)),
             'remember_token' => null,
-            'role' => 'customer',
+            'is_superadmin' => false,
             'phone_number' => null,
             'date_of_birth' => null,
             'gender' => null,

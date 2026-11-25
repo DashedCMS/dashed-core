@@ -12,13 +12,13 @@ use Filament\Resources\Resource;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Forms\Components\Select;
-use Dashed\DashedCore\Classes\AdminLocale;
 use Filament\Forms\Components\Toggle;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Tables\Filters\SelectFilter;
+use Dashed\DashedCore\Classes\AdminLocale;
 use Filament\Schemas\Components\Utilities\Get;
 use STS\FilamentImpersonate\Actions\Impersonate;
 use Dashed\DashedCore\Filament\Resources\UserResource\Users\EditUser;
@@ -58,55 +58,24 @@ class UserResource extends Resource
     }
 
     /**
-     * Mag deze rol een back-office account aanmaken?
+     * Mag $actor toegang uitdelen: de vlag superadmin zetten, rollen koppelen
+     * of via "Beheerder aanmaken" een back-office account maken?
      *
-     * Zo'n account krijgt de superadmin-rol, dus alleen een superadmin mag dit.
-     * Zou een gewone admin het ook mogen, dan kon die zichzelf via een tweede
-     * account opwaarderen.
+     * Alleen een superadmin. Zou een beheerder met gebruikersrechten dat ook
+     * mogen, dan kon die zichzelf (of een tweede account) opwaarderen.
      */
-    public static function canAssignBackOfficeRole(?string $currentRole): bool
+    public static function canManageAccess(?\Dashed\DashedCore\Models\User $actor): bool
     {
-        return $currentRole === 'superadmin';
-    }
-
-    /**
-     * Rollen die de ingelogde gebruiker mag toekennen.
-     *
-     * "Admin" slaat superadmin op: dat is de rol die via Gate::before overal
-     * toegang krijgt. Een gebruiker met de oude 'admin'-rol haalt zijn rechten
-     * uit gekoppelde roles en kan zonder die koppeling niets, dus die rol wordt
-     * niet meer uitgedeeld.
-     *
-     * Alleen een superadmin mag de rol toekennen. Zou een gewone admin dat ook
-     * mogen, dan kon die zichzelf via een tweede account opwaarderen.
-     *
-     * @return array<string, string>
-     */
-    public static function roleOptions(?string $currentRole, ?string $recordRole = null): array
-    {
-        $options = ['customer' => 'Customer'];
-
-        if (static::canAssignBackOfficeRole($currentRole)) {
-            $options['superadmin'] = 'Admin';
-        }
-
-        // Bestaande gebruikers met de oude rol moeten bewerkbaar blijven. Zonder
-        // deze optie staat er een waarde in het verplichte veld die niet in de
-        // lijst voorkomt, en dan faalt het opslaan op de validatie.
-        if ($recordRole === 'admin') {
-            $options['admin'] = 'Admin (oude rol, rechten via rollen)';
-        }
-
-        return $options;
+        return (bool) $actor?->isSuperadmin();
     }
 
     /**
      * Mag $actor het e-mailadres en wachtwoord van $target wijzigen?
      *
-     * Een account met toegang tot de beheeromgeving (superadmin, de oude
-     * admin-rol of gekoppelde rollen) is een overname waard: wie zijn e-mail
-     * of wachtwoord kan zetten, logt als hem in. Dus alleen een superadmin,
-     * of de gebruiker zelf. Een gewone klant blijft voor edit_user te beheren.
+     * Een account met toegang tot de beheeromgeving (superadmin of gekoppelde
+     * rollen) is een overname waard: wie zijn e-mail of wachtwoord kan zetten,
+     * logt als hem in. Dus alleen een superadmin, of de gebruiker zelf. Een
+     * gewone klant blijft voor edit_user te beheren.
      */
     public static function canChangeCredentials(?\Dashed\DashedCore\Models\User $actor, ?\Dashed\DashedCore\Models\User $target): bool
     {
@@ -118,7 +87,7 @@ class UserResource extends Resource
             return true;
         }
 
-        if ($actor->role === 'superadmin' || $actor->is($target)) {
+        if ($actor->isSuperadmin() || $actor->is($target)) {
             return true;
         }
 
@@ -126,26 +95,55 @@ class UserResource extends Resource
     }
 
     /**
-     * Of het rollen-veld zichtbaar is bij deze combinatie.
+     * Of het rollen-veld zichtbaar is.
      *
-     * Het veld hing aan role === 'admin', en die rol wordt sinds de
-     * security-hardening niet meer uitgedeeld. Daarmee was er geen enkele weg
-     * meer om een nieuwe beheerder beperkte rechten te geven: de enige
-     * kiesbare back-office rol is superadmin, en die komt via Gate::before
-     * overal doorheen. Een gebruiker met gekoppelde rollen mag het paneel in
-     * (zie User::canAccessPanel) en krijgt precies de extra_permissions van die
+     * Een gebruiker met gekoppelde rollen mag het paneel in (zie
+     * User::hasPanelAccess) en krijgt precies de extra_permissions van die
      * rollen, dus dit is de plek waar een beperkte beheerder gemaakt wordt.
      *
-     * Bij superadmin blijft het veld weg: die heeft alles al, en een lijst die
-     * niets doet leest als een lijst die wel iets doet.
+     * Bij een superadmin blijft het veld weg: die heeft alles al, en een lijst
+     * die niets doet leest als een lijst die wel iets doet.
      *
      * Rollen uitdelen is rechten uitdelen, dus het staat achter dezelfde deur
-     * als de back-office rol zelf. Zonder die grendel kan een beheerder met
-     * gebruikersrechten zichzelf elke bevoegdheid toekennen.
+     * als de vlag superadmin zelf.
      */
-    public static function canSeeRolesField(?string $currentRole, ?string $selectedRole): bool
+    public static function canSeeRolesField(?\Dashed\DashedCore\Models\User $actor, bool $recordIsSuperadmin): bool
     {
-        return static::canAssignBackOfficeRole($currentRole) && $selectedRole !== 'superadmin';
+        return static::canManageAccess($actor) && ! $recordIsSuperadmin;
+    }
+
+    /**
+     * Waarom $actor de vlag superadmin van $target niet naar $wanted mag
+     * zetten, of null als het mag. $target null is een nieuw account.
+     *
+     * Dit is de servercontrole achter de schakelaar; verbergen en uitschakelen
+     * in het formulier is alleen de weergave.
+     */
+    public static function superadminChangeError(?\Dashed\DashedCore\Models\User $actor, ?\Dashed\DashedCore\Models\User $target, bool $wanted): ?string
+    {
+        $current = (bool) $target?->isSuperadmin();
+
+        if ($wanted === $current) {
+            return null;
+        }
+
+        if (! static::canManageAccess($actor)) {
+            return __('Alleen een superadmin kan iemand superadmin maken of dat weer uitzetten.');
+        }
+
+        if ($wanted) {
+            return null;
+        }
+
+        if ($target && $actor->is($target)) {
+            return __('Je kunt superadmin niet bij jezelf uitzetten.');
+        }
+
+        if ($target && \Dashed\DashedCore\Models\User::query()->superadmins()->whereKeyNot($target->getKey())->doesntExist()) {
+            return __('Dit is de laatste superadmin. Maak eerst iemand anders superadmin.');
+        }
+
+        return null;
     }
 
     public static function form(Schema $schema): Schema
@@ -173,28 +171,34 @@ class UserResource extends Resource
                             ->email()
                             ->maxLength(255),
 
-                        Select::make('role')
-                            ->label(__('Rol'))
-                            ->required()
-                            ->reactive()
-                            // De options-closure wordt server-side hergebruikt voor validatie,
-                            // dus een gespoofde waarde wordt geweigerd.
-                            ->options(fn ($record) => static::roleOptions(auth()->user()?->role, $record?->role)),
+                        Toggle::make('is_superadmin')
+                            ->label(__('Superadmin'))
+                            ->helperText(__('Een superadmin mag altijd alles, ook zonder rollen. Alleen een superadmin kan dit aan- of uitzetten.'))
+                            ->live()
+                            ->visible(fn () => static::canManageAccess(auth()->user()))
+                            ->dehydrated(fn () => static::canManageAccess(auth()->user()))
+                            // Bij jezelf staat hij vast: wie zichzelf uitzet sluit zich buiten.
+                            ->disabled(fn ($record) => $record && auth()->user() && $record->is(auth()->user()))
+                            ->rule(fn ($record) => function (string $attribute, $value, \Closure $fail) use ($record): void {
+                                if ($error = static::superadminChangeError(auth()->user(), $record, (bool) $value)) {
+                                    $fail($error);
+                                }
+                            }),
 
                         Select::make('admin_locale')
                             ->label(__('Taal van het CMS'))
                             ->options(AdminLocale::options())
                             ->in(array_keys(AdminLocale::options()))
                             ->placeholder(AdminLocale::options()[AdminLocale::default()] ?? null)
-                            ->visible(fn () => auth()->user()?->role === 'superadmin'),
+                            ->visible(fn () => (bool) auth()->user()?->isSuperadmin()),
 
                         Select::make('roles')
                             ->label(__('Rollen'))
                             ->multiple()
                             ->relationship('roles', 'name')
                             ->preload()
-                            ->visible(fn (Get $get) => static::canSeeRolesField(auth()->user()?->role, $get('role')))
-                            ->helperText(__('Wijs rollen toe om te bepalen tot welke onderdelen deze gebruiker toegang heeft. Een gebruiker met rollen mag de beheeromgeving in, ook zonder beheerdersrol.')),
+                            ->visible(fn (Get $get) => static::canSeeRolesField(auth()->user(), (bool) $get('is_superadmin')))
+                            ->helperText(__('Wijs rollen toe om te bepalen tot welke onderdelen deze gebruiker toegang heeft. Zonder rol en zonder superadmin is iemand klant en komt hij niet in de beheeromgeving.')),
 
                         TextInput::make('password')
                             ->label(__('Wachtwoord'))
@@ -320,6 +324,7 @@ class UserResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn ($query) => $query->with('roles'))
             ->columns([
                 TextColumn::make('id')
                     ->label(__('ID'))
@@ -332,28 +337,53 @@ class UserResource extends Resource
                     ->label(__('Email'))
                     ->sortable()
                     ->searchable(),
-                TextColumn::make('role')
-                    ->label(__('Rol'))
-                    ->sortable(),
-                TextColumn::make('roles.name')
-                    ->label(__('Rollen'))
+                TextColumn::make('access')
+                    ->label(__('Toegang'))
+                    ->state(fn ($record) => $record->accessLabel())
                     ->badge()
-                    ->placeholder('-')
-                    ->toggleable(),
+                    ->color(fn ($record) => $record->isSuperadmin() ? 'danger' : ($record->roles->isNotEmpty() ? 'primary' : 'gray'))
+                    // Superadmin eerst, dan beheerders, dan klanten.
+                    ->sortable(query: fn ($query, string $direction) => $query
+                        ->orderBy('is_superadmin', $direction === 'asc' ? 'desc' : 'asc')
+                        ->orderBy(
+                            \Dashed\DashedCore\Models\Role::query()
+                                ->selectRaw('count(*)')
+                                ->join('dashed__model_has_roles', 'dashed__model_has_roles.role_id', '=', 'dashed__roles.id')
+                                ->whereColumn('dashed__model_has_roles.user_id', 'users.id'),
+                            $direction === 'asc' ? 'desc' : 'asc'
+                        )),
                 TextColumn::make('created_at')
                     ->label(__('Aangemaakt op'))
                     ->dateTime('d-m-Y H:i')
                     ->sortable(),
             ])
             ->filters([
-                SelectFilter::make('role')
-                    ->label(__('Rol'))
+                SelectFilter::make('access')
+                    ->label(__('Toegang'))
                     ->multiple()
                     ->options([
                         'superadmin' => __('Superadmin'),
-                        'admin' => __('Admin'),
-                        'customer' => __('Customer'),
-                    ]),
+                        'beheerder' => __('Beheerder (met rollen)'),
+                        'klant' => __('Klant'),
+                    ])
+                    ->query(function ($query, array $data) {
+                        $values = array_values(array_filter((array) ($data['values'] ?? [])));
+
+                        if ($values === []) {
+                            return $query;
+                        }
+
+                        return $query->where(function ($query) use ($values) {
+                            foreach ($values as $value) {
+                                $query->orWhere(fn ($q) => match ($value) {
+                                    'superadmin' => $q->superadmins(),
+                                    'beheerder' => $q->where('is_superadmin', false)->whereHas('roles'),
+                                    'klant' => $q->customers(),
+                                    default => $q->whereRaw('1 = 0'),
+                                });
+                            }
+                        });
+                    }),
                 SelectFilter::make('roles')
                     ->label(__('Rollen'))
                     ->multiple()

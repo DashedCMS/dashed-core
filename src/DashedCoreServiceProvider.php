@@ -17,7 +17,6 @@ use Dashed\DashedForms\Classes\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Dashed\DashedCore\Classes\Locales;
-use Dashed\DashedCore\Classes\ScheduleSpread;
 use Dashed\DashedCore\Models\Redirect;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
@@ -40,6 +39,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use Dashed\DashedCore\Mail\NotificationMail;
 use Dashed\DashedCore\Policies\ReviewPolicy;
 use Filament\Forms\Components\Builder\Block;
+use Dashed\DashedCore\Classes\ScheduleSpread;
 use Dashed\DashedCore\Commands\CreateSitemap;
 use Dashed\DashedCore\Commands\UpdateCommand;
 use Dashed\DashedCore\Mail\PasswordResetMail;
@@ -98,7 +98,6 @@ use Dashed\DashedCore\Classes\RichEditorPlugins\HtmlIdPlugin;
 use Dashed\DashedCore\Commands\InvalidatePasswordResetTokens;
 use Dashed\DashedCore\Livewire\Frontend\Search\SearchResults;
 use Dashed\DashedCore\Filament\Pages\Settings\SEOSettingsPage;
-use Dashed\DashedCore\Filament\Pages\Settings\BusinessProfileSettingsPage;
 use Dashed\DashedCore\Livewire\Infolists\SEO\SEOScoreInfoList;
 use Dashed\DashedCore\Performance\Images\ImagePriorityTracker;
 use Dashed\DashedCore\Performance\Scripts\DeferredScriptStore;
@@ -125,6 +124,7 @@ use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonFailedJobsTable;
 use Dashed\DashedCore\Filament\Widgets\Horizon\HorizonThroughputChart;
 use Dashed\DashedCore\Livewire\Frontend\Protection\PasswordProtection;
 use Dashed\DashedCore\Filament\Pages\Settings\NotFoundPageSettingsPage;
+use Dashed\DashedCore\Filament\Pages\Settings\BusinessProfileSettingsPage;
 
 class DashedCoreServiceProvider extends PackageServiceProvider
 {
@@ -1401,7 +1401,7 @@ MARKDOWN,
         Model::unguard();
 
         Gate::before(function (User $user, string $ability) {
-            if ($user->role === 'superadmin') {
+            if ($user->isSuperadmin()) {
                 return true;
             }
 

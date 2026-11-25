@@ -4,12 +4,12 @@ namespace Dashed\DashedCore\Classes\Revisions;
 
 use Closure;
 use Filament\Actions\Action;
+use Filament\Facades\Filament;
+use Dashed\DashedCore\Models\User;
 use Illuminate\Support\Facades\DB;
 use Dashed\DashedCore\Classes\Sites;
-use Dashed\DashedCore\Models\User;
-use Filament\Facades\Filament;
-use Illuminate\Support\Facades\Schema;
 use Dashed\DashedCore\Models\Revision;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Notifications\Notification;
 use Dashed\DashedCore\Models\Customsetting;
@@ -320,7 +320,7 @@ class ContentApproval
     {
         return static::userModel()::query()
             ->where(function ($query) {
-                $query->where('role', 'superadmin')
+                $query->where($query->qualifyColumn('is_superadmin'), true)
                     ->orWhereHas('roles', fn ($roles) => $roles->whereJsonContains('extra_permissions', self::PERMISSION));
             })
             ->get();

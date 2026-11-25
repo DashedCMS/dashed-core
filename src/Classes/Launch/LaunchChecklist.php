@@ -201,14 +201,14 @@ class LaunchChecklist
             [
                 'key' => 'mfa_all',
                 'label' => __('Tweestapsverificatie voor elke beheerder'),
-                'detail' => __('Elke beheerder stelt dit zelf in: bij de eerstvolgende keer inloggen vraagt het CMS erom en kan hij pas verder als het ingesteld is. Logt iemand nooit meer in, zet zijn rol dan op klant of verwijder het account.'),
+                'detail' => __('Elke beheerder stelt dit zelf in: bij de eerstvolgende keer inloggen vraagt het CMS erom en kan hij pas verder als het ingesteld is. Logt iemand nooit meer in, haal zijn rollen dan weg of verwijder het account.'),
                 'owner' => __('Elke beheerder zelf, bij het inloggen'),
                 'url' => rescue(fn () => \Dashed\DashedCore\Filament\Resources\UserResource::getUrl(), null, report: false),
                 'check' => fn () => ! static::usersWithoutMfaQuery()->exists(),
                 'problems' => fn () => static::usersWithoutMfaQuery()
                     ->orderBy('email')
                     ->get()
-                    ->map(fn ($user) => __('Nog niet ingesteld: :wie (:rol)', ['wie' => static::userLabel($user), 'rol' => $user->role]))
+                    ->map(fn ($user) => __('Nog niet ingesteld: :wie (:rol)', ['wie' => static::userLabel($user), 'rol' => $user->accessLabel()]))
                     ->all(),
             ],
             [
@@ -330,7 +330,7 @@ class LaunchChecklist
     {
         $model = config('auth.providers.users.model') ?: \Dashed\DashedCore\Models\User::class;
 
-        return $model::query()->whereNotNull('role')->where('role', '!=', 'customer');
+        return $model::query()->panelUsers()->with('roles');
     }
 
     protected static function usersWithoutMfaQuery()

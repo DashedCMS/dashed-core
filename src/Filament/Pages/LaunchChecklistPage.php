@@ -32,7 +32,7 @@ class LaunchChecklistPage extends Page
 
     public static function canAccess(): bool
     {
-        return in_array(auth()->user()?->role, ['admin', 'superadmin'], true);
+        return (auth()->user()?->hasPanelAccess() ?? false);
     }
 
     public static function getNavigationBadge(): ?string

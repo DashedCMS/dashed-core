@@ -30,10 +30,10 @@ use Awcodes\RicherEditor\Plugins\SourceCodePlugin;
 use Dashed\DashedCore\Middleware\EnsureMfaIsFresh;
 use Dashed\DashedCore\Middleware\EnsureMfaIsSetUp;
 use Dashed\DashedCore\Filament\Pages\Auth\CmsLogin;
-use Dashed\DashedCore\Filament\Pages\Auth\EditProfile;
 use Dashed\DashedCore\Middleware\EnsureCmsIpAllowed;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Illuminate\Routing\Middleware\SubstituteBindings;
+use Dashed\DashedCore\Filament\Pages\Auth\EditProfile;
 use Dashed\DashedCore\Filament\Pages\Auth\MfaReverify;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
@@ -627,7 +627,7 @@ class CMSManager
             // instellingen, alleen voor superadmins (zie SystemHealth).
             ->renderHook(
                 \Filament\View\PanelsRenderHook::BODY_START,
-                fn () => auth()->user()?->role === 'superadmin' ? view('dashed-core::filament.system-health-banner') : '',
+                fn () => (auth()->user()?->isSuperadmin() ?? false) ? view('dashed-core::filament.system-health-banner') : '',
             )
             // Takenicoon met lopende en recente achtergrondtaken (zie BackgroundTask).
             ->renderHook(

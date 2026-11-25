@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Hash;
 
 /**
  * Zet een account per direct buiten werking: willekeurig wachtwoord van 64
- * tekens, nieuw remember-token, rol klant, alle rollen los, en een regel in
+ * tekens, nieuw remember-token, superadmin uit, alle rollen los, en een regel in
  * het activiteitenlogboek met de staat van daarvoor. Gedeeld door het
  * commando dashed:lock-user en de "dit was ik niet"-link in de loginmail,
  * zodat beide precies hetzelfde doen.
@@ -17,22 +17,22 @@ use Illuminate\Support\Facades\Hash;
  * Het nieuwe wachtwoord is wat lopende sessies afbreekt: Laravel's
  * AuthenticateSession vergelijkt de wachtwoordhash per verzoek. Herstel
  * daarna is met de hand: een superadmin zet een nieuw wachtwoord, de
- * gebruiker stelt MFA opnieuw in en krijgt zijn rol terug.
+ * gebruiker stelt MFA opnieuw in en krijgt zijn rollen terug.
  */
 class LockUserAction
 {
     public const NOT_ME_LINK_DAYS = 7;
 
     /**
-     * @return array{role: string|null, roles: array<int, string>} de staat van voor de vergrendeling
+     * @return array{is_superadmin: bool, roles: array<int, string>} de staat van voor de vergrendeling
      */
     public function handle(User $user, string $reason): array
     {
-        $before = ['role' => $user->role, 'roles' => $user->roles()->pluck('name')->all()];
+        $before = ['is_superadmin' => $user->isSuperadmin(), 'roles' => $user->roles()->pluck('name')->all()];
 
         $user->password = Hash::make(Str::random(64));
         $user->remember_token = Str::random(60);
-        $user->role = 'customer';
+        $user->is_superadmin = false;
         $user->save();
         $user->roles()->detach();
 

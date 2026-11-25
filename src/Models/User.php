@@ -3,14 +3,17 @@
 namespace Dashed\DashedCore\Models;
 
 use Filament\Panel;
+use Dashed\DashedCore\Classes\SchemaColumns;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Activitylog\LogOptions;
 use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Builder;
 use Dashed\DashedCore\Classes\MfaFreshness;
 use Filament\Models\Contracts\FilamentUser;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Dashed\DashedCore\Traits\HasDynamicRelation;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -80,6 +83,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasAppAut
             'app_authentication_secret' => 'encrypted',
             'app_authentication_recovery_codes' => 'encrypted:array',
             'navigation_sort_by_usage' => 'boolean',
+            'is_superadmin' => 'boolean',
         ];
     }
 
@@ -125,9 +129,141 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasAppAut
         });
     }
 
+    /**
+     * Toegang tot het CMS komt alleen nog uit twee bronnen: de vlag
+     * is_superadmin (mag altijd alles) en gekoppelde rollen (rechten via
+     * extra_permissions). Zonder een van beide ben je klant. De oude kolom
+     * users.role bestaat niet meer; zie de accessor role() hieronder.
+     */
+    public function isSuperadmin(): bool
+    {
+        if (array_key_exists('is_superadmin', $this->attributes)) {
+            return (bool) $this->attributes['is_superadmin'];
+        }
+
+        // Code al uitgerold, migratie nog niet gedraaid: de oude kolom is dan
+        // nog de waarheid. Zonder deze terugval sluit de uitrol elke
+        // superadmin zonder rol buiten tot iemand migrate draait.
+        return ($this->attributes['role'] ?? null) === 'superadmin';
+    }
+
+    /** Superadmin, of minstens één gekoppelde rol. */
+    public function hasPanelAccess(): bool
+    {
+        if ($this->isSuperadmin()) {
+            return true;
+        }
+
+        if (! $this->exists) {
+            return false;
+        }
+
+        // Via de relatie en niet met roles()->exists(): Gate::before laadt
+        // de rollen toch al, en publicShowable() roept dit per scope aan op
+        // de front-end. Zo blijft het één query per gebruiker per verzoek.
+        return $this->roles->isNotEmpty();
+    }
+
+    /**
+     * Staat de kolom is_superadmin er al? Tussen het uitrollen van de code en
+     * migrate niet; de scopes vallen dan terug op de oude kolom role, zodat
+     * meldingen en opruimtaken in die periode niet op een onbekende kolom
+     * crashen.
+     */
+    protected static function hasSuperadminColumn(): bool
+    {
+        return SchemaColumns::has((new static)->getTable(), 'is_superadmin');
+    }
+
+    /**
+     * Wat iemand mag, als korte tekst voor schermen en meldingen:
+     * "Superadmin", de namen van zijn rollen, of "Klant".
+     */
+    public function accessLabel(): string
+    {
+        if ($this->isSuperadmin()) {
+            return __('Superadmin');
+        }
+
+        $names = $this->exists ? $this->roles->pluck('name')->filter()->all() : [];
+
+        return $names !== [] ? implode(', ', $names) : __('Klant');
+    }
+
+    public function scopeSuperadmins(Builder $query): Builder
+    {
+        if (! static::hasSuperadminColumn()) {
+            return $query->where($query->qualifyColumn('role'), 'superadmin');
+        }
+
+        return $query->where($query->qualifyColumn('is_superadmin'), true);
+    }
+
+    /** Iedereen met toegang tot het CMS: superadmin of minstens één rol. */
+    public function scopePanelUsers(Builder $query): Builder
+    {
+        if (! static::hasSuperadminColumn()) {
+            return $query->where(fn (Builder $q) => $q
+                ->where($q->qualifyColumn('role'), 'superadmin')
+                ->orWhereHas('roles'));
+        }
+
+        return $query->where(fn (Builder $q) => $q
+            ->where($q->qualifyColumn('is_superadmin'), true)
+            ->orWhereHas('roles'));
+    }
+
+    /** Klanten: geen superadmin en geen enkele rol. */
+    public function scopeCustomers(Builder $query): Builder
+    {
+        if (! static::hasSuperadminColumn()) {
+            return $query->where($query->qualifyColumn('role'), '!=', 'superadmin')
+                ->whereDoesntHave('roles');
+        }
+
+        return $query->where(fn (Builder $q) => $q
+            ->where($q->qualifyColumn('is_superadmin'), false)
+            ->orWhereNull($q->qualifyColumn('is_superadmin')))
+            ->whereDoesntHave('roles');
+    }
+
+    /**
+     * Alleen voor achterwaartse compatibiliteit van klantprojecten en oude
+     * fixtures: lezen geeft 'superadmin', 'admin' (heeft rollen) of
+     * 'customer'; schrijven zet alleen de vlag ('superadmin' aan, al het
+     * andere uit) en komt nooit als kolom in de insert. Nieuwe code gebruikt
+     * dit nooit, maar isSuperadmin(), hasPanelAccess() en de scopes.
+     *
+     * @deprecated
+     */
+    protected function role(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value, array $attributes) {
+                // Installatie waar de migratie nog niet gedraaid heeft: de
+                // oude kolom staat er nog, die is dan de waarheid.
+                if (! array_key_exists('is_superadmin', $attributes) && is_string($value) && $value !== '') {
+                    return $value;
+                }
+
+                if (! empty($attributes['is_superadmin'])) {
+                    return 'superadmin';
+                }
+
+                return $this->hasPanelAccess() ? 'admin' : 'customer';
+            },
+            // Alleen 'superadmin' schrijft iets. Elke andere waarde laten we
+            // liggen: oude klantcode die role = 'admin' of 'customer' zet op
+            // een bestaande superadmin zou hem anders stil degraderen, langs
+            // de grendels van het gebruikersscherm heen. Afschalen gaat
+            // bewust via is_superadmin zelf.
+            set: fn ($value) => $value === 'superadmin' ? ['is_superadmin' => true] : [],
+        );
+    }
+
     public function canAccessPanel(Panel $panel): bool
     {
-        return in_array($this->role, ['superadmin', 'admin']) || $this->roles->isNotEmpty();
+        return $this->hasPanelAccess();
     }
 
     /**
@@ -137,7 +273,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasAppAut
      */
     public function mustLoginViaPanel(): bool
     {
-        return $this->role !== 'customer' || $this->roles()->exists();
+        return $this->hasPanelAccess();
     }
 
     /**
@@ -154,7 +290,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasAppAut
             return false;
         }
 
-        return $actor->role === 'superadmin' || ! $this->mustLoginViaPanel();
+        return $actor->isSuperadmin() || ! $this->mustLoginViaPanel();
     }
 
     /**
