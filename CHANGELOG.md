@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.123.4 - 2026-11-25
+
+### Fixed
+- **Wisselen van taal liep vast op een fout in de andere taal.** Was bijvoorbeeld de Engelse meta titel te lang, dan weigerde de taalwissel, maar bleef de Engelse meta in het Nederlandse formulier staan. Een correctie belandde zo in de Nederlandse metadata en de volgende wissel faalde opnieuw. De wissel gaat nu door en toont de fout bij het veld in de nieuwe taal.
+
 ## v4.123.3 - 2026-11-23
 
 ### Fixed

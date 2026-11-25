@@ -4,6 +4,7 @@ namespace Dashed\DashedCore\Filament\Concerns;
 
 use Illuminate\Support\Arr;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\ValidationException;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
@@ -29,6 +30,47 @@ trait HasEditableCMSActions
 {
     use Translatable {
         fillForm as protected translatableFillForm;
+        updatedActiveLocale as protected switchActiveLocaleWithValidation;
+    }
+
+    /**
+     * updatingActiveLocale() saves (and so validates) the old locale and then
+     * loads the stored metadata, custom blocks and relations of the new locale
+     * into the form. The parent switch validates the form again, which now
+     * holds that new-locale content. When it was invalid (for example an
+     * English meta title of 80 characters) the switch was refused while the
+     * form kept the English content under the Dutch locale: the editor fixed
+     * the English title, saved it into the Dutch metadata, and the next switch
+     * failed on the same English title again. Finish the switch instead and
+     * show the errors on the new locale, where they can be fixed.
+     */
+    public function updatedActiveLocale(): void
+    {
+        $newLocale = $this->activeLocale;
+
+        try {
+            $this->switchActiveLocaleWithValidation();
+        } catch (ValidationException $exception) {
+            $this->activeLocale = $newLocale;
+
+            if (filament('spatie-translatable')->getPersistLocale()) {
+                session()->put('spatie_translatable_active_locale', $this->activeLocale);
+            }
+
+            $translatableAttributes = static::getResource()::getTranslatableAttributes();
+            $state = $this->form->getStateSnapshot();
+
+            $this->otherLocaleData[$this->oldActiveLocale] = Arr::only($state, $translatableAttributes);
+
+            $this->form->fill([
+                ...Arr::except($state, $translatableAttributes),
+                ...$this->otherLocaleData[$this->activeLocale] ?? [],
+            ]);
+
+            unset($this->otherLocaleData[$this->activeLocale]);
+
+            $this->setErrorBag($exception->validator->errors());
+        }
     }
 
     public function updatingActiveLocale($newVal): void
