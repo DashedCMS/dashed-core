@@ -7,11 +7,13 @@ use Dashed\DashedCore\Classes\SchemaColumns;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Activitylog\LogOptions;
 use Filament\Models\Contracts\HasAvatar;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Builder;
 use Dashed\DashedCore\Classes\MfaFreshness;
 use Filament\Models\Contracts\FilamentUser;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Dashed\DashedCore\Classes\Avatars\InitialsAvatar;
 use Dashed\DashedCore\Traits\HasDynamicRelation;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -100,7 +102,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasAppAut
      */
     public function getFillable()
     {
-        return array_values(array_unique([...parent::getFillable(), 'admin_locale', 'navigation_sort_by_usage']));
+        return array_values(array_unique([...parent::getFillable(), 'admin_locale', 'navigation_sort_by_usage', 'avatar_path']));
     }
 
     public function getActivitylogOptions(): LogOptions
@@ -351,7 +353,51 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasAppAut
 
     public function getFilamentAvatarUrl(): ?string
     {
-        return 'https://www.gravatar.com/avatar/'.md5(strtolower(trim($this->email)));
+        return $this->avatar_url;
+    }
+
+    /**
+     * Voorletter voornaam + voorletter van het laatste woord van de
+     * achternaam, hoofdletters, hoogstens twee tekens. Zonder namen de eerste
+     * letter van het e-mailadres. Bewust niet in $appends: dat zou elke
+     * serialisatie van een gebruiker veranderen.
+     */
+    public function getAvatarInitialsAttribute(): string
+    {
+        return InitialsAvatar::initials($this->first_name, $this->last_name, $this->email);
+    }
+
+    /**
+     * Altijd een absolute URL: de geüploade foto op de dashed-disk, anders
+     * een SVG met de initialen.
+     */
+    public function getAvatarUrlAttribute(): string
+    {
+        $path = $this->getAttributeFromArray('avatar_path');
+
+        if (is_string($path) && $path !== '') {
+            $url = (string) rescue(fn () => Storage::disk('dashed')->url($path), '', false);
+
+            if ($url !== '') {
+                return str_starts_with($url, 'http') ? $url : url($url);
+            }
+        }
+
+        return InitialsAvatar::url($this->avatar_initials);
+    }
+
+    /**
+     * De vaste vorm van een gebruiker in API-payloads en dashboards.
+     *
+     * @return array{id: int|string|null, name: string|null, avatar_url: string}
+     */
+    public function toAvatarPayload(): array
+    {
+        return [
+            'id' => $this->getKey(),
+            'name' => $this->name,
+            'avatar_url' => $this->avatar_url,
+        ];
     }
 
     public function getAppAuthenticationSecret(): ?string

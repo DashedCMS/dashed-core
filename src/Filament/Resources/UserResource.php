@@ -13,6 +13,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\FileUpload;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
@@ -171,7 +172,17 @@ class UserResource extends Resource
                             ->email()
                             ->maxLength(255),
 
-                        Toggle::make('is_superadmin')
+                        FileUpload::make('avatar_path')
+                            ->label(__('Profielfoto'))
+                            ->disk('dashed')
+                            ->directory('avatars')
+                            ->image()
+                            ->avatar()
+                            ->imageEditor()
+                            ->maxSize(4096)
+                            ->helperText(__('Zonder foto tonen we een cirkel met de initialen.')),
+
+                                                Toggle::make('is_superadmin')
                             ->label(__('Superadmin'))
                             ->helperText(__('Een superadmin mag altijd alles, ook zonder rollen. Alleen een superadmin kan dit aan- of uitzetten.'))
                             ->live()

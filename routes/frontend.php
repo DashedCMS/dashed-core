@@ -50,6 +50,12 @@ Route::get('/m/p/{id}.gif', [MailTrackingController::class, 'open'])
     ->where('id', '[A-Za-z0-9]{32}')
     ->name('dashed.frontend.mail.open');
 
+// Initialen-avatar voor gebruikers zonder eigen foto (User::avatar_url).
+// Buiten de web-groep en niet onder /dashed, zie InitialsAvatar.
+Route::get('/user-avatar/{initials}', \Dashed\DashedCore\Controllers\Frontend\UserAvatarController::class)
+    ->where('initials', \Dashed\DashedCore\Classes\Avatars\InitialsAvatar::PATTERN)
+    ->name(\Dashed\DashedCore\Classes\Avatars\InitialsAvatar::ROUTE);
+
 // Korte campagnelinks uit de UTM-linkbouwer. Eén letter als prefix zodat de
 // link op drukwerk kort blijft; buiten de web-groep, want een doorverwijzing
 // heeft geen sessie nodig en mag nooit uit de responscache komen.

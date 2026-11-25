@@ -214,6 +214,13 @@ return [
         ],
     ],
 
+    // Initialen-avatar voor gebruikers zonder eigen foto (/user-avatar/{initials}).
+    'avatar' => [
+        'background' => env('DASHED_AVATAR_BACKGROUND', '#b4e6ce'),
+        'text' => env('DASHED_AVATAR_TEXT', '#30545B'),
+        'font_family' => '\'DM Serif Display\', \'DM Serif Text\', Georgia, serif',
+    ],
+
     // Taal van de beheeromgeving. Bewust los van APP_LOCALE: dat is de taal
     // van de inhoud, en een project als rechargehamster heeft daar 'en'.
     'admin_locale' => env('DASHED_ADMIN_LOCALE', 'nl'),
