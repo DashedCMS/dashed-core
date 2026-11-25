@@ -2,6 +2,16 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.128.0 - 2026-11-25
+
+### Added
+- Een model kan zijn eigen canonical aanwijzen met `canonicalUrl(?string $locale): ?string`. `CanonicalUrl` neemt die over, `HreflangUrls` geeft dan de alternatieven van die pagina en de sitemap slaat het model over. ec-core gebruikt dit voor varianten van een groep die alleen als groep getoond wordt.
+- Sitemap: een model met `showInSitemap(): bool` dat false geeft, valt weg (bijv. een lege categorie). Een site kan zelf modellen uitsluiten met `Sitemap::skipWhen(fn ($model) => ...)`.
+- `RobotsDecision::markNotFound()` / `isNotFound()`: de 404- en 410-pagina van de frontend krijgen `noindex, follow` in de head en geen canonical meer (stond op `index, follow` met een canonical naar zichzelf).
+
+### Fixed
+- `/nl/...` bij een verborgen standaardtaal stuurt met een 301 door in plaats van een 302 (`LocaleSessionRedirect`).
+
 ## v4.127.1 - 2026-11-25
 
 ### Fixed

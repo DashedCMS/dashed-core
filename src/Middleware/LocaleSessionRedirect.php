@@ -25,7 +25,8 @@ class LocaleSessionRedirect
             Locales::setLocale($params[0]);
 
             if ($params[0] == app('laravellocalization')->getDefaultLocale() && app('laravellocalization')->isHiddenDefault($params[0])) {
-                return redirect()->to(app('laravellocalization')->getNonLocalizedURL());
+                // Permanent: met een verborgen standaardtaal is /nl/... nooit het goede adres.
+                return redirect()->to(app('laravellocalization')->getNonLocalizedURL(), 301);
             }
 
             return $next($request);

@@ -29,7 +29,10 @@ class HreflangUrls
             return [];
         }
 
-        $variant = self::matchingVariant($request, $model, $currentLocale);
+        // Wijst het model een andere pagina als canonical aan, dan horen de alternatieven bij die pagina.
+        $variant = method_exists($model, 'canonicalUrl') && $model->canonicalUrl($currentLocale)
+            ? false
+            : self::matchingVariant($request, $model, $currentLocale);
         if ($variant === null) {
             return [];
         }

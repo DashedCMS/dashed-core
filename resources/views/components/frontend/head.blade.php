@@ -107,7 +107,9 @@ $ogSiteName = $siteName ?? config('app.name');
 @if($metaDescription !== '')
 <meta name="description" content="{{ $metaDescription }}">
 @endif
+@unless(\Dashed\DashedCore\Classes\Seo\RobotsDecision::isNotFound())
 <link rel="canonical" href="{{ $canonical }}">
+@endunless
 <meta property="og:url" content="{{ $canonical }}">
 <meta property="og:site_name" content="{{ $ogSiteName }}">
 <meta property="og:title" content="{{ seo()->metaData('metaTitle') }}">

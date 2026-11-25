@@ -72,6 +72,10 @@ class Sitemap
                     continue;
                 }
 
+                if (! static::belongsInSitemap($model)) {
+                    continue;
+                }
+
                 // Winkelwagen, afrekenen, login en account staan op noindex (RobotsDecision) en horen er niet in.
                 if (RobotsDecision::isRegisteredNoindexPage($model, (string) Sites::getActive())) {
                     continue;
@@ -204,6 +208,41 @@ class Sitemap
      * as full locale arrays (id, name, regional). The same set the head uses
      * for its hreflang links, limited to what the site actually serves.
      */
+    /** @var array<int, callable> */
+    protected static array $skipCallbacks = [];
+
+    /**
+     * Een site sluit hier modellen uit die wel publiek zijn maar geen eigen pagina horen te hebben, bijvoorbeeld
+     * producten die de site zelf met een 404 verbergt: `Sitemap::skipWhen(fn ($model) => ...)`.
+     */
+    public static function skipWhen(callable $callback): void
+    {
+        static::$skipCallbacks[] = $callback;
+    }
+
+    /**
+     * Niet in de sitemap: een model dat zelf zegt er niet in te horen (`showInSitemap()`, bijv. een lege categorie),
+     * dat met zijn canonical naar een andere pagina wijst (`canonicalUrl()`), of dat een site uitsluit.
+     */
+    public static function belongsInSitemap(object $model): bool
+    {
+        if (method_exists($model, 'showInSitemap') && ! $model->showInSitemap()) {
+            return false;
+        }
+
+        if (method_exists($model, 'canonicalUrl') && $model->canonicalUrl(app()->getLocale())) {
+            return false;
+        }
+
+        foreach (static::$skipCallbacks as $callback) {
+            if ($callback($model)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public static function siteLocales(): array
     {
         $siteLocales = Sites::get()['locales'] ?? [];

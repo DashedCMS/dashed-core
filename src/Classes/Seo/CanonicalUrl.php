@@ -20,7 +20,13 @@ class CanonicalUrl
         // (hooguit anders in hoofdletters of trailing slash). Een categorie met
         // één product geeft bijvoorbeeld de product-URL terug, en zonder
         // overzichtspagina een kale plaatshouder; dat is nooit de canonical.
-        if ($model && method_exists($model, 'getUrl')) {
+        // Een model kan zelf een andere pagina als canonical aanwijzen, bijvoorbeeld een productvariant die
+        // alleen via zijn groep getoond hoort te worden. Dat gaat voor op de verzoek-URL.
+        $eigen = $model && method_exists($model, 'canonicalUrl') ? $model->canonicalUrl(app()->getLocale()) : null;
+
+        if (is_string($eigen) && $eigen !== '') {
+            $base = str_starts_with($eigen, 'http') ? $eigen : url($eigen);
+        } elseif ($model && method_exists($model, 'getUrl')) {
             $modelUrl = (string) $model->getUrl(app()->getLocale(), false);
             if (self::samePage($modelUrl, $base)) {
                 $base = $modelUrl;

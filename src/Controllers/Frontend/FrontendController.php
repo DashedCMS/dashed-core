@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedCore\Controllers\Frontend;
 
+use Dashed\DashedCore\Classes\Seo\RobotsDecision;
 use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use Dashed\DashedCore\Classes\Sites;
@@ -17,6 +18,7 @@ class FrontendController extends Controller
     public static function pageNotFoundView()
     {
         seo()->metaData('metaTitle', 'Pagina niet gevonden');
+        RobotsDecision::markNotFound();
 
         if (View::exists(config('dashed-core.site_theme', 'dashed') . '.not-found.show')) {
             return response()
@@ -212,6 +214,7 @@ class FrontendController extends Controller
         );
 
         seo()->metaData('metaTitle', 'Pagina niet gevonden');
+        RobotsDecision::markNotFound();
 
         if (View::exists(config('dashed-core.site_theme', 'dashed') . '.not-found.show')) {
             return response()

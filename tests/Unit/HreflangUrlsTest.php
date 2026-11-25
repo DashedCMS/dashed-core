@@ -114,3 +114,45 @@ it('houdt de slash van de homepage zoals de canonical', function () {
         'en' => 'https://lovora.test/en',
     ]);
 });
+
+/**
+ * Lovora (25-11-2026): een variant van een groep die alleen als groep getoond wordt, wijst met zijn canonical
+ * naar de groep; de alternatieven horen dan ook bij de groep.
+ */
+it('volgt de canonical van het model naar de groep', function () {
+    $request = Request::create('https://lovora.test/de/produkte/zavira-mistelgruen-20cm');
+    $product = new class (['nl' => 'zavira-mistelgroen-20cm', 'de' => 'zavira-mistelgruen-20cm', 'en' => 'zavira-mistletoe-green-20cm']) {
+        public function __construct(public array $slugs)
+        {
+        }
+
+        public function getUrl($locale = null, $forceOwnUrl = false)
+        {
+            $prefix = ['nl' => '/producten', 'de' => '/de/produkte', 'en' => '/en/products'][$locale];
+
+            return $forceOwnUrl ? 'https://lovora.test' . $prefix . '/' . $this->slugs[$locale] : $prefix . '/zavira';
+        }
+
+        public function canonicalUrl(string $locale): ?string
+        {
+            return $this->getUrl($locale, false);
+        }
+
+        public function isTranslatableAttribute(string $key): bool
+        {
+            return $key === 'slug';
+        }
+
+        public function getTranslation(string $key, string $locale, bool $useFallback = true)
+        {
+            return $this->slugs[$locale] ?? '';
+        }
+    };
+
+    expect(HreflangUrls::for($request, $product, HREFLANG_LOCALES, 'de'))->toBe([
+        'x-default' => 'https://lovora.test/producten/zavira',
+        'nl-NL' => 'https://lovora.test/producten/zavira',
+        'de-DE' => 'https://lovora.test/de/produkte/zavira',
+        'en' => 'https://lovora.test/en/products/zavira',
+    ]);
+});

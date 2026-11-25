@@ -17,10 +17,28 @@ class RobotsDecision
 {
     public const QUERY_KEYS = ['search', 'activeFilters', 'sortBy', 'sort-by', 'order', 'pagination'];
 
+    public const NOT_FOUND_ATTRIBUTE = 'dashed-core.not-found';
+
+    /** Markeert het verzoek als 404/410, zodat de head noindex en geen canonical krijgt. */
+    public static function markNotFound(?Request $request = null): void
+    {
+        ($request ?? request())->attributes->set(self::NOT_FOUND_ATTRIBUTE, true);
+    }
+
+    public static function isNotFound(?Request $request = null): bool
+    {
+        return (bool) ($request ?? request())->attributes->get(self::NOT_FOUND_ATTRIBUTE, false);
+    }
+
     public static function for(Request $request, ?object $model, string $siteId): string
     {
         if (app()->isLocal()) {
             return 'noindex, nofollow';
+        }
+
+        // Een 404/410-pagina: de head zegt hetzelfde als de statuscode.
+        if (self::isNotFound($request)) {
+            return 'noindex, follow';
         }
 
         if ($model && self::modelWantsNoindex($model)) {
