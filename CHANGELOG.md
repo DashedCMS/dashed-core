@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.127.0 - 2026-11-25
+
+### Added
+- Menu-items helemaal bovenaan vastpinnen, direct onder Dashboard en Mijn taken (pijltje-omhoog bij hover; "Niet meer helemaal bovenaan" om los te maken). Per gebruiker in de bestaande tabel `dashed__navigation_pins` met `item_key` `top:<pad>`, geen migratie. Staat los van pinnen binnen een kopje; werkt net als dat alleen met de instelling `navigation_sort_by_usage`.
+
 ## v4.126.0 - 2026-11-25
 
 ### Added
