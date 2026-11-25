@@ -77,6 +77,32 @@ final class RedirectChain
     }
 
     /**
+     * Een link met een gecodeerd vraagteken (/producten/x%3Fgad_source%3D5, zoals Google Ads of een feed hem soms
+     * opbouwt) zet de query in het pad en geeft een 404. Het doel is het pad met de query erachter, of null.
+     * `$slug` is het (gedecodeerde) pad, `$query` de echte querystring van het verzoek.
+     */
+    public static function encodedQueryTarget(?string $slug, ?string $query = null): ?string
+    {
+        $slug = rawurldecode((string) $slug);
+
+        if (! str_contains($slug, '?')) {
+            return null;
+        }
+
+        [$path, $pathQuery] = explode('?', $slug, 2);
+        $path = '/' . ltrim($path, '/');
+
+        // Nooit naar een ander domein: //host of /\host lezen browsers als een extern adres.
+        if (str_starts_with($path, '/\\') || preg_match('#^/[a-z][a-z0-9+.-]*:#i', $path) === 1) {
+            return null;
+        }
+
+        $parts = array_filter([$pathQuery, $query], fn ($part) => $part !== null && $part !== '');
+
+        return $path . ($parts ? '?' . implode('&', $parts) : '');
+    }
+
+    /**
      * Twee adressen zijn hetzelfde als de database ze hetzelfde vindt: MySQL vergelijkt `from` zonder op
      * hoofdletters te letten, dus /x -> /X is ook een lus.
      */

@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.127.1 - 2026-11-25
+
+### Fixed
+- Een link met een gecodeerd vraagteken in het pad (`/producten/x%3Fgad_source%3D5`, zoals Google Ads of een feed hem soms opbouwt) gaf een 404. Zonder redirect voor dat pad stuurt de frontend nu met een 301 door naar `/producten/x?gad_source=5`, met een eventuele echte querystring erachter. Logica in `RedirectChain::encodedQueryTarget()`; nooit naar een ander domein.
+
 ## v4.127.0 - 2026-11-25
 
 ### Added

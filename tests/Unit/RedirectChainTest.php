@@ -71,3 +71,21 @@ it('treats a case-only difference as the same address, like MySQL does', functio
     expect(RedirectChain::resolve('/de/produkte/myraka-Pflaume', lookupFrom(['/de/produkte/myraka-Pflaume' => '/de/produkte/myraka-pflaume'])))->toBeNull()
         ->and(RedirectChain::same('/X/', 'https://lovora.nl/x'))->toBeTrue();
 });
+
+/**
+ * Lovora (25-11-2026): Google Ads-links als /producten/waxinelichthouder-vlecht%3Fgad_source%3D5 gaven een 404.
+ */
+it('moves an encoded query out of the path', function () {
+    expect(RedirectChain::encodedQueryTarget('producten/x?gad_source=5&gad_campaignid=1'))
+        ->toBe('/producten/x?gad_source=5&gad_campaignid=1')
+        ->and(RedirectChain::encodedQueryTarget('producten/x%3Fgad_source%3D5', 'utm=a'))
+        ->toBe('/producten/x?gad_source=5&utm=a')
+        ->and(RedirectChain::encodedQueryTarget('producten/x?'))->toBe('/producten/x');
+});
+
+it('leaves normal paths and foreign hosts alone', function () {
+    expect(RedirectChain::encodedQueryTarget('producten/x'))->toBeNull()
+        ->and(RedirectChain::encodedQueryTarget('//evil.example?x=1'))->toBe('/evil.example?x=1')
+        ->and(RedirectChain::encodedQueryTarget('\\evil.example?x=1'))->toBeNull()
+        ->and(RedirectChain::encodedQueryTarget('https://evil.example?x=1'))->toBeNull();
+});

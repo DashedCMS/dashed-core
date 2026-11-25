@@ -184,7 +184,9 @@ class FrontendController extends Controller
         $resolved = Redirect::resolveFor('/' . ltrim($originalSlug !== '' ? $originalSlug : $slug, '/'));
 
         if (! $resolved) {
-            return null;
+            $target = RedirectChain::encodedQueryTarget($originalSlug !== '' ? $originalSlug : $slug, request()->getQueryString());
+
+            return $target ? redirect($target, 301) : null;
         }
 
         if ($resolved['status'] === RedirectChain::GONE) {
