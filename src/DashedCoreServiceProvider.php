@@ -440,8 +440,15 @@ class DashedCoreServiceProvider extends PackageServiceProvider
         // Filament-tafels: filters worden meteen toegepast bij het wijzigen,
         // geen losse "Toepassen"-knop meer. Geldt CMS-breed voor alle
         // resources tenzij een resource zelf deferFilters(true) zet.
+        // Filters, sortering en groepering in de sessie onthouden (kolommen
+        // en per pagina doet Filament standaard al), en via
+        // RememberTablePreferences per gebruiker in de database, zodat een
+        // tabel er na verversen of een nieuwe login net zo uitziet.
         Table::configureUsing(function (Table $table): void {
-            $table->deferFilters(false);
+            $table->deferFilters(false)
+                ->persistFiltersInSession()
+                ->persistSortInSession()
+                ->persistGroupInSession();
         });
 
         // Maak het laatst-gecaptured e-mailadres uit de sessie beschikbaar

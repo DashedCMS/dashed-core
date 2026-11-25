@@ -589,6 +589,9 @@ class CMSManager
                 // Taal van de beheerder: alleen de translator, de inhoudstaal
                 // blijft staan. Persistent om dezelfde reden als hierboven.
                 \Dashed\DashedCore\Middleware\SetAdminLocale::class,
+                // Tabelstand per gebruiker: sorteren en filteren zijn
+                // Livewire-verzoeken, dus ook dit moet persistent zijn.
+                \Dashed\DashedCore\Middleware\RememberTablePreferences::class,
             ], isPersistent: true)
             ->authMiddleware([
                 Authenticate::class,

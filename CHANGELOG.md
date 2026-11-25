@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.126.0 - 2026-11-25
+
+### Added
+- Elke tabel in het paneel onthoudt filters, sortering, groepering, zichtbare kolommen en aantal per pagina, per gebruiker. De stand staat in de sessie (via `Table::configureUsing()`) en wordt door de persistente paneelmiddleware `RememberTablePreferences` opgeslagen in `dashed__user_table_preferences` (migratie `create_dashed__user_table_preferences_table`), zodat hij na verversen, een nieuwe login of een verlopen sessie terugkomt. Zoektermen worden bewust niet onthouden. Logica in `Classes\TablePreferences`.
+
 ## v4.125.0 - 2026-11-25
 
 ### Added
