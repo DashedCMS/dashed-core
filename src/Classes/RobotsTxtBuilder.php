@@ -23,7 +23,7 @@ class RobotsTxtBuilder
     {
         $lines = ['User-agent: *'];
 
-        if (app()->isLocal()) {
+        if (\Dashed\DashedCore\Classes\Seo\RobotsDecision::isBlockedEnvironment()) {
             $lines[] = 'Disallow: /';
 
             return implode("\n", $lines) . "\n";

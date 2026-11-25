@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.129.0 - 2026-11-25
+
+### Added
+- Config `dashed-core.noindex_environments` (standaard `staging`, `acceptance`, `acceptatie`): die omgevingen krijgen net als local `noindex, nofollow` en een robots.txt met `Disallow: /` (`RobotsDecision::isBlockedEnvironment()`). Bewust een lijst met namen: een onbekende `APP_ENV` blijft indexeerbaar.
+
 ## v4.128.0 - 2026-11-25
 
 ### Added

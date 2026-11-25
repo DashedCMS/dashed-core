@@ -215,6 +215,9 @@ return [
     ],
 
     // Initialen-avatar voor gebruikers zonder eigen foto (/user-avatar/{initials}).
+    // Omgevingen die altijd noindex en een robots.txt met "Disallow: /" krijgen (naast local).
+    'noindex_environments' => ['staging', 'acceptance', 'acceptatie'],
+
     'avatar' => [
         'background' => env('DASHED_AVATAR_BACKGROUND', '#b4e6ce'),
         'text' => env('DASHED_AVATAR_TEXT', '#30545B'),

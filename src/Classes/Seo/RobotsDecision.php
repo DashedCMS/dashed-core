@@ -17,6 +17,15 @@ class RobotsDecision
 {
     public const QUERY_KEYS = ['search', 'activeFilters', 'sortBy', 'sort-by', 'order', 'pagination'];
 
+    /**
+     * Lokaal en de omgevingen uit `dashed-core.noindex_environments` (staging, acceptatie, ...) mogen nooit in Google.
+     * Bewust een lijst met namen: een onbekende APP_ENV op een live site blijft indexeerbaar.
+     */
+    public static function isBlockedEnvironment(): bool
+    {
+        return app()->isLocal() || app()->environment((array) config('dashed-core.noindex_environments', []));
+    }
+
     public const NOT_FOUND_ATTRIBUTE = 'dashed-core.not-found';
 
     /** Markeert het verzoek als 404/410, zodat de head noindex en geen canonical krijgt. */
@@ -32,7 +41,7 @@ class RobotsDecision
 
     public static function for(Request $request, ?object $model, string $siteId): string
     {
-        if (app()->isLocal()) {
+        if (self::isBlockedEnvironment()) {
             return 'noindex, nofollow';
         }
 
