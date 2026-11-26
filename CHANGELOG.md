@@ -2,6 +2,11 @@
 
 All notable changes to `Dashed core` will be documented in this file.
 
+## v4.129.1 - 2026-11-26
+
+### Fixed
+- `PageTitle::withSuffix()` voegt het titel-achtervoegsel niet meer toe als de sitenaam al als los woord in de titel staat (hoofdletterongevoelig). Zo kan een achtervoegsel als " | Dashed" aan zonder dubbele merknaam bij titels als "… | DASHED - Online Agency"; "DashedCMS" telt niet als "Dashed".
+
 ## v4.129.0 - 2026-11-25
 
 ### Added

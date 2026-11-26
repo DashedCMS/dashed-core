@@ -23,10 +23,25 @@ class PageTitle
             $suffix = ' ' . $suffix;
         }
 
-        if ($title === trim($siteName) || str_ends_with($title, $suffix)) {
+        if (str_ends_with($title, $suffix) || static::namesSite($title, $siteName)) {
             return $title;
         }
 
         return $title . $suffix;
+    }
+
+    /**
+     * Titels die het merk al noemen ("| DASHED - Online Agency") krijgen het
+     * niet nog eens. Alleen als los woord: "DashedCMS" telt niet als "Dashed".
+     */
+    private static function namesSite(string $title, string $siteName): bool
+    {
+        $siteName = trim($siteName);
+
+        if ($siteName === '') {
+            return false;
+        }
+
+        return (bool) preg_match('/(?<![\p{L}\p{N}])' . preg_quote($siteName, '/') . '(?![\p{L}\p{N}])/iu', $title);
     }
 }
